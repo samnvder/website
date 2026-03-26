@@ -1,0 +1,14 @@
+# floating-section-nav.js — Floating Section Navigation
+
+## Layman's terms
+
+Makes a floating nav that follows you as you scroll, showing which section you're in. Lets you jump between sections (e.g. membership tiers, FAQ) with a sticky nav bar.
+
+## Medium understanding
+
+Template component for section-based navigation. Typically highlights current section based on scroll position and provides click-to-scroll links. Used in long pages with multiple sections. Copy to Dev when building new pages.
+
+## Advanced
+
+- **Location:** Templates/Components/Buttons/Floating Buttons/Floating Section Nav/
+- **Template:** Not live; used as scaffold

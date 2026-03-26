@@ -1,0 +1,619 @@
+<!--
+  HOMEPAGE SUMMER BANNER — THRIVE-HARDENED PRODUCTION BUILD
+  ═══════════════════════════════════════════════════════════
+  
+  EVERY typography property uses !important.
+  EVERY selector chains through Thrive's wrapper classes.
+  
+  This file is SELF-CONTAINED: paste the <style> block into
+  Thrive's CSS panel, paste the HTML into a Custom HTML block.
+  
+  Thrive cannot override this. Nothing can.
+  
+  Typography System: Augmented Fourth (1.414) scale
+  Fonts: Montserrat (headings/UI) + Plus Jakarta Sans (body)
+-->
+
+<style>
+  /* ═══════════════════════════════════════════════════════════
+     TYPOGRAPHY SYSTEM TOKENS (inlined for Thrive independence)
+     
+     These MUST live here so the banner works even if
+     typography-system.css isn't loaded on the page yet.
+     When the global CSS IS loaded, these are harmless dupes.
+     ═══════════════════════════════════════════════════════════ */
+  :root {
+    --font-heading:     'Montserrat', sans-serif;
+    --font-body:        'Plus Jakarta Sans', sans-serif;
+    --weight-regular:   400;
+    --weight-medium:    500;
+    --weight-semi:      600;
+    --weight-bold:      700;
+    --weight-extra:     800;
+    --weight-black:     900;
+    --leading-tight:    1.1;
+    --leading-snug:     1.25;
+    --leading-normal:   1.5;
+    --leading-relaxed:  1.65;
+    --leading-loose:    1.8;
+    --tracking-tight:   -0.025em;
+    --tracking-snug:    -0.015em;
+    --tracking-normal:  0em;
+    --tracking-open:    0.01em;
+    --tracking-wide:    0.06em;
+    --tracking-ultra:   0.12em;
+    --tracking-mega:    0.18em;
+    --type-xs:          clamp(0.6875rem, 0.65rem + 0.15vw, 0.75rem);
+    --render-heading:   geometricPrecision;
+    --render-body:      optimizeLegibility;
+  }
+
+
+  /* ═══════════════════════════════════════════════════════════
+     FONT RENDERING FOUNDATION
+     Applied to everything inside the banner.
+     Thrive never touches font-feature-settings so this sticks.
+     ═══════════════════════════════════════════════════════════ */
+  #se-home-summer-banner,
+  #se-home-summer-banner *,
+  #se-home-summer-banner *::before,
+  #se-home-summer-banner *::after {
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1 !important;
+    font-kerning: auto !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+  }
+
+
+  /* ═══════════════════════════════════════════════════════════
+     BANNER CONTAINER
+     ═══════════════════════════════════════════════════════════ */
+  #se-home-summer-banner {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: 30px;
+    min-height: 420px;
+    max-width: 1200px;
+    margin: 32px auto;
+    box-shadow: 0 28px 70px rgba(10, 22, 42, 0.22);
+    text-align: center !important;
+  }
+
+
+  /* ── Background Image ── */
+  #se-home-summer-banner .se-home-summer-banner__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  #se-home-summer-banner .se-home-summer-banner__bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scale(1.02);
+    transform-origin: center;
+  }
+
+
+  /* ── Overlay ── */
+  #se-home-summer-banner .se-home-summer-banner__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      radial-gradient(circle at 50% 22%, rgba(61, 152, 255, 0.24), transparent 45%),
+      linear-gradient(180deg, rgba(0, 16, 35, 0.22) 0%, rgba(0, 16, 35, 0.52) 62%, rgba(0, 16, 35, 0.68) 100%);
+  }
+
+
+  /* ── Content Container ── */
+  #se-home-summer-banner .se-home-summer-banner__content {
+    position: relative;
+    z-index: 2;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 72px 28px 62px;
+  }
+
+
+  /* ═══════════════════════════════════════════════════════════
+     EYEBROW PILL
+     
+     Thrive defense: chained through .thrv_wrapper and
+     .thrv_text_element. Every text property is !important.
+     ═══════════════════════════════════════════════════════════ */
+  #se-home-summer-banner .se-home-summer-banner__eyebrow,
+  .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__eyebrow,
+  .thrv_text_element #se-home-summer-banner .se-home-summer-banner__eyebrow {
+    /* Layout */
+    display: inline-block !important;
+    margin-bottom: 14px !important;
+    padding: 10px 24px !important;
+    border-radius: 999px !important;
+    white-space: normal !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    text-wrap: balance !important;
+    text-align: center !important;
+
+    /* Typography — ALL !important */
+    font-family: var(--font-heading) !important;
+    font-size: var(--type-xs) !important;
+    font-weight: var(--weight-extra) !important;
+    letter-spacing: var(--tracking-ultra) !important;
+    text-transform: uppercase !important;
+    line-height: var(--leading-normal) !important;
+    text-rendering: var(--render-heading) !important;
+
+    /* Color — !important to kill Thrive's -webkit-text-fill-color */
+    color: #ff8c42 !important;
+    -webkit-text-fill-color: #ff8c42 !important;
+    border: 1px solid rgba(255, 140, 66, 0.6) !important;
+    background: rgba(17, 38, 70, 0.45) !important;
+
+    /* Effects */
+    text-shadow: 0 1px 8px rgba(255, 140, 66, 0.3) !important;
+    box-shadow:
+      0 8px 28px rgba(0, 0, 0, 0.28),
+      inset 0 0 20px rgba(255, 140, 66, 0.06) !important;
+  }
+
+
+  /* ═══════════════════════════════════════════════════════════
+     LIMITED NOTICE
+     ═══════════════════════════════════════════════════════════ */
+  #se-home-summer-banner .se-home-summer-banner__limited,
+  .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__limited,
+  .thrv_text_element #se-home-summer-banner .se-home-summer-banner__limited,
+  #se-home-summer-banner p.se-home-summer-banner__limited {
+    /* Layout */
+    margin: -4px 0 12px !important;
+    text-align: center !important;
+
+    /* Typography — ALL !important */
+    font-family: var(--font-heading) !important;
+    font-size: var(--type-xs) !important;
+    font-weight: var(--weight-bold) !important;
+    letter-spacing: var(--tracking-wide) !important;
+    text-transform: uppercase !important;
+    line-height: var(--leading-normal) !important;
+    text-rendering: var(--render-heading) !important;
+
+    /* Color */
+    color: rgba(255, 255, 255, 0.92) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.92) !important;
+
+    /* Effects */
+    text-shadow:
+      0 1px 6px rgba(0, 0, 0, 0.3),
+      0 0 20px rgba(255, 255, 255, 0.08) !important;
+  }
+
+
+  /* ═══════════════════════════════════════════════════════════
+     HERO HEADLINE — "Coastal Authority"
+     
+     The gradient text fill requires -webkit-text-fill-color:
+     transparent, which Thrive LOVES to override. The triple
+     selector chain + !important ensures it stays transparent.
+     ═══════════════════════════════════════════════════════════ */
+  #se-home-summer-banner .se-home-summer-banner__title,
+  #se-home-summer-banner h2.se-home-summer-banner__title,
+  .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__title,
+  .thrv_wrapper #se-home-summer-banner h2.se-home-summer-banner__title,
+  .thrv_text_element #se-home-summer-banner .se-home-summer-banner__title,
+  .thrv_text_element #se-home-summer-banner h2.se-home-summer-banner__title {
+    /* Layout */
+    margin: 0 auto 16px !important;
+    padding: 0 !important;
+    max-width: clamp(15ch, 70vw, 23ch) !important;
+    text-align: center !important;
+    white-space: normal !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    text-wrap: balance !important;
+
+    /* Typography — ALL !important */
+    font-family: var(--font-heading) !important;
+    font-size: clamp(1.4rem, 3vw, 2.35rem) !important;
+    font-weight: var(--weight-black) !important;
+    letter-spacing: var(--tracking-tight) !important;
+    line-height: var(--leading-tight) !important;
+    text-rendering: var(--render-heading) !important;
+
+    /* Gradient Text Fill — "Sunset Authority" */
+    background: linear-gradient(
+      135deg,
+      #ffb347 0%,
+      #ff8c42 25%,
+      #ff6b4a 50%,
+      #ff8c42 75%,
+      #ffd166 100%
+    ) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    color: #ff8c42 !important; /* fallback */
+
+    /* Layered glow */
+    filter:
+      drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))
+      drop-shadow(0 8px 24px rgba(255, 107, 74, 0.25))
+      drop-shadow(0 0 40px rgba(255, 140, 66, 0.15)) !important;
+  }
+
+  /* Keep Thrive-injected inner spans from forcing no-wrap in h2 text */
+  #se-home-summer-banner .se-home-summer-banner__title span,
+  .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__title span,
+  .thrv_text_element #se-home-summer-banner .se-home-summer-banner__title span {
+    white-space: inherit !important;
+    overflow-wrap: inherit !important;
+    word-break: inherit !important;
+    text-wrap: inherit !important;
+  }
+
+
+  /* ═══════════════════════════════════════════════════════════
+     BODY TEXT
+     
+     The Montserrat → Plus Jakarta Sans switch is the core
+     "premium-accessible" contrast. Thrive defaults everything
+     to the theme font — we force Jakarta here.
+     ═══════════════════════════════════════════════════════════ */
+  #se-home-summer-banner .se-home-summer-banner__text,
+  #se-home-summer-banner p.se-home-summer-banner__text,
+  .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__text,
+  .thrv_wrapper #se-home-summer-banner p.se-home-summer-banner__text,
+  .thrv_text_element #se-home-summer-banner .se-home-summer-banner__text,
+  .thrv_text_element #se-home-summer-banner p.se-home-summer-banner__text {
+    /* Layout */
+    margin: 0 auto 28px !important;
+    max-width: clamp(30ch, 90vw, 52ch) !important;
+    text-align: center !important;
+    white-space: normal !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    text-wrap: balance !important;
+
+    /* Typography — ALL !important */
+    font-family: var(--font-body) !important;
+    font-size: clamp(0.95rem, 2vw, 1.15rem) !important;
+    font-weight: var(--weight-semi) !important;
+    line-height: var(--leading-relaxed) !important;
+    letter-spacing: var(--tracking-open) !important;
+    text-rendering: var(--render-body) !important;
+
+    /* Color */
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+
+    /* Layered shadows for readability over image */
+    text-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.4),
+      0 4px 14px rgba(0, 0, 0, 0.25),
+      0 0 30px rgba(0, 0, 0, 0.1) !important;
+  }
+
+
+  /* ═══════════════════════════════════════════════════════════
+     CTA BUTTONS
+     ═══════════════════════════════════════════════════════════ */
+  #se-home-summer-banner .se-home-summer-banner__actions {
+    display: flex !important;
+    gap: 12px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+  }
+
+  /* Button base */
+  #se-home-summer-banner .se-home-summer-banner__btn,
+  #se-home-summer-banner .se-home-summer-banner__btn-secondary,
+  #se-home-summer-banner a.se-home-summer-banner__btn,
+  #se-home-summer-banner a.se-home-summer-banner__btn-secondary,
+  .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__btn,
+  .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__btn-secondary,
+  .thrv_text_element #se-home-summer-banner a.se-home-summer-banner__btn,
+  .thrv_text_element #se-home-summer-banner a.se-home-summer-banner__btn-secondary {
+    /* Layout */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    border-radius: 999px !important;
+    padding: 15px 30px !important;
+    text-decoration: none !important;
+    text-align: center !important;
+
+    /* Typography — ALL !important */
+    font-family: var(--font-heading) !important;
+    font-size: clamp(0.78rem, 1.3vw, 0.92rem) !important;
+    font-weight: var(--weight-extra) !important;
+    letter-spacing: var(--tracking-wide) !important;
+    text-transform: uppercase !important;
+    text-rendering: var(--render-heading) !important;
+
+    /* Transitions */
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease,
+      background 0.25s ease,
+      filter 0.25s ease !important;
+  }
+
+  /* Button inner spans — kill Thrive's span overrides */
+  #se-home-summer-banner .se-home-summer-banner__btn span,
+  #se-home-summer-banner .se-home-summer-banner__btn-secondary span,
+  .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__btn span,
+  .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__btn-secondary span {
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    letter-spacing: inherit !important;
+    line-height: inherit !important;
+    color: inherit !important;
+    -webkit-text-fill-color: inherit !important;
+  }
+
+  /* Primary CTA */
+  #se-home-summer-banner .se-home-summer-banner__btn,
+  #se-home-summer-banner a.se-home-summer-banner__btn {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    background: linear-gradient(135deg, #ff6b4a, #ff8c42) !important;
+    box-shadow:
+      0 10px 28px rgba(255, 107, 74, 0.4),
+      0 2px 8px rgba(255, 107, 74, 0.2) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* Secondary CTA */
+  #se-home-summer-banner .se-home-summer-banner__btn-secondary,
+  #se-home-summer-banner a.se-home-summer-banner__btn-secondary {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.22),
+      0 1px 4px rgba(255, 255, 255, 0.08) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* Button Icons */
+  #se-home-summer-banner .se-home-summer-banner__btn svg,
+  #se-home-summer-banner .se-home-summer-banner__btn-secondary svg {
+    width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0 !important;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2)) !important;
+  }
+
+  /* Hover States */
+  #se-home-summer-banner .se-home-summer-banner__btn:hover,
+  #se-home-summer-banner .se-home-summer-banner__btn-secondary:hover {
+    transform: translateY(-2px) !important;
+  }
+
+  #se-home-summer-banner .se-home-summer-banner__btn:hover {
+    box-shadow:
+      0 14px 34px rgba(255, 107, 74, 0.5),
+      0 4px 12px rgba(255, 107, 74, 0.3) !important;
+    filter: brightness(1.05) !important;
+  }
+
+  #se-home-summer-banner .se-home-summer-banner__btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    box-shadow:
+      0 12px 32px rgba(0, 0, 0, 0.3),
+      0 2px 8px rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* Focus States (Accessibility) */
+  #se-home-summer-banner .se-home-summer-banner__btn:focus-visible,
+  #se-home-summer-banner .se-home-summer-banner__btn-secondary:focus-visible {
+    outline: 2px solid #ffd166 !important;
+    outline-offset: 3px !important;
+  }
+
+
+  /* ═══════════════════════════════════════════════════════════
+     NUCLEAR THRIVE KILL SWITCH
+     
+     Catches ANY Thrive-injected element inside the banner
+     and forces inheritance from our styled parents above.
+     This is the last line of defense.
+     ═══════════════════════════════════════════════════════════ */
+  #se-home-summer-banner [class*="thrv_"],
+  #se-home-summer-banner [class*="tve_"],
+  #se-home-summer-banner [data-css],
+  #se-home-summer-banner .thrv_wrapper,
+  #se-home-summer-banner .thrv_text_element,
+  #se-home-summer-banner .tve_shortcode {
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    letter-spacing: inherit !important;
+    line-height: inherit !important;
+    color: inherit !important;
+    -webkit-text-fill-color: inherit !important;
+    text-rendering: inherit !important;
+    text-transform: inherit !important;
+  }
+
+  /* Kill Thrive's inline style overrides on spans */
+  #se-home-summer-banner span[style],
+  #se-home-summer-banner p[style],
+  #se-home-summer-banner h1[style],
+  #se-home-summer-banner h2[style],
+  #se-home-summer-banner h3[style],
+  #se-home-summer-banner a[style] {
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    letter-spacing: inherit !important;
+    line-height: inherit !important;
+    -webkit-text-fill-color: inherit !important;
+  }
+
+
+  /* ═══════════════════════════════════════════════════════════
+     RESPONSIVE — TABLET (≤768px)
+     All typography overrides are !important.
+     ═══════════════════════════════════════════════════════════ */
+  @media (max-width: 768px) {
+    #se-home-summer-banner {
+      border-radius: 20px !important;
+      min-height: 360px !important;
+      margin: 22px auto !important;
+    }
+
+    #se-home-summer-banner .se-home-summer-banner__content {
+      padding: 52px 18px 42px !important;
+    }
+
+    #se-home-summer-banner .se-home-summer-banner__eyebrow,
+    .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__eyebrow {
+      font-size: clamp(0.65rem, 2.5vw, 0.74rem) !important;
+      padding: 8px 16px !important;
+      margin-bottom: 10px !important;
+      letter-spacing: 0.1em !important;
+      white-space: normal !important;
+      overflow-wrap: normal !important;
+      word-break: normal !important;
+      text-wrap: balance !important;
+      text-align: center !important;
+    }
+
+    #se-home-summer-banner .se-home-summer-banner__title,
+    #se-home-summer-banner h2.se-home-summer-banner__title,
+    .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__title {
+      font-size: clamp(1.25rem, 5.8vw, 1.8rem) !important;
+      margin-bottom: 10px !important;
+      max-width: clamp(14ch, 88vw, 21ch) !important;
+      white-space: normal !important;
+      overflow-wrap: normal !important;
+      word-break: normal !important;
+      text-wrap: balance !important;
+      text-align: center !important;
+    }
+
+    #se-home-summer-banner .se-home-summer-banner__limited,
+    #se-home-summer-banner p.se-home-summer-banner__limited,
+    .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__limited {
+      margin: -2px 0 10px !important;
+      font-size: clamp(0.65rem, 2.2vw, 0.74rem) !important;
+      letter-spacing: 0.06em !important;
+      text-align: center !important;
+    }
+
+    #se-home-summer-banner .se-home-summer-banner__text,
+    #se-home-summer-banner p.se-home-summer-banner__text,
+    .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__text {
+      font-size: clamp(0.88rem, 3.5vw, 0.98rem) !important;
+      margin-bottom: 18px !important;
+      line-height: 1.7 !important;
+      max-width: clamp(27ch, 92vw, 38ch) !important;
+      text-align: center !important;
+      text-wrap: balance !important;
+    }
+
+    #se-home-summer-banner .se-home-summer-banner__actions {
+      gap: 10px !important;
+    }
+
+    #se-home-summer-banner .se-home-summer-banner__btn,
+    #se-home-summer-banner .se-home-summer-banner__btn-secondary,
+    .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__btn,
+    .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__btn-secondary {
+      width: min(100%, 300px) !important;
+      padding: 13px 18px !important;
+      font-size: clamp(0.74rem, 2.8vw, 0.84rem) !important;
+    }
+  }
+
+
+  /* ═══════════════════════════════════════════════════════════
+     RESPONSIVE — SMALL MOBILE (≤420px)
+     ═══════════════════════════════════════════════════════════ */
+  @media (max-width: 420px) {
+    #se-home-summer-banner .se-home-summer-banner__content {
+      padding: 40px 14px 34px !important;
+    }
+
+    #se-home-summer-banner .se-home-summer-banner__eyebrow,
+    .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__eyebrow {
+      font-size: 0.62rem !important;
+      padding: 7px 14px !important;
+      letter-spacing: 0.08em !important;
+    }
+
+    #se-home-summer-banner .se-home-summer-banner__title,
+    #se-home-summer-banner h2.se-home-summer-banner__title,
+    .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__title {
+      font-size: clamp(1.1rem, 5.2vw, 1.5rem) !important;
+      letter-spacing: -0.02em !important;
+      max-width: clamp(14ch, 92vw, 19ch) !important;
+      text-wrap: balance !important;
+    }
+
+    #se-home-summer-banner .se-home-summer-banner__limited,
+    .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__limited {
+      font-size: 0.62rem !important;
+    }
+
+    #se-home-summer-banner .se-home-summer-banner__text,
+    .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__text {
+      font-size: 0.85rem !important;
+      line-height: 1.7 !important;
+      max-width: clamp(24ch, 95vw, 33ch) !important;
+      text-wrap: balance !important;
+    }
+
+    #se-home-summer-banner .se-home-summer-banner__btn,
+    #se-home-summer-banner .se-home-summer-banner__btn-secondary,
+    .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__btn,
+    .thrv_wrapper #se-home-summer-banner .se-home-summer-banner__btn-secondary {
+      padding: 12px 16px !important;
+      font-size: 0.72rem !important;
+    }
+  }
+</style>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     HTML STRUCTURE — Identical to production original
+     ═══════════════════════════════════════════════════════════════════ -->
+<section class="se-home-summer-banner" id="se-home-summer-banner">
+  <div class="se-home-summer-banner__bg">
+    <img src="https://southendclub.com/wp-content/uploads/2026/02/Kids-Pool_upscayl_4x_upscayl-lite-4x-scaled-e1770759166353.png" alt="South End Club summer membership pool scene" loading="lazy">
+  </div>
+  <div class="se-home-summer-banner__overlay"></div>
+
+  <div class="se-home-summer-banner__content">
+    <span class="se-home-summer-banner__eyebrow">Summer Memberships Now Available</span>
+    <p class="se-home-summer-banner__limited">Limited Amount Offered</p>
+    <h2 class="se-home-summer-banner__title">The Staycation That Lasts All Summer</h2>
+    <p class="se-home-summer-banner__text">Sun. Pool. Fitness. Cocktails. Repeat. Explore everything included and lock in your summer at South End Club.</p>
+
+    <div class="se-home-summer-banner__actions">
+      <a href="https://southendclub.com/summer-membership/" class="se-home-summer-banner__btn">
+        <span>Explore Summer Membership</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7"></path>
+        </svg>
+      </a>
+      <a href="https://southendclub.com/schedule-a-tour/" class="se-home-summer-banner__btn-secondary">
+        <span>Schedule a Tour</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>

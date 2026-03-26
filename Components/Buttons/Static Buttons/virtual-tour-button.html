@@ -1,0 +1,445 @@
+<!-- =========================================================
+     SOUTH END CLUB — VIRTUAL TOUR BUTTON (ALL-IN-ONE)
+     =========================================================
+
+     Self-contained "Virtual Tour" button that opens an embedded
+     video modal playing the South End Club tour walkthrough.
+
+     Inspired by the General Purpose Button (sec-btn) template.
+     Drop into any page — fully self-contained CSS + HTML + JS.
+
+     VIDEO URL:
+       https://southendclub.com/wp-content/uploads/2024/05/South-End-Tour.mp4
+
+     USAGE — just paste this block where you want the button:
+     ========================================================= -->
+
+
+<!-- ===========================
+     CSS
+     =========================== -->
+<style>
+/* ========== VT-BTN: BASE ========== */
+.vt-btn,
+a.vt-btn,
+button.vt-btn,
+.thrv_wrapper .vt-btn,
+.thrv_text_element .vt-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    position: relative !important;
+    overflow: hidden !important;
+
+    padding: 15px 32px !important;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.4px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: transparent !important;
+
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    background: linear-gradient(135deg, #0b468c 0%, #0d52a3 50%, #204147 100%) !important;
+    border: 2px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 100px !important;
+
+    box-shadow:
+        0 4px 16px rgba(11, 70, 140, 0.35),
+        0 2px 6px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+
+    transition:
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.3s ease !important;
+
+    transform: translateZ(0) !important;
+    backface-visibility: hidden !important;
+}
+
+/* ── Shimmer sweep layer ── */
+.vt-btn::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(
+        105deg,
+        transparent 20%,
+        rgba(255, 255, 255, 0.12) 40%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.12) 60%,
+        transparent 80%
+    ) !important;
+    transition: none !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+}
+
+/* ── Ripple container layer ── */
+.vt-btn::after {
+    content: '' !important;
+    position: absolute !important;
+    width: 0 !important;
+    height: 0 !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: translate(-50%, -50%) !important;
+    pointer-events: none !important;
+    z-index: 2 !important;
+    opacity: 0 !important;
+}
+
+/* ── Hover state ── */
+.vt-btn:hover,
+a.vt-btn:hover,
+button.vt-btn:hover {
+    transform: translateY(-3px) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    box-shadow:
+        0 8px 28px rgba(11, 70, 140, 0.45),
+        0 4px 12px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Shimmer sweep on hover */
+.vt-btn:hover::before {
+    animation: vt-btn-shimmer 0.8s ease forwards !important;
+}
+
+@keyframes vt-btn-shimmer {
+    0%   { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* ── Active / Click state ── */
+.vt-btn:active,
+a.vt-btn:active,
+button.vt-btn:active {
+    transform: translateY(-1px) scale(0.98) !important;
+    box-shadow:
+        0 4px 14px rgba(11, 70, 140, 0.4),
+        0 2px 6px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ── Ripple animation ── */
+.vt-btn.vt-btn-ripple::after {
+    animation: vt-btn-ripple 0.6s ease-out forwards !important;
+}
+
+@keyframes vt-btn-ripple {
+    0%   { width: 0; height: 0; opacity: 0.4; }
+    100% { width: 300px; height: 300px; opacity: 0; }
+}
+
+/* ── Subtle idle glow pulse ── */
+.vt-btn.vt-btn-glow {
+    animation: vt-btn-glow 3s ease-in-out infinite !important;
+}
+
+@keyframes vt-btn-glow {
+    0%, 100% {
+        box-shadow:
+            0 4px 16px rgba(11, 70, 140, 0.35),
+            0 2px 6px rgba(0, 0, 0, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    50% {
+        box-shadow:
+            0 4px 22px rgba(11, 70, 140, 0.5),
+            0 2px 10px rgba(11, 70, 140, 0.2),
+            0 0 30px rgba(11, 70, 140, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Kill glow on hover — shimmer takes over */
+.vt-btn.vt-btn-glow:hover {
+    animation: none !important;
+}
+
+/* ── Icon styling ── */
+.vt-btn .vt-btn-icon {
+    width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0 !important;
+    fill: currentColor !important;
+    position: relative !important;
+    z-index: 3 !important;
+    transition: transform 0.3s ease !important;
+}
+
+.vt-btn:hover .vt-btn-icon {
+    transform: scale(1.1) !important;
+}
+
+/* ── Label ── */
+.vt-btn .vt-btn-label,
+.vt-btn span {
+    position: relative !important;
+    z-index: 3 !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    letter-spacing: inherit !important;
+    color: inherit !important;
+    -webkit-text-fill-color: inherit !important;
+}
+
+
+/* ==========================================================
+   VIDEO / IFRAME MODAL — CENTERING LAW
+   ----------------------------------------------------------
+   • Overlay MUST use inset:0 (not top/left + width/height)
+   • Overlay MUST carry padding ≥ 48px top/bottom so the
+     close-button space is inside the flex container.
+   • Modal box MUST NOT use overflow:hidden (clips the close
+     button); the inner video/iframe already has border-radius.
+   • Modal MUST be appended to document.body via JS on init
+     so it escapes any parent stacking context (Thrive wrappers,
+     transforms, etc.) that would let the header sit on top.
+   • Together these guarantee dead-center playback on every
+     viewport, every theme, every page builder.
+   ========================================================== */
+
+/* ========== VT-BTN: VIDEO MODAL ========== */
+.vt-btn-modal-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147483647 !important;
+    margin: 0 !important;
+    padding: 48px 20px !important;
+    box-sizing: border-box !important;
+    background: rgba(0, 0, 0, 0.85) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0.3s ease, visibility 0.3s ease !important;
+}
+
+.vt-btn-modal-overlay.vt-btn-modal-open {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.vt-btn-modal-box {
+    position: relative !important;
+    width: 90% !important;
+    max-width: 960px !important;
+    margin: auto !important;            /* belt-and-suspenders centering */
+    aspect-ratio: 16 / 9 !important;
+    background: #000 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6) !important;
+    /* NO overflow:hidden — keeps close button visible above */
+}
+
+.vt-btn-modal-box video {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 12px !important;
+    background: #000 !important;
+    object-fit: contain !important;
+}
+
+.vt-btn-modal-close {
+    position: absolute !important;
+    top: -44px !important;
+    right: 0 !important;
+    width: 40px !important;
+    height: 40px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: none !important;
+    border-radius: 50% !important;
+    color: #fff !important;
+    font-size: 28px !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: background 0.2s ease !important;
+}
+
+.vt-btn-modal-close:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+}
+
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .vt-btn,
+    a.vt-btn,
+    button.vt-btn {
+        padding: 13px 26px !important;
+        font-size: 14px !important;
+    }
+
+    .vt-btn .vt-btn-icon {
+        width: 16px !important;
+        height: 16px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .vt-btn,
+    a.vt-btn,
+    button.vt-btn {
+        padding: 12px 22px !important;
+        font-size: 13px !important;
+        gap: 8px !important;
+    }
+
+    .vt-btn-modal-overlay {
+        padding: 40px 10px !important;
+    }
+
+    .vt-btn-modal-box {
+        width: 96% !important;
+        border-radius: 8px !important;
+    }
+
+    .vt-btn-modal-close {
+        top: -40px !important;
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 24px !important;
+    }
+}
+</style>
+
+
+<!-- ===========================
+     VIDEO MODAL
+     =========================== -->
+<div id="vtBtnModal" class="vt-btn-modal-overlay"
+     onclick="if(event.target===this) window.vtBtnCloseModal();">
+    <div class="vt-btn-modal-box">
+        <button class="vt-btn-modal-close" aria-label="Close"
+                onclick="window.vtBtnCloseModal();">&times;</button>
+        <video id="vtBtnVideo" controls playsinline muted preload="metadata"
+               style="width:100%;height:100%;border-radius:12px;background:#000;">
+            <source src="https://southendclub.com/wp-content/uploads/2024/05/South-End-Tour.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</div>
+
+
+<!-- ===========================
+     BUTTON
+     =========================== -->
+<div style="text-align:center;padding:10px 0;">
+    <a class="vt-btn vt-btn-glow" id="vtBtnTrigger" role="button" tabindex="0">
+        <svg class="vt-btn-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <span class="vt-btn-label">Virtual Tour</span>
+    </a>
+</div>
+
+
+<!-- ===========================
+     JAVASCRIPT
+     =========================== -->
+<script>
+(function vtBtnInit() {
+    'use strict';
+
+    var btn        = document.getElementById('vtBtnTrigger');
+    var modal      = document.getElementById('vtBtnModal');
+    var video      = document.getElementById('vtBtnVideo');
+
+    /* ── Escape parent stacking contexts ──
+       Move the modal to <body> so no Thrive wrapper, header,
+       or other ancestor z-index / transform can sit on top. */
+    if (modal && modal.parentNode !== document.body) {
+        document.body.appendChild(modal);
+    }
+
+    /* ── Close modal ── */
+    window.vtBtnCloseModal = function() {
+        if (!modal) return;
+        modal.classList.remove('vt-btn-modal-open');
+        if (video) { video.pause(); video.currentTime = 0; }
+        document.documentElement.style.overflow = '';
+    };
+
+    /* Close on Escape */
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') window.vtBtnCloseModal();
+    });
+
+    /* ── Open modal ── */
+    function openModal() {
+        if (!modal) return;
+        document.documentElement.style.overflow = 'hidden';
+        modal.classList.add('vt-btn-modal-open');
+        if (video) video.play();
+    }
+
+    /* ── Ripple effect ── */
+    function triggerRipple(el, e) {
+        el.classList.remove('vt-btn-ripple');
+        var rect = el.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        el.style.cssText += ';--rx:' + x + 'px;--ry:' + y + 'px;';
+        void el.offsetWidth;
+        el.classList.add('vt-btn-ripple');
+        setTimeout(function() { el.classList.remove('vt-btn-ripple'); }, 600);
+    }
+
+    /* ── Ripple positioning (one-time style injection) ── */
+    if (!document.querySelector('[data-vt-btn-ripple-style]')) {
+        var s = document.createElement('style');
+        s.setAttribute('data-vt-btn-ripple-style', '');
+        s.textContent = '.vt-btn.vt-btn-ripple::after{left:var(--rx,50%)!important;top:var(--ry,50%)!important;}';
+        document.head.appendChild(s);
+    }
+
+    /* ── Click handler ── */
+    if (btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            triggerRipple(btn, e);
+            openModal();
+        });
+
+        /* Keyboard support */
+        btn.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                btn.click();
+            }
+        });
+
+        /* ── Magnetic micro-hover (desktop only) ── */
+        if (window.matchMedia('(hover: hover)').matches) {
+            btn.addEventListener('mousemove', function(e) {
+                var rect = btn.getBoundingClientRect();
+                var cx = rect.left + rect.width / 2;
+                var cy = rect.top + rect.height / 2;
+                var dx = (e.clientX - cx) * 0.08;
+                var dy = (e.clientY - cy) * 0.08;
+                btn.style.transform = 'translateY(-3px) translate(' + dx + 'px,' + dy + 'px)';
+            });
+
+            btn.addEventListener('mouseleave', function() {
+                btn.style.transform = '';
+            });
+        }
+    }
+
+})();
+</script>

@@ -1,0 +1,15 @@
+# Header.js — Header / Mobile Navigation Toggle
+
+## Layman's terms
+
+Makes the hamburger menu work. When you tap the menu icon on mobile, it opens and closes the navigation. Handles the toggle button and overlay.
+
+## Medium understanding
+
+Migrated from WordPress footer snippet. Controls `.sec-mobile-toggle` and `.sec-menu-wrapper`. Click toggles `sec-menu-active` on body and `sec-menu-open` on menu. Retries init if elements not yet in DOM (Thrive async load). No external deps.
+
+## Advanced
+
+- **Pattern:** IIFE, DOMContentLoaded or immediate if already loaded
+- **Classes:** sec-mobile-toggle, sec-menu-wrapper, sec-menu-active, sec-menu-open
+- **Used by:** Header component; embedded in pages via Thrive

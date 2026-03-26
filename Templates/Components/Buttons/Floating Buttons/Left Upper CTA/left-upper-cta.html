@@ -1,0 +1,33 @@
+<!-- =========================================================
+     SOUTH END CLUB — REUSABLE COMPONENT
+     Left Upper Smaller CTA (Floating Button)
+     =========================================================
+
+     HOW TO USE
+     ─────────────────────────────────────────────────────────
+     1. Paste this <a> tag inside <body>, typically right after
+        the opening of your hero <section>.
+     2. Include  left-upper-cta.css  (link or inline).
+     3. Include  left-upper-cta.js  at the bottom of <body>.
+
+     CUSTOMISATION  (data-* attributes)
+     ─────────────────────────────────────────────────────────
+     data-float-target   — CSS selector the button scrolls to
+                           on click  (default: href value)
+     data-float-hero     — CSS selector of the hero element;
+                           button hides while hero is visible
+                           (default: ".hero")
+     data-idle-delay     — ms before ghost/idle fade
+                           (default: 2000)
+
+     Just change the <span> text and href for each page.
+     ========================================================= -->
+
+<a href="#schedule-viewing"
+   class="sec-float-cta"
+   data-float-target="#schedule-viewing"
+   data-float-hero=".hero"
+   data-idle-delay="2000"
+   aria-label="Book Your Viewing">
+  <span>Book Your Viewing</span>
+</a>

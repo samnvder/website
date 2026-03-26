@@ -1,0 +1,15 @@
+# package-lock.json — Locked Dependency Versions
+
+## Layman's terms
+
+A snapshot of the exact versions of every tool the project uses. Ensures everyone (and every deploy) gets the same versions. Don't edit by hand—`npm install` updates it when dependencies change.
+
+## Medium understanding
+
+npm's lockfile. Records the resolved dependency tree from package.json so installs are reproducible. Commit this file so CI and other devs get identical node_modules. Edit package.json for changes; lockfile updates automatically.
+
+## Advanced
+
+- **Generated:** By `npm install` when package.json or deps change
+- **Reproducibility:** `npm ci` uses lockfile exclusively for install
+- **Do not edit manually**

@@ -1,0 +1,46 @@
+---
+description: Elevation — shadow scale, z-index layering
+globs: "**/*.html,**/*.css,**/*.tsx,**/*.jsx"
+alwaysApply: false
+---
+
+# Elevation Law
+
+**Principle:** Use a consistent shadow scale for depth. Z-index must follow a defined stacking order.
+
+## Shadow Scale
+
+| Level | Use Case | Example |
+|-------|----------|---------|
+| 0 | Flat | No shadow |
+| 1 | Slight lift | Cards at rest |
+| 2 | Hover, focus | Button hover |
+| 3 | Raised | Dropdown, popover |
+| 4 | Modal | Dialog, overlay |
+
+**Example scale (8pt-aligned):**
+```css
+--shadow-soft: 0 4px 20px rgba(0,0,0,0.08);
+--shadow-medium: 0 8px 30px rgba(0,0,0,0.12);
+--shadow-strong: 0 12px 40px rgba(0,0,0,0.18);
+```
+
+## Z-Index Scale
+
+Define a stacking order — avoid arbitrary values.
+
+| Layer | Z-Index | Use Case |
+|-------|---------|----------|
+| Base | 0 | Default |
+| Sticky/fixed | 100 | Nav, header |
+| Dropdown | 200 | Menus, popovers |
+| Overlay | 300 | Backdrop |
+| Modal | 400 | Dialogs |
+| Toast | 500 | Notifications |
+| Max | 9999 | Skip link, critical |
+
+**Avoid:** Random z-index (e.g. 7, 23, 1047). Use the scale.
+
+## Project Reference
+
+This project: `STYLE-GUIDE.md` §1, §9. Use `var(--shadow-soft)`, `var(--shadow-medium)`, `var(--shadow-strong)`. Nav z-index: 100.

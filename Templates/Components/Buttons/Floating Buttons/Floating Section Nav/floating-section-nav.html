@@ -1,0 +1,101 @@
+<!-- =========================================================
+     SOUTH END CLUB — REUSABLE COMPONENT
+     Floating Section Nav  (Desktop dots + Mobile accordion)
+     =========================================================
+
+     HOW TO USE
+     ─────────────────────────────────────────────────────────
+     1. Paste BOTH nav blocks into the page body (after the hero).
+     2. Include  floating-section-nav.css  (link or inline).
+     3. Include  floating-section-nav.js  at the bottom of <body>.
+
+     CUSTOMISATION
+     ─────────────────────────────────────────────────────────
+     • Add / remove links.  Keep data-section="<id>" matching
+       the <section id="..."> on the page.
+     • data-nav-hero on the desktop nav: selector for the hero
+       section used to show/hide the nav (default ".hero").
+     • data-section-names on the desktop nav: JSON map of
+       section-id → display name for the mobile toggle label.
+       Example:
+         data-section-names='{"banquet-hall":"Banquet Hall","garden-gazebo":"Gazebo"}'
+     ========================================================= -->
+
+
+<!-- ===========================
+     DESKTOP NAV (right-side dots)
+     =========================== -->
+<nav class="sec-floating-nav" id="secFloatingNav"
+     data-nav-hero=".hero"
+     data-section-names='{}'>
+  <div class="sec-nav-inner">
+
+    <!-- ▼ EDIT LINKS HERE ▼ -->
+    <a href="#section-1" class="sec-nav-link active" data-section="section-1">
+      <span class="nav-dot"></span>
+      <span>Section 1</span>
+    </a>
+    <a href="#section-2" class="sec-nav-link" data-section="section-2">
+      <span class="nav-dot"></span>
+      <span>Section 2</span>
+    </a>
+    <a href="#section-3" class="sec-nav-link" data-section="section-3">
+      <span class="nav-dot"></span>
+      <span>Section 3</span>
+    </a>
+    <a href="#section-4" class="sec-nav-link" data-section="section-4">
+      <span class="nav-dot"></span>
+      <span>Section 4</span>
+    </a>
+    <a href="#section-5" class="sec-nav-link" data-section="section-5">
+      <span class="nav-dot"></span>
+      <span>Inquire</span>
+    </a>
+    <!-- ▲ END LINKS ▲ -->
+
+  </div>
+</nav>
+
+
+<!-- ===========================
+     MOBILE NAV (accordion)
+     =========================== -->
+<nav class="sec-mobile-nav" id="secMobileNav">
+  <div class="sec-mobile-nav-inner" id="secMobileNavInner">
+
+    <button class="sec-mobile-nav-toggle" id="secMobileNavToggle">
+      <span class="current-section">Section 1</span>
+      <svg class="toggle-icon" width="18" height="18" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </button>
+
+    <div class="sec-mobile-nav-links">
+
+      <!-- ▼ EDIT LINKS HERE (mirror desktop links) ▼ -->
+      <a href="#section-1" class="sec-mobile-nav-link active" data-section="section-1">
+        <span class="nav-dot"></span>
+        <span>Section 1</span>
+      </a>
+      <a href="#section-2" class="sec-mobile-nav-link" data-section="section-2">
+        <span class="nav-dot"></span>
+        <span>Section 2</span>
+      </a>
+      <a href="#section-3" class="sec-mobile-nav-link" data-section="section-3">
+        <span class="nav-dot"></span>
+        <span>Section 3</span>
+      </a>
+      <a href="#section-4" class="sec-mobile-nav-link" data-section="section-4">
+        <span class="nav-dot"></span>
+        <span>Section 4</span>
+      </a>
+      <a href="#section-5" class="sec-mobile-nav-link" data-section="section-5">
+        <span class="nav-dot"></span>
+        <span>Inquire</span>
+      </a>
+      <!-- ▲ END LINKS ▲ -->
+
+    </div>
+  </div>
+</nav>

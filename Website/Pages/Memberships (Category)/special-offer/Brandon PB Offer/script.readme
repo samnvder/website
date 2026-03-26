@@ -1,0 +1,15 @@
+# script.js — Brandon PB Offer Floating CTA Behavior
+
+## Layman's terms
+
+Shows and hides the floating "Book Now" button based on user activity. When you scroll, touch, or move the mouse, the button appears briefly then fades. Keeps the CTA visible when the user is engaged.
+
+## Medium understanding
+
+IIFE that finds `#bboFloatingCta` and attaches scroll/touchstart/mousemove listeners. On activity, removes `hidden` class, then re-adds it after 1 second (debounced). Passive listeners for scroll/touch. Hides button initially after 1s. Brandon PB special offer page only.
+
+## Advanced
+
+- **Target:** bboFloatingCta
+- **Pattern:** Passive listeners, setTimeout debounce
+- **Scope:** Brandon PB Offer page

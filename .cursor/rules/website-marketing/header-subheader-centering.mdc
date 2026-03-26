@@ -1,0 +1,110 @@
+---
+description: Deterministic centering and no-straggles rule for headers and subheaders across all viewports
+globs: "**/*.html,**/*.css,!**/Dev/central/**"
+alwaysApply: false
+---
+
+# Header & Subheader Centering Law
+
+**Principle:** Different viewport dimensions are not an excuse for poor styling, centering, or layout issues. Headers and subheaders must be deterministically centered and free of straggles at every breakpoint.
+
+## Mandatory Rules
+
+### 1. Deterministic Centering
+
+- **Container centering:** Parent of header/subheader must use `display: flex; flex-direction: column; align-items: center; width: 100%` (or equivalent) so children center regardless of viewport.
+- **Sibling alignment:** Header and subheader bubbles must share the same horizontal center. Use `align-items: center` on the parent and `width: fit-content` or `max-width` on children so both center identically.
+- **No left-shift:** Never rely on `margin: 0 auto` alone for multi-child stacks; use flex `align-items: center` for deterministic centering.
+
+### 2. No Straggles — Even Word Distribution
+
+- **Straggle defined:** A single word (or very short phrase) isolated on its own line. Examples: "blast!" alone; "each other." alone while other lines have 12+ words. This breaks visual balance.
+- **Critical rule:** Each explicit line span must be **short enough to fit on one line** at the narrowest viewport (320px). If a span is too long, the browser will wrap *inside* it and create stragglers. One long span = multiple visual lines with uncontrolled breaks = stragglers.
+- **Even distribution:** Each line span should have roughly similar word count (e.g. 8–12 words per span). No span with 2–3 words when others have 10+.
+- **Single word in isolation = forbidden.** Never allow one or two words alone on a line when other lines are much longer.
+- **Line breaks:** Use explicit line-break spans (`display: block`). Split copy into multiple spans so each span fits on one line at 320px. Test at 320px — if any span wraps, add more spans and shorten each.
+- **Avoid:** One or two long spans that wrap; relying on browser auto-wrap; spans with wildly different word counts.
+
+### 3. Container Breathing Room (When in a Pill/Bubble)
+
+- **When text lives in a container** (pill, bubble, badge): ensure adequate padding and width so it doesn't feel cramped.
+- **Text expands with pill:** Text content must expand with the pill width. Use `align-items: stretch` (not `center`) on flex pill containers so line spans stretch to fill the pill; give line spans `width: 100%` so they use the full content area. Never let text stay narrow while the pill widens.
+- **Expanded padding — mandatory:** Subheader pills MUST use expanded padding at all viewports. This is non-negotiable.
+  - **Preferred: fluid padding** — Use `clamp()` so padding scales with viewport: `padding: clamp(0.75rem, 2.5vw, 1.25rem) clamp(2rem, 5vw, 2.5rem)`. This auto-fits every screen size without breakpoints. (2rem = 32px, aligns with 8pt grid.)
+  - **Fallback (fixed):** Desktop `1rem 2.5rem`; mobile `0.75rem 2rem` minimum. Never reduce horizontal below `2rem` (32px) on any viewport.
+  - **Avoid:** `0.5rem 1rem`, or any padding that makes text feel flush against the pill edge.
+- **Safe margin:** Maintain minimum horizontal padding of `2rem` (32px) between pill edge and text. With fluid `clamp(2rem, 5vw, 2.5rem)`, this is automatic.
+- **Width:** Allow the pill to breathe — use `min-width: min(90%, 42rem)` or similar so it doesn't squeeze text. On mobile, use `width: 100%` with `max-width: 98%` (or higher) so the pill uses available space; avoid constraining to `max-width: 94%` or less on narrow viewports.
+- **Line spacing:** Use `line-height: 1.5` or higher for multi-line text in pills so lines don't feel cramped. Prefer `1.6`–`1.7` for multi-line subheadings on mobile.
+
+### 3a. Cramped Test — Mandatory Before Delivery
+
+- **Definition:** A layout is "cramped" if text feels squeezed, lines feel too tight, or the container hugs content with insufficient breathing room.
+- **Test:** At each breakpoint (320px, 375px, 768px, 1024px), ask: "Does this feel cramped?" If yes, fix before delivery.
+- **Cramped indicators:** (1) Text runs nearly edge-to-edge with minimal side padding; (2) Line-height makes lines feel stacked; (3) Pill/bubble is artificially narrow (e.g. `max-width: 94%` on mobile when `98%` would fit); (4) Multi-line text has fewer than ~1.5rem vertical space between lines; (5) Text stays narrow while pill widens (text not expanding with pill).
+- **Fix checklist:** Widen the pill (`max-width: 98%` or `99%` on mobile); use `align-items: stretch` so text expands with pill; ensure safe margin (≥2rem horizontal padding); increase `line-height` to 1.6–1.7; use `width: 100%` so the pill fills available space.
+
+### 4. Key Concepts — Never Break
+
+- **Key concepts must never be split across lines.** Examples: "14-year-old", "80-year-old", "South Bay", "South End", "private club atmosphere".
+- **Enforcement:** Wrap key phrases in `<span class="no-break">` (or equivalent) with `white-space: nowrap` so the browser cannot break them.
+- **Identify key concepts:** Age ranges (X-year-old), place names (South Bay, South End), brand phrases, hyphenated terms. If it would look awkward split (e.g. "14-" on one line, "year-old" on the next), it's a key concept — wrap it.
+- **Avoid:** "14-" / "year-old"; "South" / "Bay"; "private" / "club atmosphere" — these breaks look unprofessional.
+
+### 5. Viewport Parity
+
+- **Test breakpoints:** 320px, 375px, 768px, 1024px, 1280px, 1920px. Styling must hold at each.
+- **No viewport excuses:** "It looks fine on my monitor" is insufficient. Verify centering and no straggles at narrow (mobile) and wide (desktop) viewports before delivery.
+- **Clamp responsibly:** Use `clamp()` for font-size but ensure `text-align: center` and flex centering are applied at all sizes.
+
+## Implementation Checklist
+
+Before marking header/subheader work complete:
+
+- [ ] Parent uses `display: flex; flex-direction: column; align-items: center; width: 100%`
+- [ ] Header and subheader both have `text-align: center` on their text containers
+- [ ] No left-aligned text inside centered pill/bubble shapes
+- [ ] Multi-line text centers as a block with even word distribution (no single word in isolation)
+- [ ] Container has adequate padding and width (not cramped) when in a pill/bubble
+- [ ] **Expanded padding applied:** Subheader pills use fluid `clamp()` or fixed 1rem 2.5rem (desktop) / 0.75rem 2rem (mobile); horizontal never below 2rem (32px)
+- [ ] Text expands with pill (align-items: stretch, line spans width: 100%); safe margin (≥2rem horizontal) from pill edge to text
+- [ ] **Cramped test passed:** At 320px, 375px, 768px, 1024px — layout does not feel cramped
+- [ ] Key concepts wrapped in `.no-break` — no awkward mid-phrase breaks
+- [ ] Verified at 320px, 768px, 1024px, 1280px (or equivalent breakpoints)
+- [ ] Any temporary test files deleted after confirmation
+
+## Anti-Patterns (Do Not Use)
+
+- `text-align: left` inside a centered bubble
+- Cramped pills: insufficient padding or width when text is in a container (run cramped test at each breakpoint)
+- Subheader pills with tight padding: using less than 1rem 2rem on desktop or 0.75rem 2rem on mobile; reducing horizontal below 2rem (32px) on narrow viewports
+- Text not expanding with pill: using `align-items: center` on flex pill so text stays narrow; text flush against pill edge (no safe margin)
+- Key concepts broken across lines (e.g. "14-" / "year-old", "South" / "Bay")
+- `display: inline-block` on subheader without `text-align: center` on the block
+- Relying on `margin: 0 auto` without flex for stacked centered elements
+- Delivering without testing at multiple viewport widths
+
+## Testing Before Delivery
+
+**Required:** Verify at these viewport widths before handing off:
+
+1. **320px** — narrow mobile
+2. **375px** — iPhone SE / small phone
+3. **768px** — tablet portrait
+4. **1024px** — tablet landscape / small laptop
+5. **1280px** — desktop
+6. **1920px** — large monitor
+
+**How to test:** Open DevTools (F12) → Toggle device toolbar (Ctrl+Shift+M) → Set custom width, or resize browser window. Check:
+- Header and subheader bubbles share the same horizontal center
+- Text inside bubbles is centered (no ragged left/right edges)
+- No straggler word in isolation; lines have roughly even word count / visual weight
+- Key concepts (age ranges, place names, hyphenated terms) not broken across lines
+- **Cramped test:** At each width, does the layout feel cramped? If yes, widen pill, increase line-height, or add padding until it breathes.
+- **Text expands with pill:** When pill is wide, does text use the full width (minus safe margin)? If text stays narrow, use align-items: stretch and width: 100% on line spans.
+
+**After confirmation:** Always delete any temporary test files (e.g. test harnesses, viewport-check HTML) once the component is verified to work across viewports.
+
+## Project Reference
+
+This project: `STYLE-GUIDE.md` §12 (hero element spacing), §15 (centering), §16 (text containment). Hero logo: `width` + `margin: 0 auto`. Section titles: `clamp()` for fluid sizing.

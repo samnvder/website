@@ -1,0 +1,12 @@
+# tennis.json
+
+Config for `scripts/build/build-carousel.js`. Defines source markdown, target HTML files, section→category mappings, and alt-text patterns.
+
+**Run:** `node scripts/build/build-carousel.js scripts/build/carousel-configs/tennis.json`
+
+## Advanced
+
+- **source** — Markdown file with image URLs (sections: `## General`, etc.)
+- **targets** — HTML files that get their carousel images updated
+- **sections** — Maps markdown section names to `category` and optional `caption`
+- **altPatterns** — Regex patterns on image URLs → alt text for accessibility

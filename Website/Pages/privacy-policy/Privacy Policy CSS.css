@@ -1,0 +1,331 @@
+/* ========================= CSS VARIABLES ========================= */
+:root {
+  --bg-primary: #f8f2e1;
+  --bg-secondary: #f0e9d8;
+  --bg-card: rgba(255, 255, 255, 0.7);
+  --text-primary: #204147;
+  --text-secondary: #3d5a5e;
+  --accent-blue: #0b468c;
+  --accent-teal: #204147;
+  --accent-teal-bright: #2d6b73;
+  --white: #ffffff;
+  --shadow-soft: 0 4px 30px rgba(11, 70, 140, 0.08);
+  --shadow-medium: 0 8px 40px rgba(11, 70, 140, 0.12);
+  --shadow-strong: 0 20px 60px rgba(11, 70, 140, 0.15);
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 32px;
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================= RESET & BASE ========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: var(--accent-blue);
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--accent-teal);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ========================= CONTAINER ========================= */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* ========================= SECTION STYLING ========================= */
+.section {
+  padding: 100px 0;
+  position: relative;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.85rem;
+  margin-bottom: 20px;
+}
+
+.section-label.centered {
+  justify-content: center;
+}
+
+.label-line {
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-teal) 100%);
+  border-radius: 2px;
+}
+
+.section-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+.section-title.centered {
+  text-align: center;
+}
+
+.section-subtitle {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.section-text {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.85;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.section-text:last-child {
+  margin-bottom: 0;
+}
+
+.section-text strong {
+  color: var(--accent-blue);
+  font-weight: 600;
+}
+
+/* ========================= POLICY PAGE SPECIFIC ========================= */
+.policy-content {
+  max-width: 800px;
+  margin: 0 auto 60px;
+  text-align: center;
+}
+
+.policy-section {
+  max-width: 800px;
+  margin: 0 auto 50px;
+}
+
+.policy-heading {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1.3rem, 2.5vw, 1.6rem);
+  font-weight: 700;
+  color: var(--accent-blue);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(11, 70, 140, 0.15);
+}
+
+.policy-subheading {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 25px 0 15px;
+}
+
+.policy-list {
+  margin: 15px 0 25px 20px;
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.policy-list li {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.policy-list li::marker {
+  color: var(--accent-blue);
+}
+
+/* ========================= CONTACT INFO CARD ========================= */
+.contact-info {
+  margin-top: 25px;
+  padding: 30px;
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--radius-md);
+  border: 2px solid rgba(11, 70, 140, 0.1);
+  text-align: center;
+  box-shadow: var(--shadow-soft);
+  transition: var(--transition-smooth);
+}
+
+.contact-info:hover {
+  box-shadow: var(--shadow-medium);
+  border-color: rgba(11, 70, 140, 0.2);
+}
+
+.contact-info .section-text {
+  margin-bottom: 10px;
+}
+
+.contact-info .section-text:last-child {
+  margin-bottom: 0;
+}
+
+/* ========================= RESPONSIVE - TABLETS ========================= */
+@media (max-width: 1024px) {
+  .section {
+    padding: 80px 0;
+  }
+  
+  .container {
+    padding: 0 30px;
+  }
+}
+
+/* ========================= RESPONSIVE - MOBILE ========================= */
+@media (max-width: 768px) {
+  .section {
+    padding: 60px 0;
+  }
+  
+  .container {
+    padding: 0 20px;
+  }
+  
+  .section-header {
+    margin-bottom: 40px;
+  }
+  
+  .section-title {
+    font-size: 1.8rem;
+  }
+  
+  .section-subtitle {
+    font-size: 1rem;
+  }
+  
+  .section-text {
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+  
+  .policy-content,
+  .policy-section {
+    text-align: left;
+  }
+  
+  .policy-heading {
+    font-size: 1.2rem;
+  }
+  
+  .policy-subheading {
+    font-size: 1.05rem;
+  }
+  
+  .policy-list {
+    margin-left: 10px;
+    padding-left: 15px;
+  }
+  
+  .policy-list li {
+    font-size: 1rem;
+  }
+  
+  .contact-info {
+    padding: 20px;
+  }
+}
+
+/* ========================= RESPONSIVE - SMALL PHONES ========================= */
+@media (max-width: 480px) {
+  .section {
+    padding: 50px 0;
+  }
+  
+  .container {
+    padding: 0 16px;
+  }
+  
+  .section-title {
+    font-size: 1.6rem;
+  }
+  
+  .section-label {
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+  }
+  
+  .label-line {
+    width: 30px;
+  }
+  
+  .policy-heading {
+    font-size: 1.1rem;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .policy-section {
+    margin-bottom: 40px;
+  }
+}
+
+/* ========================= THRIVE ARCHITECT OVERRIDES ========================= */
+.sec-page * {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+.sec-page h1,
+.sec-page h2,
+.sec-page h3,
+.sec-page .section-title,
+.sec-page .policy-heading,
+.sec-page .policy-subheading {
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+.sec-page .thrv_wrapper.thrv_text_element p {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  color: var(--text-secondary) !important;
+  line-height: 1.8 !important;
+}

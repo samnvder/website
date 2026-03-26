@@ -1,0 +1,63 @@
+---
+description: Layout — centering, containers, no bleed, breakpoints
+globs: "**/*.html,**/*.css,**/*.tsx,**/*.jsx"
+alwaysApply: false
+---
+
+# Layout Law
+
+**Principle:** Content must never bleed off-screen. Use flex for deterministic centering.
+
+## Centering
+
+- **Stacked content:** `display: flex; flex-direction: column; align-items: center; width: 100%`
+- **Avoid:** `text-align: center` alone for buttons (subpixel drift on iOS)
+- **Block elements with max-width:** Add `margin-inline: auto` to center
+
+## No Bleed
+
+- Content must never touch viewport edges.
+- Test at 320px — verify visible space on left and right.
+- **Page-level:** `overflow-x: hidden; max-width: 100vw` on html/body.
+- **Never:** `width: 100vw` (causes scrollbar issues).
+
+## Responsive Breakpoints
+
+Test at: **320px, 375px, 768px, 1024px, 1280px**
+
+Mobile-first: base styles = 320px minimum; scale up with `clamp()` or media queries.
+
+## Quick Reference — Common Patterns
+
+```css
+/* Container */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 1.5rem);
+}
+
+/* Centered section */
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* CTA button */
+.cta-btn {
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2.5rem);
+  min-height: 44px;
+}
+```
+
+## Anti-Patterns
+
+- `text-align: center` alone for centering stacked buttons
+- `width: 100vw`
+
+## Project Reference
+
+This project: `STYLE-GUIDE.md` §15 (universal centering, overflow-x: hidden); §18 (breakpoints). Container: 1200–1280px, 24px padding.

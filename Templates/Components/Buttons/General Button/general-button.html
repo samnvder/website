@@ -1,0 +1,597 @@
+<!-- =========================================================
+     SOUTH END CLUB — GENERAL PURPOSE BUTTON (ALL-IN-ONE)
+     =========================================================
+
+     A reusable, royal-blue themed button with subtle interactive
+     effects. Drop into any page — fully self-contained.
+
+     ACTIONS  (set via data-action)
+     ─────────────────────────────────────────────────────────
+     "link"    — navigates to data-href  (default)
+     "scroll"  — smooth-scrolls to data-target selector
+     "video"   — opens embedded video modal (data-href = .mp4 URL)
+     "iframe"  — opens iframe modal       (data-href = page URL)
+
+     CONFIGURATION  (data-* attributes)
+     ─────────────────────────────────────────────────────────
+     data-action     — "link" | "scroll" | "video" | "iframe"
+     data-href       — URL for link / video / iframe
+     data-target     — CSS selector for scroll target
+     data-icon       — "arrow" | "play" | "calendar" | "none"
+                       (default: auto-picked per action)
+     data-new-tab    — "true" to open link in new tab
+
+     EXAMPLES
+     ─────────────────────────────────────────────────────────
+     <!-- Simple link -->
+     <a class="sec-btn" data-action="link"
+        data-href="https://southendclub.com/memberships/">
+        Become a Member
+     </a>
+
+     <!-- Scroll to section -->
+     <a class="sec-btn" data-action="scroll"
+        data-target="#schedule-viewing">
+        Schedule a Viewing
+     </a>
+
+     <!-- Open video modal -->
+     <a class="sec-btn" data-action="video"
+        data-href="https://example.com/video.mp4"
+        data-icon="play">
+        Watch Tour
+     </a>
+
+     <!-- Open iframe modal -->
+     <a class="sec-btn" data-action="iframe"
+        data-href="https://southendclub.com/memberships/#scheduleAtour"
+        data-icon="calendar">
+        Book a Tour
+     </a>
+     ========================================================= -->
+
+
+<!-- ===========================
+     CSS
+     =========================== -->
+<style>
+/* ========== SEC-BTN: BASE ========== */
+.sec-btn,
+a.sec-btn,
+button.sec-btn,
+.thrv_wrapper .sec-btn,
+.thrv_text_element .sec-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    position: relative !important;
+    overflow: hidden !important;
+
+    padding: 15px 32px !important;
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.4px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: transparent !important;
+
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    background: linear-gradient(135deg, #0b468c 0%, #0d52a3 50%, #204147 100%) !important;
+    border: 2px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 100px !important;
+
+    box-shadow:
+        0 4px 16px rgba(11, 70, 140, 0.35),
+        0 2px 6px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+
+    transition:
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.3s ease !important;
+
+    transform: translateZ(0) !important;
+    backface-visibility: hidden !important;
+}
+
+/* ── Shimmer sweep layer ── */
+.sec-btn::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(
+        105deg,
+        transparent 20%,
+        rgba(255, 255, 255, 0.12) 40%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.12) 60%,
+        transparent 80%
+    ) !important;
+    transition: none !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+}
+
+/* ── Ripple container layer ── */
+.sec-btn::after {
+    content: '' !important;
+    position: absolute !important;
+    width: 0 !important;
+    height: 0 !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: translate(-50%, -50%) !important;
+    pointer-events: none !important;
+    z-index: 2 !important;
+    opacity: 0 !important;
+}
+
+/* ── Hover state ── */
+.sec-btn:hover,
+a.sec-btn:hover,
+button.sec-btn:hover {
+    transform: translateY(-3px) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    box-shadow:
+        0 8px 28px rgba(11, 70, 140, 0.45),
+        0 4px 12px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Shimmer sweep on hover */
+.sec-btn:hover::before {
+    animation: sec-btn-shimmer 0.8s ease forwards !important;
+}
+
+@keyframes sec-btn-shimmer {
+    0%   { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* ── Active / Click state ── */
+.sec-btn:active,
+a.sec-btn:active,
+button.sec-btn:active {
+    transform: translateY(-1px) scale(0.98) !important;
+    box-shadow:
+        0 4px 14px rgba(11, 70, 140, 0.4),
+        0 2px 6px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ── Ripple animation ── */
+.sec-btn.sec-btn-ripple::after {
+    animation: sec-btn-ripple 0.6s ease-out forwards !important;
+}
+
+@keyframes sec-btn-ripple {
+    0%   { width: 0; height: 0; opacity: 0.4; }
+    100% { width: 300px; height: 300px; opacity: 0; }
+}
+
+/* ── Subtle idle glow pulse ── */
+.sec-btn.sec-btn-glow {
+    animation: sec-btn-glow 3s ease-in-out infinite !important;
+}
+
+@keyframes sec-btn-glow {
+    0%, 100% {
+        box-shadow:
+            0 4px 16px rgba(11, 70, 140, 0.35),
+            0 2px 6px rgba(0, 0, 0, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    50% {
+        box-shadow:
+            0 4px 22px rgba(11, 70, 140, 0.5),
+            0 2px 10px rgba(11, 70, 140, 0.2),
+            0 0 30px rgba(11, 70, 140, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Kill glow on hover — shimmer takes over */
+.sec-btn.sec-btn-glow:hover {
+    animation: none !important;
+}
+
+/* ── Icon styling ── */
+.sec-btn .sec-btn-icon {
+    width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0 !important;
+    fill: currentColor !important;
+    position: relative !important;
+    z-index: 3 !important;
+    transition: transform 0.3s ease !important;
+}
+
+.sec-btn:hover .sec-btn-icon {
+    transform: scale(1.1) !important;
+}
+
+/* ── Label (Thrive-proof) ── */
+.sec-btn .sec-btn-label,
+.sec-btn span {
+    position: relative !important;
+    z-index: 3 !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    letter-spacing: inherit !important;
+    color: inherit !important;
+    -webkit-text-fill-color: inherit !important;
+}
+
+
+/* ==========================================================
+   VIDEO / IFRAME MODAL — CENTERING LAW
+   ----------------------------------------------------------
+   • Overlay MUST use inset:0 (not top/left + width/height)
+   • Overlay MUST carry padding ≥ 48px top/bottom so the
+     close-button space is inside the flex container.
+   • Modal box MUST NOT use overflow:hidden (clips the close
+     button); the inner video/iframe already has border-radius.
+   • Modal MUST be appended to document.body via JS on init
+     so it escapes any parent stacking context (Thrive wrappers,
+     transforms, etc.) that would let the header sit on top.
+   • Together these guarantee dead-center playback on every
+     viewport, every theme, every page builder.
+   ========================================================== */
+
+/* ========== SEC-BTN: VIDEO / IFRAME MODAL ========== */
+.sec-btn-modal-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147483647 !important;
+    margin: 0 !important;
+    padding: 48px 20px !important;
+    box-sizing: border-box !important;
+    background: rgba(0, 0, 0, 0.85) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0.3s ease, visibility 0.3s ease !important;
+}
+
+.sec-btn-modal-overlay.sec-btn-modal-open {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.sec-btn-modal-box {
+    position: relative !important;
+    width: 90% !important;
+    max-width: 960px !important;
+    margin: auto !important;            /* belt-and-suspenders centering */
+    background: #000 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6) !important;
+    /* NO overflow:hidden — keeps close button visible above */
+}
+
+.sec-btn-modal-box.sec-btn-modal-video {
+    aspect-ratio: 16 / 9 !important;
+}
+
+.sec-btn-modal-box.sec-btn-modal-iframe {
+    height: 85vh !important;
+    max-height: 780px !important;
+    background: #fff !important;
+}
+
+.sec-btn-modal-box video {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 12px !important;
+    background: #000 !important;
+    object-fit: contain !important;
+}
+
+.sec-btn-modal-box iframe {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+    border-radius: 12px !important;
+}
+
+.sec-btn-modal-close {
+    position: absolute !important;
+    top: -44px !important;
+    right: 0 !important;
+    width: 40px !important;
+    height: 40px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: none !important;
+    border-radius: 50% !important;
+    color: #fff !important;
+    font-size: 28px !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: background 0.2s ease !important;
+}
+
+.sec-btn-modal-close:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+}
+
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .sec-btn,
+    a.sec-btn,
+    button.sec-btn {
+        padding: 13px 26px !important;
+        font-size: 14px !important;
+    }
+
+    .sec-btn .sec-btn-icon {
+        width: 16px !important;
+        height: 16px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .sec-btn,
+    a.sec-btn,
+    button.sec-btn {
+        padding: 12px 22px !important;
+        font-size: 13px !important;
+        gap: 8px !important;
+    }
+
+    .sec-btn-modal-overlay {
+        padding: 40px 10px !important;
+    }
+
+    .sec-btn-modal-box {
+        width: 96% !important;
+        border-radius: 8px !important;
+    }
+
+    .sec-btn-modal-close {
+        top: -40px !important;
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 24px !important;
+    }
+}
+</style>
+
+
+<!-- ===========================
+     MODAL CONTAINER
+     (shared by all sec-btn instances on the page)
+     =========================== -->
+<div id="secBtnModal" class="sec-btn-modal-overlay"
+     onclick="if(event.target===this) window.secBtnCloseModal();">
+    <div class="sec-btn-modal-box" id="secBtnModalBox">
+        <button class="sec-btn-modal-close" aria-label="Close"
+                onclick="window.secBtnCloseModal();">&times;</button>
+        <div id="secBtnModalContent"></div>
+    </div>
+</div>
+
+
+<!-- ===========================
+     EXAMPLE BUTTONS (remove or modify for your page)
+     =========================== -->
+<!--
+<div style="display:flex; flex-wrap:wrap; gap:16px; justify-content:center; padding:24px;">
+
+    <a class="sec-btn sec-btn-glow"
+       data-action="link"
+       data-href="https://southendclub.com/memberships/">
+        Become a Member
+    </a>
+
+    <a class="sec-btn"
+       data-action="video"
+       data-href="https://southendclub.com/wp-content/uploads/2026/02/Indoor-Drone-Tour-s2.mp4"
+       data-icon="play">
+        Drone Tour
+    </a>
+
+    <a class="sec-btn"
+       data-action="scroll"
+       data-target="#schedule-viewing"
+       data-icon="arrow">
+        Schedule a Viewing
+    </a>
+
+    <a class="sec-btn"
+       data-action="iframe"
+       data-href="https://southendclub.com/memberships/#scheduleAtour"
+       data-icon="calendar">
+        Book a Tour
+    </a>
+
+</div>
+-->
+
+
+<!-- ===========================
+     JAVASCRIPT
+     =========================== -->
+<script>
+(function secBtnInit() {
+    'use strict';
+
+    /* ── Icon SVGs ── */
+    var ICONS = {
+        arrow: '<svg class="sec-btn-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>',
+        play: '<svg class="sec-btn-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+        calendar: '<svg class="sec-btn-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1zm-2 6v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8H5z"/></svg>',
+        none: ''
+    };
+
+    /* Default icon per action type */
+    var DEFAULT_ICONS = {
+        link: 'arrow',
+        scroll: 'arrow',
+        video: 'play',
+        iframe: 'calendar'
+    };
+
+    /* ── Modal references ── */
+    var modal = document.getElementById('secBtnModal');
+    var modalBox = document.getElementById('secBtnModalBox');
+    var modalContent = document.getElementById('secBtnModalContent');
+
+    /* ── Escape parent stacking contexts ──
+       Move the modal to <body> so no Thrive wrapper, header,
+       or other ancestor z-index / transform can sit on top. */
+    if (modal && modal.parentNode !== document.body) {
+        document.body.appendChild(modal);
+    }
+
+    /* ── Close modal (global so onclick can reach it) ── */
+    window.secBtnCloseModal = function() {
+        if (!modal) return;
+        modal.classList.remove('sec-btn-modal-open');
+        /* Stop any video playing */
+        var vid = modalContent.querySelector('video');
+        if (vid) { vid.pause(); vid.currentTime = 0; }
+        /* Clear iframe to stop loading */
+        var ifr = modalContent.querySelector('iframe');
+        if (ifr) { ifr.src = ''; }
+        document.documentElement.style.overflow = '';
+    };
+
+    /* Close on Escape key */
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') window.secBtnCloseModal();
+    });
+
+    /* ── Open modal ── */
+    function openModal(type, url) {
+        if (!modal || !modalBox || !modalContent) return;
+
+        modalBox.classList.remove('sec-btn-modal-video', 'sec-btn-modal-iframe');
+
+        if (type === 'video') {
+            modalBox.classList.add('sec-btn-modal-video');
+            modalContent.innerHTML =
+                '<video controls playsinline muted preload="metadata" style="width:100%;height:100%;border-radius:12px;background:#000;">' +
+                '<source src="' + url + '" type="video/mp4">' +
+                'Your browser does not support the video tag.</video>';
+            var vid = modalContent.querySelector('video');
+            if (vid) vid.play();
+        } else if (type === 'iframe') {
+            modalBox.classList.add('sec-btn-modal-iframe');
+            modalContent.innerHTML =
+                '<iframe src="' + url + '" loading="lazy" allowtransparency="true" ' +
+                'style="width:100%;height:100%;border:none;border-radius:12px;"></iframe>';
+        }
+
+        document.documentElement.style.overflow = 'hidden';
+        modal.classList.add('sec-btn-modal-open');
+    }
+
+    /* ── Ripple effect ── */
+    function triggerRipple(btn, e) {
+        btn.classList.remove('sec-btn-ripple');
+        var rect = btn.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        btn.style.setProperty('--ripple-x', x + 'px');
+        btn.style.setProperty('--ripple-y', y + 'px');
+        /* Use ::after for ripple — position it via inline var */
+        btn.style.cssText += ';--rx:' + x + 'px;--ry:' + y + 'px;';
+        /* Force reflow */
+        void btn.offsetWidth;
+        btn.classList.add('sec-btn-ripple');
+        setTimeout(function() {
+            btn.classList.remove('sec-btn-ripple');
+        }, 600);
+    }
+
+    /* ── Initialise all .sec-btn elements ── */
+    var buttons = document.querySelectorAll('.sec-btn');
+
+    buttons.forEach(function(btn) {
+        var action = btn.getAttribute('data-action') || 'link';
+        var href   = btn.getAttribute('data-href') || btn.getAttribute('href') || '#';
+        var target = btn.getAttribute('data-target');
+        var iconType = btn.getAttribute('data-icon');
+        var newTab = btn.getAttribute('data-new-tab') === 'true';
+
+        /* Auto-pick icon if not specified */
+        if (!iconType) iconType = DEFAULT_ICONS[action] || 'arrow';
+        var iconSvg = ICONS[iconType] || '';
+
+        /* Wrap existing text in a label span, prepend icon */
+        var label = btn.innerHTML.trim();
+        btn.innerHTML = iconSvg + '<span class="sec-btn-label">' + label + '</span>';
+
+        /* Set href for accessibility / right-click */
+        if (action === 'link' && href !== '#') {
+            btn.setAttribute('href', href);
+            if (newTab) btn.setAttribute('target', '_blank');
+        }
+
+        /* ── Click handler ── */
+        btn.addEventListener('click', function(e) {
+            triggerRipple(btn, e);
+
+            if (action === 'link') {
+                if (newTab) {
+                    /* Let default link behaviour handle it */
+                    return;
+                }
+                e.preventDefault();
+                window.location.href = href;
+
+            } else if (action === 'scroll') {
+                e.preventDefault();
+                var el = document.querySelector(target);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            } else if (action === 'video' || action === 'iframe') {
+                e.preventDefault();
+                openModal(action, href);
+            }
+        });
+
+        /* ── Magnetic micro-hover (desktop only) ── */
+        if (window.matchMedia('(hover: hover)').matches) {
+            btn.addEventListener('mousemove', function(e) {
+                var rect = btn.getBoundingClientRect();
+                var cx = rect.left + rect.width / 2;
+                var cy = rect.top + rect.height / 2;
+                var dx = (e.clientX - cx) * 0.08;
+                var dy = (e.clientY - cy) * 0.08;
+                btn.style.transform = 'translateY(-3px) translate(' + dx + 'px,' + dy + 'px)';
+            });
+
+            btn.addEventListener('mouseleave', function() {
+                btn.style.transform = '';
+            });
+        }
+
+        /* ── Position ripple via CSS custom props ── */
+        var style = document.createElement('style');
+        style.textContent = '.sec-btn.sec-btn-ripple::after{left:var(--rx,50%)!important;top:var(--ry,50%)!important;}';
+        if (!document.querySelector('[data-sec-btn-ripple-style]')) {
+            style.setAttribute('data-sec-btn-ripple-style', '');
+            document.head.appendChild(style);
+        }
+    });
+
+})();
+</script>

@@ -1,0 +1,306 @@
+<div class="thrv_wrapper thrv-page-section tve-height-update tcb-window-width tcb-desktop-hidden" style="" data-css="tve-u-6886b615a98306">
+	<div class="tve-page-section-out" style="" data-css="tve-u-6886b615a98349"></div>
+	<div class="tve-page-section-in tve_empty_dropzone" data-css="tve-u-6886b615a98363" style=""><div class="thrv_wrapper thrv_text_element" style="" data-css="tve-u-6886b615a98374"><h1 class="" data-css="tve-u-6886b615a98384" style="text-align: center;">Schedule A Viewing!</h1></div></div>
+</div><div class="thrv_wrapper thrv-page-section tve-height-update" style="" data-css="tve-u-6886b615a98405">
+	<div class="tve-page-section-out"></div>
+	<div class="tve-page-section-in tve_empty_dropzone" data-css="tve-u-6886b615a98412"><div class="thrv_wrapper thrv_custom_html_shortcode" style="" data-css="tve-u-6886b615a98428"><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Us</title>
+    <!-- Zapier Interfaces Script -->
+    <script type="module" src="https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js"></script>
+    <style>
+        /* Message Us Button */
+        #messageUsButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #0b468c; /* Default color */
+            color: white;
+            font-family: 'Lato', sans-serif;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 999999; /* Ensure button is on top */
+            text-align: center;
+            transition: background-color 0.3s ease; /* Smooth transition for color change */
+        }
+
+        /* Change color when modal is open */
+        #messageUsButton.open {
+            background-color: #b0345a; /* Color when modal is open */
+        }
+
+        /* Modal */
+        #zapierFormModal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999999; /* Ensure modal is always on top */
+            align-items: center;
+            justify-content: center;
+            display: flex; /* Flexbox for centering */
+            overflow-y: auto; /* Allow scrolling for mobile */
+        }
+
+        /* Modal Content */
+        #zapierFormContent {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 90%;
+            width: 500px; /* Default width */
+            height: 700px; /* Default height */
+            position: relative;
+            text-align: center;
+            z-index: 1000000; /* Ensure modal content is above everything */
+            overflow-y: auto; /* Allow content scrolling if needed */
+        }
+
+        /* Responsive Modal Adjustments for Mobile */
+        @media (max-width: 768px) {
+            #zapierFormContent {
+                width: 90%; /* Smaller modal width */
+                height: 70%; /* Smaller modal height */
+            }
+        }
+
+        @media (max-width: 480px) {
+            #zapierFormContent {
+                width: 85%; /* Even smaller modal width for very small devices */
+                height: 75%; /* Even smaller modal height */
+            }
+        }
+
+        /* Close Button */
+        #closeModalButton {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #0b468c; /* New color */
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000001; /* Ensure close button is on top */
+        }
+    </style>
+
+
+    <!-- Wrapper to conditionally inject modal -->
+    <div id="modalWrapper"></div>
+
+    <!-- Message Us Button -->
+    <div id="messageUsButton" onclick="toggleMessageForm()">Message Us</div>
+
+    <script>
+        // Detect if Thrive Architect Editor is active
+        const isThriveEditor = document.body.classList.contains('thrive-admin');
+
+        // Only inject modal HTML if not in Thrive Editor
+        if (!isThriveEditor) {
+            const modalHTML = `
+                <div id="zapierFormModal">
+                    <div id="zapierFormContent">
+                        <!-- Zapier Embed Code -->
+                        <zapier-interfaces-page-embed 
+                            page-id="cm4kje8hw001hp13agzjz9ul9" 
+                            no-background="false" 
+                            style="max-width: 100%; height: 100%;">
+                        </zapier-interfaces-page-embed>
+                        <button id="closeModalButton" onclick="closeMessageForm()">Close</button>
+                    </div>
+                </div>`;
+            document.getElementById('modalWrapper').innerHTML = modalHTML;
+
+            // Ensure the modal is hidden by default
+            const modal = document.getElementById('zapierFormModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        // Toggle modal visibility and button color
+        function toggleMessageForm() {
+            const modal = document.getElementById('zapierFormModal');
+            const button = document.getElementById('messageUsButton');
+            if (modal.style.display === 'flex') {
+                closeMessageForm(); // Close the modal
+                button.classList.remove('open'); // Remove open class from button
+            } else {
+                openMessageForm(); // Open the modal
+                button.classList.add('open'); // Add open class to button
+            }
+        }
+
+        // Open the modal
+        function openMessageForm() {
+            const modal = document.getElementById('zapierFormModal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        // Close the modal
+        function closeMessageForm() {
+            const modal = document.getElementById('zapierFormModal');
+            const button = document.getElementById('messageUsButton');
+            if (modal) modal.style.display = 'none';
+            button.classList.remove('open'); // Ensure button reverts back to default
+        }
+
+        // Additional safeguard to hide modal on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('zapierFormModal');
+            if (modal) modal.style.display = 'none';
+        });
+    </script></div><div class="thrv_wrapper thrv_text_element tcb-tablet-hidden tcb-mobile-hidden"><h1 data-css="tve-u-1984e4b1181" style="text-align: center;" class="">Book a Consultation For Your Special Day!</h1></div><div class="thrv_wrapper tcb-image-gallery tcb-gallery-crop" data-type="carousel" data-click-behavior="none" data-thumbnail-size="auto" data-fullscreen-size="medium" data-crop-images="true" data-css="tve-u-1984e4e0063" style="--tcb-cwv-slides-d: 7; --tcb-cwv-slides-t: 6; --tcb-cwv-slides-m: 3; --tcb-cwv-height-d: 171px; --tcb-cwv-height-t: 171px; --tcb-cwv-height-m: 171px;" data-caption="false" data-cwv-height-m="171" data-cwv-height-t="171" data-cwv-height-d="171"><div class="tcb-image-gallery-container" style="" data-css="tve-u-1984eae8802" data-carousel-settings="{&quot;autoplay&quot;:true,&quot;autoplaySpeed&quot;:2500,&quot;pauseOnFocus&quot;:false,&quot;pauseOnHover&quot;:false,&quot;arrows&quot;:false,&quot;uniformSlidesHeight&quot;:true,&quot;verticalPosition&quot;:&quot;top&quot;,&quot;dots&quot;:false,&quot;slidesToShow&quot;:7,&quot;slidesToScroll&quot;:1,&quot;centerMode&quot;:false,&quot;centerPadding&quot;:&quot;50px&quot;,&quot;draggable&quot;:true,&quot;swipeToSlide&quot;:true,&quot;fade&quot;:false,&quot;rtl&quot;:false,&quot;infinite&quot;:true,&quot;adaptiveHeight&quot;:false,&quot;dotsClass&quot;:&quot;thrv_wrapper tcb-carousel-dots slick-dots                   &quot;,&quot;tcbDots&quot;:&quot;&lt;svg xmlns='http://www.w3.org/2000/svg' class='tcb-dot tcb-icon' viewBox='0 0 24 24'&gt;&lt;path d='M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z'&gt;&lt;/path&gt;&lt;/svg&gt;&quot;,&quot;prevArrow&quot;:&quot;&lt;div class='thrv_wrapper thrv_icon tcb-icon-display tcb-carousel-arrow slick-arrow slick-slide slick-prev' style='width: 107px;' data-slick-index='0' aria-hidden='true'&gt;&lt;svg xmlns='http://www.w3.org/2000/svg' class='tcb-chevron-left-solid tcb-icon' viewBox='0 0 320 512'&gt;&lt;path d='M34.52 239.03L228.87 44.69c9.37-9.37 24.57-9.37 33.94 0l22.67 22.67c9.36 9.36 9.37 24.52.04 33.9L131.49 256l154.02 154.75c9.34 9.38 9.32 24.54-.04 33.9l-22.67 22.67c-9.37 9.37-24.57 9.37-33.94 0L34.52 272.97c-9.37-9.37-9.37-24.57 0-33.94z'&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/div&gt;&quot;,&quot;nextArrow&quot;:&quot;&lt;div class='thrv_wrapper thrv_icon tcb-icon-display tcb-carousel-arrow slick-slide slick-cloned slick-arrow slick-next' style='width: 107px;' data-slick-index='28' aria-hidden='true'&gt;&lt;svg xmlns='http://www.w3.org/2000/svg' class='tcb-chevron-right-solid tcb-icon' viewBox='0 0 320 512'&gt;&lt;path d='M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z'&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/div&gt;&quot;,&quot;responsive&quot;:[{&quot;breakpoint&quot;:1023,&quot;settings&quot;:{&quot;slidesToShow&quot;:6,&quot;centerMode&quot;:false,&quot;slidesToScroll&quot;:1}},{&quot;breakpoint&quot;:767,&quot;settings&quot;:{&quot;slidesToShow&quot;:3,&quot;slidesToScroll&quot;:1,&quot;centerMode&quot;:false,&quot;dots&quot;:false,&quot;arrows&quot;:false}}]}"><div data-id="8143" data-caption="" data-position="1/15" data-index="0" class="thrv_wrapper tve_image_caption" data-selector="[data-css=&quot;tve-u-1984e4e0063&quot;] .thrv_wrapper.tve_image_caption" style="" role="tabpanel">
+	<span class="tve_image_frame no_style">
+	
+		<img decoding="async" class="tve_image wp-image-8143" alt="" data-id="8143" width="1920" height="1080" title="SouthEndBanquet-gazebo-GalleryImage" src="https://southendclub.com/wp-content/uploads/2025/07/SouthEndBanquet-gazebo-GalleryImage-1024x576.jpg" data-src="https://southendclub.com/wp-content/uploads/2025/07/SouthEndBanquet-gazebo-GalleryImage-300x169.jpg" loading="lazy" data-sizes="{&quot;thumbnail&quot;:{&quot;height&quot;:150,&quot;width&quot;:150,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/SouthEndBanquet-gazebo-GalleryImage-150x150.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;medium&quot;:{&quot;height&quot;:169,&quot;width&quot;:300,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/SouthEndBanquet-gazebo-GalleryImage-300x169.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;large&quot;:{&quot;height&quot;:576,&quot;width&quot;:1024,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/SouthEndBanquet-gazebo-GalleryImage-1024x576.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;full&quot;:{&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/SouthEndBanquet-gazebo-GalleryImage.jpg&quot;,&quot;height&quot;:1080,&quot;width&quot;:1920,&quot;orientation&quot;:&quot;landscape&quot;}}">
+	
+	</span>
+	
+
+</div><div data-id="8140" data-caption="" data-position="2/15" data-index="1" class="thrv_wrapper tve_image_caption" data-selector="[data-css=&quot;tve-u-1984e4e0063&quot;] .thrv_wrapper.tve_image_caption" style="" role="tabpanel">
+	<span class="tve_image_frame no_style">
+	
+		<img decoding="async" class="tve_image wp-image-8140" alt="" data-id="8140" width="768" height="511" title="torrance-banquet-rooms-768x511" src="https://southendclub.com/wp-content/uploads/2025/07/torrance-banquet-rooms-768x511-1.jpg" data-src="https://southendclub.com/wp-content/uploads/2025/07/torrance-banquet-rooms-768x511-1-300x200.jpg" loading="lazy" data-sizes="{&quot;thumbnail&quot;:{&quot;height&quot;:150,&quot;width&quot;:150,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/torrance-banquet-rooms-768x511-1-150x150.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;medium&quot;:{&quot;height&quot;:200,&quot;width&quot;:300,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/torrance-banquet-rooms-768x511-1-300x200.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;full&quot;:{&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/torrance-banquet-rooms-768x511-1.jpg&quot;,&quot;height&quot;:511,&quot;width&quot;:768,&quot;orientation&quot;:&quot;landscape&quot;}}">
+	
+	</span>
+	
+
+</div><div data-id="8146" data-caption="" data-position="3/15" data-index="2" class="thrv_wrapper tve_image_caption" data-selector="[data-css=&quot;tve-u-1984e4e0063&quot;] .thrv_wrapper.tve_image_caption" style="" role="tabpanel">
+	<span class="tve_image_frame no_style">
+	
+		<img decoding="async" class="tve_image wp-image-8146" alt="" data-id="8146" width="640" height="480" title="IMG_1332" src="https://southendclub.com/wp-content/uploads/2025/07/IMG_1332.jpg" data-src="https://southendclub.com/wp-content/uploads/2025/07/IMG_1332-300x225.jpg" loading="lazy" data-sizes="{&quot;thumbnail&quot;:{&quot;height&quot;:150,&quot;width&quot;:150,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/IMG_1332-150x150.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;medium&quot;:{&quot;height&quot;:225,&quot;width&quot;:300,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/IMG_1332-300x225.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;full&quot;:{&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/IMG_1332.jpg&quot;,&quot;height&quot;:480,&quot;width&quot;:640,&quot;orientation&quot;:&quot;landscape&quot;}}">
+	
+	</span>
+	
+
+</div><div data-id="8139" data-caption="" data-position="4/15" data-index="3" class="thrv_wrapper tve_image_caption" data-selector="[data-css=&quot;tve-u-1984e4e0063&quot;] .thrv_wrapper.tve_image_caption" style="" role="tabpanel">
+	<span class="tve_image_frame no_style">
+	
+		<img decoding="async" class="tve_image wp-image-8139" alt="" data-id="8139" width="1502" height="1000" title="widen-1680-noupsize_56530-pool-room" src="https://southendclub.com/wp-content/uploads/2025/07/widen-1680-noupsize_56530-pool-room-1024x682.jpg" data-src="https://southendclub.com/wp-content/uploads/2025/07/widen-1680-noupsize_56530-pool-room-300x200.jpg" loading="lazy" data-sizes="{&quot;thumbnail&quot;:{&quot;height&quot;:150,&quot;width&quot;:150,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/widen-1680-noupsize_56530-pool-room-150x150.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;medium&quot;:{&quot;height&quot;:200,&quot;width&quot;:300,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/widen-1680-noupsize_56530-pool-room-300x200.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;large&quot;:{&quot;height&quot;:682,&quot;width&quot;:1024,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/widen-1680-noupsize_56530-pool-room-1024x682.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;full&quot;:{&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/widen-1680-noupsize_56530-pool-room.jpg&quot;,&quot;height&quot;:1000,&quot;width&quot;:1502,&quot;orientation&quot;:&quot;landscape&quot;}}">
+	
+	</span>
+	
+
+</div><div data-id="8144" data-caption="" data-position="5/15" data-index="4" class="thrv_wrapper tve_image_caption" data-selector="[data-css=&quot;tve-u-1984e4e0063&quot;] .thrv_wrapper.tve_image_caption" style="" role="tabpanel">
+	<span class="tve_image_frame no_style">
+	
+		<img decoding="async" class="tve_image wp-image-8144" alt="" data-id="8144" width="400" height="400" title="l" src="https://southendclub.com/wp-content/uploads/2025/07/l.jpg" data-src="https://southendclub.com/wp-content/uploads/2025/07/l-300x300.jpg" loading="lazy" data-sizes="{&quot;thumbnail&quot;:{&quot;height&quot;:150,&quot;width&quot;:150,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/l-150x150.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;medium&quot;:{&quot;height&quot;:300,&quot;width&quot;:300,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/l-300x300.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;full&quot;:{&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/l.jpg&quot;,&quot;height&quot;:400,&quot;width&quot;:400,&quot;orientation&quot;:&quot;landscape&quot;}}">
+	
+	</span>
+	
+
+</div><div data-id="8149" data-caption="" data-position="6/15" data-index="5" class="thrv_wrapper tve_image_caption" data-selector="[data-css=&quot;tve-u-1984e4e0063&quot;] .thrv_wrapper.tve_image_caption" style="" role="tabpanel">
+	<span class="tve_image_frame no_style">
+	
+		<img decoding="async" class="tve_image wp-image-8149" alt="" data-id="8149" width="1000" height="667" title="banquets-by-south-end-club_lounge-3-1" src="https://southendclub.com/wp-content/uploads/2025/07/banquets-by-south-end-club_lounge-3-1.jpg" data-src="https://southendclub.com/wp-content/uploads/2025/07/banquets-by-south-end-club_lounge-3-1-300x200.jpg" loading="lazy" data-sizes="{&quot;thumbnail&quot;:{&quot;height&quot;:150,&quot;width&quot;:150,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/banquets-by-south-end-club_lounge-3-1-150x150.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;medium&quot;:{&quot;height&quot;:200,&quot;width&quot;:300,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/banquets-by-south-end-club_lounge-3-1-300x200.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;full&quot;:{&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/banquets-by-south-end-club_lounge-3-1.jpg&quot;,&quot;height&quot;:667,&quot;width&quot;:1000,&quot;orientation&quot;:&quot;landscape&quot;}}">
+	
+	</span>
+	
+
+</div><div data-id="8154" data-caption="" data-position="7/15" data-index="6" class="thrv_wrapper tve_image_caption" data-selector="[data-css=&quot;tve-u-1984e4e0063&quot;] .thrv_wrapper.tve_image_caption" style="" role="tabpanel">
+	<span class="tve_image_frame no_style">
+	
+		<img decoding="async" class="tve_image wp-image-8154" alt="" data-id="8154" width="1501" height="1000" title="widen-1680-noupsize_56530-pool-room-1" src="https://southendclub.com/wp-content/uploads/2025/07/widen-1680-noupsize_56530-pool-room-1-1024x682.jpg" data-src="https://southendclub.com/wp-content/uploads/2025/07/widen-1680-noupsize_56530-pool-room-1-300x200.jpg" loading="lazy" data-sizes="{&quot;thumbnail&quot;:{&quot;height&quot;:150,&quot;width&quot;:150,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/widen-1680-noupsize_56530-pool-room-1-150x150.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;medium&quot;:{&quot;height&quot;:200,&quot;width&quot;:300,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/widen-1680-noupsize_56530-pool-room-1-300x200.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;large&quot;:{&quot;height&quot;:682,&quot;width&quot;:1024,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/widen-1680-noupsize_56530-pool-room-1-1024x682.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;full&quot;:{&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/widen-1680-noupsize_56530-pool-room-1.jpg&quot;,&quot;height&quot;:1000,&quot;width&quot;:1501,&quot;orientation&quot;:&quot;landscape&quot;}}">
+	
+	</span>
+	
+
+</div><div data-id="8151" data-caption="" data-position="8/15" data-index="7" class="thrv_wrapper tve_image_caption" data-selector="[data-css=&quot;tve-u-1984e4e0063&quot;] .thrv_wrapper.tve_image_caption" style="" tabindex="-1" role="tabpanel">
+	<span class="tve_image_frame no_style">
+	
+		<img decoding="async" class="tve_image wp-image-8151" alt="" data-id="8151" width="675" height="375" title="7938a6ea-9a1e-449b-8800-335251d74d8e~sc_675" src="https://southendclub.com/wp-content/uploads/2025/07/7938a6ea-9a1e-449b-8800-335251d74d8esc_675.jpg" data-src="https://southendclub.com/wp-content/uploads/2025/07/7938a6ea-9a1e-449b-8800-335251d74d8esc_675-300x167.jpg" loading="lazy" data-sizes="{&quot;thumbnail&quot;:{&quot;height&quot;:150,&quot;width&quot;:150,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/7938a6ea-9a1e-449b-8800-335251d74d8esc_675-150x150.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;medium&quot;:{&quot;height&quot;:167,&quot;width&quot;:300,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/7938a6ea-9a1e-449b-8800-335251d74d8esc_675-300x167.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;full&quot;:{&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/7938a6ea-9a1e-449b-8800-335251d74d8esc_675.jpg&quot;,&quot;height&quot;:375,&quot;width&quot;:675,&quot;orientation&quot;:&quot;landscape&quot;}}">
+	
+	</span>
+	
+
+</div><div data-id="8153" data-caption="" data-position="9/15" data-index="8" class="thrv_wrapper tve_image_caption" data-selector="[data-css=&quot;tve-u-1984e4e0063&quot;] .thrv_wrapper.tve_image_caption" style="" tabindex="-1" role="tabpanel">
+	<span class="tve_image_frame no_style">
+	
+		<img decoding="async" class="tve_image wp-image-8153" alt="" data-id="8153" width="768" height="432" title="SouthEndBanquet-Banquet-2-GalleryImage-768x432" src="https://southendclub.com/wp-content/uploads/2025/07/SouthEndBanquet-Banquet-2-GalleryImage-768x432-1.jpg" data-src="https://southendclub.com/wp-content/uploads/2025/07/SouthEndBanquet-Banquet-2-GalleryImage-768x432-1-300x169.jpg" loading="lazy" data-sizes="{&quot;thumbnail&quot;:{&quot;height&quot;:150,&quot;width&quot;:150,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/SouthEndBanquet-Banquet-2-GalleryImage-768x432-1-150x150.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;medium&quot;:{&quot;height&quot;:169,&quot;width&quot;:300,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/SouthEndBanquet-Banquet-2-GalleryImage-768x432-1-300x169.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;full&quot;:{&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/SouthEndBanquet-Banquet-2-GalleryImage-768x432-1.jpg&quot;,&quot;height&quot;:432,&quot;width&quot;:768,&quot;orientation&quot;:&quot;landscape&quot;}}">
+	
+	</span>
+	
+
+</div><div data-id="8147" data-caption="Philip Martin" data-position="10/15" data-index="9" class="thrv_wrapper tve_image_caption" data-selector="[data-css=&quot;tve-u-1984e4e0063&quot;] .thrv_wrapper.tve_image_caption" style="" tabindex="-1" role="tabpanel">
+	<span class="tve_image_frame no_style">
+	
+		<img decoding="async" class="tve_image wp-image-8147" alt="" data-id="8147" width="1000" height="662" title="Philip Martin" src="https://southendclub.com/wp-content/uploads/2025/07/carlos.jpg" data-src="https://southendclub.com/wp-content/uploads/2025/07/carlos-300x199.jpg" loading="lazy" data-sizes="{&quot;thumbnail&quot;:{&quot;height&quot;:150,&quot;width&quot;:150,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/carlos-150x150.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;medium&quot;:{&quot;height&quot;:199,&quot;width&quot;:300,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/carlos-300x199.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;full&quot;:{&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/carlos.jpg&quot;,&quot;height&quot;:662,&quot;width&quot;:1000,&quot;orientation&quot;:&quot;landscape&quot;}}">
+	
+	</span>
+	
+
+</div><div data-id="8148" data-caption="" data-position="11/15" data-index="10" class="thrv_wrapper tve_image_caption" data-selector="[data-css=&quot;tve-u-1984e4e0063&quot;] .thrv_wrapper.tve_image_caption" style="" tabindex="-1" role="tabpanel">
+	<span class="tve_image_frame no_style">
+	
+		<img decoding="async" class="tve_image wp-image-8148" alt="" data-id="8148" width="1000" height="750" title="banquets-south-end-club-west-end-torrance-ca-90505-90503-171_002" src="https://southendclub.com/wp-content/uploads/2025/07/banquets-south-end-club-west-end-torrance-ca-90505-90503-171_002.jpg" data-src="https://southendclub.com/wp-content/uploads/2025/07/banquets-south-end-club-west-end-torrance-ca-90505-90503-171_002-300x225.jpg" loading="lazy" data-sizes="{&quot;thumbnail&quot;:{&quot;height&quot;:150,&quot;width&quot;:150,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/banquets-south-end-club-west-end-torrance-ca-90505-90503-171_002-150x150.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;medium&quot;:{&quot;height&quot;:225,&quot;width&quot;:300,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/banquets-south-end-club-west-end-torrance-ca-90505-90503-171_002-300x225.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;full&quot;:{&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/banquets-south-end-club-west-end-torrance-ca-90505-90503-171_002.jpg&quot;,&quot;height&quot;:750,&quot;width&quot;:1000,&quot;orientation&quot;:&quot;landscape&quot;}}">
+	
+	</span>
+	
+
+</div><div data-id="8152" data-caption="" data-position="12/15" data-index="11" class="thrv_wrapper tve_image_caption" data-selector="[data-css=&quot;tve-u-1984e4e0063&quot;] .thrv_wrapper.tve_image_caption" style="" tabindex="-1" role="tabpanel">
+	<span class="tve_image_frame no_style">
+	
+		<img decoding="async" class="tve_image wp-image-8152" alt="" data-id="8152" width="675" height="375" title="3c15369e-6b5e-460e-bcc2-ef5f068a93f9~sc_675" src="https://southendclub.com/wp-content/uploads/2025/07/3c15369e-6b5e-460e-bcc2-ef5f068a93f9sc_675.jpg" data-src="https://southendclub.com/wp-content/uploads/2025/07/3c15369e-6b5e-460e-bcc2-ef5f068a93f9sc_675-300x167.jpg" loading="lazy" data-sizes="{&quot;thumbnail&quot;:{&quot;height&quot;:150,&quot;width&quot;:150,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/3c15369e-6b5e-460e-bcc2-ef5f068a93f9sc_675-150x150.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;medium&quot;:{&quot;height&quot;:167,&quot;width&quot;:300,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/3c15369e-6b5e-460e-bcc2-ef5f068a93f9sc_675-300x167.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;full&quot;:{&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/3c15369e-6b5e-460e-bcc2-ef5f068a93f9sc_675.jpg&quot;,&quot;height&quot;:375,&quot;width&quot;:675,&quot;orientation&quot;:&quot;landscape&quot;}}">
+	
+	</span>
+	
+
+</div><div data-id="8141" data-caption="" data-position="13/15" data-index="12" class="thrv_wrapper tve_image_caption" data-selector="[data-css=&quot;tve-u-1984e4e0063&quot;] .thrv_wrapper.tve_image_caption" style="" tabindex="-1" role="tabpanel">
+	<span class="tve_image_frame no_style">
+	
+		<img decoding="async" class="tve_image wp-image-8141" alt="" data-id="8141" width="1920" height="1440" title="thumbnail_IMG_9484" src="https://southendclub.com/wp-content/uploads/2025/07/thumbnail_IMG_9484-1024x768.jpg" data-src="https://southendclub.com/wp-content/uploads/2025/07/thumbnail_IMG_9484-300x225.jpg" loading="lazy" data-sizes="{&quot;thumbnail&quot;:{&quot;height&quot;:150,&quot;width&quot;:150,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/thumbnail_IMG_9484-150x150.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;medium&quot;:{&quot;height&quot;:225,&quot;width&quot;:300,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/thumbnail_IMG_9484-300x225.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;large&quot;:{&quot;height&quot;:768,&quot;width&quot;:1024,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/thumbnail_IMG_9484-1024x768.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;full&quot;:{&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/thumbnail_IMG_9484.jpg&quot;,&quot;height&quot;:1440,&quot;width&quot;:1920,&quot;orientation&quot;:&quot;landscape&quot;}}">
+	
+	</span>
+	
+
+</div><div data-id="8142" data-caption="" data-position="14/15" data-index="13" class="thrv_wrapper tve_image_caption" data-selector="[data-css=&quot;tve-u-1984e4e0063&quot;] .thrv_wrapper.tve_image_caption" style="" tabindex="-1" role="tabpanel">
+	<span class="tve_image_frame no_style">
+	
+		<img decoding="async" class="tve_image wp-image-8142" alt="" data-id="8142" width="533" height="800" title="toast" src="https://southendclub.com/wp-content/uploads/2025/07/toast.jpg" data-src="https://southendclub.com/wp-content/uploads/2025/07/toast-200x300.jpg" loading="lazy" data-sizes="{&quot;thumbnail&quot;:{&quot;height&quot;:150,&quot;width&quot;:150,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/toast-150x150.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;medium&quot;:{&quot;height&quot;:300,&quot;width&quot;:200,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/toast-200x300.jpg&quot;,&quot;orientation&quot;:&quot;portrait&quot;},&quot;full&quot;:{&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/toast.jpg&quot;,&quot;height&quot;:800,&quot;width&quot;:533,&quot;orientation&quot;:&quot;portrait&quot;}}">
+	
+	</span>
+	
+
+</div><div data-id="8138" data-caption="" data-position="15/15" data-index="14" class="thrv_wrapper tve_image_caption" data-selector="[data-css=&quot;tve-u-1984e4e0063&quot;] .thrv_wrapper.tve_image_caption" style="" tabindex="-1" role="tabpanel">
+	<span class="tve_image_frame no_style">
+	
+		<img decoding="async" class="tve_image wp-image-8138" alt="" data-id="8138" width="1920" height="2560" title="IMG_6212" src="https://southendclub.com/wp-content/uploads/2025/07/IMG_6212-768x1024.jpg" data-src="https://southendclub.com/wp-content/uploads/2025/07/IMG_6212-225x300.jpg" loading="lazy" data-sizes="{&quot;thumbnail&quot;:{&quot;height&quot;:150,&quot;width&quot;:150,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/IMG_6212-150x150.jpg&quot;,&quot;orientation&quot;:&quot;landscape&quot;},&quot;medium&quot;:{&quot;height&quot;:300,&quot;width&quot;:225,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/IMG_6212-225x300.jpg&quot;,&quot;orientation&quot;:&quot;portrait&quot;},&quot;large&quot;:{&quot;height&quot;:1024,&quot;width&quot;:768,&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/IMG_6212-768x1024.jpg&quot;,&quot;orientation&quot;:&quot;portrait&quot;},&quot;full&quot;:{&quot;url&quot;:&quot;https://southendclub.com/wp-content/uploads/2025/07/IMG_6212.jpg&quot;,&quot;height&quot;:2560,&quot;width&quot;:1920,&quot;orientation&quot;:&quot;portrait&quot;}}">
+	
+	</span>
+	
+
+</div></div></div><div class="thrv_wrapper thrv_custom_html_shortcode"><!-- Google Calendar Appointment Scheduling begin -->
+<div id="scheduleAtour">
+  <iframe id="google-calendar-iframe" loading="lazy" src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ2mdvyBmUuee1DrVS6OzWxo6Elh3W_XIwLXTZngLXbzuCRGZL260EJcXDGpKNTNSU4kgyJKKDTe?gv=true" style="border: 0; width: 100%; height: 1350px;" frameborder="0"></iframe>
+  <div class="tve_iframe_cover"></div>
+</div>
+<!-- end Google Calendar Appointment Scheduling -->
+
+<style>
+  /* Default for larger screens */
+  #google-calendar-iframe {
+    height: 1150px !important; /* Fixed !important syntax */
+  }
+
+  /* For tablets */
+  @media (max-width: 1300px) {
+    #google-calendar-iframe {
+      height: 1800px !important;
+    }
+  }
+
+  /* For mobile screens */
+  @media (max-width: 768px) {
+    #google-calendar-iframe {
+      height: 1800px !important;
+    }
+  }
+</style></div></div>
+</div>

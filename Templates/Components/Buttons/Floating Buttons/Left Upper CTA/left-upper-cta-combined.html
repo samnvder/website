@@ -1,0 +1,247 @@
+<!-- =========================================================
+     SOUTH END CLUB — REUSABLE COMPONENT (ALL-IN-ONE)
+     Left Upper Smaller CTA (Floating Button)
+     =========================================================
+
+     This file contains the HTML, CSS, and JS in a single file.
+     Drop this into any page and it's fully self-contained.
+
+     CUSTOMISATION  (data-* attributes)
+     ─────────────────────────────────────────────────────────
+     data-float-target   — CSS selector the button scrolls to
+                           on click  (default: href value)
+     data-float-hero     — CSS selector of the hero element;
+                           button hides while hero is visible
+                           (default: ".hero")
+     data-idle-delay     — ms before ghost/idle fade
+                           (default: 2000)
+
+     Just change the <span> text and href for each page.
+     ========================================================= -->
+
+
+<!-- ===========================
+     CSS
+     =========================== -->
+<style>
+/* ===========================
+   BASE — Desktop-first
+   =========================== */
+
+.sec-float-cta {
+  position: fixed !important;
+  top: calc(env(safe-area-inset-top, 0px) + 198px) !important;
+  left: 18px !important;
+  right: auto !important;
+  z-index: 2147483000 !important;          /* Above everything incl. Thrive */
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+
+  padding: 10px 18px !important;
+  font-family: 'Montserrat', sans-serif !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+
+  /* Visual style — matches site .btn-primary gradient */
+  background: linear-gradient(135deg,
+    var(--accent-blue, #0b468c),
+    var(--accent-teal-bright, #2a5a63)) !important;
+  color: var(--white, #ffffff) !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 100px !important;
+
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.24),
+    0  8px 26px rgba(11, 70, 140, 0.34) !important;
+
+  /* Hidden by default — JS adds .is-visible after hero scroll */
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(12px) !important;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease,
+    box-shadow 0.3s ease !important;
+}
+
+/* STATE: Visible */
+.sec-float-cta.is-visible {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translateY(0) !important;
+}
+
+/* STATE: Idle / Ghost */
+.sec-float-cta.is-idle {
+  opacity: 0.25 !important;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    0 2px  8px rgba(11, 70, 140, 0.1) !important;
+}
+
+/* STATE: Hover (always full) */
+.sec-float-cta:hover {
+  opacity: 1 !important;
+  transform: translateY(-2px) !important;
+  box-shadow:
+    0 14px 36px rgba(0, 0, 0, 0.3),
+    0 10px 30px rgba(11, 70, 140, 0.4) !important;
+}
+
+/* Inner <span> — Thrive-proof */
+.sec-float-cta span {
+  font-family: inherit !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  letter-spacing: inherit !important;
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+
+/* Tablet (≤ 1024px) — keep on left */
+@media (max-width: 1024px) {
+  .sec-float-cta {
+    left: 18px !important;
+    right: auto !important;
+  }
+}
+
+/* Mobile (≤ 768px) */
+@media (max-width: 768px) {
+  .sec-float-cta {
+    top: calc(env(safe-area-inset-top, 0px) + 62px) !important;
+    left: 16px !important;
+    right: auto !important;
+    padding: 8px 14px !important;
+    font-size: 0.68rem !important;
+    letter-spacing: 0.05em !important;
+  }
+}
+
+/* Small mobile (≤ 420px) */
+@media (max-width: 420px) {
+  .sec-float-cta {
+    top: calc(env(safe-area-inset-top, 0px) + 76px) !important;
+    left: 12px !important;
+    right: auto !important;
+    padding: 7px 12px !important;
+    font-size: 0.65rem !important;
+  }
+}
+</style>
+
+
+<!-- ===========================
+     HTML
+     =========================== -->
+<a href="#schedule-viewing"
+   class="sec-float-cta"
+   data-float-target="#schedule-viewing"
+   data-float-hero=".hero"
+   data-idle-delay="2000"
+   aria-label="Book Your Viewing">
+  <span>Book Your Viewing</span>
+</a>
+
+
+<!-- ===========================
+     JAVASCRIPT
+     =========================== -->
+<script>
+(function initSecFloatCTA() {
+  'use strict';
+
+  var btn = document.querySelector('.sec-float-cta');
+  if (!btn) return;
+
+  /* ── Read config ─────────────────────────────── */
+  var heroSelector   = btn.getAttribute('data-float-hero') || '.hero';
+  var targetSelector = btn.getAttribute('data-float-target') || btn.getAttribute('href');
+  var IDLE_DELAY     = parseInt(btn.getAttribute('data-idle-delay'), 10) || 2000;
+
+  var heroEl = document.querySelector(heroSelector);
+  if (!heroEl) {
+    // No hero on this page → show immediately
+    btn.classList.add('is-visible');
+    return;
+  }
+
+  var idleTimer = null;
+
+  /* ── Idle timer ──────────────────────────────── */
+  function startIdleTimer() {
+    clearTimeout(idleTimer);
+    btn.classList.remove('is-idle');
+    idleTimer = setTimeout(function () {
+      if (btn.classList.contains('is-visible')) {
+        btn.classList.add('is-idle');
+      }
+    }, IDLE_DELAY);
+  }
+
+  /* ── Show / Hide via IntersectionObserver ─────── */
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          btn.classList.remove('is-visible');
+          btn.classList.remove('is-idle');
+          clearTimeout(idleTimer);
+        } else {
+          btn.classList.add('is-visible');
+          startIdleTimer();
+        }
+      });
+    }, { threshold: 0.05 });
+
+    observer.observe(heroEl);
+  } else {
+    btn.classList.add('is-visible');
+  }
+
+  /* ── Wake on scroll ──────────────────────────── */
+  var scrollTicking = false;
+  window.addEventListener('scroll', function () {
+    if (!scrollTicking) {
+      window.requestAnimationFrame(function () {
+        if (btn.classList.contains('is-visible')) {
+          startIdleTimer();
+        }
+        scrollTicking = false;
+      });
+      scrollTicking = true;
+    }
+  }, { passive: true });
+
+  /* ── Wake on hover ───────────────────────────── */
+  btn.addEventListener('mouseenter', function () {
+    clearTimeout(idleTimer);
+  });
+  btn.addEventListener('mouseleave', function () {
+    startIdleTimer();
+  });
+
+  /* ── Click → smooth scroll ───────────────────── */
+  btn.addEventListener('click', function (e) {
+    e.preventDefault();
+    btn.classList.remove('is-idle');
+    clearTimeout(idleTimer);
+
+    var target = document.querySelector(targetSelector);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+})();
+</script>

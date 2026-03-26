@@ -1,0 +1,17 @@
+# convert-to-local.js
+
+Converts absolute URLs (https://southendclub.com/...) to relative paths for local development. Use `--revert` to switch back for deploy.
+
+**Run:** `node scripts/convert/convert-to-local.js` or `npm run convert:local` / `npm run convert:live`
+
+## Layman's terms
+
+When the site is live, links point to the real website. When you work on your computer, those same links need to point to your local files. This script flips the switch: one mode for local, one for going live. No manual find-and-replace.
+
+## Medium understanding
+
+Scans `Pages/` and `Components/` for HTML and CSS. Replaces `https://southendclub.com/...` with relative paths (e.g. `../Pages/...`) for local dev. `--revert` converts relative paths back to absolute URLs for deploy. URL mappings are defined in the script (live path → local file path).
+
+## Advanced
+
+Node.js, no deps. `URL_MAPPINGS` maps live paths to local file paths. `getRelativePath()` computes relative path from each scanned file to the target. `convertToLocal()` / `convertToLive()` do in-place replacement. Processes `.html` and `.css` only. Run from project root (process.cwd()).

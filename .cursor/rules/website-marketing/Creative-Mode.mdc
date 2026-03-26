@@ -1,0 +1,128 @@
+---
+description: Creative mode — sum of rationale from greatest marketers, salespeople, philosophers, persuaders, and logical minds. Apply when doing creative, copy, or persuasive work.
+globs: "**/Create/**,**/email-templates/**,**/prompts-main/**,**/*copy*.md,**/*creative*,!**/Dev/central/**"
+alwaysApply: false
+---
+
+# Our Includes — Creative Mode
+
+> **When to use:** Invoke `@our_includes.mdc` when in creative mode — writing copy, marketing content, persuasive messaging, or any work that benefits from the combined wisdom below. This rule applies automatically when editing files in Create/, email-templates/, prompts-main/, or files matching *copy*.md / *creative*.
+
+---
+
+## Creative Mode Meta-Principle
+
+**When creative mode is on, every decision elevates the ultimate goal.** No regression.
+
+The product or result must be:
+
+1. **Unique** — Not derivative. Distinct from what exists.
+2. **Attention-garnering** — Built to cut through noise and be noticed.
+3. **Market-meta-changing** — Shifts how the category is perceived or played.
+
+Every choice — copy, design, feature, positioning — either advances toward this or it doesn't. If it doesn't, reject it.
+
+---
+
+## The Council
+
+These figures represent the greatest marketers, salespeople, philosophers, persuaders, and logical minds across history. **Each category has one influence per era:** Today, Early 2000s, 1800s, 1600s, BC. In creative mode, apply their **sum of rationale** — the distilled principles that transcend any single discipline.
+
+---
+
+### Marketers (5 eras)
+
+| Era | Name | Core principle |
+|-----|------|----------------|
+| **Today** | Gary Vaynerchuk (1975–) | Social-first creative; "the creative creates the reach"; attention is the asset. |
+| **Early 2000s** | Seth Godin (1960–) | Permission marketing; Purple Cow; tribes; remarkable beats average. |
+| **1800s** | John Wanamaker (1838–1922) | Department store pioneer; "Half the money I spend on advertising is wasted; the trouble is I don't know which half." |
+| **1600s** | Francis Bacon (1561–1626) | "Apply reason to imagination for the better moving of the will"; eloquence prevails in active life. |
+| **BC** | Gorgias (483–375 BC) | Rhetoric as all-powerful persuasion; first to charge for teaching; "enslave through consent." |
+
+---
+
+### Salespeople (5 eras)
+
+| Era | Name | Core principle |
+|-----|------|----------------|
+| **Today** | Jeremy Lee Miner (1979–) | NEPQ (Neuro-Emotional Persuasion Questioning); work with human behavior, not against it; question-based selling. |
+| **Early 2000s** | Brian Tracy (1944–) | Eat the frog; clarity of goals; systematic selling; high-value activities. |
+| **1800s** | John Henry Patterson (1844–1922) | Father of modern sales; sales manuals, quotas, territories, training. |
+| **1600s** | Sir Thomas Gresham (1519–1579) | Merchant-financier; Gresham's Law; commerce as persuasion. |
+| **BC** | Marcus Licinius Crassus (115–53 BC) | Fortune through commerce and dealmaking; scale through relationships. |
+
+---
+
+### Philosophers (5 eras)
+
+| Era | Name | Core principle |
+|-----|------|----------------|
+| **Today** | Timothy Williamson (1955–) | Rigorous logic; epistemicism; precision in argument. |
+| **Early 2000s** | Daniel Dennett (1942–) | Breaking the Spell; consciousness; clear thinking over mystification. |
+| **1800s** | John Stuart Mill (1806–1873) | Utilitarianism; evidence over intuition; liberty and consequences. |
+| **1600s** | René Descartes (1596–1650) | Methodical doubt; break problems into parts; clear foundations. |
+| **BC** | Aristotle (384–322 BC) | Ethos, pathos, logos; rhetoric; logic and virtue as foundations. |
+
+---
+
+### Persuaders (5 eras)
+
+| Era | Name | Core principle |
+|-----|------|----------------|
+| **Today** | Chris Voss (1958–) | Tactical empathy; Never Split the Difference; negotiation as collaboration. |
+| **Early 2000s** | Robert Cialdini (1945–) | Seven principles: reciprocity, scarcity, authority, consistency, liking, social proof, unity. |
+| **1800s** | Abraham Lincoln (1809–1865) | Oratory; clarity; "with malice toward none"; persuasion through moral force. |
+| **1600s** | Blaise Pascal (1623–1662) | "The heart has its reasons"; Pensées; reason and emotion together. |
+| **BC** | Demosthenes (384–322 BC) | Oratory as force; practice until mastery; "the perfect orator." |
+
+---
+
+### Logical Minds (5 eras)
+
+| Era | Name | Core principle |
+|-----|------|----------------|
+| **Today** | Timothy Williamson (1955–) | Vagueness; epistemicism; formal precision in philosophy. |
+| **Early 2000s** | Saul Kripke (1940–2022) | Naming and Necessity; modal logic; rigid designators. |
+| **1800s** | Gottlob Frege (1848–1925) | Formal logic; precision in language; Begriffsschrift. |
+| **1600s** | Gottfried Leibniz (1646–1716) | Principle of sufficient reason; identity of indiscernibles. |
+| **BC** | Aristotle (384–322 BC) | Syllogism; deductive validity; structure of argument. |
+
+---
+
+## Sum of Rationale — How to Apply
+
+When in creative mode, synthesize these principles:
+
+1. **Know your audience** (Godin, Bacon, Gorgias) — Research. Permission. Match message to where they are. Crystallize what they already feel.
+
+2. **One clear proposition** (Wanamaker, Bacon) — Measure what works. Eloquence in service of the will.
+
+3. **Ethos, pathos, logos** (Aristotle) — Credibility, emotion, logic. Use all three.
+
+4. **Question assumptions** (Descartes, Dennett) — Methodical doubt. Clear thinking over mystification.
+
+5. **Structure matters** (Aristotle, Frege, Leibniz) — Syllogisms. Precision. Sufficient reason.
+
+6. **Help them get what they want** (Miner, Tracy, Patterson, Crassus) — NEPQ questions. Systematic. Relationships.
+
+7. **Principles of influence** (Cialdini) — Reciprocity, scarcity, authority, consistency, liking, social proof, unity. Use ethically.
+
+8. **Attention is the asset** (Vaynerchuk) — Creative creates reach. Social-first.
+
+9. **Reason and emotion together** (Pascal, Lincoln) — The heart has its reasons. Moral force.
+
+10. **Break down complexity** (Descartes, Leibniz, Kripke) — Methodical. Sufficient reason. Rigid designators.
+
+---
+
+## Pre-Flight for Creative Work
+
+Before writing copy or persuasive content:
+
+- **Audience:** Who is this for? Permission or interruption? (Godin)
+- **Proposition:** What is the one thing we're selling? (Wanamaker)
+- **Evidence:** What proof do we have? (Bacon)
+- **Emotion + logic:** Are we appealing to both? (Aristotle, Pascal)
+- **Influence:** Which principles apply? (Cialdini)
+- **Attention:** Does the creative create reach? (Vaynerchuk)

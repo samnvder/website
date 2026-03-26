@@ -1,0 +1,44 @@
+---
+description: Pickleball carousel source-of-truth workflow
+globs: "**/pickleball-images.md,**/carousel-pickleball*.html,**/Racquet Sports HTML.html,!**/Dev/central/**"
+alwaysApply: false
+---
+
+# Pickleball Carousel — Source of Truth
+
+**Law:** Never edit carousel image lists directly in HTML files. Always edit the source of truth and run the build script.
+
+## Source of Truth
+
+`media/racquets/pickleball/pickleball-images.md`
+
+This markdown file contains all pickleball carousel images organized by section:
+- `## General` — standard club photos
+- `## Halloween` — Halloween Mixer 2025 event
+- `## Beachlife` / `## Tito` — Beachlife x Tito's 2025 event
+
+## Workflow
+
+1. **Edit the markdown** — add, remove, or reorder image URLs in `pickleball-images.md`
+2. **Run the build script:**
+   ```bash
+   node scripts/build/build-carousel.js scripts/build/carousel-configs/pickleball.json
+   ```
+3. The script injects updated images into all target HTML files
+
+## Target Files (auto-updated by build)
+
+- `Components/Index/carousel-pickleball-homepage.html`
+- `Pages/racquet-sports/Racquet Sports HTML.html`
+
+## Config
+
+`scripts/build/carousel-configs/pickleball.json` — defines source, targets, section→category mappings, alt text patterns
+
+## Anti-patterns
+
+- ❌ Editing `<img>` tags directly in carousel HTML
+- ❌ Adding/removing images without updating the markdown
+- ❌ Forgetting to run the build script after markdown changes
+
+Direct HTML edits will be overwritten by the next build.

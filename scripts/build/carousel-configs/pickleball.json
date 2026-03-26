@@ -1,0 +1,23 @@
+{
+  "name": "Pickleball Carousel",
+  "source": "media/racquets/pickleball/pickleball-images.md",
+  "targets": [
+    "Components/Index/carousel-pickleball-homepage.html",
+    "Website/Pages/racquet-sports/Racquet Sports HTML.html"
+  ],
+  "sections": {
+    "general": { "category": "general" },
+    "halloween": { "category": "halloween", "caption": "Halloween Mixer 2025" },
+    "beachlife": { "category": "beachlife", "caption": "Beachlife x Tito's 2025" },
+    "tito": { "category": "beachlife", "caption": "Beachlife x Tito's 2025" }
+  },
+  "defaultCategory": "general",
+  "defaultAlt": "Pickleball at South End",
+  "altPatterns": [
+    { "pattern": "HALLOWEEN|PICKLEBALL-\\d+", "alt": "Pickleball event photo" },
+    { "pattern": "SERC_PB|812A", "alt": "Pickleball at South End" },
+    { "pattern": "beachlife|tito", "alt": "Beachlife x Tito's event" }
+  ],
+  "trackSelector": "<div class=\"carousel-track\">",
+  "trackCloseIndent": "        "
+}

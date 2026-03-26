@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stay Connected | South End Club</title>
+    <link rel="stylesheet" href="subscribe.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Animated background elements -->
+        <div class="bg-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+
+        <main class="subscribe-container">
+            <!-- Header section -->
+            <header class="subscribe-header">
+                <span class="eyebrow">Join Our Community</span>
+                <h1 class="headline">Stay in the <span class="accent">Loop</span></h1>
+                <p class="subheadline">Get exclusive updates, event invites, and insider perks delivered straight to your inbox.</p>
+            </header>
+
+            <!-- Video section -->
+            <section class="video-section">
+                <div class="video-wrapper">
+                    <video 
+                        id="heroVideo"
+                        autoplay 
+                        muted 
+                        loop 
+                        playsinline
+                        poster="">
+                        <source src="https://southendclub.com/wp-content/uploads/2025/09/SER_Landing_V1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </section>
+
+            <!-- Form section -->
+            <section class="form-section">
+                <div class="form-wrapper">
+                    <script type="module" src="https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js"></script>
+                    <div class="zapier-interfaces-wrapper">
+                        <zapier-interfaces-page-embed 
+                            page-id="cm1jxql2l001o8bubfm2nwb35" 
+                            test-id="cm1jxql2l001o8bubfm2nwb35-zapier-interfaces-page-embed-iframe" 
+                            no-background="true"
+                            class="hydrated">
+                        </zapier-interfaces-page-embed>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer accent -->
+            <footer class="subscribe-footer">
+                <p class="footer-note">We respect your privacy. Unsubscribe anytime.</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        // Parallax effect for background shapes
+        document.addEventListener('mousemove', (e) => {
+            const shapes = document.querySelectorAll('.shape');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            shapes.forEach((shape, index) => {
+                const speed = (index + 1) * 15;
+                const xOffset = (x - 0.5) * speed;
+                const yOffset = (y - 0.5) * speed;
+                shape.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+            });
+        });
+
+        // Fade-in animation on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = document.querySelectorAll('.subscribe-header, .video-section, .form-section, .subscribe-footer');
+            elements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.15}s`;
+                el.classList.add('fade-in');
+            });
+        });
+
+    </script>
+</body>
+</html>

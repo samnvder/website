@@ -1,0 +1,32 @@
+---
+description: Shape — border-radius scale, border width
+globs: "**/*.html,**/*.css,**/*.tsx,**/*.jsx"
+alwaysApply: false
+---
+
+# Shape Law
+
+**Principle:** Border radius and border width should use a consistent scale. Prefer 8pt grid for radius.
+
+## Border Radius Scale
+
+| Level | Value | Use Case |
+|-------|-------|----------|
+| sm | 8px | Buttons, inputs, small chips |
+| md | 12px or 16px | Cards, panels |
+| lg | 20px or 24px | Modals, large containers |
+| full | 50% or 9999px | Pills, avatars |
+
+**8pt-aligned:** 8px, 16px, 24px, 32px
+
+**Avoid:** 12px, 20px if strict 8pt grid (use 8 or 16, 16 or 24 instead). Some design systems use 12/20 — document your choice.
+
+## Border Width
+
+- **Default:** 1px
+- **Emphasis:** 2px
+- **Avoid:** Fractional px (0.5px) — inconsistent across browsers
+
+## Project Reference
+
+This project: `STYLE-GUIDE.md` §10. `--radius-sm: 12px`, `--radius-md: 20px`, `--radius-lg: 32px`. Pills/buttons: `100px`.

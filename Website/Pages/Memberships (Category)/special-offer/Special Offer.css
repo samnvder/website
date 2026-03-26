@@ -1,0 +1,334 @@
+/* Contact Info Box Styled to Match Existing Theme */
+.contact-info-box {
+    background-color: #242424; /* Matching the background color */
+    border-radius: 10px;
+    border: 5px solid #00ccff; /* Neon blue border */
+    box-shadow: 0 14px 35px rgba(0, 204, 255, 0.28); /* Match the same shadow effect */
+    text-align: center;
+    margin: 20px auto; /* Centers the section */
+    max-width: 400px; /* Made the box smaller */
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Arrange children in a column */
+    justify-content: center; /* Center content vertically */
+    height: 120px; /* Adjust height to be large enough for centering */
+    padding-top: 20px; /* Increased padding to lower the content */
+    padding-bottom: 0; /* Reduced bottom padding */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transition for hover effect */
+}
+
+.contact-info-box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 28px 56px rgba(0, 204, 255, 0.56); /* Hover effect to match the second HTML */
+    border: 5px solid #00ccff; /* Keep the border bright on hover */
+}
+
+/* Ensuring font color is set correctly */
+.contact-info-box p.contact-info-text {
+    color: #00ccff !important; /* Neon blue font color */
+    font-weight: bold; /* Bold the text */
+    margin: 0; /* Removed margin to bring lines closer */
+    line-height: 0.4; /* Reduced line height for tighter spacing */
+}
+
+.contact-info-box a {
+    color: #00ccff !important; /* Matching link color */
+    text-decoration: none;
+    font-weight: bold; /* Bold the email link */
+}
+
+.contact-info-box a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .contact-info-box {
+        max-width: 80%; /* More flexibility for smaller screens */
+        padding: 8px; /* Adjust padding */
+        font-size: 14px; /* Adjust font size */
+    }
+}
+
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+.membership-builder.container {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: #242424; /* Match membership card background */
+    border-radius: 10px; /* Matching rounded corners */
+    border: 5px solid #00ccff; /* Apply the neon blue border */
+    box-shadow: 0 14px 35px rgba(0, 204, 255, 0.28); /* Match the same shadow effect */
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Add transition for hover effect */
+    color: white; /* Ensure text color contrasts */
+}
+
+.membership-builder.container:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 28px 56px rgba(0, 204, 255, 0.56); /* Matching hover effect */
+    border: 5px solid #00ccff; /* Keep the border bright on hover */
+}
+
+/* Center input-wrapper elements */
+.membership-builder .input-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%; /* Ensures full width for inputs */
+}
+
+.membership-builder h1 {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #00ccff; /* Match card title color */
+}
+
+.membership-builder label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ddd; /* Adjust text color for contrast */
+}
+
+.membership-builder .input-wrapper label[for="tier"] {
+    margin-top: 10px; /* Adjust this value to lower the text */
+}
+
+.membership-builder .styled-select {
+    padding: 10px 15px;
+    font-size: 18px;
+    color: white; /* Text color inside the select */
+    background-color: #242424; /* Match card background */
+    border: 2px solid #00ccff; /* Match card border color */
+    border-radius: 5px;
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Personal Info Section for Name and Email */
+.membership-builder .personal-info {
+    display: flex;
+    gap: 40px; /* Increased spacing between name and email fields */
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.membership-builder .personal-input {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #00ccff; /* Match card border color */
+    border-radius: 5px;
+    background-color: #242424; /* Match card background */
+    color: white; /* Adjust text color */
+    width: 100%;
+    max-width: 100%;
+    caret-color: white; /* Ensures the caret is visible */
+}
+
+.membership-builder .personal-input::placeholder {
+    color: #888; /* Placeholder text color */
+}
+
+.membership-builder .personal-input:focus {
+    color: white; /* User input text color */
+}
+
+/* Responsive Styling: Stacks name and email fields vertically on small screens */
+@media (max-width: 768px) {
+    .membership-builder .personal-info {
+        flex-direction: column; /* Vertical on smaller screens */
+    }
+
+    .membership-builder .styled-select,
+    .membership-builder .personal-input {
+        max-width: 70%; /* Adjusted max-width for smaller input boxes */
+        margin: 0 auto; /* Center the input boxes */
+    }
+}
+
+/* Center children ages container */
+.membership-builder #childrenAgesContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Content Box Styling */
+.membership-builder .content-box {
+    padding: 15px;
+    border: 2px solid #00ccff; /* Match card border color */
+    border-radius: 10px;
+    background-color: #333; /* Darker background for better contrast */
+    max-width: 350px;
+    margin: 20px auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* One-Time Enrollment Fee Styling */
+.membership-builder .enrollment-fee-info {
+    display: inline-block; /* Ensure elements are displayed in line */
+    font-size: 24px; /* Reduced font size */
+    font-weight: bold;
+    color: #ffffff; /* White color for better contrast */
+    margin: 0; /* Reduced vertical spacing */
+}
+
+.membership-builder .strikethrough {
+    display: inline-block; /* Keep the crossed-out price on the same line */
+    text-decoration: line-through;
+    color: #ff9999; /* Softer red for better readability */
+    margin-left: 5px; /* Slight spacing to separate from the label */
+    font-size: 24px; /* Maintain size consistency */
+    vertical-align: middle; /* Align with the text */
+}
+
+/* Discounted Enrollment Fee and "for a limited time" */
+.membership-builder .enrollment-fee-info span#discountedPrice {
+    font-size: 24px; /* Ensure the size matches */
+    font-weight: bold;
+    display: inline; /* Keep on the same line */
+    color: #ffff66; /* Light yellow for emphasis */
+    margin-right: 5px; /* Spacing between discounted price and limited time text */
+    position: relative; 
+    top: -8px; /* Move the text upwards */
+}
+
+.membership-builder .limited-time {
+    font-size: 16px;
+    color: #ffcc99; /* Softer shade of red */
+    margin: 0; /* No additional margin */
+    font-style: italic;
+    display: inline; /* Keep on the same line */
+    position: relative; 
+    top: -8px; /* Move the text upwards */
+}
+
+/* Monthly Due Styling */
+.membership-builder .price-info.bold-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff; /* White for better contrast */
+    margin: 0; /* Reduced vertical spacing */
+}
+
+/* Monthly Food & Beverage Minimum Styling */
+.membership-builder .price-info {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff; /* White for readability */
+    margin: 0; /* Reduced spacing */
+}
+
+.membership-builder #commitmentMessage {
+    font-size: 12px;
+    font-style: italic;
+    color: #cccccc; /* Light gray for readability */
+    margin-top: 10px; /* Reduced margin */
+}
+
+/* Age Inputs Container */
+.membership-builder .age-inputs-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+/* Age Group Styling */
+.membership-builder .age-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.membership-builder .age-group label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #ddd; /* Adjusted text color */
+}
+
+.membership-builder .age-group input {
+    width: 50px;
+    padding: 5px;
+    font-size: 14px;
+    border: 2px solid #00ccff; /* Match card border color */
+    border-radius: 5px;
+    text-align: center;
+    background-color: #242424; /* Match card background */
+    color: white; /* Adjusted text color */
+}
+
+/* Buy Membership Button Styling */
+.membership-builder .membership-btn {
+    padding: 15px 30px;  /* Larger padding */
+    font-size: 20px;  /* Larger font size */
+    cursor: pointer;
+    background-color: #00ccff; /* Match card button color */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    margin-top: 20px !important; /* Set margin-top to 20px */
+    display: block; /* Ensures the button is centered */
+    margin: 0 auto; /* Centers the button */
+}
+
+.membership-builder .membership-btn:hover {
+    background-color: #00ff99; /* Match hover color */
+}
+
+/* Modal styling */
+.membership-builder .modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
+}
+
+.membership-builder .modal-content {
+    background-color: #fff;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    text-align: center;
+}
+
+.membership-builder .close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.membership-builder .close-button:hover,
+.membership-builder .close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+

@@ -1,0 +1,47 @@
+---
+description: 8pt grid spacing — padding, margin, gap for all layouts
+globs: "**/*.html,**/*.css,**/*.tsx,**/*.jsx"
+alwaysApply: false
+---
+
+# Spacing Law
+
+**Principle:** All spacing values (padding, margin, gap) must use multiples of 8px. Align with the 8pt grid (Material Design, Apple HIG).
+
+## 8pt Grid — Baseline
+
+**Preferred scale:** 8, 16, 24, 32, 40, 48, 64, 96px. Optional half-steps (4px) for fine micro-adjustments only.
+
+| Use Case | Value | rem |
+|----------|-------|-----|
+| Tight spacing | 8px | 0.5rem |
+| Base unit | 16px | 1rem |
+| Section padding (mobile) | 16px | 1rem |
+| Standard padding | 24px | 1.5rem |
+| Pill/container horizontal min | 32px | 2rem |
+| Section padding (desktop) | 24–32px | 1.5–2rem |
+| Large gaps | 40–48px | 2.5–3rem |
+
+**Avoid:** 12px, 20px, 28px — these break the 8pt grid. Use 16px or 24px instead of 20px; 24px or 32px instead of 28px.
+
+## Container & Page Padding
+
+| Viewport | Min horizontal padding |
+|----------|------------------------|
+| Desktop (≥1024px) | 24px |
+| Tablet (768–1023px) | 16px |
+| Mobile (480–767px) | 16px |
+| Small (320–479px) | 16px |
+
+**Fluid alternative:** `padding-inline: clamp(1rem, 4vw, 1.5rem)`
+
+**Never:** Zero horizontal padding; content touching viewport edges.
+
+## Anti-Patterns
+
+- Spacing values not on 8pt grid (12, 20, 28px)
+- Zero horizontal padding on containers
+
+## Project Reference
+
+This project: `STYLE-GUIDE.md` §1 (container vars), §18 (breakpoints). Container padding: 24px → 16px (768px) → 12px (480px). Section padding: 120px/80px/60px at breakpoints.

@@ -1,0 +1,15 @@
+# index-page.js — Homepage Behavior
+
+## Layman's terms
+
+The JavaScript that makes the homepage work: mobile menu toggle, holiday countdown, and any other interactive bits. Runs when the homepage loads.
+
+## Medium understanding
+
+Extracted from Thrive Architect export. Handles mobile menu (toggle, overlay close, link click close), video banner countdown, and other homepage-specific behavior. DOM-ready pattern; no framework. IDs/classes follow Thrive export conventions (sec-mobile-toggle, sec-menu-wrapper, etc.).
+
+## Advanced
+
+- **Scope:** Homepage (Pages/index/)
+- **Pattern:** DOMContentLoaded, IIFE for isolation
+- **Deps:** None; vanilla JS

@@ -1,0 +1,86 @@
+---
+description: Universal CTA formatting laws — centering, padding, no bleeding, responsive
+globs: "**/*.html,**/*.css,!**/Dev/central/**"
+alwaysApply: false
+---
+
+# CTA Formatting Law
+
+**Principle:** Call-to-action buttons and links must be consistently formatted, properly centered, never bleed off-screen, and respect padding at all viewports. Default to center unless the design explicitly specifies otherwise.
+
+## Mandatory Rules
+
+### 1. Centering (Default)
+
+- **Default:** CTAs are centered horizontally unless the design specifies left/right alignment.
+- **Use flexbox for centering:** Parent container must use `display: flex; flex-direction: column; align-items: center; width: 100%` (or `justify-content: center` for row layouts). Do not rely on `text-align: center` alone for CTA buttons — it can render inconsistently on mobile (e.g. iPhone Safari).
+- **Why flex over text-align:** `text-align: center` on inline/inline-flex children can produce subpixel drift on iOS. Flex `align-items: center` gives deterministic, viewport-independent centering.
+- **Override:** If design specifies left- or right-aligned CTA, use `align-items: flex-start` or `align-items: flex-end` explicitly.
+
+### 2. No Bleeding
+
+- **Definition:** Content must never bleed off the viewport or touch the screen edge with no padding.
+- **Minimum padding:** CTA containers must have `padding-inline` (or `padding-left` + `padding-right`) of at least `1rem` on mobile. Prefer `padding-inline: clamp(1rem, 4vw, 2rem)` for fluid scaling.
+- **Full-width CTAs:** If a CTA spans full width, the parent must have padding so the CTA doesn't touch the viewport edge. Never use `width: 100%` on a CTA inside a container with zero horizontal padding.
+- **Test:** At 320px viewport, verify the CTA has visible space on both left and right.
+
+### 3. Padding & Breathing Room
+
+- **Button padding:** CTA buttons need adequate tap/click area. Minimum: `padding: 0.75rem 1.5rem` on mobile; `1rem 2rem` or more on desktop. Use `clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2.5rem)` for fluid scaling.
+- **Container padding:** Section CTAs (e.g. footer CTA) — the wrapper should have `padding-inline` so the CTA doesn't feel flush against the content edge. Equal left/right padding prevents asymmetric "drift" on mobile.
+- **Gap:** If multiple CTAs share a row, use `gap: 0.75rem` or more so they don't touch.
+
+### 4. Touch Targets (Mobile)
+
+- **Minimum size:** CTA tap targets should be at least 44×44px (Apple HIG) or 48×48px (Material) for comfortable tapping. Use padding to achieve this — avoid tiny buttons on mobile.
+- **Spacing:** Adjacent CTAs or links need enough gap that users don't mis-tap.
+
+### 5. Responsive Behavior
+
+- **Fluid where possible:** Use `clamp()` for padding and font-size so CTAs scale smoothly across viewports without hard breakpoints.
+- **Wrap when needed:** Long CTA text (e.g. "Contact Sam to Get Started") — on very narrow viewports, allow `white-space: normal` and `text-align: center` so the label can wrap if necessary. Avoid `white-space: nowrap` if it causes horizontal scroll on 320px.
+- **Test breakpoints:** 320px, 375px, 768px, 1024px. CTA must remain centered and non-bleeding at each.
+
+## Implementation Checklist
+
+Before marking CTA work complete:
+
+- [ ] Parent uses flexbox with `align-items: center` (or explicit left/right if design specifies)
+- [ ] Container has `padding-inline` of at least 1rem (or fluid equivalent)
+- [ ] CTA does not bleed off viewport at 320px
+- [ ] Button has adequate padding (min 0.75rem 1.5rem on mobile)
+- [ ] Touch target ≥44px on mobile
+- [ ] Verified at 320px, 375px, 768px, 1024px
+
+## Anti-Patterns (Do Not Use)
+
+- Relying on `text-align: center` alone for CTA button centering (use flex on parent)
+- Zero or near-zero horizontal padding on CTA containers
+- CTAs that touch the viewport edge on mobile
+- `margin: 0 auto` without flex for stacked centered content (can drift on iOS)
+- Tiny tap targets (<44px) on mobile
+- `white-space: nowrap` on long CTA labels when it causes horizontal scroll at 320px
+
+## Reference: Reliable CTA Container Pattern
+
+```css
+.cta-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding-inline: clamp(1rem, 4vw, 2rem);
+    text-align: center;
+}
+.cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2.5rem);
+    /* ... */
+}
+```
+
+## Project Reference
+
+This project: `STYLE-GUIDE.md` §11 (hero CTA button, scroll indicator, spacing). Gradient: `linear-gradient(135deg, var(--accent-blue), var(--accent-teal-bright))`; hover: `var(--accent-teal)`. Pills: 100px radius.

@@ -1,0 +1,42 @@
+---
+description: Color — contrast ratios, semantic usage
+globs: "**/*.html,**/*.css,**/*.tsx,**/*.jsx"
+alwaysApply: false
+---
+
+# Color Law
+
+**Principle:** Text must meet contrast requirements. Use semantic color roles, not raw hex for UI states.
+
+## Contrast (WCAG)
+
+- **Body text:** Minimum 4.5:1 against background (AA)
+- **Large text (18px+ or 14px+ bold):** Minimum 3:1 (AA)
+- **AAA:** 7:1 body, 4.5:1 large
+
+**Test:** Use browser DevTools or contrast checker. Never rely on "looks fine."
+
+## Semantic Roles
+
+Prefer semantic names over raw values:
+
+```css
+color: var(--text-primary);
+background: var(--bg-card);
+border-color: var(--accent-blue);
+```
+
+**Avoid:** Hardcoded hex for interactive states. Use design tokens.
+
+## States
+
+- **Default:** Primary color
+- **Hover:** Slightly darker or brighter
+- **Active/Focus:** Visible focus ring (2px outline, contrast)
+- **Disabled:** Reduced opacity (0.5–0.6) or muted color
+
+**Focus:** Never remove focus styles. Use `:focus-visible` for keyboard-only focus ring.
+
+## Project Reference
+
+This project: `STYLE-GUIDE.md` §1, §8. Use `var(--accent-blue)`, `var(--text-primary)`, etc. Never hardcode `#0b468c`, `#204147` for brand colors.

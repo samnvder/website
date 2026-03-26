@@ -1,0 +1,76 @@
+---
+description: Site changer mode — website-only scope, styling consistent with website MDC. Invoke with "command-site".
+globs: []
+alwaysApply: false
+---
+
+# command-site — Site Changer Mode
+
+> **Invoke:** Type `command-site` or `@command-site` to enter this mode. Manual only — never auto-applied.
+
+---
+
+## What This Mode Does
+
+When the user invokes **command-site**, the agent enters **site changer mode**:
+
+1. **Scope:** Only website-related files and repo items. Central platform work is off-limits.
+2. **Styling:** All edits follow `STYLE-GUIDE.md` and website MDC rules (this folder + `general-formatting/`).
+3. **Boundary:** Do not read, edit, or reference Central-related files or MDC rules.
+
+---
+
+## In-Scope (Website Only)
+
+| Area | Paths / Files |
+|------|---------------|
+| **Pages** | `Pages/`, `index.html`, `index-*.html`, `dev-index.html` |
+| **Components** | `Components/` |
+| **Templates** | `Templates/` |
+| **Styles** | `css/`, `*.css` in Components/Templates |
+| **Scripts** | `js/`, `scripts/` (build, scaffold — carousel, etc.) |
+| **Media** | `media/` |
+| **Content** | `Create/`, `email-templates/`, `prompts-main/` |
+| **Docs** | `STYLE-GUIDE.md`, `LAYOUT-STANDARDS.md`, `SEO-GUIDELINES.md`, `ASSETS-REFERENCE.md`, `JS-PATTERNS.md` |
+| **Website rules** | `.cursor/rules/website-marketing/*.mdc`, `.cursor/rules/general-formatting/*.mdc` |
+
+---
+
+## Out-of-Scope (Do Not Touch)
+
+| Area | Paths / Files |
+|------|---------------|
+| **Central** | `Dev/central/` (all of it) |
+| **Central rules** | Any `.mdc` that applies to Central (RLS, CRM, dashboard, migrations, etc.) |
+| **Applications** | `Applications/` (deployable apps with backend) |
+
+**Rule:** If a file lives under `Dev/central/` or is a Central-scoped rule, do not read or edit it in site changer mode.
+
+---
+
+## Styling Authority (When Editing)
+
+In site changer mode, apply these in order:
+
+1. **`STYLE-GUIDE.md`** — CSS variables, typography, navigation, hero, sections, CTAs, spacing.
+2. **`website-marketing/`** — `cta-formatting.mdc`, `header-subheader-centering.mdc`, `dynamic-image-carousel.mdc`, `Creative-Mode.mdc` (when doing copy).
+3. **`general-formatting/`** — typography, spacing, color, elevation, shape, motion, layout, accessibility.
+
+---
+
+## Pre-Flight (Site Changer Mode)
+
+Before editing any website file:
+
+- **Scope check:** Is this file under `Dev/central/` or Central-related? If yes → stop. Not in scope.
+- **Style check:** Does this change affect layout, typography, or components? If yes → read `STYLE-GUIDE.md` and relevant website MDC first.
+- **Carousel check:** If touching carousel HTML/images → use source-of-truth workflow (`pickleball-carousel-source-of-truth.mdc`).
+
+---
+
+## References
+
+- `STYLE-GUIDE.md` — Authoritative design system
+- `website-marketing/README.md` — Website rules index
+- `general-formatting/` — Design primitives
+- `../MDC-FRAMEWORK.md` — Tier 3: Website-Scoped

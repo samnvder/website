@@ -1,0 +1,45 @@
+---
+description: Typography — font size, line height, line length, fluid scaling
+globs: "**/*.html,**/*.css,**/*.tsx,**/*.jsx"
+alwaysApply: false
+---
+
+# Typography Law
+
+**Principle:** Font sizes must scale responsively. Use `clamp()` for fluid scaling — no fixed px without responsive fallback.
+
+## Font Sizes
+
+- **Fluid:** `font-size: clamp(1rem, 2vw, 1.25rem)`
+- **Avoid:** Fixed px without media query or clamp fallback
+
+## Line Height
+
+- **Body:** 1.4–1.7
+- **Multi-line headings:** 1.5–1.7
+- **Example:** `line-height: 1.6`
+
+## Line Length
+
+- **Desktop:** 45–75 characters
+- **Mobile:** 35–50 characters
+
+## Text Containment
+
+```css
+max-width: 100%;
+overflow-wrap: break-word;
+text-wrap: balance;  /* headings, short text */
+text-wrap: pretty;  /* longer paragraphs */
+```
+
+**No stragglers:** Single words alone on a line are forbidden. Use `text-wrap: balance` or explicit line-break spans.
+
+## Anti-Patterns
+
+- Fixed font sizes without `clamp()` or media queries
+- Single orphan words on their own line
+
+## Project Reference
+
+This project: `STYLE-GUIDE.md` §2, §17. Montserrat (headings/CTAs); Plus Jakarta Sans (body). All font-sizes use `clamp()`.

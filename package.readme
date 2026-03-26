@@ -1,0 +1,15 @@
+# package.json — Project Dependencies and Scripts
+
+## Layman's terms
+
+The project's recipe card. Lists what tools the site needs (live-server, supabase) and the shortcut commands you can run (start, build carousel, convert URLs). Run `npm install` once to get the tools; run `npm run <script>` to do the job.
+
+## Medium understanding
+
+Node.js package manifest. Defines devDependencies (live-server, serve, supabase) and npm scripts that wrap common workflows. No production runtime—static HTML/CSS/JS. Scripts: `start`/`serve`/`dev` (local server), `convert:local`/`convert:live` (URL transform), `build:pickleball-carousel`, `scaffold:carousel`.
+
+## Advanced
+
+- **No production deps:** Site is static; deps are dev tooling only
+- **Scripts:** `npx live-server`, `npx serve`, `node scripts/convert/...`, `node scripts/build/...`, `node scripts/scaffold/...`
+- **Supabase:** Used for Edge Functions; deploy from Dev/tour-booking-v2

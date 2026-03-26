@@ -1,0 +1,22 @@
+{
+  "name": "south-end-club-website",
+  "version": "1.0.0",
+  "description": "South End Club marketing website (standalone repo; exported from WebsiteV1)",
+  "scripts": {
+    "start": "npx live-server --port=3000 --open=/",
+    "serve": "npx serve -l 3000",
+    "dev": "npx live-server --port=3000 --open=/ --watch=.",
+    "convert:local": "node scripts/convert/convert-to-local.js",
+    "convert:live": "node scripts/convert/convert-to-local.js --revert",
+    "build:pickleball-carousel": "node scripts/build/build-carousel.js scripts/build/carousel-configs/pickleball.json",
+    "build:tennis-carousel": "node scripts/build/build-carousel.js scripts/build/carousel-configs/tennis.json",
+    "scaffold:carousel": "node scripts/scaffold/new-carousel.js"
+  },
+  "keywords": ["south-end-club", "fitness", "wellness"],
+  "author": "South End Club",
+  "license": "ISC",
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "serve": "^14.2.1"
+  }
+}

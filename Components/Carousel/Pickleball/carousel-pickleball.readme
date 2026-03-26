@@ -1,0 +1,16 @@
+# carousel-pickleball.js — Pickleball Carousel Behavior
+
+## Layman's terms
+
+Makes the pickleball image carousel work: auto-rotates images, dots for navigation, swipe/click to change slide, click-to-lightbox, Browse by Event (Halloween/Beachlife albums). Handles both static and dynamic height (aspect-ratio) modes. Fixed: lightbox opens correct image; resize works in Thrive iframes.
+
+## Medium understanding
+
+Vanilla JS carousel. Requires `.carousel-pickleball` container. Finds `[data-carousel]` inside it, shuffles slides in DOM, initializes track/dots, auto-advance, touch swipe, lightbox (arrows, Escape, click-off). Supports `data-carousel-dynamic` for aspect-ratio-based height; uses `offsetWidth` fallback for Thrive. No framework. Used by carousel-pickleball-homepage. Content is build-managed via pickleball.json.
+
+## Advanced
+
+- **Selector:** .carousel-pickleball, [data-carousel], .carousel-track, .carousel-dots
+- **Dynamic mode:** data-carousel-dynamic → height from image aspect ratio; offsetWidth fallback for getBoundingClientRect
+- **Shuffle:** DOM reorder (not CSS order) so lightbox index matches display
+- **Build:** Images injected by build-carousel.js; this script handles behavior only

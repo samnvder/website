@@ -1,0 +1,3 @@
+Folders in the webpages directory are named by slug. the html and css are for their respective slug folders.
+
+If a folder (i.e Memberships) is followed by the word (Category), it has other folders within it, then it is not the exact slug but a broader category that contains the webpages and slugs following the same convention. For example, in the case of "Memberships (Category) we offer different membership promotions with webpages that are similar (example would be a new years promo or a direct link for certain promos) - treat those folders within the categorical folder as the slugs (Webpages).

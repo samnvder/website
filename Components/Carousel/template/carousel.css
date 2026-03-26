@@ -1,0 +1,146 @@
+/* Generic Carousel Base — Reusable for any amenity. Scoped to .carousel */
+.carousel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 2rem;
+}
+.carousel .carousel-label-wrap {
+    margin-bottom: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.carousel .carousel-label {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    display: block;
+    text-align: center;
+    margin: 0;
+    width: fit-content;
+    max-width: 90%;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    letter-spacing: 0.04em;
+    line-height: 1.35;
+    padding: clamp(1rem, 2.5vw, 1.25rem) clamp(1.75rem, 5vw, 2.5rem);
+    color: #0b468c;
+    background: linear-gradient(135deg, #fff 0%, #f8f6f0 100%);
+    border: 1px solid rgba(11,70,140,0.12);
+    border-radius: 100px;
+    box-shadow: 0 2px 8px rgba(11,70,140,0.04), 0 12px 40px rgba(11,70,140,0.06);
+}
+.carousel .carousel-wrap {
+    align-self: stretch;
+    width: 100%;
+    position: relative;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    background: rgba(32,65,71,0.03);
+    border: 1px solid rgba(11,70,140,0.05);
+    transition: height 0.4s ease;
+}
+.carousel .carousel-wrap[data-carousel-dynamic] {
+    min-height: 200px;
+}
+.carousel .carousel-track {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+}
+.carousel .carousel-track .carousel-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 100%;
+    position: relative;
+    cursor: pointer;
+}
+.carousel .carousel-track .carousel-slide img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+.carousel .carousel-slide-caption {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    padding: 0.25rem 0.5rem;
+    background: rgba(0,0,0,0.4);
+    border-radius: 0.25rem;
+}
+.carousel .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.375rem;
+    padding: 0.75rem 0;
+}
+.carousel .carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(11,70,140,0.15);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+.carousel .carousel-dot.active {
+    background: #0b468c;
+    transform: scale(1.3);
+}
+/* Lightbox — global (appended to body) */
+.carousel-lightbox {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center;
+    padding: 1rem; box-sizing: border-box; cursor: default;
+}
+.carousel-lightbox .carousel-lightbox-img-wrap {
+    display: flex; align-items: center; justify-content: center;
+    max-width: calc(100vw - 6rem); max-height: calc(100vh - 2rem); cursor: default;
+}
+.carousel-lightbox .carousel-lightbox-img-wrap img {
+    max-width: 100%; max-height: calc(100vh - 2rem); width: auto; height: auto;
+    object-fit: contain; pointer-events: none;
+}
+.carousel-lightbox .carousel-lightbox-close {
+    position: absolute; top: 1rem; right: 1rem; z-index: 1;
+    width: 2rem; height: 2rem; padding: 0; border: none; border-radius: 50%;
+    background: rgba(128,128,128,0.6); color: #fff; font-size: 1.25rem; line-height: 1;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+}
+.carousel-lightbox .carousel-lightbox-close:hover {
+    background: rgba(128,128,128,0.9);
+}
+.carousel-lightbox .carousel-lightbox-prev,
+.carousel-lightbox .carousel-lightbox-next {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 3rem; height: 3rem; padding: 0; border: none; border-radius: 50%;
+    background: rgba(128,128,128,0.5); color: #fff; font-size: 1.5rem; line-height: 1;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s; z-index: 1;
+}
+.carousel-lightbox .carousel-lightbox-prev:hover,
+.carousel-lightbox .carousel-lightbox-next:hover {
+    background: rgba(128,128,128,0.8);
+}
+.carousel-lightbox .carousel-lightbox-prev { left: 1rem; }
+.carousel-lightbox .carousel-lightbox-next { right: 1rem; }
+@media (min-width: 1025px) {
+    .carousel .carousel-wrap {
+        max-width: 38rem;
+        margin-left: auto;
+        margin-right: auto;
+        align-self: center;
+    }
+}

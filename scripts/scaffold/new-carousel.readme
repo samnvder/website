@@ -1,0 +1,17 @@
+# new-carousel.js
+
+Scaffolds a new carousel from scratch. Creates source markdown, config, and HTML shell. Output adheres to `.cursor/rules/dynamic-image-carousel.mdc`.
+
+**Run:** `node scripts/scaffold/new-carousel.js <name> [--media-path=PATH] [--sections=a,b,c]`
+
+## Layman's terms
+
+Need a new image carousel (e.g. for tennis, yoga, events)? Run this with a name. It creates the files you need: a list where you add image URLs, a config that ties everything together, and a blank carousel page. Add your images, run the build script, and you're done.
+
+## Medium understanding
+
+Generates the full carousel workflow: source markdown (media/.../name-images.md), config JSON + readme (scripts/build/carousel-configs/), and minimal HTML in Dev/carousel-name/. The HTML uses the exact structure from dynamic-image-carousel.mdc (data-carousel, data-carousel-dynamic, carousel-track, carousel-dots). Add image URLs to the markdown, run build-carousel.js, then add carousel JS for behavior. Per Law I, output lives in Dev/ until promoted.
+
+## Advanced
+
+Node.js, no deps. Args: name (kebab-case), --media-path (default media/<name>), --sections (default general). Writes: mediaPath/name-images.md, carousel-configs/name.json, carousel-configs/name.readme, Dev/carousel-name/carousel-name.html. HTML has trackSelector/trackCloseIndent compatible with build-carousel.js. CSS scoped to .carousel-{name}. HTML links to Components/Carousel/template/carousel.css and carousel.js.

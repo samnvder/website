@@ -1,0 +1,273 @@
+/* ========================================
+   South End Club - Development Index Page
+   ======================================== */
+
+/* CSS Variables */
+:root {
+    --sec-blue: #0b468c;
+    --sec-teal: #204147;
+    --sec-gold: #c9a227;
+    --sec-beige: #f8f2e1;
+    --sec-white: #ffffff;
+    --sec-shadow: 0 4px 24px rgba(11, 70, 140, 0.12);
+    --sec-shadow-strong: 0 8px 32px rgba(11, 70, 140, 0.18);
+    --sec-radius: 16px;
+    --sec-radius-sm: 8px;
+    --sec-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--sec-beige);
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+
+/* Container */
+.dev-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header */
+.dev-header {
+    text-align: center;
+    margin-bottom: 50px;
+    padding: 40px;
+    background: linear-gradient(135deg, var(--sec-blue), var(--sec-teal));
+    border-radius: 24px;
+    color: white;
+    box-shadow: 0 20px 60px rgba(11, 70, 140, 0.3);
+}
+
+.dev-header h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.dev-header p {
+    opacity: 0.9;
+    font-size: 1.1rem;
+}
+
+/* Dev Badge */
+.dev-badge {
+    display: inline-block;
+    background: var(--sec-gold);
+    color: var(--sec-teal);
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 15px;
+}
+
+/* Pages Grid */
+.pages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 50px;
+}
+
+/* Page Category Cards */
+.page-category {
+    background: white;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 8px 30px rgba(11, 70, 140, 0.1);
+    border: 2px solid rgba(11, 70, 140, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.page-category:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(11, 70, 140, 0.15);
+}
+
+/* Category Title */
+.category-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--sec-blue);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid rgba(11, 70, 140, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.category-title svg {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+}
+
+/* Page Links */
+.page-links {
+    list-style: none;
+}
+
+.page-links li {
+    margin-bottom: 10px;
+}
+
+.page-links a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: rgba(11, 70, 140, 0.04);
+    border-radius: 12px;
+    color: var(--sec-teal);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.page-links a:hover {
+    background: var(--sec-blue);
+    color: white;
+    transform: translateX(4px);
+}
+
+.page-links a::before {
+    content: '→';
+    opacity: 0.5;
+}
+
+.page-links a:hover::before {
+    opacity: 1;
+}
+
+/* Components Section */
+.components-section {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 30px rgba(11, 70, 140, 0.1);
+}
+
+.components-section h2 {
+    font-family: 'Montserrat', sans-serif;
+    color: var(--sec-teal);
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+
+/* Component Grid */
+.component-grid {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.component-link {
+    padding: 14px 24px;
+    background: linear-gradient(135deg, var(--sec-blue), var(--sec-teal));
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.component-link:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(11, 70, 140, 0.3);
+}
+
+/* Instructions */
+.instructions {
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.1), rgba(201, 162, 39, 0.05));
+    border: 2px solid rgba(201, 162, 39, 0.3);
+    border-radius: 16px;
+    padding: 28px;
+    margin-top: 30px;
+}
+
+.instructions h3 {
+    color: var(--sec-teal);
+    font-family: 'Montserrat', sans-serif;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.instructions code {
+    background: var(--sec-teal);
+    color: var(--sec-gold);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+}
+
+.instructions ul {
+    margin-top: 12px;
+    padding-left: 20px;
+}
+
+.instructions li {
+    margin-bottom: 8px;
+    color: var(--sec-teal);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dev-header {
+        padding: 30px 20px;
+    }
+    
+    .dev-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .pages-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .component-grid {
+        flex-direction: column;
+    }
+    
+    .component-link {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 20px 12px;
+    }
+    
+    .dev-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .page-category {
+        padding: 20px;
+    }
+    
+    .instructions {
+        padding: 20px;
+    }
+}
+

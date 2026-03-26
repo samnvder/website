@@ -1,0 +1,12 @@
+# pickleball.json
+
+Config for `scripts/build/build-carousel.js`. Tells the build script where to read images from, which HTML files to inject into, and how to map sections to categories and alt text.
+
+**Run:** `node scripts/build/build-carousel.js scripts/build/carousel-configs/pickleball.json`
+
+## Advanced
+
+- **source** — Markdown file with image URLs (sections: `## General`, `## Halloween`, etc.)
+- **targets** — HTML files that get their carousel images updated
+- **sections** — Maps markdown section names to `category` and optional `caption`
+- **altPatterns** — Regex patterns on image URLs → alt text for accessibility

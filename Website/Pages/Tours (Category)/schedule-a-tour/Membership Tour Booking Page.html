@@ -1,0 +1,1232 @@
+<div class="thrv_wrapper thrv-page-section tve-height-update tcb-video-background-parent" data-css="tve-u-1936aeba0f6" style="">
+	<div class="tve-page-section-out tcb-responsive-video tcb-video-background-el" style="" data-css="tve-u-1936aec7f8f"><video playsinline="" autoplay="" muted="" loop="" class="tcb-bg-video" data-title="Digital SIgn" data-id="7440"><source src="https://southendclub.com/wp-content/uploads/2024/11/Digital-SIgn.mp4" type="video/mp4"></video></div>
+	<div class="tve-page-section-in tve_empty_dropzone" data-css="tve-u-1936ae92f94" style=""></div>
+</div><div class="thrv_wrapper thrv-page-section tve-height-update" style="" data-css="tve-u-193ae0800d2">
+	<div class="tve-page-section-out"></div>
+	<div class="tve-page-section-in tve_empty_dropzone" data-css="tve-u-1936ae80cc1"><div class="thrv_wrapper thrv_custom_html_shortcode"><!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- TOUR BOOKING FORM — CALENDAR VERSION (nvde-v1)                          -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- Google Calendar-style week view with mini-calendar sidebar.             -->
+<!-- For use on /schedule-a-tour/ page.                                      -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+
+<style>
+@keyframes seBkSpin{to{transform:rotate(360deg)}}
+
+.se-cal-container {
+  font-family: system-ui, -apple-system, sans-serif !important;
+  width: 85% !important;
+  max-width: 85vw !important;
+  margin: 0 auto !important;
+  background: #fff !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08) !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.se-cal-container * {
+  box-sizing: border-box !important;
+}
+
+/* Header */
+.se-cal-header {
+  background: linear-gradient(135deg, #0b468c 0%, #163d6b 100%) !important;
+  padding: 20px 28px !important;
+  position: relative !important;
+}
+
+.se-cal-title {
+  margin: 0 !important;
+  font-family: Montserrat, system-ui, sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 22px !important;
+  color: #fff !important;
+  letter-spacing: -0.3px !important;
+  text-align: center !important;
+}
+
+.se-cal-subtitle {
+  margin: 6px 0 0 !important;
+  font-size: 14px !important;
+  color: rgba(255,255,255,0.7) !important;
+  text-align: center !important;
+}
+
+/* Body layout */
+.se-cal-body {
+  display: flex !important;
+}
+
+/* Sidebar mini-calendar */
+.se-cal-sidebar {
+  width: 300px !important;
+  border-right: 1px solid #e5e7eb !important;
+  padding: 24px 32px 24px 24px !important;
+  background: #fafbfc !important;
+  flex-shrink: 0 !important;
+}
+
+.se-cal-mini-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 12px !important;
+}
+
+.se-cal-mini-title {
+  font-family: Montserrat, system-ui, sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  color: #1a1a2e !important;
+}
+
+.se-cal-mini-nav {
+  background: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 4px !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.se-cal-mini-nav:hover {
+  background: #f1f5f9 !important;
+}
+
+.se-cal-mini-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 2px !important;
+  text-align: center !important;
+}
+
+.se-cal-mini-dow {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #94a3b8 !important;
+  padding: 4px 0 !important;
+}
+
+.se-cal-mini-day {
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  margin: 1px auto !important;
+}
+
+.se-cal-mini-day:hover {
+  background: #f1f5f9 !important;
+}
+
+.se-cal-mini-day.se-cal-today {
+  border: 2px solid #0b468c !important;
+  font-weight: 600 !important;
+}
+
+.se-cal-mini-day.se-cal-selected {
+  background: linear-gradient(135deg, #0b468c, #1a6dd4) !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+
+.se-cal-mini-day.se-cal-past {
+  color: #cbd5e1 !important;
+  cursor: not-allowed !important;
+}
+
+.se-cal-mini-day.se-cal-past:hover {
+  background: transparent !important;
+}
+
+/* Week header */
+.se-cal-week-header {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  background: #fafbfc !important;
+}
+
+.se-cal-week-day {
+  padding: 16px 8px !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease !important;
+}
+
+.se-cal-week-day:hover {
+  background: #f1f5f9 !important;
+}
+
+.se-cal-week-dow {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #94a3b8 !important;
+  text-transform: uppercase !important;
+}
+
+.se-cal-week-date {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #1a1a2e !important;
+  margin-top: 2px !important;
+}
+
+.se-cal-week-day-today .se-cal-week-date {
+  color: #0b468c !important;
+}
+
+.se-cal-week-day-selected {
+  background: #f0f4ff !important;
+}
+
+.se-cal-week-day-selected .se-cal-week-date {
+  color: #0b468c !important;
+}
+
+/* Slots area */
+.se-cal-slots-container {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  flex: 1 !important;
+  min-height: 400px !important;
+}
+
+.se-cal-day-column {
+  border-right: 1px solid #f1f5f9 !important;
+  padding: 16px 10px !important;
+  min-height: 280px !important;
+}
+
+.se-cal-day-column:last-child {
+  border-right: none !important;
+}
+
+.se-cal-slot {
+  display: block !important;
+  width: 100% !important;
+  padding: 14px 12px !important;
+  margin-bottom: 8px !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  color: #1a1a2e !important;
+  cursor: pointer !important;
+  text-align: center !important;
+  transition: all 0.15s ease !important;
+}
+
+.se-cal-slot:hover {
+  background: #f0f4ff !important;
+  border-color: #0b468c !important;
+  color: #0b468c !important;
+}
+
+.se-cal-slot-selected {
+  background: linear-gradient(135deg, #0b468c, #1a6dd4) !important;
+  color: #fff !important;
+  border-color: #0b468c !important;
+}
+
+.se-cal-slot-booked {
+  background: #f8fafc !important;
+  color: #cbd5e1 !important;
+  cursor: not-allowed !important;
+  text-decoration: line-through !important;
+  border-color: #f1f5f9 !important;
+}
+
+.se-cal-slot-booked:hover {
+  background: #f8fafc !important;
+  border-color: #f1f5f9 !important;
+  color: #cbd5e1 !important;
+}
+
+.se-cal-no-slots {
+  text-align: center !important;
+  color: #94a3b8 !important;
+  font-size: 13px !important;
+  padding: 20px 4px !important;
+}
+
+.se-cal-loading {
+  color: #0b468c !important;
+}
+
+.se-cal-mobile-date {
+  display: none;
+}
+
+/* Form panel (slide-in) */
+.se-cal-form-panel {
+  position: fixed !important;
+  top: 0 !important;
+  right: -500px !important;
+  width: 480px !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  background: #fff !important;
+  box-shadow: -8px 0 32px rgba(0,0,0,0.15) !important;
+  z-index: 2147483647 !important;
+  transition: right 0.3s ease !important;
+  display: flex !important;
+  flex-direction: column !important;
+  isolation: isolate !important;
+}
+
+.se-cal-form-panel.se-cal-open {
+  right: 0 !important;
+}
+
+.se-cal-overlay {
+  display: none;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: rgba(0,0,0,0.4) !important;
+  z-index: 2147483646 !important;
+}
+
+.se-cal-overlay.se-cal-open {
+  display: block !important;
+}
+
+/* Force site header behind panel when open */
+body.se-cal-panel-open header,
+body.se-cal-panel-open .thrv-header,
+body.se-cal-panel-open [class*="header"],
+body.se-cal-panel-open nav,
+body.se-cal-panel-open .tve-leads-ribbon,
+body.se-cal-panel-open #wpadminbar {
+  z-index: 1 !important;
+}
+
+.se-cal-form-header {
+  padding: 20px 24px !important;
+  background: linear-gradient(135deg, #0b468c 0%, #163d6b 100%) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-shrink: 0 !important;
+}
+
+.se-cal-form-title {
+  margin: 0 !important;
+  font-family: Montserrat, system-ui, sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 18px !important;
+  color: #fff !important;
+}
+
+.se-cal-form-close {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,0.12) !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #fff !important;
+  transition: background 0.15s ease !important;
+}
+
+.se-cal-form-close:hover {
+  background: rgba(255,255,255,0.25) !important;
+}
+
+.se-cal-form-body {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 24px !important;
+  background: #fff !important;
+}
+
+.se-cal-selected-time {
+  background: #f0f4ff !important;
+  border: 1px solid #dbe4f0 !important;
+  border-radius: 12px !important;
+  padding: 16px !important;
+  margin-bottom: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.se-cal-selected-icon {
+  width: 44px !important;
+  height: 44px !important;
+  background: linear-gradient(135deg, #0b468c, #1a6dd4) !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+.se-cal-selected-text h4 {
+  margin: 0 0 4px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #1a1a2e !important;
+  padding: 0 !important;
+}
+
+.se-cal-selected-text p {
+  margin: 0 !important;
+  font-size: 13px !important;
+  color: #64748b !important;
+  padding: 0 !important;
+}
+
+.se-cal-field {
+  margin-bottom: 16px !important;
+}
+
+.se-cal-field label {
+  display: block !important;
+  font-family: Montserrat, system-ui, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 11px !important;
+  color: #64748b !important;
+  margin-bottom: 6px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.8px !important;
+}
+
+.se-cal-field input,
+.se-cal-field select {
+  width: 100% !important;
+  padding: 12px 14px !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  font-family: system-ui, sans-serif !important;
+  font-size: 15px !important;
+  color: #1a1a2e !important;
+  outline: none !important;
+  background: #fafbfc !important;
+  transition: border-color 0.2s ease !important;
+  box-sizing: border-box !important;
+}
+
+.se-cal-field input:focus,
+.se-cal-field select:focus {
+  border-color: #0b468c !important;
+}
+
+.se-cal-field select {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  cursor: pointer !important;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2364748b%22 stroke-width=%222%22><polyline points=%226 9 12 15 18 9%22/></svg>') !important;
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+}
+
+.se-cal-consent {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  cursor: pointer !important;
+  font-size: 12px !important;
+  color: #475569 !important;
+  line-height: 1.5 !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  font-weight: normal !important;
+}
+
+.se-cal-consent input[type="checkbox"] {
+  width: 16px !important;
+  height: 16px !important;
+  margin-top: 2px !important;
+  flex-shrink: 0 !important;
+  accent-color: #0b468c !important;
+}
+
+.se-cal-error {
+  display: none;
+  padding: 12px 16px !important;
+  background: #fef2f2 !important;
+  border: 1px solid #fecaca !important;
+  border-radius: 12px !important;
+  font-size: 14px !important;
+  color: #dc2626 !important;
+  margin-bottom: 16px !important;
+  text-align: center !important;
+}
+
+.se-cal-submit {
+  width: 100% !important;
+  padding: 16px !important;
+  border: none !important;
+  border-radius: 100px !important;
+  background: linear-gradient(135deg, #16a34a, #15803d) !important;
+  color: #fff !important;
+  font-family: Montserrat, system-ui, sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+  box-shadow: 0 4px 16px rgba(22,163,74,0.3) !important;
+}
+
+.se-cal-submit:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(22,163,74,0.4) !important;
+}
+
+/* Success state */
+.se-cal-success {
+  display: none;
+  text-align: center !important;
+  padding: 40px 20px !important;
+}
+
+.se-cal-success-icon {
+  width: 72px !important;
+  height: 72px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-bottom: 20px !important;
+  box-shadow: 0 8px 32px rgba(22,163,74,0.3) !important;
+}
+
+.se-cal-success h3 {
+  margin: 0 0 8px !important;
+  font-family: Montserrat, system-ui, sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 22px !important;
+  color: #1a1a2e !important;
+}
+
+/* Referral */
+.se-cal-ref-wrap {
+  display: none;
+}
+
+.se-cal-ref-input-wrap {
+  position: relative !important;
+}
+
+.se-cal-ref-btn {
+  position: absolute !important;
+  right: 6px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  padding: 8px 14px !important;
+  border-radius: 10px !important;
+  background: #0b468c !important;
+  color: #fff !important;
+  font-family: Montserrat, system-ui, sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  cursor: pointer !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  transition: background 0.15s ease !important;
+}
+
+.se-cal-ref-btn:hover {
+  background: #0d3d7a !important;
+}
+
+.se-cal-ref-status {
+  display: none;
+  margin-top: 8px !important;
+  padding: 10px 14px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 1024px) {
+  .se-cal-body {
+    flex-direction: column !important;
+  }
+  
+  .se-cal-sidebar {
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    padding: 16px !important;
+  }
+  
+  .se-cal-week-header {
+    display: none !important;
+  }
+  
+  .se-cal-slots-container {
+    display: block !important;
+    padding: 16px !important;
+  }
+  
+  .se-cal-day-column {
+    border-right: none !important;
+    padding: 0 !important;
+    min-height: auto !important;
+    display: none !important;
+  }
+  
+  .se-cal-day-column.se-cal-active {
+    display: block !important;
+  }
+  
+  .se-cal-mobile-date {
+    display: block !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: #1a1a2e !important;
+    margin-bottom: 12px !important;
+    text-align: center !important;
+  }
+  
+  .se-cal-slot {
+    display: inline-block !important;
+    margin: 4px !important;
+    padding: 12px 20px !important;
+  }
+
+  .se-cal-day-column.se-cal-active {
+    text-align: center !important;
+  }
+}
+
+@media (min-width: 1025px) {
+  .se-cal-mobile-date {
+    display: none !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .se-cal-header {
+    padding: 16px 20px !important;
+  }
+  
+  .se-cal-title {
+    font-size: 18px !important;
+  }
+  
+  .se-cal-form-panel {
+    width: 100vw !important;
+  }
+  
+  .se-cal-form-body {
+    padding-bottom: 120px !important;
+  }
+}
+</style>
+
+<!-- Calendar Container -->
+<div class="se-cal-container" id="scheduleAtour">
+  <!-- Header -->
+  <div class="se-cal-header">
+    <div style="display:flex;justify-content:center;margin-bottom:10px;">
+      <img src="https://southendclub.com/wp-content/uploads/2025/11/Original-Logo.svg" alt="South End Club" style="height:44px;width:auto;filter:brightness(0) invert(1);" />
+    </div>
+    <h2 class="se-cal-title">Book Your Tour</h2>
+    <p class="se-cal-subtitle">Pick a day and time that works for you</p>
+  </div>
+
+  <!-- Body -->
+  <div class="se-cal-body">
+    <!-- Sidebar: Mini Calendar -->
+    <div class="se-cal-sidebar">
+      <div class="se-cal-mini-header">
+        <button type="button" class="se-cal-mini-nav" id="se-cal-prev">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.5" style="width:16px;height:16px;"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <span class="se-cal-mini-title" id="se-cal-month-label"></span>
+        <button type="button" class="se-cal-mini-nav" id="se-cal-next">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.5" style="width:16px;height:16px;"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+      <div class="se-cal-mini-grid" id="se-cal-mini-grid">
+        <div class="se-cal-mini-dow">Su</div>
+        <div class="se-cal-mini-dow">Mo</div>
+        <div class="se-cal-mini-dow">Tu</div>
+        <div class="se-cal-mini-dow">We</div>
+        <div class="se-cal-mini-dow">Th</div>
+        <div class="se-cal-mini-dow">Fr</div>
+        <div class="se-cal-mini-dow">Sa</div>
+      </div>
+    </div>
+
+    <!-- Main: Week View -->
+    <div style="flex:1;overflow:hidden;">
+      <div class="se-cal-week-header" id="se-cal-week-header"></div>
+      <div class="se-cal-slots-container" id="se-cal-slots"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay -->
+<div class="se-cal-overlay" id="se-cal-overlay"></div>
+
+<!-- Form Panel -->
+<div class="se-cal-form-panel" id="se-cal-form-panel">
+  <div class="se-cal-form-header">
+    <h2 class="se-cal-form-title">Complete Your Booking</h2>
+    <button class="se-cal-form-close" id="se-cal-form-close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <div class="se-cal-form-body">
+    <!-- Form content -->
+    <div id="se-cal-form-content">
+      <div class="se-cal-selected-time">
+        <div class="se-cal-selected-icon">
+          <svg viewBox="0 0 24 24" fill="#fff" style="width:22px;height:22px;"><path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1zm-2 6v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8H5z"/></svg>
+        </div>
+        <div class="se-cal-selected-text">
+          <h4 id="se-cal-selected-date"></h4>
+          <p id="se-cal-selected-time-text"></p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;">
+        <div class="se-cal-field" style="flex:1;">
+          <label>First Name</label>
+          <input type="text" id="se-cal-fname" placeholder="John" maxlength="25" autocomplete="given-name" />
+        </div>
+        <div class="se-cal-field" style="flex:1;">
+          <label>Last Name</label>
+          <input type="text" id="se-cal-lname" placeholder="Smith" maxlength="25" autocomplete="family-name" />
+        </div>
+      </div>
+
+      <div class="se-cal-field">
+        <label>Email</label>
+        <input type="email" id="se-cal-email" placeholder="john@example.com" maxlength="60" autocomplete="email" />
+      </div>
+
+      <div class="se-cal-field">
+        <label>Phone</label>
+        <input type="tel" id="se-cal-phone" placeholder="(310) 555-1234" maxlength="14" autocomplete="tel" />
+      </div>
+
+      <div class="se-cal-field">
+        <label>How did you hear about us?</label>
+        <select id="se-cal-heard">
+          <option value="" disabled selected>— Select —</option>
+          <option value="Friends/Family">Member Referral</option>
+          <option value="Web Search/Website">Web Search / Website</option>
+          <option value="Instagram">Instagram</option>
+          <option value="Facebook">Facebook</option>
+          <option value="Drove By">Drove By</option>
+          <option value="Email">Email</option>
+        </select>
+      </div>
+
+      <div class="se-cal-field se-cal-ref-wrap" id="se-cal-ref-wrap">
+        <label>Who referred you?</label>
+        <p style="margin:0 0 8px;font-size:12px;color:#94a3b8;">Enter the member's email or phone to verify.</p>
+        <div class="se-cal-ref-input-wrap">
+          <input type="text" id="se-cal-referral" placeholder="Email or phone number" style="padding-right:80px;" />
+          <button type="button" class="se-cal-ref-btn" id="se-cal-ref-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Match
+          </button>
+        </div>
+        <div class="se-cal-ref-status" id="se-cal-ref-status"></div>
+      </div>
+
+      <div style="padding:14px 16px;background:#f0f4ff;border-radius:12px;margin-bottom:16px;border:1px solid #dbe4f0;">
+        <label class="se-cal-consent">
+          <input type="checkbox" id="se-cal-consent" checked />
+          <span>
+            By providing your phone number and email address, you consent to the
+            <a href="https://southendclub.com/privacy-policy/" target="_blank" rel="noopener" style="color:#0b468c;text-decoration:underline;">Privacy Policy</a> and
+            <a href="https://southendclub.com/terms-conditions/" target="_blank" rel="noopener" style="color:#0b468c;text-decoration:underline;">Terms and Conditions</a>
+            and agree to receive SMS text messages from South End Club. Message and data rates may apply.
+          </span>
+        </label>
+      </div>
+
+      <div class="se-cal-error" id="se-cal-error"></div>
+
+      <button type="button" class="se-cal-submit" id="se-cal-submit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><polyline points="20 6 9 17 4 12"/></svg>
+        Confirm Tour
+      </button>
+    </div>
+
+    <!-- Success -->
+    <div class="se-cal-success" id="se-cal-success">
+      <div class="se-cal-success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:36px;height:36px;"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h3>Accepted! See you then.</h3>
+      <p id="se-cal-success-detail" style="margin:0 0 6px;font-size:15px;color:#0b468c;font-weight:600;"></p>
+      <p style="margin:0 0 8px;font-size:14px;color:#64748b;">A confirmation email will be sent shortly.</p>
+      <p style="margin:0 0 24px;font-size:15px;color:#22c55e;font-weight:600;">Have a great day! 🎉</p>
+      <a href="https://southendclub.com/memberships/#FAQs"
+        style="display:inline-block;padding:14px 32px;border-radius:100px;background:linear-gradient(135deg,#0b468c,#1a6dd4);color:#fff;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:14px;text-decoration:none;box-shadow:0 4px 16px rgba(11,70,140,0.25);"
+      >View Membership FAQs</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- JAVASCRIPT                                                               -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+  if(!document.getElementById('scheduleAtour') || !document.getElementById('se-cal-prev')) return;
+  var SE_URL = 'https://zngbawafqjntciafhxgr.supabase.co';
+  var SE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuZ2Jhd2FmcWpudGNpYWZoeGdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2ODE3NTgsImV4cCI6MjA4NjI1Nzc1OH0.NtH0Cm6gENkkYki2LUMMYlPsFvrdg8CDt63iNP7Xi4o';
+
+  var HOURS = {0:[8,16],1:[11,19],2:[11,19],3:[11,19],4:[11,19],5:[11,19],6:[8,16]};
+  var DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  var SE_SELECTED_DATE = null, SE_SELECTED_TIME = null;
+  var SE_REF_ID = null, SE_REF_REFID = null, SE_REF_NAME = '', SE_REF_EMAIL = null, SE_REF_PHONE = null;
+
+  var today = new Date();
+  var MIN_HOURS_AHEAD = 2;
+
+  // Check if today still has bookable slots (2+ hours from now)
+  function todayHasSlots(){
+    var h = HOURS[today.getDay()];
+    if(!h) return false;
+    var cutoffHour = today.getHours() + MIN_HOURS_AHEAD;
+    var cutoffMin = today.getMinutes();
+    // Round up to next 30-min slot
+    if(cutoffMin > 0){ cutoffMin = 30; }
+    if(cutoffMin >= 60){ cutoffHour++; cutoffMin = 0; }
+    return cutoffHour < h[1];
+  }
+
+  var firstAvailable = todayHasSlots() ? new Date(today) : (function(){ var t = new Date(today); t.setDate(t.getDate()+1); return t; })();
+
+  var currentMonth = new Date(firstAvailable.getFullYear(), firstAvailable.getMonth(), 1);
+  var selectedDate = firstAvailable;
+  var weekStartDate = new Date(firstAvailable);
+
+  var bookedSlotsCache = {};
+
+  function pad2(n){ return n < 10 ? '0' + n : '' + n; }
+  function dateKey(d){ return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()); }
+  function isSameDay(a, b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
+
+  /* ── Mini Calendar ─────────────────────────────────────────────── */
+  function renderMiniCalendar(){
+    document.getElementById('se-cal-month-label').textContent = MONTHS[currentMonth.getMonth()] + ' ' + currentMonth.getFullYear();
+    var grid = document.getElementById('se-cal-mini-grid');
+    var dows = grid.querySelectorAll('.se-cal-mini-dow');
+    while(grid.children.length > 7) grid.removeChild(grid.lastChild);
+
+    var firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay();
+    var daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth()+1, 0).getDate();
+
+    for(var i = 0; i < firstDay; i++){
+      var empty = document.createElement('div');
+      empty.style.cssText = 'padding:4px;';
+      grid.appendChild(empty);
+    }
+
+    for(var d = 1; d <= daysInMonth; d++){
+      var dayDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), d);
+      var el = document.createElement('div');
+      el.className = 'se-cal-mini-day';
+      el.textContent = d;
+
+      var isPast = isSameDay(dayDate, today) ? !todayHasSlots() : dayDate < today;
+      if(isPast){
+        el.classList.add('se-cal-past');
+      } else {
+        if(isSameDay(dayDate, today)) el.classList.add('se-cal-today');
+        if(selectedDate && isSameDay(dayDate, selectedDate)) el.classList.add('se-cal-selected');
+        el.dataset.date = dateKey(dayDate);
+        el.addEventListener('click', function(){
+          var parts = this.dataset.date.split('-');
+          selectDate(new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2])));
+        });
+      }
+      grid.appendChild(el);
+    }
+  }
+
+  document.getElementById('se-cal-prev').addEventListener('click', function(){
+    currentMonth.setMonth(currentMonth.getMonth() - 1);
+    var minMonth = new Date(firstAvailable.getFullYear(), firstAvailable.getMonth(), 1);
+    if(currentMonth < minMonth) currentMonth = new Date(minMonth);
+    renderMiniCalendar();
+  });
+
+  document.getElementById('se-cal-next').addEventListener('click', function(){
+    currentMonth.setMonth(currentMonth.getMonth() + 1);
+    renderMiniCalendar();
+  });
+
+  /* ── Week View ─────────────────────────────────────────────────── */
+  function renderWeekView(){
+    var header = document.getElementById('se-cal-week-header');
+    var slots = document.getElementById('se-cal-slots');
+    header.innerHTML = '';
+    slots.innerHTML = '';
+
+    for(var i = 0; i < 7; i++){
+      var date = new Date(weekStartDate);
+      date.setDate(date.getDate() + i);
+
+      var dayHeader = document.createElement('div');
+      dayHeader.className = 'se-cal-week-day';
+      if(isSameDay(date, today)) dayHeader.classList.add('se-cal-week-day-today');
+      if(selectedDate && isSameDay(date, selectedDate)) dayHeader.classList.add('se-cal-week-day-selected');
+      dayHeader.innerHTML = '<div class="se-cal-week-dow">' + DAYS_SHORT[date.getDay()] + '</div>' +
+        '<div class="se-cal-week-date">' + date.getDate() + '</div>';
+      header.appendChild(dayHeader);
+
+      var column = document.createElement('div');
+      column.className = 'se-cal-day-column';
+      column.dataset.date = dateKey(date);
+      if(selectedDate && isSameDay(date, selectedDate)) column.classList.add('se-cal-active');
+
+      var mobileLabel = document.createElement('div');
+      mobileLabel.className = 'se-cal-mobile-date';
+      mobileLabel.textContent = DAYS[date.getDay()] + ', ' + MONTHS[date.getMonth()] + ' ' + date.getDate();
+      column.appendChild(mobileLabel);
+
+      var dayIsPast = isSameDay(date, today) ? !todayHasSlots() : date < today;
+      if(dayIsPast){
+        var noSlots = document.createElement('div');
+        noSlots.className = 'se-cal-no-slots';
+        noSlots.textContent = '—';
+        column.appendChild(noSlots);
+      } else {
+        var h = HOURS[date.getDay()];
+        if(!h){
+          var noSlots = document.createElement('div');
+          noSlots.className = 'se-cal-no-slots';
+          noSlots.textContent = 'Closed';
+          column.appendChild(noSlots);
+        } else {
+          var loading = document.createElement('div');
+          loading.className = 'se-cal-no-slots se-cal-loading';
+          loading.textContent = 'Loading...';
+          loading.id = 'se-cal-loading-' + dateKey(date);
+          column.appendChild(loading);
+
+          fetchAndRenderSlots(date, column, h);
+        }
+      }
+
+      slots.appendChild(column);
+    }
+  }
+
+  function fetchAndRenderSlots(date, column, h){
+    var dk = dateKey(date);
+
+    if(bookedSlotsCache[dk]){
+      renderSlots(date, column, h, bookedSlotsCache[dk]);
+      return;
+    }
+
+    fetch(SE_URL + '/functions/v1/check-availability', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SE_KEY, 'Authorization': 'Bearer ' + SE_KEY },
+      body: JSON.stringify({ date: dk })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var booked = {};
+      if(data.booked_slots){
+        for(var i = 0; i < data.booked_slots.length; i++){
+          booked[data.booked_slots[i]] = true;
+        }
+      }
+      bookedSlotsCache[dk] = booked;
+      renderSlots(date, column, h, booked);
+    })
+    .catch(function(){
+      bookedSlotsCache[dk] = {};
+      renderSlots(date, column, h, {});
+    });
+  }
+
+  function renderSlots(date, column, h, booked){
+    var dk = dateKey(date);
+    var loading = document.getElementById('se-cal-loading-' + dk);
+    if(loading) loading.remove();
+    var colLoading = column.querySelector('.se-cal-loading');
+    if(colLoading) colLoading.remove();
+
+    var isToday = isSameDay(date, today);
+    var nowHour = today.getHours();
+    var nowMin = today.getMinutes();
+
+    for(var hr = h[0]; hr < h[1]; hr++){
+      for(var min = 0; min < 60; min += 30){
+        // Skip slots less than 2 hours from now if today
+        if(isToday){
+          var slotMinutes = hr * 60 + min;
+          var nowMinutes = nowHour * 60 + nowMin;
+          if(slotMinutes < nowMinutes + MIN_HOURS_AHEAD * 60) continue;
+        }
+
+        var ampm = hr >= 12 ? 'PM' : 'AM';
+        var h12 = hr > 12 ? hr - 12 : (hr === 0 ? 12 : hr);
+        var mStr = min === 0 ? '00' : '30';
+        var label = h12 + ':' + mStr + ampm.toLowerCase();
+        var labelFull = h12 + ':' + mStr + ' ' + ampm;
+
+        var slot = document.createElement('div');
+        slot.className = 'se-cal-slot';
+        slot.textContent = label;
+        slot.dataset.date = dk;
+        slot.dataset.time = labelFull;
+
+        if(booked[labelFull]){
+          slot.classList.add('se-cal-slot-booked');
+        } else {
+          slot.addEventListener('click', function(){
+            selectSlot(this.dataset.date, this.dataset.time);
+          });
+        }
+
+        column.appendChild(slot);
+      }
+    }
+  }
+
+  /* ── Select Date ──────────────────────────────────────────────── */
+  function selectDate(date){
+    selectedDate = date;
+
+    // Start week view from selected date so it's the first column
+    weekStartDate = new Date(date);
+
+    if(date.getMonth() !== currentMonth.getMonth() || date.getFullYear() !== currentMonth.getFullYear()){
+      currentMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    }
+
+    renderMiniCalendar();
+    renderWeekView();
+  }
+
+  /* ── Select Slot ──────────────────────────────────────────────── */
+  function selectSlot(dateStr, time){
+    document.querySelectorAll('.se-cal-slot-selected').forEach(function(s){
+      s.classList.remove('se-cal-slot-selected');
+    });
+
+    var slot = document.querySelector('.se-cal-slot[data-date="' + dateStr + '"][data-time="' + time + '"]');
+    if(slot) slot.classList.add('se-cal-slot-selected');
+
+    var parts = dateStr.split('-');
+    var date = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+
+    SE_SELECTED_DATE = dateStr;
+    SE_SELECTED_TIME = time;
+
+    document.getElementById('se-cal-selected-date').textContent = DAYS[date.getDay()] + ', ' + MONTHS[date.getMonth()] + ' ' + date.getDate();
+    document.getElementById('se-cal-selected-time-text').textContent = time + ' (30 min tour)';
+
+    openFormPanel();
+  }
+
+  /* ── Form Panel ───────────────────────────────────────────────── */
+  function openFormPanel(){
+    document.getElementById('se-cal-overlay').classList.add('se-cal-open');
+    document.getElementById('se-cal-form-panel').classList.add('se-cal-open');
+    document.body.classList.add('se-cal-panel-open');
+    document.body.style.overflow = 'hidden';
+    var heardSelect = document.getElementById('se-cal-heard');
+    heardSelect.selectedIndex = 0;
+  }
+
+  function closeFormPanel(){
+    document.getElementById('se-cal-overlay').classList.remove('se-cal-open');
+    document.getElementById('se-cal-form-panel').classList.remove('se-cal-open');
+    document.body.classList.remove('se-cal-panel-open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('se-cal-form-close').addEventListener('click', closeFormPanel);
+  document.getElementById('se-cal-overlay').addEventListener('click', closeFormPanel);
+
+  /* ── Phone auto-format ──────────────────────────────────────────── */
+  var phoneInput = document.getElementById('se-cal-phone');
+  phoneInput.addEventListener('input', function(){
+    var v = this.value.replace(/\D/g, '');
+    if(v.length >= 6) this.value = '(' + v.slice(0,3) + ') ' + v.slice(3,6) + '-' + v.slice(6,10);
+    else if(v.length >= 3) this.value = '(' + v.slice(0,3) + ') ' + v.slice(3);
+    else this.value = v;
+  });
+
+  /* ── How Heard → show/hide referral ─────────────────────────────── */
+  document.getElementById('se-cal-heard').addEventListener('change', function(){
+    document.getElementById('se-cal-ref-wrap').style.display = this.value === 'Friends/Family' ? 'block' : 'none';
+  });
+
+  /* ── Referral Verification ──────────────────────────────────────── */
+  document.getElementById('se-cal-ref-btn').addEventListener('click', function(){
+    var input = document.getElementById('se-cal-referral');
+    var status = document.getElementById('se-cal-ref-status');
+    var btn = this;
+    var val = input.value.trim();
+
+    if(!val){
+      status.style.display = 'block';
+      status.style.background = '#fef2f2';
+      status.style.color = '#dc2626';
+      status.textContent = "Please enter the member's email or phone.";
+      return;
+    }
+
+    var origHtml = btn.innerHTML;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px;animation:seBkSpin 0.8s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="31" stroke-dashoffset="10"/></svg>';
+    status.style.display = 'block';
+    status.style.background = '#f8fafc';
+    status.style.color = '#64748b';
+    status.textContent = 'Searching...';
+
+    var searchType = val.indexOf('@') >= 0 ? 'email' : (val.replace(/\D/g,'').length >= 7 ? 'phone' : 'name');
+
+    fetch(SE_URL + '/functions/v1/validate-referral', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SE_KEY, 'Authorization': 'Bearer ' + SE_KEY },
+      body: JSON.stringify({ search_type: searchType, search_value: val })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      btn.innerHTML = origHtml;
+      if(d.found){
+        SE_REF_ID = d.member.id;
+        SE_REF_REFID = d.member.ref_id || null;
+        SE_REF_NAME = (d.member.first_name || '') + ' ' + (d.member.last_name || '');
+        SE_REF_EMAIL = d.member.email || null;
+        SE_REF_PHONE = d.member.cell_phone || null;
+        status.style.background = '#f0fdf4'; status.style.color = '#16a34a';
+        status.innerHTML = '<span style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Member matched: <strong>' + SE_REF_NAME.trim() + '</strong></span>';
+        input.style.borderColor = '#22c55e';
+      } else {
+        SE_REF_ID = null; SE_REF_REFID = null; SE_REF_NAME = ''; SE_REF_EMAIL = null; SE_REF_PHONE = null;
+        status.style.background = '#fffbeb'; status.style.color = '#b45309';
+        status.textContent = 'No member found with that email or phone.';
+        input.style.borderColor = '#f59e0b';
+      }
+    })
+    .catch(function(){
+      btn.innerHTML = origHtml;
+      status.style.background = '#fffbeb'; status.style.color = '#b45309';
+      status.textContent = "Could not verify right now — we'll follow up.";
+    });
+  });
+
+  /* ── Submit ─────────────────────────────────────────────────────── */
+  document.getElementById('se-cal-submit').addEventListener('click', function(){
+    var fn = document.getElementById('se-cal-fname').value.trim();
+    var ln = document.getElementById('se-cal-lname').value.trim();
+    var em = document.getElementById('se-cal-email').value.trim();
+    var ph = document.getElementById('se-cal-phone').value.trim();
+    var heard = document.getElementById('se-cal-heard').value;
+    var consent = document.getElementById('se-cal-consent');
+    var errEl = document.getElementById('se-cal-error');
+    var submitBtn = document.getElementById('se-cal-submit');
+
+    if(!fn || !ln){ errEl.textContent = 'Please enter your name.'; errEl.style.display = 'block'; return; }
+    if(!em || em.indexOf('@') < 0){ errEl.textContent = 'Please enter a valid email.'; errEl.style.display = 'block'; return; }
+    if(ph.replace(/\D/g,'').length !== 10){ errEl.textContent = 'Please enter a valid 10-digit phone.'; errEl.style.display = 'block'; return; }
+    if(!heard){ errEl.textContent = 'Please select how you heard about us.'; errEl.style.display = 'block'; return; }
+    if(!consent.checked){ errEl.textContent = 'Please accept the terms to continue.'; errEl.style.display = 'block'; return; }
+    errEl.style.display = 'none';
+
+    submitBtn.style.pointerEvents = 'none'; submitBtn.style.opacity = '0.7';
+    submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;animation:seBkSpin 0.8s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="31" stroke-dashoffset="10"/></svg> Booking...';
+
+    var refInput = document.getElementById('se-cal-referral');
+    var payload = {
+      first_name: fn,
+      last_name: ln,
+      email: em,
+      cell_phone: ph,
+      preferred_date: SE_SELECTED_DATE,
+      preferred_time: SE_SELECTED_TIME,
+      how_heard: heard || null,
+      referral_member: (refInput && refInput.value.trim()) ? (SE_REF_NAME || refInput.value.trim()) : null,
+      referral_member_id: SE_REF_ID || null,
+      referral_member_ref_id: SE_REF_REFID || null,
+      referral_member_email: SE_REF_EMAIL || null,
+      referral_member_phone: SE_REF_PHONE || null,
+      send_texts: '1',
+      send_calls: '1',
+      send_emails: 'now',
+      source_page: window.location.href,
+      device_type: window.innerWidth < 768 ? 'mobile' : 'desktop',
+      utm_source: (new URLSearchParams(window.location.search)).get('utm_source'),
+      utm_medium: (new URLSearchParams(window.location.search)).get('utm_medium'),
+      utm_campaign: (new URLSearchParams(window.location.search)).get('utm_campaign')
+    };
+
+    fetch(SE_URL + '/functions/v1/book-tour', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SE_KEY, 'Authorization': 'Bearer ' + SE_KEY },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+    .then(function(res){
+      if(res.ok && res.data.success){
+        document.getElementById('se-cal-form-content').style.display = 'none';
+        var parts = SE_SELECTED_DATE.split('-');
+        var dateObj = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+        document.getElementById('se-cal-success-detail').textContent = DAYS[dateObj.getDay()] + ', ' + MONTHS[dateObj.getMonth()] + ' ' + dateObj.getDate() + ' at ' + SE_SELECTED_TIME;
+        var headingEl = document.querySelector('#se-cal-success h3');
+        if(headingEl && res.data.appointment_rescheduled){
+          headingEl.textContent = 'Rescheduled! See you then.';
+        }
+        document.getElementById('se-cal-success').style.display = 'block';
+      } else {
+        errEl.textContent = res.data.error || 'Something went wrong. Please try again.';
+        errEl.style.display = 'block';
+        resetBtn();
+      }
+    })
+    .catch(function(){
+      errEl.textContent = 'Network error — please check your connection.';
+      errEl.style.display = 'block';
+      resetBtn();
+    });
+
+    function resetBtn(){
+      submitBtn.style.pointerEvents = ''; submitBtn.style.opacity = '1';
+      submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><polyline points="20 6 9 17 4 12"/></svg> Confirm Tour';
+    }
+  });
+
+  /* ── Initialize ───────────────────────────────────────────────── */
+  renderMiniCalendar();
+  renderWeekView();
+
+})();
+</script>
+</div></div>
+</div>

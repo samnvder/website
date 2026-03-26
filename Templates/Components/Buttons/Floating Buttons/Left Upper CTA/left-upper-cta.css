@@ -1,0 +1,157 @@
+/* =========================================================
+   SOUTH END CLUB — REUSABLE COMPONENT
+   Left Upper Smaller CTA (Floating Button)
+   =========================================================
+   
+   USAGE
+   ─────────────────────────────────────────────────────────
+   1. Add the HTML from  left-upper-cta.html  inside <body>.
+   2. Link or paste this CSS into the page.
+   3. Include  left-upper-cta.js  (or paste the <script>).
+   4. Customise by changing:
+      • data-float-target   — selector the button scrolls to on click
+      • data-float-hero     — selector of the hero section (button hides while hero is on-screen)
+      • data-idle-delay     — ms before the button fades to ghost (default 2000)
+      • Link text inside <span>
+      • href (fallback for non-JS)
+   
+   DESIGN TOKENS  (inherits the site-wide CSS variables)
+   ─────────────────────────────────────────────────────────
+   --accent-blue, --accent-teal-bright, --white
+   Falls back to hard-coded values if vars are missing.
+   =========================================================
+*/
+
+
+/* ===========================
+   BASE — Desktop-first
+   =========================== */
+
+.sec-float-cta {
+  position: fixed !important;
+  top: calc(env(safe-area-inset-top, 0px) + 198px) !important;
+  left: 18px !important;
+  right: auto !important;
+  z-index: 2147483000 !important;          /* Above everything incl. Thrive */
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+
+  padding: 10px 18px !important;
+  font-family: 'Montserrat', sans-serif !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+
+  /* Visual style — matches site .btn-primary gradient */
+  background: linear-gradient(135deg,
+    var(--accent-blue, #0b468c),
+    var(--accent-teal-bright, #2a5a63)) !important;
+  color: var(--white, #ffffff) !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 100px !important;
+
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.24),
+    0  8px 26px rgba(11, 70, 140, 0.34) !important;
+
+  /* Hidden by default — JS adds .is-visible after hero scroll */
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(12px) !important;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease,
+    box-shadow 0.3s ease !important;
+}
+
+
+/* ===========================
+   STATE: Visible
+   =========================== */
+
+.sec-float-cta.is-visible {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translateY(0) !important;
+}
+
+
+/* ===========================
+   STATE: Idle / Ghost
+   =========================== */
+
+.sec-float-cta.is-idle {
+  opacity: 0.25 !important;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    0 2px  8px rgba(11, 70, 140, 0.1) !important;
+}
+
+
+/* ===========================
+   STATE: Hover (always full)
+   =========================== */
+
+.sec-float-cta:hover {
+  opacity: 1 !important;
+  transform: translateY(-2px) !important;
+  box-shadow:
+    0 14px 36px rgba(0, 0, 0, 0.3),
+    0 10px 30px rgba(11, 70, 140, 0.4) !important;
+}
+
+
+/* ===========================
+   Inner <span> — Thrive-proof
+   =========================== */
+
+.sec-float-cta span {
+  font-family: inherit !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  letter-spacing: inherit !important;
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+
+/* Tablet (≤ 1024px) — keep on left */
+@media (max-width: 1024px) {
+  .sec-float-cta {
+    left: 18px !important;
+    right: auto !important;
+  }
+}
+
+/* Mobile (≤ 768px) */
+@media (max-width: 768px) {
+  .sec-float-cta {
+    top: calc(env(safe-area-inset-top, 0px) + 62px) !important;
+    left: 16px !important;
+    right: auto !important;
+    padding: 8px 14px !important;
+    font-size: 0.68rem !important;
+    letter-spacing: 0.05em !important;
+  }
+}
+
+/* Small mobile (≤ 420px) */
+@media (max-width: 420px) {
+  .sec-float-cta {
+    top: calc(env(safe-area-inset-top, 0px) + 76px) !important;
+    left: 12px !important;
+    right: auto !important;
+    padding: 7px 12px !important;
+    font-size: 0.65rem !important;
+  }
+}

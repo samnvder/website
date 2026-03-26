@@ -1,0 +1,635 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+
+<!-- Mobile Optimizations -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Contact South End Club">
+<meta name="format-detection" content="telephone=yes">
+<meta name="msapplication-TileColor" content="#0b468c">
+
+<!-- Primary Meta Tags -->
+<title>Contact Us | South End Racquet & Health Club | Torrance, CA</title>
+<meta name="title" content="Contact Us | South End Racquet & Health Club | Torrance, CA">
+<meta name="description" content="Get in touch with South End Racquet & Health Club in Torrance, CA. Contact us for membership inquiries, tour bookings, event planning, or general questions. Visit us at 2800 Skypark Dr.">
+<meta name="keywords" content="contact South End Club, health club Torrance, gym contact, fitness center Torrance, membership inquiry, schedule tour, South Bay fitness">
+<meta name="author" content="South End Racquet & Health Club">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0b468c">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://southendclub.com/contact-us/">
+<meta property="og:title" content="Contact Us | South End Racquet & Health Club | Torrance, CA">
+<meta property="og:description" content="Get in touch with South End Racquet & Health Club. Contact us for membership inquiries, tour bookings, event planning, or general questions.">
+<meta property="og:image" content="https://southendclub.com/wp-content/uploads/2025/11/Original-Logo.svg">
+<meta property="og:site_name" content="South End Racquet & Health Club">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://southendclub.com/contact-us/">
+<meta name="twitter:title" content="Contact Us | South End Racquet & Health Club | Torrance, CA">
+<meta name="twitter:description" content="Get in touch with South End Racquet & Health Club. Contact us for membership inquiries, tour bookings, or general questions.">
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://southendclub.com/contact-us/">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="https://southendclub.com/wp-content/uploads/2025/11/Original-Logo.svg">
+
+<!-- Preconnect for Performance -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+
+<!-- Preload Critical Resources -->
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" as="style">
+<link rel="preload" href="Contact Us CSS.css" as="style">
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Stylesheet -->
+<link rel="stylesheet" href="Contact Us CSS.css">
+
+<!-- Contact Page Specific Header Override -->
+<style>
+  /* Contact Us CTA Button - Desktop & Mobile */
+  .sec-contact-cta-wrapper {
+    display: block;
+  }
+  
+  /* Desktop: In nav-left, same position as "Join Today" button but lower */
+  @media (min-width: 1051px) {
+    .sec-nav-left {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: flex-start !important;
+    }
+    
+    .sec-nav-left .sec-contact-cta-wrapper {
+      display: block !important;
+      margin-top: 8px !important; /* Position lower */
+      margin-left: 0 !important;
+      order: 3 !important; /* After logo */
+    }
+    
+    .sec-nav-left .sec-contact-cta {
+      display: inline-flex !important;
+      align-items: center;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #0b468c, #2a5a63) !important;
+      color: #ffffff !important;
+      border-radius: 30px;
+      font-weight: 600 !important;
+      font-size: 13px;
+      font-family: 'Montserrat', sans-serif !important;
+      box-shadow: 0 4px 16px rgba(11, 70, 140, 0.3);
+      transition: 0.3s ease;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    
+    .sec-nav-left .sec-contact-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(11, 70, 140, 0.4);
+      background: linear-gradient(135deg, #204147, #2a5a63) !important;
+    }
+    
+    /* Hide the Join Today button on contact page */
+    .contact-page .sec-nav-left > .sec-nav-cta:first-child {
+      display: none !important;
+    }
+  }
+  
+  /* Mobile: Simple button following global CTA styling */
+  @media (max-width: 1050px) {
+    .contact-mobile-button {
+      display: block !important;
+      position: fixed;
+      right: 12px;
+      top: 80px;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    
+    .contact-mobile-button.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .contact-mobile-button.faded {
+      opacity: 0.15;
+      transition: opacity 0.4s ease;
+    }
+    
+    .contact-mobile-button a {
+      display: block !important;
+      text-align: center !important;
+      width: auto !important;
+      max-width: 280px !important;
+      margin: 0 auto !important;
+      padding: 14px 24px !important;
+      font-size: 15px !important;
+      line-height: 1.4 !important;
+      box-sizing: border-box !important;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-teal-bright)) !important;
+      color: var(--white) !important;
+      border-radius: 30px !important;
+      font-weight: 600 !important;
+      font-family: 'Montserrat', sans-serif !important;
+      text-decoration: none !important;
+      box-shadow: 0 4px 16px rgba(11, 70, 140, 0.3) !important;
+      transition: 0.3s ease !important;
+    }
+    
+    .contact-mobile-button a:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 24px rgba(11, 70, 140, 0.4) !important;
+      background: linear-gradient(135deg, var(--accent-teal), var(--accent-teal-bright)) !important;
+    }
+  }
+</style>
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HealthClub",
+  "name": "South End Racquet & Health Club",
+  "description": "Premier health and racquet club in Torrance, CA offering fitness, pools, tennis, and more.",
+  "url": "https://southendclub.com/",
+  "telephone": "+1-310-530-0630",
+  "email": "info@southendclub.com",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "2800 Skypark Dr",
+    "addressLocality": "Torrance",
+    "addressRegion": "CA",
+    "postalCode": "90505",
+    "addressCountry": "US"
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "06:00",
+      "closes": "21:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Saturday", "Sunday"],
+      "opens": "07:00",
+      "closes": "18:00"
+    }
+  ]
+}
+</script>
+
+
+
+<!-- =========================
+     HERO SECTION
+========================== -->
+<section class="contact-hero" style="background-image: url('https://southendclub.com/wp-content/uploads/2025/12/IMG_1929-scaled.jpg');">
+  <div class="contact-hero-content">
+    <img src="https://southendclub.com/wp-content/uploads/2025/11/Original-Logo.svg" alt="South End Racquet & Health Club" class="contact-hero-logo">
+    
+    <h1 class="contact-hero-title">Get In Touch</h1>
+    <p class="contact-hero-subtitle">We'd love to hear from you. Whether you have questions about memberships, want to schedule a tour, or need event information — our team is here to help.</p>
+    
+    <p class="hero-contact-intro">Quick Contact</p>
+    
+    <div class="hero-contact-pills">
+      <a href="tel:3105300630" class="hero-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+        </svg>
+        (310) 530-0630
+      </a>
+      <a href="mailto:info@southendclub.com" class="hero-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+        </svg>
+        info@southendclub.com
+      </a>
+    </div>
+  </div>
+  
+  <div class="scroll-indicator">
+    <span>EXPLORE</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+
+<!-- =========================
+     CONTACT FORM SECTION
+========================== -->
+<section class="form-section" id="contact-form">
+  <div class="form-container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-label">
+        <span class="label-line"></span>
+        <span class="section-label-text">Send Us a Message</span>
+        <span class="label-line"></span>
+      </div>
+      <h2 class="section-title">Contact Form</h2>
+      <p class="section-subtitle">Fill out the form below and our team will get back to you within 24 hours.</p>
+    </div>
+    
+    <div class="form-wrapper animate-on-scroll">
+      <!-- Zapier Interfaces Script -->
+      <script type="module" src="https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js"></script>
+
+<div class="zapier-interfaces-wrapper">
+        <zapier-interfaces-page-embed 
+          page-id="cm4kje8hw001hp13agzjz9ul9" 
+          test-id="cm4kje8hw001hp13agzjz9ul9-zapier-interfaces-page-embed-iframe" 
+          no-background="true" 
+          class="hydrated">
+  </zapier-interfaces-page-embed>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- =========================
+     MAP & LOCATION SECTION
+========================== -->
+<section class="location-section">
+  <div class="location-grid">
+    <div class="location-info animate-on-scroll">
+      <div class="section-label">
+        <span class="label-line"></span>
+        <span class="section-label-text">Visit Us</span>
+      </div>
+      <h2 class="section-title">Our Location</h2>
+      
+      <div class="location-address">
+        <div class="location-address-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+        </div>
+        <div class="location-address-text">
+          <h4>South End Racquet & Health Club</h4>
+          <p>
+            <a href="https://www.google.com/maps/place/2800+Skypark+Dr,+Torrance,+CA+90505" target="_blank" class="address-link">2800 Skypark Dr<br>Torrance, CA 90505</a>
+          </p>
+        </div>
+      </div>
+      
+      <div class="hours-container">
+        <div class="hours-box">
+          <h4>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            Club Hours
+          </h4>
+          <div class="hours-row">
+            <span class="hours-day">Monday – Friday</span>
+            <span class="hours-time"><strong>6 AM – 9 PM</strong></span>
+          </div>
+          <div class="hours-row">
+            <span class="hours-day">Saturday – Sunday</span>
+            <span class="hours-time"><strong>7 AM – 6 PM</strong></span>
+          </div>
+          <div class="hours-row summer-hours-row">
+            <span class="hours-day">☀️ Summer: Sat–Sun</span>
+            <span class="hours-time"><strong>7 AM – 7 PM</strong></span>
+          </div>
+        </div>
+        
+        <div class="holiday-hours-box">
+          <h4>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            Holiday Hours
+          </h4>
+          <div class="holiday-info">
+            <p class="holiday-closed"><strong>Closed:</strong> Thanksgiving, Christmas Day, New Year's Day & Easter</p>
+            <p class="holiday-limited">Christmas Eve, New Year's Eve, Labor Day & Memorial Day: <strong>7 AM – 2 PM</strong></p>
+          </div>
+        </div>
+      </div>
+      
+      <a href="https://www.google.com/maps/dir//2800+Skypark+Dr,+Torrance,+CA+90505" target="_blank" class="directions-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+        </svg>
+        Get Directions
+      </a>
+    </div>
+    
+    <div class="map-container animate-on-scroll">
+      <!-- Google Maps Embed -->
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3314.0890374123!2d-118.3445!3d33.8389!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2ca1f53b86c65%3A0x1d2a6d7a8e7c3b5!2s2800%20Skypark%20Dr%2C%20Torrance%2C%20CA%2090505!5e0!3m2!1sen!2sus!4v1703275200000!5m2!1sen!2sus" 
+        width="100%" 
+        height="450" 
+        style="border:0;" 
+        allowfullscreen="" 
+        loading="lazy" 
+        referrerpolicy="no-referrer-when-downgrade"
+        title="South End Club Location Map">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+
+<!-- =========================
+     CONTACT CARDS SECTION
+========================== -->
+<section class="contact-section" id="main-content">
+  <div class="contact-container">
+    <div class="section-header animate-on-scroll">
+      <div class="section-label">
+        <span class="label-line"></span>
+        <span class="section-label-text">How Can We Help?</span>
+        <span class="label-line"></span>
+      </div>
+      <h2 class="section-title">Connect With Us</h2>
+      <p class="section-subtitle">Choose the best way to reach our team based on your needs.</p>
+    </div>
+    
+    <div class="contact-grid animate-on-scroll">
+      <!-- Membership Inquiries -->
+      <div class="contact-card">
+        <div class="contact-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+            <path d="M7 8h4"></path>
+            <path d="M7 12h10"></path>
+            <path d="M7 16h6"></path>
+          </svg>
+        </div>
+        <h3>Membership Inquiries</h3>
+        <p>Interested in joining? Learn about our membership options and schedule a personal tour.</p>
+        <div class="card-cta-group">
+          <a href="https://southendclub.com/schedule-a-tour/" class="cta-pill cta-pill-primary">Schedule a Tour</a>
+          <a href="mailto:s@southendclub.com" class="cta-pill cta-pill-email">Email Sam</a>
+          <a href="sms:+13108965462" class="cta-pill cta-pill-text">
+            <span class="text-desktop">Text 310-896-5462</span>
+            <span class="text-mobile">Text Sam</span>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Events & Banquets -->
+      <div class="contact-card">
+        <div class="contact-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        </div>
+        <h3>Events & Banquets</h3>
+        <p>Planning a special event? Our versatile venues are perfect for celebrations of all sizes.</p>
+        <div class="card-cta-group">
+          <a href="https://southendclub.com/events/#event-form" class="cta-pill cta-pill-primary">Plan Your Event</a>
+          <a href="mailto:events@southendclub.com" class="cta-pill cta-pill-email">Email Nicolette</a>
+        </div>
+      </div>
+      
+      <!-- General Questions -->
+      <div class="contact-card">
+        <div class="contact-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        </div>
+        <h3>General Questions</h3>
+        <p>Have questions about our facilities, programs, or services? We're happy to help.</p>
+        <div class="card-cta-group">
+          <a href="tel:3105300630" class="cta-pill cta-pill-primary cta-pill-phone">
+            <span class="phone-desktop">(310) 530-0630</span>
+            <span class="phone-mobile">Call Us Now</span>
+          </a>
+          <a href="mailto:info@southendclub.com" class="cta-pill cta-pill-email">Email The Club</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- =========================
+     CTA SECTION
+========================== -->
+<section class="cta-section">
+  <div class="cta-container">
+    <div class="cta-card animate-on-scroll">
+      <h2>Ready to Experience the Club?</h2>
+      <p>The best way to discover everything South End has to offer is to see it for yourself. Schedule a personalized tour and let us show you around our world-class facilities.</p>
+      <a href="https://southendclub.com/schedule-a-tour/" class="cta-btn">
+        <span>Book Your Tour Today</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+</div>
+</section>
+
+
+<!-- =========================
+     JAVASCRIPT
+========================== -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  
+  // Add contact-page class to body for styling
+  document.body.classList.add('contact-page');
+  
+  // Function to add Contact Us CTA
+  function addContactUsCTA() {
+    // Desktop nav - add to nav-left (same spot as Join Today)
+    if (window.innerWidth > 1050) {
+      const navLeft = document.querySelector('.sec-nav-left');
+      if (navLeft) {
+        let contactCtaWrapper = navLeft.querySelector('.sec-contact-cta-wrapper');
+        if (!contactCtaWrapper) {
+          contactCtaWrapper = document.createElement('div');
+          contactCtaWrapper.className = 'sec-contact-cta-wrapper';
+          contactCtaWrapper.innerHTML = '<a href="#contact-form" class="sec-contact-cta" draggable="false">Contact Us</a>';
+          // Insert after the logo
+          const logo = navLeft.querySelector('.sec-logo');
+          if (logo) {
+            // Insert after logo (as next sibling)
+            if (logo.nextSibling) {
+              navLeft.insertBefore(contactCtaWrapper, logo.nextSibling);
+            } else {
+              navLeft.appendChild(contactCtaWrapper);
+            }
+          } else {
+            // If no logo, just append
+            navLeft.appendChild(contactCtaWrapper);
+          }
+        }
+        // Ensure it's visible and styled
+        if (contactCtaWrapper) {
+          contactCtaWrapper.style.display = 'block';
+          const link = contactCtaWrapper.querySelector('.sec-contact-cta');
+          if (link) {
+            link.style.display = 'inline-flex';
+          }
+        }
+      }
+    } else {
+      // Remove from desktop if window is small
+      const navLeft = document.querySelector('.sec-nav-left');
+      if (navLeft) {
+        const existingDesktopCta = navLeft.querySelector('.sec-contact-cta-wrapper');
+        if (existingDesktopCta) {
+          existingDesktopCta.remove();
+        }
+      }
+    }
+  }
+  
+  // Create mobile simple button
+  function createMobileButton() {
+    if (window.innerWidth <= 1050) {
+      // Check if mobile button already exists
+      let mobileButton = document.querySelector('.contact-mobile-button');
+      if (!mobileButton) {
+        mobileButton = document.createElement('div');
+        mobileButton.className = 'contact-mobile-button';
+        mobileButton.innerHTML = '<a href="#contact-form">Contact Us</a>';
+        document.body.appendChild(mobileButton);
+        
+        // Show button after hero
+        const hero = document.querySelector('.contact-hero');
+        if (hero) {
+          const heroObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                mobileButton.classList.remove('visible');
+                mobileButton.classList.remove('faded');
+              } else {
+                mobileButton.classList.add('visible');
+                // Auto-fade after 1 second
+                setTimeout(() => {
+                  if (mobileButton && mobileButton.classList.contains('visible')) {
+                    mobileButton.classList.add('faded');
+                  }
+                }, 1000);
+              }
+            });
+          }, { threshold: 0.5 });
+          heroObserver.observe(hero);
+        }
+        
+        // Show button on scroll/touch
+        let buttonFadeTimeout;
+        function showButton() {
+          if (mobileButton && mobileButton.classList.contains('visible')) {
+            mobileButton.classList.remove('faded');
+          }
+          clearTimeout(buttonFadeTimeout);
+          buttonFadeTimeout = setTimeout(() => {
+            if (mobileButton && mobileButton.classList.contains('visible')) {
+              mobileButton.classList.add('faded');
+            }
+          }, 1000);
+        }
+        window.addEventListener('scroll', showButton, { passive: true });
+        window.addEventListener('touchstart', showButton, { passive: true });
+        window.addEventListener('touchmove', showButton, { passive: true });
+      }
+    } else {
+      // Remove mobile button on desktop
+      const mobileButton = document.querySelector('.contact-mobile-button');
+      if (mobileButton) {
+        mobileButton.remove();
+      }
+    }
+  }
+  
+  // Add on load
+  addContactUsCTA();
+  createMobileButton();
+  
+  // Update on resize
+  let resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+      addContactUsCTA();
+      createMobileButton();
+    }, 250);
+  });
+  
+  // Smooth scroll for Contact Us link
+  document.querySelectorAll('a[href="#contact-form"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector('#contact-form');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Close mobile nav if open
+        const mobileNavInner = document.getElementById('secMenuWrapper');
+        if (mobileNavInner && mobileNavInner.classList.contains('sec-menu-open')) {
+          document.body.classList.remove('sec-menu-active');
+          mobileNavInner.classList.remove('sec-menu-open');
+        }
+      }
+    });
+  });
+  
+  
+  // Scroll animations
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.15
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const delay = entry.target.dataset.delay || 0;
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, delay);
+      }
+    });
+  }, observerOptions);
+
+  document.querySelectorAll('.animate-on-scroll').forEach(el => {
+    observer.observe(el);
+  });
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+});
+</script>
+
+<!-- See It For Yourself – references Components/Buttons/tour-button.html -->

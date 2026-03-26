@@ -1,0 +1,639 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   SOUTH END CLUB — TYPOGRAPHY SYSTEM
+   ═══════════════════════════════════════════════════════════════════════
+   
+   THE SOUTH END STANDARD
+   ──────────────────────
+   This is not a style guide. This is the law.
+   
+   Every font-size, weight, spacing, and line-height on every page of
+   southendclub.com derives from this single file. No exceptions.
+   No "creative overrides." No Thrive defaults.
+   
+   ═══════════════════════════════════════════════════════════════════════
+   
+   PHILOSOPHY: "COASTAL AUTHORITY"
+   ────────────────────────────────
+   South End Club sits in Torrance — the heart of the South Bay.
+   Not Malibu pretension. Not downtown edge. South Bay is:
+   
+     → Warm but not soft
+     → Premium but not exclusive
+     → Active but not aggressive
+     → Family but not childish
+   
+   The typography must feel like a confident handshake from someone
+   who owns a beautiful home near the beach. Approachable authority.
+   
+   We achieve this through:
+   1. Montserrat — geometric precision signals competence & modernity
+   2. Plus Jakarta Sans — humanist warmth signals approachability
+   3. The contrast between them creates "premium-accessible" tension
+   4. Mathematical spacing creates subconscious trust (nothing arbitrary)
+   
+   ═══════════════════════════════════════════════════════════════════════
+   
+   SCALE: AUGMENTED FOURTH (1.414 — √2)
+   ──────────────────────────────────────
+   Why not Perfect Fourth (1.333) or Golden Ratio (1.618)?
+   
+   → 1.333 is too conservative — every fitness site uses it
+   → 1.618 is too dramatic — creates gaps that feel empty on mobile
+   → 1.414 (√2) is the sweet spot nobody uses
+   
+   It's mathematically elegant (the diagonal of a unit square),
+   creates clear hierarchy without the jumps feeling jarring,
+   and it's distinctive — you won't find this on any competitor.
+   
+   Base: 16px
+   Scale: 16 → 22.6 → 32 → 45.2 → 64 → 90.5
+   (Each step is previous × 1.414, rounded for rendering)
+   
+   ═══════════════════════════════════════════════════════════════════════
+   
+   THRIVE ARCHITECT DEFENSE SYSTEM
+   ────────────────────────────────
+   Thrive Architect injects styles via:
+   
+   1. .thrv_wrapper .thrv_text_element — wraps all text blocks
+   2. Inline styles on elements (style="font-size:...") 
+   3. data-css attributes with generated class names
+   4. .tve_shortcode containers
+   5. -webkit-text-fill-color overrides (breaks color inheritance)
+   6. Default line-height: 1.4 on body (too tight)
+   7. Random font-weight resets to 400
+   8. letter-spacing: normal (kills our spacing system)
+   
+   Our defense: Every rule that touches text uses !important with
+   high-specificity selectors that chain through Thrive's wrappers.
+   This is the ONE place !important is sanctioned per Website-Law.md:
+   "except for overriding third-party styles"
+   
+   ═══════════════════════════════════════════════════════════════════════ */
+
+
+/* ─────────────────────────────────────────────────────────────────────
+   1. TYPOGRAPHY TOKENS (CSS Custom Properties)
+   ───────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Scale: Augmented Fourth (1.414) ── */
+  --type-base:        16px;
+  --type-scale:       1.414;
+  
+  /* Size Steps (base × scale^n) */
+  --type-xs:          clamp(0.6875rem, 0.65rem + 0.15vw, 0.75rem);     /* 11-12px — fine print, captions */
+  --type-sm:          clamp(0.8125rem, 0.78rem + 0.15vw, 0.875rem);    /* 13-14px — metadata, labels */
+  --type-base-fluid:  clamp(0.9375rem, 0.9rem + 0.2vw, 1rem);         /* 15-16px — body text */
+  --type-md:          clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);      /* 18-20px — lead paragraphs */
+  --type-lg:          clamp(1.25rem, 1.1rem + 0.65vw, 1.625rem);       /* 20-26px — H4, card titles */
+  --type-xl:          clamp(1.5rem, 1.25rem + 1.1vw, 2rem);            /* 24-32px — H3, section heads */
+  --type-2xl:         clamp(1.75rem, 1.4rem + 1.6vw, 2.825rem);        /* 28-45px — H2, major sections */
+  --type-3xl:         clamp(2.25rem, 1.75rem + 2.2vw, 4rem);           /* 36-64px — H1, page titles */
+  --type-display:     clamp(2.75rem, 2rem + 3.2vw, 5.65rem);           /* 44-90px — hero display */
+  
+  /* ── Font Families ── */
+  --font-heading:     'Montserrat', sans-serif;
+  --font-body:        'Plus Jakarta Sans', sans-serif;
+  
+  /* ── Font Weights ── 
+     Montserrat: 300 (light) | 400 (regular) | 500 (medium) | 600 (semi) | 700 (bold) | 800 (extra) | 900 (black)
+     Plus Jakarta: 400 (regular) | 500 (medium) | 600 (semi) | 700 (bold) */
+  --weight-light:     300;
+  --weight-regular:   400;
+  --weight-medium:    500;
+  --weight-semi:      600;
+  --weight-bold:      700;
+  --weight-extra:     800;
+  --weight-black:     900;
+  
+  /* ── Line Heights ──
+     Tighter for large text (headlines command attention)
+     Looser for small text (body needs breathing room) */
+  --leading-tight:    1.1;    /* Display, H1 */
+  --leading-snug:     1.25;   /* H2, H3 */
+  --leading-normal:   1.5;    /* H4, lead paragraphs */
+  --leading-relaxed:  1.65;   /* Body text */
+  --leading-loose:    1.8;    /* Small text, captions */
+  
+  /* ── Letter Spacing ──
+     The "Coastal Authority" signature:
+     Headlines get TIGHT spacing → density = importance
+     Body gets OPEN spacing → breathing room = luxury
+     Labels get WIDE spacing → uppercase readability + prestige */
+  --tracking-tight:   -0.025em;   /* Display, H1 — compressed authority */
+  --tracking-snug:    -0.015em;   /* H2, H3 — subtle tightness */
+  --tracking-normal:  0em;        /* Body text — natural */
+  --tracking-open:    0.01em;     /* Lead paragraphs — slight luxury */
+  --tracking-wide:    0.06em;     /* Buttons, tags — uppercase readability */
+  --tracking-ultra:   0.12em;     /* Labels, eyebrows — prestige signal */
+  --tracking-mega:    0.18em;     /* Scroll indicator, micro-labels */
+  
+  /* ── Paragraph Spacing ──
+     Golden Ratio (φ = 1.618) applied to vertical rhythm */
+  --space-text-xs:    0.5em;
+  --space-text-sm:    0.75em;
+  --space-text-md:    1em;
+  --space-text-lg:    1.618em;
+  --space-text-xl:    2.618em;    /* φ² */
+  
+  /* ── Text Rendering ── */
+  --render-heading:   geometricPrecision;
+  --render-body:      optimizeLegibility;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────
+   2. GLOBAL TEXT FOUNDATION
+   
+   Applied to every element. This is the baseline that Thrive
+   cannot override because it targets the universal selector
+   with font-feature-settings (Thrive never sets these).
+   ───────────────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  /* Enable OpenType features globally — Thrive ignores these entirely */
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+  font-kerning: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Body baseline — the default everything inherits from */
+body,
+body.sec-page {
+  font-family: var(--font-body) !important;
+  font-size: var(--type-base-fluid) !important;
+  font-weight: var(--weight-regular) !important;
+  line-height: var(--leading-relaxed) !important;
+  letter-spacing: var(--tracking-normal) !important;
+  text-rendering: var(--render-body) !important;
+  -webkit-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+  
+  /* Kill Thrive's -webkit-text-fill-color inheritance */
+  -webkit-text-fill-color: inherit !important;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────
+   3. HEADING SYSTEM
+   
+   The "Coastal Authority" heading hierarchy.
+   
+   Montserrat at every heading level. Weight decreases as you go
+   down the hierarchy (800 → 700 → 600) creating a natural
+   "importance gradient" that the eye follows instinctively.
+   
+   Letter-spacing tightens at larger sizes — this is the opposite
+   of what most sites do, and it's what makes premium brands feel
+   premium. Large text with tight tracking = density = authority.
+   ───────────────────────────────────────────────────────────────────── */
+
+/* Base heading reset — catches everything including Thrive wrappers */
+h1, h2, h3, h4, h5, h6,
+.thrv_wrapper h1, .thrv_wrapper h2, .thrv_wrapper h3,
+.thrv_wrapper h4, .thrv_wrapper h5, .thrv_wrapper h6,
+.thrv_text_element h1, .thrv_text_element h2, .thrv_text_element h3,
+.thrv_text_element h4, .thrv_text_element h5, .thrv_text_element h6 {
+  font-family: var(--font-heading) !important;
+  -webkit-text-fill-color: inherit !important;
+  text-rendering: var(--render-heading) !important;
+  text-wrap: balance !important;
+  overflow-wrap: break-word !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ── H1 — Page Title ── */
+h1,
+.thrv_wrapper h1,
+.thrv_text_element h1,
+.type-h1 {
+  font-size: var(--type-3xl) !important;
+  font-weight: var(--weight-extra) !important;
+  line-height: var(--leading-tight) !important;
+  letter-spacing: var(--tracking-tight) !important;
+}
+
+/* ── H2 — Section Title ── */
+h2,
+.thrv_wrapper h2,
+.thrv_text_element h2,
+.type-h2,
+.section-title {
+  font-size: var(--type-2xl) !important;
+  font-weight: var(--weight-extra) !important;
+  line-height: var(--leading-snug) !important;
+  letter-spacing: var(--tracking-snug) !important;
+}
+
+/* ── H3 — Subsection ── */
+h3,
+.thrv_wrapper h3,
+.thrv_text_element h3,
+.type-h3 {
+  font-size: var(--type-xl) !important;
+  font-weight: var(--weight-bold) !important;
+  line-height: var(--leading-snug) !important;
+  letter-spacing: var(--tracking-snug) !important;
+}
+
+/* ── H4 — Card Title / Tertiary ── */
+h4,
+.thrv_wrapper h4,
+.thrv_text_element h4,
+.type-h4 {
+  font-size: var(--type-lg) !important;
+  font-weight: var(--weight-bold) !important;
+  line-height: var(--leading-normal) !important;
+  letter-spacing: var(--tracking-normal) !important;
+}
+
+/* ── H5 — Label / Small Heading ── */
+h5,
+.thrv_wrapper h5,
+.thrv_text_element h5,
+.type-h5 {
+  font-size: var(--type-md) !important;
+  font-weight: var(--weight-semi) !important;
+  line-height: var(--leading-normal) !important;
+  letter-spacing: var(--tracking-normal) !important;
+}
+
+/* ── H6 — Micro Heading ── */
+h6,
+.thrv_wrapper h6,
+.thrv_text_element h6,
+.type-h6 {
+  font-size: var(--type-sm) !important;
+  font-weight: var(--weight-semi) !important;
+  line-height: var(--leading-normal) !important;
+  letter-spacing: var(--tracking-wide) !important;
+  text-transform: uppercase !important;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────
+   4. BODY TEXT SYSTEM
+   
+   Plus Jakarta Sans for all body copy. The humanist curves create
+   warmth that balances Montserrat's geometric precision.
+   
+   Lead paragraphs (first-of-type) get slightly larger size and
+   heavier weight — this is the "hook" that pulls readers in.
+   ───────────────────────────────────────────────────────────────────── */
+
+/* Base paragraph */
+p,
+.thrv_wrapper p,
+.thrv_text_element p,
+.type-body {
+  font-family: var(--font-body) !important;
+  font-size: var(--type-base-fluid) !important;
+  font-weight: var(--weight-regular) !important;
+  line-height: var(--leading-relaxed) !important;
+  letter-spacing: var(--tracking-normal) !important;
+  -webkit-text-fill-color: inherit !important;
+  text-rendering: var(--render-body) !important;
+}
+
+/* Lead paragraph — the opening hook */
+.section-text:first-of-type,
+.thrv_text_element > p:first-of-type,
+.type-lead {
+  font-size: var(--type-md) !important;
+  font-weight: var(--weight-medium) !important;
+  line-height: var(--leading-relaxed) !important;
+  letter-spacing: var(--tracking-open) !important;
+}
+
+/* Section body text */
+.section-text,
+.thrv_text_element > .section-text {
+  font-size: var(--type-base-fluid) !important;
+  font-weight: var(--weight-medium) !important;
+  line-height: 1.85 !important;
+  letter-spacing: var(--tracking-normal) !important;
+}
+
+/* Section subtitle */
+.section-subtitle,
+.thrv_text_element > .section-subtitle {
+  font-family: var(--font-body) !important;
+  font-size: var(--type-md) !important;
+  font-weight: var(--weight-medium) !important;
+  line-height: 1.8 !important;
+  letter-spacing: var(--tracking-open) !important;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────
+   5. DISPLAY TEXT (Hero Headlines)
+   
+   The biggest text on any page. This is where "Coastal Authority"
+   is most visible. Montserrat at weight 900 (Black) with tight
+   tracking creates a wall of confidence.
+   
+   These are the only elements that may use gradient text fills
+   or layered drop-shadows — restraint is what makes them special.
+   ───────────────────────────────────────────────────────────────────── */
+
+.type-display,
+.hero-title .title-line,
+.title-line {
+  font-family: var(--font-heading) !important;
+  font-weight: var(--weight-extra) !important;
+  line-height: var(--leading-tight) !important;
+  letter-spacing: var(--tracking-tight) !important;
+  text-rendering: var(--render-heading) !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────
+   6. UI TEXT SYSTEM
+   
+   Buttons, labels, tags, navigation, eyebrows — all the small
+   text that creates the "infrastructure" of the page.
+   
+   Always Montserrat. Always uppercase for labels/eyebrows.
+   Wide letter-spacing on uppercase text is non-negotiable —
+   it's what separates "premium" from "loud."
+   ───────────────────────────────────────────────────────────────────── */
+
+/* ── Buttons ── */
+.btn,
+.cta-pill,
+a[class*="btn"],
+button[class*="btn"],
+.thrv_wrapper a[class*="btn"] {
+  font-family: var(--font-heading) !important;
+  font-weight: var(--weight-bold) !important;
+  letter-spacing: var(--tracking-wide) !important;
+  text-transform: uppercase !important;
+  text-rendering: var(--render-heading) !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+/* ── Labels / Eyebrows ── */
+.section-label span:not(.label-line),
+.type-label,
+.type-eyebrow {
+  font-family: var(--font-heading) !important;
+  font-size: var(--type-sm) !important;
+  font-weight: var(--weight-extra) !important;
+  letter-spacing: var(--tracking-ultra) !important;
+  text-transform: uppercase !important;
+  line-height: var(--leading-normal) !important;
+}
+
+/* ── Tags / Pills ── */
+.tag,
+.feature-tags .tag {
+  font-family: var(--font-heading) !important;
+  font-size: var(--type-sm) !important;
+  font-weight: var(--weight-bold) !important;
+  letter-spacing: var(--tracking-wide) !important;
+}
+
+/* ── Navigation ── */
+.nav-link,
+.mobile-nav-link,
+.mobile-nav-toggle {
+  font-family: var(--font-heading) !important;
+  font-weight: var(--weight-semi) !important;
+  letter-spacing: var(--tracking-wide) !important;
+}
+
+/* ── Scroll Indicator ── */
+.scroll-indicator span {
+  font-family: var(--font-heading) !important;
+  font-weight: var(--weight-bold) !important;
+  letter-spacing: var(--tracking-mega) !important;
+  text-transform: uppercase !important;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────
+   7. THRIVE ARCHITECT NUCLEAR OVERRIDES
+   
+   These selectors are intentionally over-specified to defeat
+   every known Thrive injection pattern. They target:
+   
+   → .thrv_wrapper .thrv_text_element (text blocks)
+   → Inline style overrides via attribute selectors
+   → data-css generated classes
+   → Nested wrapper chains
+   
+   The specificity chain: html body.sec-page .thrv_wrapper
+   scores high enough to beat any Thrive-generated selector.
+   ───────────────────────────────────────────────────────────────────── */
+
+/* Kill Thrive's font-family injection */
+html body .thrv_wrapper,
+html body .thrv_text_element,
+html body.sec-page .thrv_wrapper,
+html body.sec-page .thrv_text_element,
+html body [class*="thrv_"],
+html body [class*="tve_"] {
+  font-family: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+  letter-spacing: inherit !important;
+  line-height: inherit !important;
+}
+
+/* Kill Thrive's inline font-size on paragraphs */
+html body .thrv_wrapper p,
+html body .thrv_text_element p,
+html body.sec-page .thrv_wrapper p,
+html body.sec-page .thrv_text_element p {
+  font-family: var(--font-body) !important;
+  font-weight: var(--weight-regular) !important;
+  line-height: var(--leading-relaxed) !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+/* Kill Thrive's heading overrides */
+html body .thrv_wrapper h1,
+html body .thrv_wrapper h2,
+html body .thrv_wrapper h3,
+html body .thrv_wrapper h4,
+html body .thrv_text_element h1,
+html body .thrv_text_element h2,
+html body .thrv_text_element h3,
+html body .thrv_text_element h4,
+html body.sec-page .thrv_wrapper h1,
+html body.sec-page .thrv_wrapper h2,
+html body.sec-page .thrv_wrapper h3,
+html body.sec-page .thrv_wrapper h4 {
+  font-family: var(--font-heading) !important;
+  -webkit-text-fill-color: inherit !important;
+  text-rendering: var(--render-heading) !important;
+}
+
+/* Kill Thrive's link styling on buttons */
+html body .thrv_wrapper a,
+html body .thrv_text_element a,
+html body.sec-page .thrv_wrapper a {
+  -webkit-text-fill-color: inherit !important;
+  text-decoration-color: inherit !important;
+}
+
+/* Kill Thrive's span overrides (it wraps text in spans with inline styles) */
+html body .thrv_wrapper span[style],
+html body .thrv_text_element span[style],
+html body.sec-page .thrv_wrapper span[style] {
+  font-family: inherit !important;
+  letter-spacing: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────
+   8. RESPONSIVE TYPOGRAPHY ADJUSTMENTS
+   
+   The clamp() values in our tokens handle most scaling, but
+   we need explicit adjustments for:
+   → Weight reduction on mobile (screens can't render heavy weights well)
+   → Line-height loosening on small screens (more breathing room)
+   → Letter-spacing adjustments (tight tracking hurts at small sizes)
+   ───────────────────────────────────────────────────────────────────── */
+
+/* Tablet (≤1024px) */
+@media (max-width: 1024px) {
+  :root {
+    --leading-tight:    1.15;
+    --leading-snug:     1.3;
+    --leading-normal:   1.5;
+    --leading-relaxed:  1.65;
+    --tracking-tight:   -0.02em;
+    --tracking-snug:    -0.01em;
+  }
+}
+
+/* Phone (≤768px) */
+@media (max-width: 768px) {
+  :root {
+    --leading-tight:    1.15;
+    --leading-snug:     1.3;
+    --leading-normal:   1.5;
+    --leading-relaxed:  1.7;
+    --leading-loose:    1.85;
+    --tracking-tight:   -0.015em;
+    --tracking-snug:    -0.005em;
+    --tracking-ultra:   0.1em;
+    --tracking-mega:    0.15em;
+  }
+  
+  /* Reduce heading weights slightly for mobile rendering */
+  h1, .thrv_wrapper h1, .thrv_text_element h1 {
+    font-weight: var(--weight-extra) !important;
+  }
+  
+  h2, .thrv_wrapper h2, .thrv_text_element h2 {
+    font-weight: var(--weight-bold) !important;
+  }
+}
+
+/* Small Phone (≤480px) */
+@media (max-width: 480px) {
+  :root {
+    --tracking-tight:   -0.01em;
+    --tracking-snug:    0em;
+    --tracking-ultra:   0.08em;
+    --tracking-mega:    0.12em;
+  }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────────
+   9. UTILITY CLASSES
+   
+   For use in custom HTML blocks where you need to explicitly
+   assign a typography role. These override everything.
+   ───────────────────────────────────────────────────────────────────── */
+
+/* Size utilities */
+.type-xs      { font-size: var(--type-xs) !important; }
+.type-sm      { font-size: var(--type-sm) !important; }
+.type-base    { font-size: var(--type-base-fluid) !important; }
+.type-md      { font-size: var(--type-md) !important; }
+.type-lg      { font-size: var(--type-lg) !important; }
+.type-xl      { font-size: var(--type-xl) !important; }
+.type-2xl     { font-size: var(--type-2xl) !important; }
+.type-3xl     { font-size: var(--type-3xl) !important; }
+.type-display { font-size: var(--type-display) !important; }
+
+/* Weight utilities */
+.weight-light   { font-weight: var(--weight-light) !important; }
+.weight-regular { font-weight: var(--weight-regular) !important; }
+.weight-medium  { font-weight: var(--weight-medium) !important; }
+.weight-semi    { font-weight: var(--weight-semi) !important; }
+.weight-bold    { font-weight: var(--weight-bold) !important; }
+.weight-extra   { font-weight: var(--weight-extra) !important; }
+.weight-black   { font-weight: var(--weight-black) !important; }
+
+/* Family utilities */
+.font-heading { font-family: var(--font-heading) !important; }
+.font-body    { font-family: var(--font-body) !important; }
+
+/* Tracking utilities */
+.tracking-tight  { letter-spacing: var(--tracking-tight) !important; }
+.tracking-snug   { letter-spacing: var(--tracking-snug) !important; }
+.tracking-normal { letter-spacing: var(--tracking-normal) !important; }
+.tracking-open   { letter-spacing: var(--tracking-open) !important; }
+.tracking-wide   { letter-spacing: var(--tracking-wide) !important; }
+.tracking-ultra  { letter-spacing: var(--tracking-ultra) !important; }
+
+/* Leading utilities */
+.leading-tight   { line-height: var(--leading-tight) !important; }
+.leading-snug    { line-height: var(--leading-snug) !important; }
+.leading-normal  { line-height: var(--leading-normal) !important; }
+.leading-relaxed { line-height: var(--leading-relaxed) !important; }
+.leading-loose   { line-height: var(--leading-loose) !important; }
+
+/* Semantic role utilities */
+.type-label {
+  font-family: var(--font-heading) !important;
+  font-size: var(--type-sm) !important;
+  font-weight: var(--weight-extra) !important;
+  letter-spacing: var(--tracking-ultra) !important;
+  text-transform: uppercase !important;
+}
+
+.type-lead {
+  font-family: var(--font-body) !important;
+  font-size: var(--type-md) !important;
+  font-weight: var(--weight-medium) !important;
+  line-height: var(--leading-relaxed) !important;
+  letter-spacing: var(--tracking-open) !important;
+}
+
+.type-caption {
+  font-family: var(--font-body) !important;
+  font-size: var(--type-xs) !important;
+  font-weight: var(--weight-regular) !important;
+  line-height: var(--leading-loose) !important;
+  letter-spacing: var(--tracking-normal) !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   END OF TYPOGRAPHY SYSTEM
+   
+   QUICK REFERENCE
+   ───────────────
+   Fonts:     Montserrat (headings/UI) + Plus Jakarta Sans (body)
+   Scale:     Augmented Fourth (1.414) — 16 → 22.6 → 32 → 45 → 64 → 90
+   Weights:   900/800 (display) → 800/700 (headings) → 600 (UI) → 400/500 (body)
+   Tracking:  -0.025em (display) → -0.015em (H2-H3) → 0 (body) → 0.06em (buttons) → 0.12em (labels)
+   Leading:   1.1 (display) → 1.25 (headings) → 1.5 (H4) → 1.65 (body) → 1.8 (captions)
+   
+   THRIVE DEFENSE:
+   All heading/body rules include .thrv_wrapper and .thrv_text_element
+   selectors with !important. Nuclear overrides in Section 7 catch
+   everything else with html body specificity chains.
+   ═══════════════════════════════════════════════════════════════════════ */

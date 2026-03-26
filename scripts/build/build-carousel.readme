@@ -1,0 +1,17 @@
+# build-carousel.js
+
+Reads image URLs from a markdown source file and injects them into HTML carousel targets. Config comes from a JSON file—no hardcoded values.
+
+**Run:** `node scripts/build/build-carousel.js scripts/build/carousel-configs/<name>.json`
+
+## Layman's terms
+
+You keep one master list of image URLs in a markdown file. This script reads that list and updates all the HTML pages that show those images in a carousel. Change the list once, run the script, and everything stays in sync.
+
+## Medium understanding
+
+Source-of-truth propagation: the markdown file (e.g. `media/racquets/pickleball/pickleball-images.md`) is the canonical source. The JSON config (e.g. `carousel-configs/pickleball.json`) defines which source maps to which HTML targets, section→category mappings, and alt-text patterns. The script parses the markdown, builds slide HTML, and injects into each target. Never edit carousel image lists directly in HTML—edit the source and run the build.
+
+## Advanced
+
+Node.js script. Reads config via `loadConfig()`, parses markdown with `parseMarkdown()` (section headers `## Name`, URL lines `- https://...`), builds `<div class="carousel-slide">` tags, injects via regex on `trackSelector`/`trackCloseIndent`. Also updates `<!-- BUILD:REFS -->` block in source markdown. Idempotent. ROOT = project root (two levels up from script).

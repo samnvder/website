@@ -1,0 +1,14 @@
+# left-upper-cta.js — Left Upper CTA Button Behavior
+
+## Layman's terms
+
+Powers the floating left-upper CTA button (e.g. "Schedule a Tour"). Handles show/hide, click, or scroll-based visibility. Template for pages that need a prominent floating CTA.
+
+## Medium understanding
+
+Template component for the left-upper floating CTA pattern. May include scroll-triggered visibility, click handlers, or modal integration. Copy to Dev when building pages with this CTA style. Mirrors Components/Buttons/ structure.
+
+## Advanced
+
+- **Location:** Templates/Components/Buttons/Floating Buttons/Left Upper CTA/
+- **Template:** Not live; used as scaffold

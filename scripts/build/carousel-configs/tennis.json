@@ -1,0 +1,15 @@
+{
+  "name": "Tennis Carousel",
+  "source": "media/tennis/tennis-images.md",
+  "targets": ["Website/dev/carousel-tennis.html"],
+  "sections": {
+    "general": {
+      "category": "general"
+    }
+  },
+  "defaultCategory": "general",
+  "defaultAlt": "Tennis image",
+  "altPatterns": [],
+  "trackSelector": "<div class=\"carousel-track\">",
+  "trackCloseIndent": "        "
+}

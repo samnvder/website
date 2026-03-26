@@ -1,0 +1,40 @@
+---
+description: Accessibility — touch targets, focus, contrast
+globs: "**/*.html,**/*.css,**/*.tsx,**/*.jsx"
+alwaysApply: false
+---
+
+# Accessibility Law
+
+**Principle:** Interactive elements must be usable by touch and keyboard. Meet minimum size and contrast requirements.
+
+## Touch Targets
+
+- **Minimum:** 44×44px (WCAG 2.5.5 AAA, Apple HIG)
+- **Preferred:** 48×48px (Material Design)
+- **Spacing between targets:** ≥8px to prevent mis-taps
+
+Use padding to achieve size — avoid tiny buttons on mobile.
+
+## Focus
+
+- **Visible focus:** All interactive elements must have a visible focus indicator.
+- **Use:** `:focus-visible` for keyboard-only focus (avoids focus ring on mouse click).
+- **Style:** 2px outline, sufficient contrast. Never `outline: none` without replacement.
+
+```css
+:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+```
+
+## Anti-Patterns
+
+- Touch targets <44px on mobile
+- Removing focus styles
+- Relying on color alone for state (add icon or text)
+
+## Project Reference
+
+This project: `STYLE-GUIDE.md` §1. `--touch-target-min: 44px`. Skip link, focus ring patterns in global.css.

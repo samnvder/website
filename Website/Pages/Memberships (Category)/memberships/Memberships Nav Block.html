@@ -1,0 +1,369 @@
+<!-- =========================
+     MEMBERSHIPS PAGE - FLOATING SECTION NAV
+     Standalone HTML block. Paste into Custom HTML block (e.g. after video hero).
+     ========================== -->
+<style>
+/* Desktop Floating Nav */
+.floating-nav {
+  position: fixed;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+.floating-nav.visible {
+  opacity: 1;
+  visibility: visible;
+}
+.floating-nav.faded {
+  opacity: 0.15;
+  transition: opacity 0.4s ease;
+}
+.nav-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 14px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 2px solid rgba(11, 70, 140, 0.15);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(11, 70, 140, 0.15), 0 0 30px rgba(11, 70, 140, 0.12);
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px;
+  color: #3d5a5e;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+.nav-link .nav-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(11, 70, 140, 0.3);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(11, 70, 140, 0.25);
+}
+.nav-link span:not(.nav-dot) {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.nav-link:hover,
+.nav-link:active {
+  background: rgba(11, 70, 140, 0.08);
+}
+.nav-link:hover span:not(.nav-dot),
+.nav-link.active span:not(.nav-dot) {
+  opacity: 1;
+  transform: translateX(0);
+}
+.nav-link.active {
+  color: #0b468c;
+  background: rgba(11, 70, 140, 0.12);
+}
+.nav-link.active .nav-dot {
+  background: #0b468c;
+  box-shadow: 0 0 20px rgba(11, 70, 140, 0.6), 0 0 40px rgba(11, 70, 140, 0.35);
+  transform: scale(1.1);
+}
+@media (max-width: 1024px) {
+  .floating-nav { display: none !important; }
+}
+/* Mobile Nav */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  right: 12px;
+  top: 80px;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+@media (max-width: 1024px) {
+  .mobile-nav.visible {
+    display: block !important;
+    opacity: 1;
+    visibility: visible;
+  }
+}
+.mobile-nav.faded {
+  opacity: 0.15;
+  transition: opacity 0.4s ease;
+}
+.mobile-nav-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(11, 70, 140, 0.1);
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(11, 70, 140, 0.1), 0 0 12px rgba(11, 70, 140, 0.05);
+  overflow: hidden;
+  max-height: 34px;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mobile-nav-inner.expanded {
+  max-height: 280px;
+}
+.mobile-nav-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #0b468c;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: all 0.2s ease;
+}
+.mobile-nav-toggle:hover {
+  background: rgba(11, 70, 140, 0.08);
+}
+.mobile-nav-toggle .toggle-icon {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.3s ease;
+}
+.mobile-nav-inner.expanded .mobile-nav-toggle .toggle-icon {
+  transform: rotate(180deg);
+}
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 4px 6px 8px;
+  border-top: 1px solid rgba(11, 70, 140, 0.08);
+}
+.mobile-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  text-decoration: none;
+  color: #3d5a5e;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+.mobile-nav-link .nav-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(11, 70, 140, 0.25);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  box-shadow: 0 0 3px rgba(11, 70, 140, 0.15);
+}
+.mobile-nav-link:hover,
+.mobile-nav-link:active {
+  background: rgba(11, 70, 140, 0.1);
+}
+.mobile-nav-link.active {
+  color: #0b468c;
+  background: rgba(11, 70, 140, 0.12);
+}
+.mobile-nav-link.active .nav-dot {
+  background: #0b468c;
+  box-shadow: 0 0 16px rgba(11, 70, 140, 0.6), 0 0 30px rgba(11, 70, 140, 0.3);
+  transform: scale(1.2);
+}
+</style>
+
+<nav class="floating-nav" id="floatingNav">
+  <div class="nav-inner">
+    <a href="#membershipOptions" class="nav-link active" data-section="membershipOptions">
+      <span class="nav-dot"></span>
+      <span>Options</span>
+    </a>
+    <a href="#membershipBuilder" class="nav-link" data-section="membershipBuilder">
+      <span class="nav-dot"></span>
+      <span>Builder</span>
+    </a>
+    <a href="#corporate-membership" class="nav-link" data-section="corporate-membership">
+      <span class="nav-dot"></span>
+      <span>Corporate</span>
+    </a>
+    <a href="#scheduleAtour" class="nav-link" data-section="scheduleAtour">
+      <span class="nav-dot"></span>
+      <span>Book a Tour</span>
+    </a>
+    <a href="#FAQs" class="nav-link" data-section="FAQs">
+      <span class="nav-dot"></span>
+      <span>FAQs</span>
+    </a>
+  </div>
+</nav>
+
+<nav class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-inner" id="mobileNavInner">
+    <button class="mobile-nav-toggle" id="mobileNavToggle">
+      <span class="current-section">Options</span>
+      <svg class="toggle-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </button>
+    <div class="mobile-nav-links">
+      <a href="#membershipOptions" class="mobile-nav-link active" data-section="membershipOptions">
+        <span class="nav-dot"></span>
+        <span>Options</span>
+      </a>
+      <a href="#membershipBuilder" class="mobile-nav-link" data-section="membershipBuilder">
+        <span class="nav-dot"></span>
+        <span>Builder</span>
+      </a>
+      <a href="#corporate-membership" class="mobile-nav-link" data-section="corporate-membership">
+        <span class="nav-dot"></span>
+        <span>Corporate Memberships</span>
+      </a>
+      <a href="#scheduleAtour" class="mobile-nav-link" data-section="scheduleAtour">
+        <span class="nav-dot"></span>
+        <span>Book a Tour</span>
+      </a>
+      <a href="#FAQs" class="mobile-nav-link" data-section="FAQs">
+        <span class="nav-dot"></span>
+        <span>FAQs</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const floatingNav = document.getElementById('floatingNav');
+  const mobileNav = document.getElementById('mobileNav');
+  const mobileNavInner = document.getElementById('mobileNavInner');
+  const mobileNavToggle = document.getElementById('mobileNavToggle');
+  const currentSectionText = mobileNavToggle ? mobileNavToggle.querySelector('.current-section') : null;
+  const hero = document.querySelector('.tcb-video-background-parent');
+  const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+  const sectionIds = ['membershipOptions', 'membershipBuilder', 'corporate-membership', 'scheduleAtour', 'FAQs'];
+  const sections = sectionIds.map(id => document.getElementById(id)).filter(el => el);
+  let navFadeTimeout, desktopNavFadeTimeout;
+  let isMobile = window.innerWidth <= 1024;
+  function checkMobile() { isMobile = window.innerWidth <= 1024; }
+  window.addEventListener('resize', checkMobile);
+  function showMobileNav() { if (mobileNav && mobileNav.classList.contains('visible')) mobileNav.classList.remove('faded'); }
+  function startNavFadeTimer() {
+    if (!isMobile) return;
+    clearTimeout(navFadeTimeout);
+    showMobileNav();
+    navFadeTimeout = setTimeout(function() {
+      if (mobileNav && mobileNav.classList.contains('visible') && mobileNavInner && !mobileNavInner.classList.contains('expanded')) mobileNav.classList.add('faded');
+    }, 1000);
+  }
+  function showDesktopNav() { if (floatingNav && floatingNav.classList.contains('visible')) floatingNav.classList.remove('faded'); }
+  function startDesktopNavFadeTimer() {
+    if (isMobile) return;
+    clearTimeout(desktopNavFadeTimeout);
+    showDesktopNav();
+    desktopNavFadeTimeout = setTimeout(function() {
+      if (floatingNav && floatingNav.classList.contains('visible')) floatingNav.classList.add('faded');
+    }, 750);
+  }
+  if (mobileNavToggle && mobileNavInner) {
+    mobileNavToggle.addEventListener('click', function() {
+      mobileNavInner.classList.toggle('expanded');
+      if (mobileNavInner.classList.contains('expanded')) { mobileNav.classList.remove('faded'); clearTimeout(navFadeTimeout); }
+      else startNavFadeTimer();
+    });
+  }
+  document.addEventListener('click', function(e) {
+    if (mobileNavInner && mobileNav && !mobileNav.contains(e.target)) mobileNavInner.classList.remove('expanded');
+  });
+  function showNav() {
+    if (floatingNav) floatingNav.classList.add('visible');
+    if (mobileNav) mobileNav.classList.add('visible');
+    startNavFadeTimer();
+    startDesktopNavFadeTimer();
+  }
+  if (hero) {
+    const heroObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          if (floatingNav) floatingNav.classList.remove('visible', 'faded');
+          if (mobileNav) mobileNav.classList.remove('visible', 'faded');
+          if (mobileNavInner) mobileNavInner.classList.remove('expanded');
+          clearTimeout(navFadeTimeout);
+          clearTimeout(desktopNavFadeTimeout);
+        } else { showNav(); }
+      });
+    }, { threshold: 0.3 });
+    heroObserver.observe(hero);
+  } else {
+    setTimeout(showNav, 500);
+  }
+  window.addEventListener('scroll', function() {
+    const scrollY = window.scrollY || window.pageYOffset;
+    const heroHeight = hero ? hero.offsetHeight : 300;
+    if (scrollY > heroHeight * 0.5) showNav();
+    if (isMobile) startNavFadeTimer();
+    else startDesktopNavFadeTimer();
+  }, { passive: true });
+  window.addEventListener('touchstart', startNavFadeTimer, { passive: true });
+  window.addEventListener('touchmove', startNavFadeTimer, { passive: true });
+  if (floatingNav) {
+    floatingNav.addEventListener('mouseenter', function() { clearTimeout(desktopNavFadeTimeout); showDesktopNav(); }, { passive: true });
+    floatingNav.addEventListener('mouseleave', startDesktopNavFadeTimer, { passive: true });
+  }
+  const sectionNames = { 'membershipOptions': 'Options', 'membershipBuilder': 'Builder', 'corporate-membership': 'Corporate Memberships', 'scheduleAtour': 'Book a Tour', 'FAQs': 'FAQs' };
+  function updateActiveSection() {
+    let maxVisibility = 0, mostVisibleSection = '';
+    sections.forEach(section => {
+      const rect = section.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const visibleTop = Math.max(0, rect.top);
+      const visibleBottom = Math.min(windowHeight, rect.bottom);
+      const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+      const centerOffset = Math.abs((rect.top + rect.bottom) / 2 - windowHeight / 2);
+      const visibility = visibleHeight - (centerOffset * 0.3);
+      if (visibility > maxVisibility && rect.top < windowHeight * 0.6) { maxVisibility = visibility; mostVisibleSection = section.id; }
+    });
+    if (mostVisibleSection) {
+      navLinks.forEach(link => link.classList.toggle('active', link.dataset.section === mostVisibleSection));
+      if (currentSectionText && sectionNames[mostVisibleSection]) currentSectionText.textContent = sectionNames[mostVisibleSection];
+    }
+  }
+  let scrollTicking = false;
+  window.addEventListener('scroll', function() {
+    if (!scrollTicking) {
+      requestAnimationFrame(function() { updateActiveSection(); scrollTicking = false; });
+      scrollTicking = true;
+    }
+  }, { passive: true });
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href').substring(1);
+      const target = document.getElementById(targetId);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (mobileNavInner) { mobileNavInner.classList.remove('expanded'); startNavFadeTimer(); }
+    });
+  });
+  updateActiveSection();
+});
+</script>

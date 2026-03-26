@@ -1,0 +1,42 @@
+---
+description: Motion — transitions, duration, easing curves
+globs: "**/*.html,**/*.css,**/*.tsx,**/*.jsx"
+alwaysApply: false
+---
+
+# Motion Law
+
+**Principle:** Transitions should use consistent duration and easing. Align with Material Design motion guidelines.
+
+## Duration Scale
+
+| Use Case | Duration | Example |
+|----------|----------|---------|
+| Micro (hover, focus) | 150–200ms | Button hover |
+| Standard (expand, fade) | 250–300ms | Dropdown, modal |
+| Complex (layout shift) | 400–500ms | Accordion, carousel |
+| Slow (page transition) | 500–600ms | Full-page |
+
+**Preferred:** 200ms, 300ms, 400ms (align with 8pt-ish rhythm)
+
+## Easing
+
+- **Standard:** `cubic-bezier(0.4, 0, 0.2, 1)` — Material "standard"
+- **Decelerate:** `cubic-bezier(0, 0, 0.2, 1)` — enter animations
+- **Accelerate:** `cubic-bezier(0.4, 0, 1, 1)` — exit animations
+- **Bounce:** `cubic-bezier(0.68, -0.55, 0.265, 1.55)` — playful feedback
+
+**Avoid:** `linear` for UI (feels mechanical); `ease-in-out` without cubic-bezier (less predictable).
+
+## When to Animate
+
+- State changes (hover, active, focus)
+- Expand/collapse (accordion, nav)
+- Enter/exit (modals, toasts)
+- Layout shifts (carousel slide)
+
+**Avoid:** Animating on every scroll; excessive motion that distracts.
+
+## Project Reference
+
+This project: `STYLE-GUIDE.md` §1. Use `var(--transition-fast)`, `var(--transition-smooth)`, `var(--transition-slow)`. cubic-bezier(0.4, 0, 0.2, 1).

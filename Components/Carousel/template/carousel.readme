@@ -1,0 +1,16 @@
+# carousel.js — Generic Carousel Base
+
+## Layman's terms
+
+Bare-bones carousel behavior: shuffle slides, dots for navigation, auto-advance, swipe, click-to-lightbox, dynamic height. Works for any amenity (tennis, yoga, etc.). No Browse by Event or album grids—those are in amenity-specific scripts (e.g. carousel-pickleball.js).
+
+## Medium understanding
+
+Vanilla JS. Finds all `[data-carousel]` elements, shuffles .carousel-slide in DOM, builds dots, auto-advance 3s, touch swipe, lightbox (arrows, Escape, click-off). Supports data-carousel-dynamic for aspect-ratio height; offsetWidth fallback for Thrive iframes. Images injected by build-carousel.js.
+
+## Advanced
+
+- **Selector:** [data-carousel], .carousel-track, .carousel-slide, .carousel-dots
+- **Scope:** Works on any carousel; no specific container class required
+- **Dynamic:** data-carousel-dynamic → height from image aspect ratio
+- **Build:** Images from markdown via build-carousel.js

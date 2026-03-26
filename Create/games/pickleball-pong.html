@@ -1,0 +1,469 @@
+<!-- Pickleball Pong — Standalone game (no carousel). Paste entire block. Self-contained: fonts, styles, HTML, script. -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700&display=swap" rel="stylesheet">
+<style>
+/* Scoped to .pong-fun */
+.pong-fun {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 90%;
+  margin: 0 auto;
+}
+.pong-fun .pong-fun-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  position: relative;
+  min-height: 400px;
+}
+.pong-fun .pong-court-and-score {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 0.5rem;
+}
+.pong-fun .pong-court {
+  flex: 1;
+  position: relative;
+  min-height: 400px;
+  min-width: 0;
+  background: linear-gradient(135deg, rgba(11, 70, 140, 0.04) 0%, rgba(42, 138, 158, 0.06) 100%);
+  border: 1px solid rgba(11, 70, 140, 0.12);
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(11, 70, 140, 0.08);
+}
+.pong-fun .pong-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+  cursor: default;
+  touch-action: none;
+}
+.pong-fun .carousel-label-play-wrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  pointer-events: none;
+}
+.pong-fun .carousel-label-play-wrap .pong-play-btn { pointer-events: auto; }
+.pong-fun .carousel-label-play-wrap .carousel-label { position: static !important; transform: none !important; }
+.pong-fun .carousel-label {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-style: italic;
+  display: block;
+  text-align: center;
+  margin: 0;
+  width: fit-content;
+  max-width: 90%;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  padding: 1.25rem 2.5rem;
+  color: #0b468c;
+  background: linear-gradient(135deg, #fff 0%, #f8f6f0 100%);
+  border: 1px solid rgba(11,70,140,0.12);
+  border-radius: 100px;
+  box-shadow: 0 2px 8px rgba(11,70,140,0.04), 0 12px 40px rgba(11,70,140,0.06);
+}
+.pong-fun .carousel-label .carousel-label-line { display: block; white-space: nowrap; }
+@media (min-width: 1025px) {
+  .pong-fun .carousel-label-line--desktop { display: block !important; }
+  .pong-fun .carousel-label-line--mobile { display: none !important; }
+}
+@media (max-width: 1024px) {
+  .pong-fun .carousel-label-line--desktop { display: none !important; }
+  .pong-fun .carousel-label-line--mobile { display: block !important; }
+  .pong-fun .carousel-label {
+    font-size: clamp(0.85rem, 3.5vw, 1.15rem) !important;
+    padding: 0.75rem 1.5rem !important;
+    max-width: 92% !important;
+  }
+}
+.pong-fun .pong-play-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.25rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: #fff;
+  background: linear-gradient(135deg, #0b468c, #0d5ba8);
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(11, 70, 140, 0.25);
+  transition: transform 0.2s, box-shadow 0.2s;
+  z-index: 3;
+  flex-shrink: 0;
+}
+.pong-fun .pong-play-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(11, 70, 140, 0.35); }
+.pong-fun .pong-msg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  z-index: 10;
+  display: none;
+  animation: pongMsgFade 0.3s ease;
+}
+.pong-fun .pong-msg.win { color: #0b468c; background: rgba(255,255,255,0.95); box-shadow: 0 8px 32px rgba(11,70,140,0.2); }
+.pong-fun .pong-msg.lose { color: #c53030; background: rgba(255,255,255,0.95); box-shadow: 0 8px 32px rgba(197,48,48,0.15); }
+@keyframes pongMsgFade { from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+.pong-fun .pong-game-end-cta {
+  position: absolute !important;
+  bottom: 2rem !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  font-family: 'Montserrat', sans-serif !important;
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  color: #204147 !important;
+  z-index: 10 !important;
+  display: none !important;
+  text-align: center !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+}
+.pong-fun .pong-game-end-cta .pong-cta-sep { display: block !important; }
+.pong-fun .pong-game-end-cta a { color: #0b468c !important; font-weight: 600 !important; text-decoration: underline !important; white-space: nowrap !important; }
+.pong-fun .pong-game-end-cta .pong-play-again {
+  display: inline !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: none !important;
+  border: none !important;
+  font: inherit !important;
+  color: inherit !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+}
+.pong-fun .pong-score-row {
+  width: 100%;
+  margin-top: 0;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.25rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(11, 70, 140, 0.1);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(11, 70, 140, 0.06);
+}
+.pong-fun .pong-score-flex {
+  position: relative !important;
+  width: 100% !important;
+  min-height: 1.5em !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+.pong-fun .pong-score-flex .pong-score-you { position: absolute !important; left: 24px !important; text-align: left !important; }
+.pong-fun .pong-score-flex .pong-score-sep { position: absolute !important; left: 50% !important; transform: translateX(-50%) !important; padding: 0 0.5rem !important; }
+.pong-fun .pong-score-flex .pong-score-bot { position: absolute !important; right: 24px !important; text-align: right !important; }
+.pong-fun .pong-score-row .pong-rally-count {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #0b468c;
+  display: none;
+  text-align: center;
+  align-self: center;
+}
+.pong-fun .pong-score-row .pong-rally-count.visible { display: block; }
+@media (max-width: 768px) {
+  .pong-fun .carousel-label { font-size: clamp(1rem, 4vw, 1.35rem) !important; padding: 0.6rem 1.25rem !important; }
+  .pong-fun .pong-fun-row { flex-direction: column !important; gap: 0.75rem !important; min-height: 300px !important; }
+  .pong-fun .pong-court { min-height: 300px !important; }
+  .pong-fun .pong-court-and-score { width: 100% !important; }
+  .pong-fun .pong-play-btn { padding: 0.5rem 1rem !important; font-size: 0.8rem !important; }
+  .pong-fun .pong-game-end-cta { font-size: 1.25rem !important; bottom: 2.5rem !important; gap: 1rem !important; }
+  .pong-fun .pong-game-end-cta .pong-play-again { font-size: 1.25rem !important; }
+  .pong-fun .pong-game-end-cta a { font-size: 1.25rem !important; }
+}
+</style>
+
+<div class="pong-fun">
+  <div class="pong-fun-row">
+    <div class="pong-court-and-score">
+      <div class="pong-court">
+        <canvas class="pong-canvas" aria-label="Pickleball rally game"></canvas>
+        <div class="carousel-label-play-wrap">
+          <div class="carousel-label">
+            <span class="carousel-label-line carousel-label-line--desktop">The Best Pickleball In</span>
+            <span class="carousel-label-line carousel-label-line--mobile">The Best Pickleball</span>
+            <span class="carousel-label-line carousel-label-line--desktop">The South Bay!</span>
+            <span class="carousel-label-line carousel-label-line--mobile">In the South Bay</span>
+          </div>
+          <button class="pong-play-btn" type="button">Play Pong!</button>
+        </div>
+        <div class="pong-msg"></div>
+        <div class="pong-game-end-cta">
+          <button type="button" class="pong-play-again">Play Again?</button>
+          <span class="pong-cta-sep">Or </span>
+          <a href="https://southendclub.com/schedule-a-tour/">Book a Tour Here!</a>
+        </div>
+      </div>
+      <div class="pong-score-row">
+        <div class="pong-score-flex">
+          <span class="pong-score-you">You: 0</span>
+          <span class="pong-score-sep">–</span>
+          <span class="pong-score-bot">The Bot: 0</span>
+        </div>
+        <div class="pong-rally-count">Rally Count 0</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var W = 1;
+  var FIXED_DY = 1.35;
+  function initPong(wrap) {
+    var canvas = wrap.querySelector('.pong-canvas');
+    var pill = wrap.querySelector('.carousel-label');
+    var labelPlayWrap = wrap.querySelector('.carousel-label-play-wrap');
+    var court = wrap.querySelector('.pong-court') || wrap;
+    var playBtn = wrap.querySelector('.pong-play-btn');
+    var scoreYou = wrap.querySelector('.pong-score-you');
+    var scoreBot = wrap.querySelector('.pong-score-bot');
+    var msgEl = wrap.querySelector('.pong-msg');
+    var rallyEl = wrap.querySelector('.pong-rally-count');
+    var gameEndCta = wrap.querySelector('.pong-game-end-cta');
+    var playAgainBtn = gameEndCta ? gameEndCta.querySelector('.pong-play-again') : wrap.querySelector('.pong-play-again');
+    if (!canvas || !pill) return;
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var paddleH = 80, paddleW = 36, ballR = 8, baseSpeed = 4.5, speed = 4.5, speedMult = 1.10;
+    var leftY = 0, rightY = 0, ballX = 0, ballY = 0, dx = 0, dy = 0;
+    var courtH = 0, courtW = 0;
+    var pillRect = { l: 0, r: 0, t: 0, b: 0 };
+    var running = false, gameOver = false, playerScore = 0, botScore = 0, rallyCount = 0, msgT = null, rafId = null;
+    function resize() {
+      var r = court.getBoundingClientRect();
+      courtW = r.width;
+      courtH = r.height;
+      canvas.width = courtW * dpr;
+      canvas.height = courtH * dpr;
+      canvas.style.width = courtW + 'px';
+      canvas.style.height = courtH + 'px';
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+      if (pill.offsetParent !== null) {
+        var pr = pill.getBoundingClientRect(), wr = court.getBoundingClientRect();
+        pillRect.l = pr.left - wr.left;
+        pillRect.r = pr.right - wr.left;
+        pillRect.t = pr.top - wr.top;
+        pillRect.b = pr.bottom - wr.top;
+      }
+      leftY = (courtH - paddleH) / 2;
+      rightY = (courtH - paddleH) / 2;
+      if (!running && !gameOver) {
+        ballX = Math.min(pillRect.l > 10 ? pillRect.l - 50 : (courtW > 100 ? 80 : Math.max(24, courtW * 0.2)), 24 - ballR - 10);
+        ballY = courtH / 2;
+        dx = speed;
+        dy = FIXED_DY;
+      }
+      speed = courtW <= 768 ? baseSpeed * 0.3 : baseSpeed;
+      speedMult = courtW <= 768 ? 1.03 : 1.10;
+    }
+    function drawPaddle(x, y, left) {
+      var w = paddleW, h = paddleH, r = 10;
+      ctx.fillStyle = '#0b468c';
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(x, y, w, h, r);
+      else ctx.rect(x, y, w, h);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(11,70,140,0.6)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = '#0b468c';
+      ctx.font = 'bold 11px Montserrat,sans-serif';
+      ctx.textAlign = 'center';
+      var labelY, base = 'top';
+      if (y + h + 20 > courtH) { base = 'bottom'; labelY = y - 14; }
+      else { labelY = y + h + 10; }
+      ctx.textBaseline = base;
+      ctx.fillText(left ? 'You' : 'The Bot', x + w / 2, labelY);
+    }
+    function drawBall() {
+      ctx.fillStyle = '#f4c430';
+      ctx.beginPath();
+      ctx.arc(ballX, ballY, ballR, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+      ctx.stroke();
+      [[0.3, 0], [-0.25, 0.4], [-0.25, -0.4], [0.5, 0.5], [0.5, -0.5]].forEach(function(h) {
+        ctx.fillStyle = 'rgba(0,0,0,0.25)';
+        ctx.beginPath();
+        ctx.arc(ballX + h[0] * ballR, ballY + h[1] * ballR, ballR * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+    function upScore() {
+      if (scoreYou) scoreYou.textContent = 'You: ' + playerScore;
+      if (scoreBot) scoreBot.textContent = 'The Bot: ' + botScore;
+    }
+    function upRally() {
+      rallyCount++;
+      if (rallyEl) rallyEl.textContent = 'Rally Count ' + rallyCount;
+    }
+    function showMsg(txt, win) {
+      if (msgEl) {
+        msgEl.textContent = txt;
+        msgEl.className = 'pong-msg ' + (win ? 'win' : 'lose');
+        msgEl.style.display = 'block';
+        clearTimeout(msgT);
+        msgT = setTimeout(function() { msgEl.style.display = 'none'; }, 2500);
+      }
+    }
+    function endGame(won) {
+      running = false;
+      gameOver = true;
+      if (rafId != null) { cancelAnimationFrame(rafId); rafId = null; }
+      canvas.style.pointerEvents = 'none';
+      showMsg(won ? 'You Win!' : 'You Lose!', won);
+      if (rallyEl) rallyEl.classList.remove('visible');
+      if (gameEndCta) gameEndCta.style.display = 'flex';
+      ballX = Math.min(pillRect.l > 10 ? pillRect.l - 50 : (courtW > 100 ? 80 : Math.max(24, courtW * 0.2)), 24 - ballR - 10);
+      ballY = courtH / 2;
+      drawIdle();
+    }
+    function drawIdle() {
+      ctx.clearRect(0, 0, courtW, courtH);
+      drawPaddle(24, leftY, true);
+      drawPaddle(courtW - 24 - paddleW, rightY, false);
+      drawBall();
+    }
+    function loop() {
+      if (!running || gameOver) return;
+      ctx.clearRect(0, 0, courtW, courtH);
+      ballX += dx;
+      ballY += dy;
+      var lx = 24, rx = courtW - 24 - paddleW;
+      if (ballX - ballR <= lx + paddleW && ballX + ballR >= lx && ballY >= leftY && ballY <= leftY + paddleH) {
+        dx = Math.abs(dx);
+        dx *= speedMult;
+        dy *= speedMult;
+        upRally();
+      }
+      if (ballX + ballR >= rx && ballX - ballR <= rx + paddleW && ballY >= rightY && ballY <= rightY + paddleH) {
+        dx = -Math.abs(dx);
+        dx *= speedMult;
+        dy *= speedMult;
+        upRally();
+      }
+      if (ballY <= ballR || ballY >= courtH - ballR) dy = -dy;
+      if (ballX < -ballR * 3) {
+        botScore++;
+        upScore();
+        if (botScore >= W) { endGame(false); return; }
+        ballX = pillRect.r > 10 ? pillRect.r + 40 : (courtW > 100 ? courtW - 80 : Math.min(courtW - 24, courtW * 0.8));
+        dx = -speed;
+        dy = FIXED_DY;
+      }
+      if (ballX > courtW + ballR * 3) {
+        playerScore++;
+        upScore();
+        if (playerScore >= W) { endGame(true); return; }
+        ballX = Math.min(pillRect.l > 10 ? pillRect.l - 50 : (courtW > 100 ? 80 : Math.max(24, courtW * 0.2)), 24 - ballR - 10);
+        dx = speed;
+        dy = FIXED_DY;
+      }
+      rightY += (ballY - (rightY + paddleH / 2)) * 0.15;
+      rightY = Math.max(0, Math.min(courtH - paddleH, rightY));
+      drawPaddle(lx, leftY, true);
+      drawPaddle(rx, rightY, false);
+      drawBall();
+      rafId = requestAnimationFrame(loop);
+    }
+    function start() {
+      if (running) return;
+      gameOver = false;
+      running = true;
+      rallyCount = 0;
+      if (rallyEl) { rallyEl.textContent = 'Rally Count 0'; rallyEl.classList.add('visible'); }
+      if (labelPlayWrap) labelPlayWrap.style.display = 'none';
+      else { if (pill) pill.style.display = 'none'; if (playBtn) playBtn.style.display = 'none'; }
+      if (gameEndCta) gameEndCta.style.display = 'none';
+      if (msgEl) msgEl.style.display = 'none';
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          resize();
+          ballX = Math.min(pillRect.l > 10 ? pillRect.l - 50 : (courtW > 100 ? 80 : Math.max(24, courtW * 0.2)), 24 - ballR - 10);
+          ballY = courtH / 2;
+          dx = speed;
+          dy = FIXED_DY;
+          loop();
+        });
+      });
+    }
+    function reset() {
+      rallyCount = 0;
+      upScore();
+      gameOver = false;
+      canvas.style.pointerEvents = '';
+      if (pill) pill.style.display = '';
+      if (rallyEl) rallyEl.classList.remove('visible');
+      if (gameEndCta) gameEndCta.style.display = 'none';
+      if (labelPlayWrap) labelPlayWrap.style.display = '';
+      else if (playBtn) playBtn.style.display = 'inline-flex';
+      if (pill && !labelPlayWrap) pill.style.display = '';
+      leftY = (courtH - paddleH) / 2;
+      rightY = (courtH - paddleH) / 2;
+      ballX = Math.min(pillRect.l > 10 ? pillRect.l - 50 : (courtW > 100 ? 80 : Math.max(24, courtW * 0.2)), 24 - ballR - 10);
+      ballY = courtH / 2;
+      dx = speed;
+      dy = FIXED_DY;
+      drawIdle();
+    }
+    function move(cy) {
+      var r = court.getBoundingClientRect();
+      var y = cy - r.top;
+      leftY = Math.max(0, Math.min(courtH - paddleH, y - paddleH / 2));
+    }
+    if (playBtn) playBtn.onclick = function() { reset(); start(); };
+    if (playAgainBtn) playAgainBtn.onclick = function(e) { e.preventDefault(); reset(); start(); };
+    canvas.onmousedown = function(e) { if (e.offsetX < courtW / 2 && running) move(e.clientY); };
+    canvas.onmousemove = function(e) { if (e.buttons && e.offsetX < courtW / 2 && running) move(e.clientY); };
+    canvas.ontouchstart = function(e) {
+      if (running) {
+        if (e.touches[0].clientX < court.getBoundingClientRect().left + courtW / 2) { e.preventDefault(); move(e.touches[0].clientY); }
+      } else if (!gameOver) { e.preventDefault(); reset(); start(); }
+    };
+    canvas.ontouchmove = function(e) {
+      if (e.touches[0].clientX < court.getBoundingClientRect().left + courtW / 2 && running) { e.preventDefault(); move(e.touches[0].clientY); }
+    };
+    resize();
+    window.addEventListener('resize', resize);
+    upScore();
+    setTimeout(function() { if (!running && canvas.width) drawIdle(); }, 100);
+  }
+  document.querySelectorAll('.pong-fun').forEach(initPong);
+})();
+</script>

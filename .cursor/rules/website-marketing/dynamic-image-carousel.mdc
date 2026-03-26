@@ -1,0 +1,143 @@
+---
+description: Dynamic image carousel (aspect-ratio resizing, source-of-truth workflow)
+globs: "**/*.html,**/*.css,**/*.js,**/*images*.md,**/build-carousel.js,**/carousel-configs/*.json,!**/Dev/central/**"
+alwaysApply: false
+---
+
+# Dynamic Image Carousel Component
+
+Use this pattern when building image carousels that resize the frame to match each image's aspect ratio (no white borders).
+
+## HTML Structure
+
+```html
+<div class="carousel-wrap" data-carousel data-carousel-dynamic>
+    <div class="carousel-track">
+        <img src="..." alt="...">
+        <img src="..." alt="...">
+        <!-- more images -->
+    </div>
+    <div class="carousel-dots"></div>
+</div>
+```
+
+**Required attributes:**
+- `data-carousel` — enables carousel behavior
+- `data-carousel-dynamic` — enables dynamic height (frame resizes per image)
+
+## CSS (scope with parent class, e.g. `.bbo-page`)
+
+```css
+.carousel-wrap {
+    position: relative;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    transition: height 0.4s ease;
+}
+.carousel-wrap[data-carousel-dynamic] {
+    min-height: 200px;
+}
+.carousel-track {
+    display: flex;
+    align-items: flex-start;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+}
+.carousel-track img {
+    width: 100%;
+    min-width: 100%;
+    height: auto;
+    display: block;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.375rem;
+    padding: 0.75rem 0;
+}
+.carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(11,70,140,0.15);
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+.carousel-dot.active {
+    background: var(--blue);
+    transform: scale(1.3);
+}
+```
+
+## JavaScript (vanilla, IIFE)
+
+- Auto-advances every 3s
+- Swipe support (touch)
+- Dot navigation
+- Dynamic height: `wrap.style.height = wrapWidth * (naturalHeight/naturalWidth)`
+- Use `getBoundingClientRect().width` for accurate measurement
+- Use double `requestAnimationFrame` when switching slides for layout
+- Wrap in `DOMContentLoaded` for embed contexts (WordPress, etc.)
+
+## Optional Enhanced Features (Not Default)
+
+Carousels **may** support enhanced features (category tabs, photo albums, shuffle-no-repeat), but these must **not** be default. Only enable when explicitly opted in.
+
+**Opt-in:** Use `data-carousel-features="categories,albums,shuffle"` (or a subset) on the carousel wrapper. Carousels without this attribute use basic behavior only.
+
+**Features:**
+- **Categories:** Clickable tabs to filter by category (e.g. General, Halloween, Beachlife)
+- **Albums:** Per-category photo album view (grid + lightbox on click)
+- **Shuffle:** Random order, no repeat until all images shown, then reshuffle
+
+**Requirements when enabled:**
+- Images need `data-category` (e.g. `general`, `halloween`, `beachlife`)
+- **Lightbox:** All carousel and album images clickable → open lightbox with: left/right arrows to navigate catalogue, grey × top-right to close, click overlay or Escape to close
+- Mobile: category tabs wrap; album grid uses `minmax(120px, 1fr)` at ≤480px, `minmax(140px, 1fr)` at 481–1024px, `minmax(160px, 1fr)` at ≥1025px
+- Touch: swipe, tap-friendly category buttons, tap-to-open lightbox in carousel and albums
+
+**Reference:** `Components/Index/carousel-pickleball-homepage.html`
+
+## Single Source of Truth (Law)
+
+**Never edit carousel image lists directly in HTML files.** Always edit the source of truth and run the universal build script.
+
+**Workflow (required for every carousel):**
+1. Edit the carousel's source markdown (e.g. `media/**/*-images.md`) — add, remove, or reorder URLs
+2. Run: `node scripts/build/build-carousel.js scripts/build/carousel-configs/<name>.json`
+3. The build injects images into all configured HTML targets
+
+**Universal Build Script:** `scripts/build/build-carousel.js` — takes a JSON config file, no hardcoded values.
+
+**Config files:** Stored in `scripts/build/carousel-configs/*.json`. Each config defines:
+- `source` — markdown file with image URLs
+- `targets` — HTML files to inject into
+- `sections` — map section names → category/caption
+- `altPatterns` — regex → alt text mappings
+- `trackSelector` / `trackCloseIndent` — HTML injection points
+
+**Categories module:** Source markdown uses `## Section Name` headers. The config's `sections` map matches these to `data-category` values and optional captions.
+
+**Creating a new carousel (repeatable workflow):**
+
+Use the scaffold script—output adheres to this mdc.
+
+```bash
+node scripts/scaffold/new-carousel.js <name> [--media-path=PATH] [--sections=a,b,c]
+```
+
+Example: `node scripts/scaffold/new-carousel.js tennis --sections=general,lessons,events`
+
+Then:
+1. Add image URLs to the generated markdown
+2. Run `node scripts/build/build-carousel.js scripts/build/carousel-configs/<name>.json`
+3. Scaffolded HTML links to Components/Carousel/template/carousel.css and carousel.js
+
+**Manual alternative:** Create source markdown, config JSON+readme, and HTML with `data-carousel`/`data-carousel-dynamic`/`carousel-track`/`carousel-dots` per spec above.
+
+| Carousel | Config | Source |
+|----------|--------|--------|
+| Pickleball | `scripts/build/carousel-configs/pickleball.json` | `media/racquets/pickleball/pickleball-images.md` |
