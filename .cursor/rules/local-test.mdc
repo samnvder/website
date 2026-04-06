@@ -55,9 +55,9 @@ Canonical path:
 
 ---
 
-## Production / hosted testing site
+## Staging vs live (Open Play)
 
-Deploy **`Programs/Pickleball/live/`** via Firebase Hosting (`npm run deploy:openplay` from `Website/`). See **`auto-deploy-openplay-testing.mdc`** (always on) for sync + test + deploy after edits.
+Default dev edits go to **`Programs/Pickleball/staging/`**. **`npm run local-test`** mirrors whichever tree **`openplay-mode.json`** selects (`activeTree`: `staging` or `live`). Firebase Hosting always deploys **`live/`** — guarded by **`openplay-deploy.js`**. See **`openplay-mode.mdc`** and **`Programs/Pickleball/README.md`**.
 
 ---
 

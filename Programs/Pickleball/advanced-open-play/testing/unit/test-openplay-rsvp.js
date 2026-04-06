@@ -48,3 +48,26 @@ describe('validateAccessCard', () => {
     assert.ok(inv.message);
   });
 });
+
+describe('validatePhone', () => {
+  it('fails when phone is missing', () => {
+    var a = helpers.validatePhone('');
+    assert.strictEqual(a.ok, false);
+    assert.strictEqual(a.field, 'phone');
+    assert.ok(a.message);
+  });
+
+  it('passes for common 10-digit phone formats', () => {
+    assert.strictEqual(helpers.validatePhone('7045551212').ok, true);
+    assert.strictEqual(helpers.validatePhone('(704) 555-1212').ok, true);
+    assert.strictEqual(helpers.validatePhone('704-555-1212').ok, true);
+    assert.strictEqual(helpers.validatePhone('+1 (704) 555-1212').ok, true);
+  });
+
+  it('fails for invalid lengths or non-phone text', () => {
+    assert.strictEqual(helpers.validatePhone('555').ok, false);
+    assert.strictEqual(helpers.validatePhone('123456789').ok, false);
+    assert.strictEqual(helpers.validatePhone('123456789012').ok, false);
+    assert.strictEqual(helpers.validatePhone('not a phone').ok, false);
+  });
+});

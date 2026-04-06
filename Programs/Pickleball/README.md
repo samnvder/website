@@ -2,38 +2,57 @@
 
 | Path | Role |
 |------|------|
-| **`live/`** | Deploy these files (HTML + `js/`). Same relative layout on production. |
-| **`testing/`** | Local QA only — unit tests, mirror script, generated `local-page/`. |
-| **`account-creation/`** | **Living docs:** [README](./account-creation/README.md), **[MANAGING-ACCOUNTS.md](./account-creation/MANAGING-ACCOUNTS.md)** (manage users in Firebase Console), [CHANGELOG](./account-creation/CHANGELOG.md). |
+| **`staging/`** | **Default dev tree** — edit here first. Mirrored by `local-test` when `openplay-mode.json` has `activeTree: "staging"`. Not the Firebase deploy folder. |
+| **`live/`** | **Production source** for Firebase Hosting (`firebase.json` → `hosting.public`). Deploy **only** promotes content here + passes guards. |
+| **`openplay-mode.json`** | **`activeTree`**: `staging` \| `live` (which tree `local-test` copies). **`allowProductionHostingDeploy`**: must be `true` to deploy hosting without `OPENPLAY_CONFIRM_PRODUCTION=1`. |
+| **`scripts/`** | `openplay-resolve-tree.js`, `openplay-deploy.js`, bootstrap / promote / switch-tree helpers. |
+| **`testing/`** | Unit tests, `local-test.js` mirror script, generated **`local-page/`** (gitignored). |
+| **`account-creation/`** | **Living docs:** [README](./account-creation/README.md), **[MANAGING-ACCOUNTS.md](./account-creation/MANAGING-ACCOUNTS.md)**, [CHANGELOG](./account-creation/CHANGELOG.md). |
 
-## Testing layout
+## Staging vs live workflow
 
-| Subfolder | Contents |
-|-----------|----------|
-| `testing/unit/` | Node tests (`npm test` from Website root). |
-| `testing/integration/` | Reserved for future browser/e2e checks. |
-| `testing/scripts/` | `local-test.js` — copies `live/` → `testing/local-page/`. |
-| `testing/local-page/` | **Gitignored** mirror + hub (duplicate of root `local-page/` for short URLs). |
-| Root `local-page/` (Website) | **Gitignored** same mirror — use `http://127.0.0.1:3456/local-page/...` with live-server. |
+1. **Develop in `staging/`** (or run `npm run openplay:bootstrap-staging` once to clone `live/` → `staging/`).
+2. **`npm run local-test`** — copies the **active** tree (`staging` or `live`) into gitignored `local-page/` hubs.
+3. **Ship to Firebase:** promote `staging/` → `live/`, then deploy:
+   - **PowerShell:** `$env:OPENPLAY_CONFIRM_PROMOTE='1'; npm run openplay:promote`
+   - **cmd:** `set OPENPLAY_CONFIRM_PROMOTE=1&& npm run openplay:promote`
+   - Set **`openplay-mode.json`**: `"activeTree": "live"`, `"allowProductionHostingDeploy": true` after QA.
+   - **`npm run deploy:openplay`** or **`deploy:openplay:all`**.
+
+**Deploy guard:** `deploy:openplay` refuses to run if `activeTree` is not `live` (Firebase always deploys `live/`). It also refuses if `allowProductionHostingDeploy` is false unless **`OPENPLAY_CONFIRM_PRODUCTION=1`** is set for a one-off.
+
+**Database rules:** `npm run firebase:deploy-rules` is unchanged (deploys root `database.rules.json` only — no staging split).
 
 ## Commands (from `Website/`)
 
-- `npm test` — unit tests (`Programs/Pickleball/testing/unit/`, includes `database.rules.json` parse check)  
-- `npm run firebase:deploy-rules` — publish `database.rules.json` (run `npx firebase-tools login` once from `Website/`)  
-- `npm run deploy:openplay` — **Firebase Hosting** for `live/` (testing/staging site; `firebase.json` `hosting.public`)  
-- `npm run deploy:openplay:all` — Hosting + database rules together  
-- `npm run local-test:sync` — refresh mirrors (`local-page/` + `testing/local-page/`)  
-- `npm run local-test` — sync + live-server on port **3456** (opens `/local-page/index.html`)  
+| Script | Purpose |
+|--------|---------|
+| `npm run openplay:use-staging` | `activeTree` → `staging` |
+| `npm run openplay:use-live` | `activeTree` → `live` |
+| `npm run openplay:bootstrap-staging` | Replace `staging/` from `live/` |
+| `npm run openplay:promote` | Replace `live/` from `staging/` (needs `OPENPLAY_CONFIRM_PROMOTE=1`) |
+| `npm test` | Unit tests |
+| `npm run firebase:deploy-rules` | RTDB rules only |
+| `npm run deploy:openplay` | Guarded Firebase **hosting** deploy |
+| `npm run deploy:openplay:all` | Guarded **hosting + database** |
+| `npm run local-test:sync` | Refresh `local-page/` mirrors |
+| `npm run local-test` | Sync + live-server port **3456** |
 
-**CI:** push to `main` / `master` that touches `live/` or `testing/` runs `.github/workflows/deploy-openplay-firebase-hosting.yml` if `FIREBASE_TOKEN` is set in the repo.
+**URLs (live-server, repo root = site root):** `http://127.0.0.1:3456/local-page/…`
 
-**URLs (live-server, repo root = site root):** `http://127.0.0.1:3456/local-page/…` or `http://127.0.0.1:3456/Programs/Pickleball/testing/local-page/…`
+## CI
+
+Workflow: `.github/workflows/deploy-openplay-firebase-hosting.yml`
+
+- Runs on **`workflow_dispatch`**, or on **`push`** only if GitHub repo variable **`OPENPLAY_CI_AUTO_DEPLOY`** is **`true`** (avoids accidental prod deploys).
+- Needs **`FIREBASE_TOKEN`** secret; uses the same deploy guard as local CLI.
 
 ## Firebase (RSVP): sync + optional accounts
 
-Configure `live/js/openplay-firebase-config.js` with your web app credentials (free Spark tier is enough for typical club traffic).
+Configure **`staging/js/openplay-firebase-config.js`** and **`live/js/openplay-firebase-config.js`** (keep in sync when promoting, or use identical keys).
 
-1. **Realtime Database** — used for RSVP → check-in queue sync (`openplay_se/rsvps`).
-2. **Authentication → Email/Password** — optional member accounts: users sign in on **`live/SouthEnd_OpenPlay_Account.html`** (session persists in the browser on that device), then open **`SouthEnd_Session_RSVP.html`** to reserve. Profiles are stored at `openplay_se/user_profiles/{uid}` (name, phone, skill, membership, “heard via”, liability/communication waiver flags + schema version + timestamps — not access card numbers). Update RTDB rules as in the config file comment so each user can only read/write their own profile node.
-3. **RSVP email (FormSubmit)** and **each RTDB RSVP row** include the same waiver fields (`RSVP_Waivers_Schema` v2 after modal sign flow, both acceptances, UTC timestamp). On-page full-text liability and communications agreements are shown in pop-ups; have counsel review.
-4. Add your production domain under **Authentication → Settings → Authorized domains** so sign-in and password reset emails work when deployed.
+1. **Realtime Database** — RSVP → check-in sync (`openplay_se/rsvps`).
+2. **Authentication** — accounts on **`SouthEnd_OpenPlay_Account.html`**, profiles at `openplay_se/user_profiles/{uid}`.
+3. **RSVP email (FormSubmit)** + RTDB waiver fields — see `account-creation` docs.
+4. **Authorized domains** for production hostname.
+5. **`admin_uids`** + `staffEmails` for check-in — see `MANAGING-ACCOUNTS.md`.

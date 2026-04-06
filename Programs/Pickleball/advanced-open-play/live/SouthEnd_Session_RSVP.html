@@ -762,6 +762,7 @@ function collectProfileFromForm() {
     phone: document.getElementById('p-phone').value.trim(),
     skill: document.getElementById('p-skill').value,
     membership: document.getElementById('p-member').value,
+    memberCard: (document.getElementById('p-member-card') && document.getElementById('p-member-card').value.trim()) || '',
     hear: document.getElementById('p-hear').value || '',
     notes: notesEl ? notesEl.value.trim() : '',
     waiverLiabilityAccepted: !!(wl && wl.checked),
@@ -780,6 +781,9 @@ function applyProfileToForm(p) {
   if (p.membership) {
     document.getElementById('p-member').value = p.membership;
     toggleMemberPay(p.membership);
+    if (p.membership === 'yes' && p.memberCard && document.getElementById('p-member-card')) {
+      document.getElementById('p-member-card').value = p.memberCard;
+    }
   }
   if (p.hear) document.getElementById('p-hear').value = p.hear;
   if (p.notes && document.getElementById('p-notes')) document.getElementById('p-notes').value = p.notes;
@@ -1121,6 +1125,8 @@ function showErr(id) { const el=document.getElementById(id); if(el) el.classList
 function clearErrors() {
   document.querySelectorAll('.err-msg').forEach(e=>e.classList.remove('show'));
   document.querySelectorAll('.error').forEach(e=>e.classList.remove('error'));
+  var eph = document.getElementById('err-phone');
+  if (eph) eph.textContent = 'Required.';
   var emc = document.getElementById('err-member-card');
   if (emc) emc.textContent = 'Enter a 6-digit number starting with 2 or 3.';
   var wb = document.getElementById('waiver-block');
@@ -1152,7 +1158,17 @@ function submitRSVP() {
   if (!first) { showErr('err-first'); document.getElementById('p-first').classList.add('error'); valid = false; }
   if (!last)  { showErr('err-last');  document.getElementById('p-last').classList.add('error');  valid = false; }
   if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) { showErr('err-email'); document.getElementById('p-email').classList.add('error'); valid = false; }
-  if (!phone) { showErr('err-phone'); document.getElementById('p-phone').classList.add('error'); valid = false; }
+  const phoneCheck =
+    typeof OpenPlayRsvpHelpers !== 'undefined' && OpenPlayRsvpHelpers.validatePhone
+      ? OpenPlayRsvpHelpers.validatePhone(phone)
+      : { ok: !!phone, message: 'Required.' };
+  if (!phoneCheck.ok) {
+    var errPhone = document.getElementById('err-phone');
+    if (errPhone && phoneCheck.message) errPhone.textContent = phoneCheck.message;
+    showErr('err-phone');
+    document.getElementById('p-phone').classList.add('error');
+    valid = false;
+  }
   const skillPre = document.getElementById('p-skill').value;
   if (!skillPre) {
     showErr('err-skill');
@@ -1273,7 +1289,8 @@ function submitRSVP() {
         notes: notes || '',
         code: codeInfo,
         source: 'rsvp',
-        memberCard: member === 'yes' ? (memberCard || '') : '',
+        // Do not persist access card numbers in RTDB/check-in sync payload.
+        memberCard: '',
         firebaseUid: firebaseUid || '',
         rsvpWaiversSchema: typeof OpenPlayWaiverUI !== 'undefined' ? OpenPlayWaiverUI.RSVP_WAIVERS_SCHEMA : '2',
         liabilityWaiverAccepted: true,

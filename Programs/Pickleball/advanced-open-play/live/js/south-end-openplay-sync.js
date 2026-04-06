@@ -209,7 +209,7 @@
   }
 
   /**
-   * Saves profile fields (no access card — never store payment/access numbers in RTDB).
+   * Saves profile fields.
    * New fields: add to payload here and to PROFILE_FIELD_DEFS in `openplay-profile-panel.js`.
    */
   function saveUserProfile(uid, data) {
@@ -221,6 +221,7 @@
       phone: (data && data.phone) || '',
       skill: (data && data.skill) || '',
       membership: (data && data.membership) || '',
+      memberCard: (data && data.memberCard) || '',
       hear: (data && data.hear) || '',
       notes: (data && data.notes) || '',
       waiverLiabilityAccepted: !!(data && data.waiverLiabilityAccepted),
@@ -265,7 +266,8 @@
 
   /** Same rule on account + RSVP: required registration fields + electronic waivers on file (schema v2). */
   function isProfileComplete(p) {
-    return !!(
+    if (
+      !(
       p &&
       p.firstName &&
       p.lastName &&
@@ -275,7 +277,12 @@
       p.waiverLiabilityAccepted &&
       p.waiverCommunicationAccepted &&
       p.rsvpWaiversSchema === WAIVERS_SCHEMA_CURRENT
-    );
+      )
+    ) {
+      return false;
+    }
+    if (p.membership !== 'yes') return true;
+    return /^[23][0-9]{5}$/.test(String(p.memberCard || '').trim());
   }
 
   function pushRsvpToFirebase(record) {

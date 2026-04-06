@@ -1,16 +1,33 @@
 #!/usr/bin/env node
 /**
- * Mirrors Programs/Pickleball/live assets into testing mirrors for local QA.
+ * Mirrors Programs/Pickleball/advanced-open-play/{staging|live} (see openplay-mode.json) into testing mirrors for local QA.
  * Writes to two paths so both URL styles work with live-server (repo root = site root).
  */
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = path.join(__dirname, '..', '..', '..', '..');
-const LIVE = path.join(ROOT, 'Programs', 'Pickleball', 'live');
+const ROOT = path.join(__dirname, '..', '..', '..', '..', '..');
+const { getActiveSourceDir, getActiveTreeName } = require(path.join(
+  ROOT,
+  'Programs',
+  'Pickleball',
+  'advanced-open-play',
+  'scripts',
+  'openplay-resolve-tree.js'
+));
+const SOURCE = getActiveSourceDir();
+const TREE_LABEL = getActiveTreeName();
+
+if (!fs.existsSync(SOURCE)) {
+  console.error('[local-test] missing source tree:', SOURCE);
+  console.error('Run: npm run openplay:bootstrap-staging');
+  process.exit(1);
+}
+console.log('[local-test] mirroring from:', 'Programs/Pickleball/advanced-open-play/' + TREE_LABEL + '/');
+
 /** Canonical mirror + short legacy path (same files). */
 const OUT_DIRS = [
-  path.join(ROOT, 'Programs', 'Pickleball', 'testing', 'local-page'),
+  path.join(ROOT, 'Programs', 'Pickleball', 'advanced-open-play', 'testing', 'local-page'),
   path.join(ROOT, 'local-page'),
 ];
 
@@ -44,7 +61,7 @@ function bustHtmlJsRefs(html, token) {
 }
 
 function copyInto(OUT, rel) {
-  const src = path.join(LIVE, rel);
+  const src = path.join(SOURCE, rel);
   const dest = path.join(OUT, rel);
   if (!fs.existsSync(src)) {
     console.warn('[local-test] skip (missing):', rel);
@@ -100,14 +117,14 @@ const hub = `<!DOCTYPE html>
   </style>
 </head>
 <body>
-  <h1>Programs / Pickleball <span>testing</span></h1>
-  <p class="meta">Synced ${syncedAt} · mirror of live/</p>
+  <h1>Pickleball · Advanced Open Play <span>local</span></h1>
+  <p class="meta">Synced ${syncedAt} · source: Programs/Pickleball/advanced-open-play/${TREE_LABEL}/ (see openplay-mode.json)</p>
   <ul>
     <li><a href="SouthEnd_Session_RSVP.html">RSVP <small>Open Play — reservation form</small></a></li>
     <li><a href="SouthEnd_OpenPlay_Account.html">Account <small>Sign in / create account (then RSVP)</small></a></li>
     <li><a href="SouthEnd_Session_Checkin.html">Check-in <small>Staff roster / scan</small></a></li>
   </ul>
-  <p class="hint">Run <code>npm run local-test</code> from the Website folder to refresh. Short URL: <code>/local-page/</code> · canonical: <code>Programs/Pickleball/testing/local-page/</code>. Do not deploy these folders — production is <code>Programs/Pickleball/live/</code>.</p>
+  <p class="hint">Run <code>npm run local-test</code> from the Website folder to refresh. Short URL: <code>/local-page/</code>. Mirrors are gitignored. Active tree: <strong>${TREE_LABEL}</strong> — switch with <code>npm run openplay:use-staging</code> / <code>npm run openplay:use-live</code>. Production deploy uses <code>live/</code> only (see <code>openplay-mode.json</code> + deploy guard).</p>
 </body>
 </html>
 `;
@@ -118,4 +135,4 @@ for (const OUT of OUT_DIRS) {
   const rel = path.relative(ROOT, OUT).replace(/\\/g, '/');
   console.log('[local-test] wrote:', rel + '/index.html');
 }
-console.log('[local-test] done. Open http://127.0.0.1:3456/local-page/index.html (or …/Programs/Pickleball/testing/local-page/index.html) when using live-server from repo root.');
+console.log('[local-test] done. Open http://127.0.0.1:3456/local-page/index.html (or …/Programs/Pickleball/advanced-open-play/testing/local-page/index.html) when using live-server from repo root.');

@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="js/openplay-testing-env.js"></script>
+<title>RSVP — South End Open Play</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0a1628;--navy-lt:#152342;--navy-mid:#1e3a5f;
+  --purple:#6b21a8;--purple-lt:#9333ea;--electric:#a855f7;
+  --neon:#00ff88;--neon-dim:rgba(0,255,136,.12);--neon-glow:rgba(0,255,136,.25);
+  --gold:#f59e0b;--gold-lt:#fcd34d;
+  --ink:#0a0a1a;--muted:rgba(255,255,255,.7);--rule:rgba(255,255,255,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-height:100vh;}
+
+/* HEADER */
+.header{background:var(--navy-lt);padding:18px 28px 14px;display:flex;align-items:center;gap:16px;border-bottom:3px solid var(--neon);position:relative;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 16px var(--neon-glow)}50%{box-shadow:0 0 32px var(--neon-glow)}}
+.header img{height:48px;filter:drop-shadow(0 0 8px var(--neon-glow));}
+.hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--neon);margin-bottom:3px;}
+.hdr-title{font-family:'Oswald',sans-serif;font-size:24px;color:#fff;letter-spacing:1px;text-transform:uppercase;line-height:1;}
+.hdr-title span{color:var(--neon);}
+.hdr-sub{font-size:9px;color:rgba(255,255,255,.65);margin-top:3px;}
+
+/* HIDDEN COUPON ZONE — top right corner trigger, invisible to casual viewers */
+
+.coupon-panel{
+  display:none;
+  position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;
+  align-items:center;justify-content:center;
+}
+.coupon-panel.open{display:flex;}
+.coupon-box{
+  background:#111e35;
+  border:2px solid var(--neon);
+  border-radius:12px;padding:32px;
+  width:400px;max-width:95vw;
+  box-shadow:0 0 48px rgba(0,255,136,.15);
+}
+.coupon-title{font-family:'Oswald',sans-serif;font-size:22px;color:var(--neon);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;}
+.coupon-subtitle{font-size:12px;color:rgba(255,255,255,.72);margin-bottom:20px;line-height:1.5;}
+.coupon-input{
+  width:100%;padding:13px 16px;
+  background:rgba(255,255,255,.08);
+  border:2px solid rgba(0,255,136,.4);
+  border-radius:6px;font-family:'Oswald',sans-serif;
+  font-size:20px;color:#fff;letter-spacing:4px;
+  text-transform:uppercase;outline:none;margin-bottom:12px;
+  text-align:center;
+}
+.coupon-input::placeholder{color:rgba(255,255,255,.5);letter-spacing:1px;font-size:14px;font-family:'Barlow',sans-serif;}
+.coupon-input:focus{border-color:var(--neon);background:rgba(0,255,136,.05);}
+.coupon-msg{font-size:13px;margin-bottom:14px;min-height:18px;font-weight:600;text-align:center;}
+.coupon-msg.success{color:var(--neon);}
+.coupon-msg.error{color:#ff6666;}
+.coupon-actions{display:flex;gap:10px;}
+.coupon-btn{flex:1;padding:12px;border:none;border-radius:6px;font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.5px;}
+.cb-apply{background:var(--neon);color:var(--ink);}
+.cb-apply:hover{box-shadow:0 0 16px var(--neon-glow);}
+.cb-close{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);}
+.cb-close:hover{background:rgba(255,255,255,.15);}
+.coupon-divider{border:none;border-top:1px solid rgba(255,255,255,.1);margin:20px 0;}
+.coupon-admin-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:12px;}
+.pin-input{
+  width:100%;padding:12px 16px;
+  background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(168,85,247,.3);
+  border-radius:6px;font-family:'Oswald',sans-serif;
+  font-size:18px;color:#fff;outline:none;margin-bottom:10px;
+  letter-spacing:6px;text-align:center;
+}
+.pin-input:focus{border-color:var(--electric);background:rgba(168,85,247,.05);}
+.pin-input::placeholder{letter-spacing:2px;font-size:13px;font-family:'Barlow',sans-serif;}
+.pin-btn{width:100%;padding:11px;background:var(--electric);color:#fff;border:none;border-radius:6px;font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:.5px;font-weight:700;cursor:pointer;}
+.pin-btn:hover{background:var(--purple-lt);}
+
+/* SESSION CARDS */
+.body-wrap{padding:28px;}
+.session-help{font-size:12px;color:rgba(255,255,255,.55);line-height:1.45;margin-bottom:12px;max-width:520px;}
+.session-quick{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.sq-chip{
+  padding:8px 12px;border-radius:6px;border:1px solid rgba(0,255,136,.35);background:rgba(0,255,136,.06);
+  color:var(--neon);font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;
+  font-family:'Barlow',sans-serif;transition:background .15s,border-color .15s;
+}
+.sq-chip:hover{background:rgba(0,255,136,.12);border-color:var(--neon);}
+.sq-chip.muted{border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.45);background:rgba(255,255,255,.04);}
+.sq-chip.muted:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.65);}
+.session-week-block{margin-bottom:18px;}
+.swb-head{
+  font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:none;color:rgba(255,255,255,.55);
+  margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.08);
+}
+.swb-head .swb-range{text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.45);}
+.session-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media(max-width:640px){.session-grid{grid-template-columns:1fr;}}
+.session-card{
+  background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:8px;padding:14px;cursor:pointer;transition:all .15s;position:relative;
+}
+.session-card:hover{border-color:var(--neon);background:var(--neon-dim);}
+.session-card.selected{border-color:var(--neon);background:var(--neon-dim);box-shadow:0 0 16px var(--neon-glow);}
+.session-card input{position:absolute;opacity:0;width:0;height:0;}
+.sc-tag{font-size:8px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.6);margin-bottom:4px;}
+.sc-day{font-family:'Oswald',sans-serif;font-size:22px;color:#fff;line-height:1;}
+.sc-day span{color:var(--neon);}
+.sc-date{font-size:11px;color:rgba(255,255,255,.7);font-weight:600;margin-top:3px;}
+.sc-time{font-size:10px;margin-top:2px;}
+.sc-check{position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:4px;border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;transition:all .15s;}
+.session-card.selected .sc-check{background:var(--neon);border-color:var(--neon);color:var(--ink);}
+.session-summary{font-size:12px;color:var(--neon);font-weight:600;margin:14px 0 8px;min-height:1.2em;}
+
+/* DISCOUNT BADGE — shown when coupon applied */
+#discount-badge{
+  display:none;
+  background:var(--neon-dim);border:1px solid rgba(0,255,136,.3);
+  border-radius:5px;padding:8px 14px;margin-bottom:16px;
+  font-size:11px;color:var(--neon);font-weight:600;
+}
+#discount-badge.show{display:block;}
+
+/* FIELDS */
+.section{margin-bottom:22px;}
+.sec-head{display:flex;align-items:center;gap:10px;border-bottom:1.5px solid rgba(255,255,255,.07);padding-bottom:7px;margin-bottom:14px;}
+.sec-num{width:21px;height:21px;border-radius:50%;background:var(--neon);color:var(--ink);font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sec-label{font-family:'Oswald',sans-serif;font-size:14px;color:#fff;text-transform:uppercase;letter-spacing:.5px;}
+.row{display:grid;gap:12px;margin-bottom:12px;}
+.row-2{grid-template-columns:1fr 1fr;}
+.row-1{grid-template-columns:1fr;}
+.field label{display:block;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:4px;}
+.field label .req{color:var(--neon);}
+.field input,.field select,.field textarea{
+  width:100%;padding:10px 13px;
+  background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:5px;font-family:'Barlow',sans-serif;font-size:13px;color:#fff;outline:none;
+  transition:border-color .15s;
+}
+.field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.45);}
+.field input:focus,.field select:focus{border-color:var(--neon);}
+.field select option{background:var(--navy-lt);}
+.field input.error,.field select.error{border-color:#ff4444;}
+.err-msg{font-size:10px;color:#ff6666;margin-top:3px;display:none;}
+.err-msg.show{display:block;}
+
+/* PAYMENT BOX */
+.pay-box{
+  background:rgba(147,51,234,.08);border:1.5px solid rgba(147,51,234,.25);
+  border-radius:8px;padding:14px 16px;margin:16px 0;
+}
+.pay-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--electric);margin-bottom:8px;}
+.pay-num{font-family:'Oswald',sans-serif;font-size:22px;color:#fff;letter-spacing:1px;}
+.pay-sub{font-size:10px;color:rgba(255,255,255,.6);}
+.pay-note{font-size:10px;color:rgba(255,255,255,.65);line-height:1.6;margin-top:8px;}
+.pay-note strong{color:var(--neon);}
+
+/* SUBMIT */
+.submit-btn{
+  width:100%;padding:15px;background:var(--neon);color:var(--ink);
+  font-family:'Oswald',sans-serif;font-size:21px;letter-spacing:1px;
+  text-transform:uppercase;border:none;border-radius:5px;cursor:pointer;
+  animation:glowPulse 2.5s ease infinite;transition:transform .15s;
+}
+.submit-btn:hover{transform:translateY(-1px);}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;animation:none;}
+
+/* SUCCESS */
+#success{display:none;text-align:center;padding:40px 20px 48px;max-width:1040px;margin:0 auto;}
+#success.visible{display:block;}
+.success-icon{font-size:56px;margin-bottom:12px;}
+.success-title{font-family:'Oswald',sans-serif;font-size:clamp(26px,5vw,36px);color:#fff;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.success-title span{color:var(--neon);}
+.success-sub{font-size:14px;color:rgba(255,255,255,.55);margin-bottom:28px;line-height:1.65;max-width:520px;margin-left:auto;margin-right:auto;padding:0 8px;}
+.id-badge{margin-bottom:6px;}
+#player-id-sub{margin-bottom:22px!important;}
+.qr-multi-hint{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:18px;max-width:560px;margin-left:auto;margin-right:auto;line-height:1.5;}
+.qr-multi{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:22px;
+  width:100%;
+  max-width:960px;
+  margin:0 auto 32px;
+  padding:0 4px;
+  text-align:center;
+}
+@media(min-width:900px){
+  .qr-multi{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;}
+}
+@media(max-width:480px){
+  .qr-multi{grid-template-columns:1fr;max-width:280px;}
+}
+.qr-wrap.qr-tile{
+  background:#fff;border-radius:12px;padding:16px 14px 18px;
+  box-shadow:0 4px 24px rgba(0,255,136,.12);
+  display:flex;flex-direction:column;align-items:center;
+  min-width:0;
+}
+.qr-tile-head{font-size:11px;font-weight:700;color:rgba(10,22,40,.85);line-height:1.35;margin-bottom:12px;text-align:center;}
+.qr-tile-head .qh-date{color:rgba(10,22,40,.55);font-weight:600;font-size:10px;display:block;margin-top:4px;}
+.qr-tile .qr-holder{min-height:152px;display:flex;align-items:center;justify-content:center;}
+.qr-caption{font-size:11px;color:var(--ink);font-weight:800;letter-spacing:1.5px;text-align:center;margin-top:12px;text-transform:uppercase;}
+.qr-wrap{background:#fff;border-radius:10px;padding:18px;display:inline-block;margin:0 auto 20px;box-shadow:0 0 32px var(--neon-glow);}
+#qr-canvas{display:block;}
+.confirm-card{
+  background:rgba(255,255,255,.06);border:1.5px solid rgba(0,255,136,.22);
+  border-radius:12px;padding:22px 24px 24px;text-align:left;
+  max-width:min(100%,640px);margin:0 auto 20px;font-size:13px;line-height:1.65;
+  box-sizing:border-box;
+}
+.confirm-card strong{color:var(--neon);font-weight:700;}
+.confirm-card .cc-line{margin-bottom:12px;}
+.confirm-card .cc-line:last-child{margin-bottom:0;}
+.confirm-sessions-wrap{margin-top:16px;overflow-x:auto;border-radius:8px;border:1px solid rgba(255,255,255,.1);}
+.confirm-sessions-table{width:100%;border-collapse:collapse;font-size:12px;}
+.confirm-sessions-table th{
+  text-align:left;padding:10px 12px;background:rgba(0,255,136,.08);
+  color:var(--neon);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+.confirm-sessions-table td{padding:12px 12px;border-bottom:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.88);vertical-align:top;}
+.confirm-sessions-table td.mono{font-family:ui-monospace,'Consolas',monospace;font-size:11px;color:var(--neon);font-weight:600;}
+.confirm-sessions-table tr:last-child td{border-bottom:none;}
+.confirm-sessions-table .col-time{white-space:nowrap;color:rgba(255,255,255,.55);font-size:11px;}
+@media(max-width:520px){
+  .confirm-sessions-table th:nth-child(2),.confirm-sessions-table td:nth-child(2){display:none;}
+}
+.id-badge{
+  display:inline-block;background:var(--neon);color:var(--ink);
+  font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:2px;
+  padding:4px 14px;border-radius:4px;margin-bottom:4px;
+}
+.waiver-note{
+  background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);
+  border-radius:6px;padding:10px 14px;max-width:400px;margin:0 auto 16px;
+  font-size:11px;color:var(--gold-lt);text-align:left;
+}
+.success-pay{
+  background:rgba(147,51,234,.1);border:1.5px solid rgba(147,51,234,.25);
+  border-radius:8px;padding:14px;max-width:400px;margin:0 auto 16px;
+}
+.sp-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--electric);margin-bottom:8px;}
+.sp-num{font-family:'Oswald',sans-serif;font-size:20px;color:#fff;}
+.sp-sub{font-size:10px;color:rgba(255,255,255,.6);}
+.zelle-btn{
+  display:inline-block;margin-top:10px;padding:9px 20px;
+  background:var(--neon);color:var(--ink);font-family:'Oswald',sans-serif;
+  font-size:15px;letter-spacing:.5px;border-radius:4px;text-decoration:none;font-weight:700;
+}
+.show-qr-note{font-size:11px;color:var(--neon);margin-top:22px;font-weight:600;padding:0 12px;line-height:1.5;}
+.hidden{display:none!important;}
+
+/* WAIVERS */
+.waiver-block{
+  background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.1);
+  border-radius:7px;padding:14px 16px;margin-bottom:16px;font-size:11px;color:rgba(255,255,255,.78);line-height:1.55;
+}
+.waiver-block.waiver-error{border-color:rgba(255,68,68,.45);}
+.waiver-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:10px;}
+.waiver-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;}
+.waiver-row input[type=checkbox]{width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:var(--neon);cursor:pointer;}
+.waiver-row label{font-weight:500;cursor:pointer;color:rgba(255,255,255,.85);}
+.waiver-block .err-msg{margin-top:4px;margin-bottom:8px;}
+.waiver-intro{font-size:11px;color:rgba(255,255,255,.55);margin-bottom:12px;line-height:1.5;}
+.waiver-item{border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px 14px;margin-bottom:12px;background:rgba(255,255,255,.03);}
+.waiver-item.waiver-item--done{border-color:rgba(0,255,136,.25);}
+.waiver-item-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px;}
+.waiver-item-head input[type=checkbox]{width:18px;height:18px;margin-top:2px;accent-color:var(--neon);flex-shrink:0;}
+.waiver-item-head input[type=checkbox]:disabled{opacity:.35;cursor:not-allowed;}
+.waiver-item-label{font-family:'Oswald',sans-serif;font-size:13px;color:#fff;letter-spacing:.3px;text-transform:none;}
+.waiver-item-sum{font-size:10px;color:rgba(255,255,255,.5);line-height:1.45;margin-bottom:10px;}
+.waiver-open-btn{
+  display:inline-block;padding:8px 14px;border-radius:5px;border:1.5px solid var(--neon);background:rgba(0,255,136,.1);
+  color:var(--neon);font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;
+}
+.waiver-open-btn:hover{background:rgba(0,255,136,.18);}
+.waiver-modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:600;align-items:center;justify-content:center;padding:16px;
+}
+.waiver-modal-overlay.open{display:flex;}
+.waiver-modal-overlay--view-only .waiver-modal-agree{display:none;}
+.waiver-modal-overlay--view-only .waiver-scroll-hint{display:none;}
+.waiver-modal-box{
+  background:#0f1a2e;border:2px solid var(--neon);border-radius:12px;max-width:640px;width:100%;max-height:min(92vh,720px);
+  display:flex;flex-direction:column;box-shadow:0 0 48px rgba(0,255,136,.12);
+}
+.waiver-modal-head{
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.1);
+}
+.waiver-modal-head h2{font-family:'Oswald',sans-serif;font-size:17px;color:var(--neon);text-transform:uppercase;letter-spacing:.5px;margin:0;}
+.waiver-modal-close{
+  background:rgba(255,255,255,.08);border:none;color:#fff;width:36px;height:36px;border-radius:6px;font-size:22px;line-height:1;cursor:pointer;
+}
+.waiver-modal-close:hover{background:rgba(255,255,255,.14);}
+.waiver-modal-scroll{
+  flex:1;overflow-y:auto;padding:16px 18px;font-size:11px;color:rgba(255,255,255,.82);line-height:1.6;-webkit-overflow-scrolling:touch;
+}
+.waiver-modal-scroll h3{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--neon);margin:16px 0 8px;}
+.waiver-modal-scroll h3:first-child{margin-top:0;}
+.waiver-modal-scroll p{margin:0 0 10px;}
+.waiver-modal-scroll ul{margin:0 0 10px;padding-left:18px;}
+.waiver-modal-scroll li{margin-bottom:4px;}
+.waiver-modal-footer{flex-shrink:0;padding:12px 16px 16px;border-top:1px solid rgba(255,255,255,.1);}
+.waiver-scroll-hint{font-size:10px;color:rgba(255,255,255,.45);margin:0 0 8px;}
+.waiver-modal-agree{
+  width:100%;padding:12px;border:none;border-radius:6px;background:var(--neon);color:var(--ink);font-family:'Oswald',sans-serif;
+  font-size:15px;font-weight:700;letter-spacing:.5px;cursor:pointer;
+}
+.waiver-modal-agree:disabled{opacity:.4;cursor:not-allowed;}
+.waiver-modal-agree:not(:disabled):hover{filter:brightness(1.06);}
+
+/* ACCOUNT — sign-in lives on SouthEnd_OpenPlay_Account.html; RSVP shows a link + session state */
+.account-strip{
+  background:rgba(0,255,136,.06);border:1.5px solid rgba(0,255,136,.2);
+  border-radius:8px;padding:12px 14px;margin-bottom:18px;font-size:12px;color:rgba(255,255,255,.78);
+  line-height:1.45;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;justify-content:space-between;
+}
+.account-strip-text{flex:1;min-width:180px;font-size:12px;color:rgba(255,255,255,.75);}
+.account-strip-text strong{color:rgba(255,255,255,.95);font-weight:600;}
+.account-strip-link{
+  font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+  color:var(--electric);text-decoration:none;white-space:nowrap;
+}
+.account-strip-link:hover{text-decoration:underline;}
+.profile-summary-card{
+  background:rgba(0,255,136,.06);border:1.5px solid rgba(0,255,136,.2);
+  border-radius:8px;padding:14px 16px;margin-bottom:18px;
+}
+.profile-summary-lead{font-size:12px;color:rgba(255,255,255,.65);margin-bottom:10px;line-height:1.45;}
+.profile-summary-body{font-size:12px;color:rgba(255,255,255,.88);line-height:1.55;}
+.profile-summary-body .ps-line{margin:5px 0;}
+.profile-summary-edit{margin-top:12px;font-size:12px;}
+.profile-summary-edit a{color:var(--electric);}
+.profile-fields-wrap--hidden{
+  position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
+  overflow:hidden!important;clip:rect(0,0,0,0)!important;border:0!important;white-space:nowrap!important;
+}
+
+/* Auth gate — shown until signed-in user confirmed (Firebase) */
+.rsvp-gate-overlay{
+  position:fixed;inset:0;z-index:99999;background:var(--navy);display:flex;align-items:center;justify-content:center;
+  padding:28px 20px;text-align:center;
+}
+.rsvp-gate-overlay.hidden{display:none!important;}
+.rsvp-gate-inner{max-width:420px;}
+.rsvp-gate-title{font-family:'Oswald',sans-serif;font-size:20px;color:var(--neon);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+.rsvp-gate-sub{font-size:13px;color:rgba(255,255,255,.72);line-height:1.55;margin-bottom:14px;}
+.rsvp-gate-sub code{font-size:11px;color:rgba(0,255,136,.75);}
+.rsvp-gate-link{
+  display:inline-block;margin-top:8px;font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;
+  color:var(--electric);text-decoration:none;letter-spacing:.03em;text-transform:uppercase;
+}
+.rsvp-gate-link:hover{text-decoration:underline;}
+#main-form-wrap.rsvp-main-hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<div id="rsvp-auth-loading" class="rsvp-gate-overlay" aria-busy="true" aria-label="Checking sign in">
+  <div class="rsvp-gate-inner">
+    <p class="rsvp-gate-title">Checking sign-in…</p>
+    <p class="rsvp-gate-sub">If you aren’t redirected, sign in on the account page.</p>
+  </div>
+</div>
+<div id="rsvp-no-firebase" class="rsvp-gate-overlay hidden" role="alert">
+  <div class="rsvp-gate-inner">
+    <p class="rsvp-gate-title">RSVP requires sign-in</p>
+    <p class="rsvp-gate-sub">Add Firebase in <code>js/openplay-firebase-config.js</code> and reload. If scripts failed to load, check your connection.</p>
+    <a class="rsvp-gate-link" href="SouthEnd_OpenPlay_Account.html">Open Play account →</a>
+  </div>
+</div>
+
+<div class="header">
+  <img src="data:image/png;base64,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" alt="South End">
+  <div>
+    <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+    <div class="hdr-title">OPEN <span>PLAY</span> RSVP</div>
+    <div class="hdr-sub">Tuesday &amp; Thursday Sessions &nbsp;·&nbsp; Competitive Open Play</div>
+  </div>
+</div>
+
+<div class="coupon-panel" id="coupon-panel">
+  <div class="coupon-box">
+    <div class="coupon-title">⚡ Access Code</div>
+    <div class="coupon-subtitle">Enter your access code below. Codes are case-insensitive.</div>
+    <input class="coupon-input" type="text" id="coupon-input" placeholder="Enter code..." maxlength="20" oninput="this.value=this.value.toUpperCase()">
+    <div class="coupon-msg" id="coupon-msg"></div>
+    <div class="coupon-actions">
+      <button class="coupon-btn cb-apply" onclick="applyCoupon()">Apply</button>
+      <button class="coupon-btn cb-close" onclick="closeCoupon()">Close</button>
+    </div>
+    <hr class="coupon-divider">
+    <div class="coupon-admin-title">Staff Access</div>
+    <input class="pin-input" type="password" id="pin-input" placeholder="••••" maxlength="20">
+    <button class="pin-btn" onclick="checkPin()">Unlock Admin →</button>
+  </div>
+</div>
+
+<div id="main-form-wrap" class="rsvp-main-hidden">
+  <div class="body-wrap">
+
+    <div class="account-strip hidden" id="account-strip" aria-label="Open Play account">
+      <span class="account-strip-text" id="account-strip-msg">Sign in on the account page to save your details for next time.</span>
+      <a class="account-strip-link" id="account-strip-link" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Session_RSVP.html">Account page →</a>
+    </div>
+
+    <div class="section" id="section-your-info">
+      <div id="profile-summary-wrap" class="profile-summary-card hidden" aria-live="polite">
+        <div class="sec-head"><div class="sec-num">1</div><div class="sec-label">Your Information</div></div>
+        <p class="profile-summary-lead">Using your saved account profile. You can still add your access card below if you’re a member.</p>
+        <div class="profile-summary-body" id="profile-summary-body"></div>
+        <p class="profile-summary-edit"><a id="profile-summary-account-link" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Session_RSVP.html">Edit details on account page</a></p>
+      </div>
+      <div id="profile-fields-wrap">
+      <div class="sec-head"><div class="sec-num">1</div><div class="sec-label">Your Information</div></div>
+      <div class="row row-2">
+        <div class="field"><label>First Name <span class="req">*</span></label><input type="text" id="p-first" placeholder="First"><div class="err-msg" id="err-first">Required.</div></div>
+        <div class="field"><label>Last Name <span class="req">*</span></label><input type="text" id="p-last" placeholder="Last"><div class="err-msg" id="err-last">Required.</div></div>
+      </div>
+      <div class="row row-2">
+        <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="p-email" placeholder="your@email.com"><div class="err-msg" id="err-email">Valid email required.</div></div>
+        <div class="field"><label>Phone <span class="req">*</span></label><input type="tel" id="p-phone" placeholder="(555) 555-5555"><div class="err-msg" id="err-phone">Required.</div></div>
+      </div>
+      <div class="row row-2">
+        <div class="field">
+          <label>Skill Level <span class="req">*</span></label>
+          <select id="p-skill">
+            <option value="">Select level...</option>
+            <option value="Advanced 4.0+">Advanced 4.0+</option>
+            <option value="Open 5.0+">Open 5.0+</option>
+          </select>
+          <div class="err-msg" id="err-skill">Select a skill level.</div>
+        </div>
+        <div class="field">
+          <label>South End Member? <span class="req">*</span></label>
+          <select id="p-member" onchange="toggleMemberPay(this.value)">
+            <option value="">Select...</option>
+            <option value="yes">Yes — Member</option>
+            <option value="no">No — Guest</option>
+          </select>
+          <div class="err-msg" id="err-member">Required.</div>
+        </div>
+      </div>
+      <div class="row row-1 hidden" id="member-card-row">
+        <div class="field">
+          <label>Member access card # <span class="req">*</span></label>
+          <input type="text" id="p-member-card" placeholder="e.g. 212345" maxlength="6" pattern="[23][0-9]{5}" autocomplete="off" inputmode="numeric">
+          <div class="err-msg" id="err-member-card">Enter a 6-digit number starting with 2 or 3.</div>
+        </div>
+      </div>
+      <div class="row row-2">
+        <div class="field">
+          <label>How did you hear about us? <span style="color:rgba(255,255,255,.2);font-weight:400">(optional)</span></label>
+          <select id="p-hear">
+            <option value="">Select...</option>
+            <option value="Friend / Word of mouth">Friend / Word of mouth</option>
+            <option value="Social media">Social media</option>
+            <option value="South End member">South End member</option>
+            <option value="Google / Search">Google / Search</option>
+            <option value="Walk-in / Drove by">Walk-in / Drove by</option>
+            <option value="Event / Tournament">Event / Tournament</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field"><label>Notes <span style="color:rgba(255,255,255,.2);font-weight:400">(optional)</span></label><textarea id="p-notes" rows="2" placeholder="Anything we should know." style="resize:none;height:46px;"></textarea></div>
+      </div>
+      </div>
+    </div>
+
+    <div class="sec-head"><div class="sec-num">2</div><div class="sec-label">Choose Your Session</div></div>
+    <p class="session-help">Select <strong>one or more</strong> sessions. Tap a card to toggle. Use quick add to grab every Tuesday morning, every evening slot, a full week, or all dates at once.</p>
+    <div class="session-quick">
+      <button type="button" class="sq-chip" onclick="selectQuick('tue-am')">All Tue AM</button>
+      <button type="button" class="sq-chip" onclick="selectQuick('tue-pm')">All Tue PM</button>
+      <button type="button" class="sq-chip" onclick="selectQuick('thu-pm')">All Thu PM</button>
+      <button type="button" class="sq-chip" onclick="selectQuick('week1')">This Week (Apr 8–10)</button>
+      <button type="button" class="sq-chip" onclick="selectQuick('week2')">Next Week (Apr 15–17)</button>
+      <button type="button" class="sq-chip" onclick="selectQuick('all')">All sessions</button>
+      <button type="button" class="sq-chip muted" onclick="clearSessionSelection()">Clear</button>
+    </div>
+
+    <div class="session-week-block">
+      <div class="swb-head" id="swb-week-1"><span class="swb-label">This Week</span> · <span class="swb-range">Apr 8 – 10</span></div>
+      <div class="session-grid">
+        <div class="session-card" role="checkbox" tabindex="0" aria-checked="false" data-session="Tuesday Morning Apr 8" onclick="toggleSession(this,'Tuesday Morning Apr 8')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSession(this,'Tuesday Morning Apr 8');}">
+          <input type="checkbox" name="session" value="Tuesday Morning Apr 8">
+          <div class="sc-tag" style="color:rgba(0,255,136,.6)">☀ MORNING</div>
+          <div class="sc-day">TUES<span>.</span></div>
+          <div class="sc-date">Apr 8</div>
+          <div class="sc-time" style="color:var(--neon);">8:00 AM – 12:00 PM</div>
+          <div class="sc-check"></div>
+        </div>
+        <div class="session-card" role="checkbox" tabindex="0" aria-checked="false" data-session="Tuesday Evening Apr 8" onclick="toggleSession(this,'Tuesday Evening Apr 8')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSession(this,'Tuesday Evening Apr 8');}">
+          <input type="checkbox" name="session" value="Tuesday Evening Apr 8">
+          <div class="sc-tag" style="color:rgba(168,85,247,.6)">🌙 EVENING</div>
+          <div class="sc-day">TUES<span>.</span></div>
+          <div class="sc-date">Apr 8</div>
+          <div class="sc-time" style="color:var(--electric);">6:00 – 9:00 PM</div>
+          <div class="sc-check"></div>
+        </div>
+        <div class="session-card" role="checkbox" tabindex="0" aria-checked="false" data-session="Thursday Evening Apr 10" onclick="toggleSession(this,'Thursday Evening Apr 10')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSession(this,'Thursday Evening Apr 10');}">
+          <input type="checkbox" name="session" value="Thursday Evening Apr 10">
+          <div class="sc-tag" style="color:rgba(168,85,247,.6)">🌙 EVENING</div>
+          <div class="sc-day">THURS<span>.</span></div>
+          <div class="sc-date">Apr 10</div>
+          <div class="sc-time" style="color:var(--electric);">6:00 – 9:00 PM</div>
+          <div class="sc-check"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="session-week-block">
+      <div class="swb-head" id="swb-week-2"><span class="swb-label">Next Week</span> · <span class="swb-range">Apr 15 – 17</span></div>
+      <div class="session-grid">
+        <div class="session-card" role="checkbox" tabindex="0" aria-checked="false" data-session="Tuesday Morning Apr 15" onclick="toggleSession(this,'Tuesday Morning Apr 15')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSession(this,'Tuesday Morning Apr 15');}">
+          <input type="checkbox" name="session" value="Tuesday Morning Apr 15">
+          <div class="sc-tag" style="color:rgba(0,255,136,.6)">☀ MORNING</div>
+          <div class="sc-day">TUES<span>.</span></div>
+          <div class="sc-date">Apr 15</div>
+          <div class="sc-time" style="color:var(--neon);">8:00 AM – 12:00 PM</div>
+          <div class="sc-check"></div>
+        </div>
+        <div class="session-card" role="checkbox" tabindex="0" aria-checked="false" data-session="Tuesday Evening Apr 15" onclick="toggleSession(this,'Tuesday Evening Apr 15')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSession(this,'Tuesday Evening Apr 15');}">
+          <input type="checkbox" name="session" value="Tuesday Evening Apr 15">
+          <div class="sc-tag" style="color:rgba(168,85,247,.6)">🌙 EVENING</div>
+          <div class="sc-day">TUES<span>.</span></div>
+          <div class="sc-date">Apr 15</div>
+          <div class="sc-time" style="color:var(--electric);">6:00 – 9:00 PM</div>
+          <div class="sc-check"></div>
+        </div>
+        <div class="session-card" role="checkbox" tabindex="0" aria-checked="false" data-session="Thursday Evening Apr 17" onclick="toggleSession(this,'Thursday Evening Apr 17')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSession(this,'Thursday Evening Apr 17');}">
+          <input type="checkbox" name="session" value="Thursday Evening Apr 17">
+          <div class="sc-tag" style="color:rgba(168,85,247,.6)">🌙 EVENING</div>
+          <div class="sc-day">THURS<span>.</span></div>
+          <div class="sc-date">Apr 17</div>
+          <div class="sc-time" style="color:var(--electric);">6:00 – 9:00 PM</div>
+          <div class="sc-check"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="session-summary" id="session-summary">No sessions selected</div>
+    <div class="err-msg" id="err-session" style="margin-bottom:14px;">Select at least one session.</div>
+
+    <div id="discount-badge">✓ Special rate applied</div>
+
+    <div class="pay-box" id="pay-box">
+      <div class="pay-title">Payment</div>
+      <div class="pay-num">310-251-3804</div>
+      <div class="pay-sub">Zelle · Session fee</div>
+      <div class="pay-note">
+        <strong style="color:var(--neon);">South End Members:</strong> no charge — membership covers open play.<br>
+        <strong style="color:#f87171;">Non-Members:</strong> session fee applies — pay at front desk upon arrival.<br>
+        <strong>First-time players:</strong> arrive 10 minutes early for a quick waiver.
+      </div>
+    </div>
+
+    <div class="waiver-block" id="waiver-block">
+      <div class="waiver-title">Agreements &amp; waivers <span class="req" style="color:var(--neon);">*</span></div>
+      <p class="waiver-intro">Open each agreement below, read the full text, and sign electronically. The checkboxes are enabled only after you agree in the pop-up.</p>
+
+      <div class="waiver-item" id="waiver-item-liability">
+        <div class="waiver-item-head">
+          <input type="checkbox" id="waiver-liability" disabled aria-required="true" aria-describedby="err-waiver-liability">
+          <span class="waiver-item-label" id="waiver-liability-summary">Liability release &amp; assumption of risk</span>
+        </div>
+        <p class="waiver-item-sum">Industry-standard release: assumption of risk, release of claims (including negligence, where permitted by law), medical fitness, indemnity, facility use, media, and related terms. You must read the full document.</p>
+        <button type="button" class="waiver-open-btn" id="waiver-btn-open-liability">Read full text &amp; sign</button>
+        <div class="err-msg" id="err-waiver-liability">Please read and sign the liability waiver to continue.</div>
+      </div>
+
+      <div class="waiver-item" id="waiver-item-communication">
+        <div class="waiver-item-head">
+          <input type="checkbox" id="waiver-communication" disabled aria-required="true" aria-describedby="err-waiver-communication">
+          <span class="waiver-item-label" id="waiver-communication-summary">Communications consent</span>
+        </div>
+        <p class="waiver-item-sum">Generic club consent for calls, emails, and text messages about programs, reservations, and related updates (with opt-out rights).</p>
+        <button type="button" class="waiver-open-btn" id="waiver-btn-open-communication">Read full text &amp; sign</button>
+        <div class="err-msg" id="err-waiver-communication">Please read and sign the communications consent to continue.</div>
+      </div>
+
+      <div style="font-size:10px;color:rgba(255,255,255,.38);margin-top:6px;">Waivers schema v2 — sign once on your account; here you confirm they still apply. Club counsel should review all legal text.</div>
+    </div>
+
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:14px 16px;margin-bottom:16px;font-size:11px;color:rgba(255,255,255,.45);line-height:1.8;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:8px;">Court Rules</div>
+      🏆 <strong style="color:rgba(255,255,255,.7);">Challenge court always.</strong> Winners stay, losers rotate.<br>
+      ⚡ Director may remove or adjust players and/or court rotations as necessary based on skill.<br>
+      📋 By reserving, you agree to abide by all facility and session rules.
+    </div>
+    <div class="err-msg" id="err-general" style="margin-bottom:10px;font-size:12px;"></div>
+    <button class="submit-btn" id="submit-btn" type="button" onclick="submitRSVP()">RESERVE MY SPOT →</button>
+    <div style="text-align:center;margin-top:18px;">
+      <span style="font-size:10px;color:rgba(255,255,255,.15);cursor:default;user-select:none;" ondblclick="openCoupon()">South End Racquet &amp; Health Club &copy; 2026</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- Full-text waiver modals (read, scroll, electronic sign) -->
+<div id="waiver-modal-liability" class="waiver-modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="waiver-modal-liability-title">
+  <div class="waiver-modal-box" role="document">
+    <div class="waiver-modal-head">
+      <h2 id="waiver-modal-liability-title">Liability waiver &amp; release</h2>
+      <button type="button" class="waiver-modal-close" id="waiver-modal-liability-close" aria-label="Close">×</button>
+    </div>
+    <div class="waiver-modal-scroll" id="waiver-scroll-liability" tabindex="0">
+      <h3>Please read carefully</h3>
+      <p>By indicating your agreement at the end of this document, you are consenting to assumption of risk, a release of certain legal rights, and other binding terms, except where prohibited by law. If you do not agree, do not participate.</p>
+      <h3>Parties and activities</h3>
+      <p>I wish to participate in or attend pickleball and related athletic, recreational, and conditioning activities, including without limitation open play, leagues, clinics, lessons, tournaments, demonstrations, practice, social events, and use of courts, equipment, parking, walkways, locker rooms, and common areas (collectively, the &quot;Activities&quot;) at or through <strong>South End Racquet &amp; Health Club</strong> (the &quot;Club&quot;). The Club and its affiliates, owners, successors, subsidiaries, officers, directors, managers, members, employees, independent contractors, volunteers, instructors, coaches, referees, agents, sponsoring organizations, and insurers, and the owners and lessors of any premises used for the Activities (collectively, the &quot;Releasees&quot;) are intended third-party beneficiaries of this agreement.</p>
+      <h3>Risks</h3>
+      <p>I understand that the Activities are inherently hazardous. Risks include, without limitation: falls, trips, slips, dives, and collisions; contact or impact with the playing surface, nets, fences, walls, posts, doors, glass, dividers, benches, spectators, staff, or other participants; being struck by a ball, paddle, or other object; equipment failure or misuse; musculoskeletal injuries including sprains, strains, fractures, and concussions; overexertion; dehydration; heat-related illness; cardiac, circulatory, or neurological events; illness or complications from communicable disease; damage to or loss of personal property; and motor vehicle incidents in parking or access areas. Such risks may result in temporary or permanent injury, disability, or death. Releasees cannot eliminate all risks or guarantee safety.</p>
+      <h3>Voluntary assumption of risk</h3>
+      <p>I voluntarily elect to participate in the Activities with knowledge of the risks. I assume all risks, whether known or unknown, foreseeable or unforeseeable, that arise out of or relate to the Activities, my travel to or presence at the Club, the condition of facilities or equipment, or the acts or omissions of other persons, including other participants, spectators, or third parties.</p>
+      <h3>Release, waiver, and covenant not to sue</h3>
+      <p>To the fullest extent permitted by applicable law, I hereby release, acquit, waive, discharge, and covenant not to sue the Releasees from any and all claims, demands, actions, causes of action, judgments, liabilities, losses, or expenses (including attorneys&apos; fees) of any kind, whether known or unknown, arising out of or in any way connected with the Activities, my participation or observation, my use of the Club, or travel to or from the Club, including claims arising from the <strong>negligence, fault, or omissions</strong> of Releasees or others, and including claims for personal injury, illness, death, or property damage. I intend this release to be as broad and inclusive as the law allows. Nothing herein purports to release claims that cannot be released under applicable law (for example, certain claims based on gross negligence or willful misconduct where such limitations apply).</p>
+      <h3>Indemnification</h3>
+      <p>I agree to defend, indemnify, and hold harmless the Releasees from any loss, liability, damage, or cost (including reasonable attorneys&apos; fees) arising out of my participation, my breach of this agreement, my intoxication or use of prohibited substances where applicable, or claims brought by any other person (including a family member or minor) arising out of my conduct or registration.</p>
+      <h3>Medical fitness and insurance</h3>
+      <p>I represent that I am physically and mentally fit to participate and that I will not participate if impaired. I have obtained appropriate medical clearance or I voluntarily assume the risk of participation without it. I understand that Releasees do not provide medical insurance for me. I am solely responsible for any medical, ambulance, or hospital costs, and I am encouraged to maintain health and accident insurance.</p>
+      <h3>Equipment and property</h3>
+      <p>I am responsible for equipment I use or bring. I agree to reimburse the Club for damage to facilities or equipment caused by my reckless, intentional, or grossly negligent conduct.</p>
+      <h3>Emergency care</h3>
+      <p>I consent to emergency first aid, medical treatment, or transport as appropriate. I release Releasees from claims arising from such care except to the extent caused by willful misconduct.</p>
+      <h3>Photo, video, and likeness</h3>
+      <p>I grant the Club a non-exclusive, royalty-free license to capture, reproduce, and use my name, image, voice, and likeness in photographs, audio, or video for operational, promotional, training, or safety purposes, unless I submit a written opt-out where the Club offers one.</p>
+      <h3>Minors</h3>
+      <p>If I register a participant under 18, I am the parent or legal guardian; I enter this agreement on the minor&apos;s behalf; I consent to the minor&apos;s participation; and I agree to indemnify Releasees for claims brought by or on behalf of the minor.</p>
+      <h3>Rules and conduct</h3>
+      <p>I will comply with all posted rules, session director instructions, and staff directions. The Club may refuse or end participation for unsafe or disruptive behavior.</p>
+      <h3>Governing law and severability</h3>
+      <p>This agreement is governed by the laws of the state in which the Club is located, without regard to conflict-of-law principles. If any provision is held invalid, the remainder remains enforceable to the maximum extent permitted.</p>
+      <h3>Electronic signature</h3>
+      <p>I agree that selecting &quot;I have read and agree&quot; in this RSVP flow constitutes my electronic signature, that I have accessed and may retain a copy of this agreement, and that this agreement is binding.</p>
+    </div>
+    <div class="waiver-modal-footer">
+      <p class="waiver-scroll-hint" id="waiver-hint-liability">Scroll through the entire agreement to enable the button.</p>
+      <button type="button" class="waiver-modal-agree" id="waiver-agree-liability" disabled>I have read and agree to the above</button>
+    </div>
+  </div>
+</div>
+
+<div id="waiver-modal-communication" class="waiver-modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="waiver-modal-communication-title">
+  <div class="waiver-modal-box" role="document">
+    <div class="waiver-modal-head">
+      <h2 id="waiver-modal-communication-title">Communications consent</h2>
+      <button type="button" class="waiver-modal-close" id="waiver-modal-communication-close" aria-label="Close">×</button>
+    </div>
+    <div class="waiver-modal-scroll" id="waiver-scroll-communication" tabindex="0">
+      <h3>Please read carefully</h3>
+      <p>This is a <strong>generic club communications consent</strong> for transactional and promotional contact. Your club may customize procedures; consult counsel for compliance with TCPA, CAN-SPAM, and state privacy laws.</p>
+      <h3>Consent to be contacted</h3>
+      <p>By agreeing below, you consent to receive communications from <strong>South End Racquet &amp; Health Club</strong> and its service providers at the email address and telephone number(s) you provide, including via automated telephone dialing systems, prerecorded or artificial voice, SMS/MMS text messages, push notifications (if applicable), and email.</p>
+      <h3>Categories of messages</h3>
+      <p>Communications may include: (a) <strong>operational and transactional</strong> messages, such as reservation confirmations, cancellations, schedule changes, waitlist notices, check-in reminders, payment or billing notices, facility closures, and safety or policy updates; (b) <strong>account and service</strong> messages related to your participation in programs; and (c) where permitted, <strong>marketing or promotional</strong> messages about programs, events, membership offers, surveys, and club news.</p>
+      <h3>No purchase required</h3>
+      <p>Consent to marketing communications is not required to purchase goods or services, where applicable. Message frequency varies. <strong>Carrier message and data rates may apply</strong> for SMS.</p>
+      <h3>How to opt out</h3>
+      <p>You may opt out of promotional emails using the unsubscribe link where provided. You may opt out of promotional texts by following instructions in those messages (for example, replying <strong>STOP</strong>). You may also contact the club front desk to update preferences. Operational messages may continue where necessary to complete transactions or for legal or safety reasons.</p>
+      <h3>Use of contact information</h3>
+      <p>We use contact details to operate programs and communicate with you. We do not sell your personal information to unaffiliated third parties for their independent marketing without consent where required by law. No system is perfectly secure; we use reasonable safeguards.</p>
+      <h3>Electronic signature</h3>
+      <p>Selecting &quot;I have read and agree&quot; constitutes your electronic acceptance of this communications consent.</p>
+    </div>
+    <div class="waiver-modal-footer">
+      <p class="waiver-scroll-hint" id="waiver-hint-communication">Scroll through the entire consent to enable the button.</p>
+      <button type="button" class="waiver-modal-agree" id="waiver-agree-communication" disabled>I have read and agree to the above</button>
+    </div>
+  </div>
+</div>
+
+<div id="success">
+  <div class="success-icon">⚡</div>
+  <div class="success-title">YOU'RE <span>IN!</span></div>
+  <div class="success-sub" id="success-sub-msg">
+    Spot reserved. Show this screen at the door.<br>
+    <span style="color:var(--neon);">Screenshot your QR code(s) — your check-in ticket(s).</span>
+  </div>
+
+  <div class="id-badge" id="player-id-badge"></div>
+  <div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:16px;" id="player-id-sub">Your Player ID</div>
+
+  <p class="qr-multi-hint" id="qr-multi-hint" style="display:none;"></p>
+  <div class="qr-multi" id="qr-multi"></div>
+
+  <div class="confirm-card" id="confirm-detail"></div>
+
+  <div class="waiver-note" id="waiver-note" style="display:none;">
+    📋 <strong>First-time player?</strong> Please arrive 10 minutes early — you'll need to complete a quick waiver at the front desk.
+  </div>
+
+  <div class="success-pay" id="success-pay-box">
+    <div class="sp-title">💜 Pay via Zelle</div>
+    <div class="sp-num">310-251-3804</div>
+    <div class="sp-sub">Session fee — amount confirmed at check-in</div>
+    <a href="https://enroll.zellepay.com/qr-codes?data=ewogICJuYW1lIjogIkJSQU5ET04gSE9PS0VSIFRFTU5JUyBMTEMiLAogICJ0b2tlbiI6ICIzMTAtMjUxLTM4MDQiLAogICJhY3Rpb24iOiAicGF5bWVudCIKfQ==" class="zelle-btn" target="_blank">Open Zelle →</a>
+  </div>
+
+  <div class="show-qr-note">📱 Show QR code + Player ID to staff at the door</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="js/openplay-firebase-config.js"></script>
+<script src="js/south-end-openplay-sync.js"></script>
+<script src="js/openplay-profile-panel.js"></script>
+<script src="js/openplay-rsvp-helpers.js"></script>
+<script src="js/openplay-waiver-modals.js"></script>
+<script>
+(function applyOpenPlayWeekHeadings() {
+  var inner1 =
+    '<span class="swb-label">This Week</span> · <span class="swb-range">Apr 8 – 10</span>';
+  var inner2 =
+    '<span class="swb-label">Next Week</span> · <span class="swb-range">Apr 15 – 17</span>';
+  var w1 = document.getElementById('swb-week-1');
+  var w2 = document.getElementById('swb-week-2');
+  var heads = document.querySelectorAll('.session-week-block .swb-head');
+  if (w1) w1.innerHTML = inner1;
+  else if (heads[0]) heads[0].innerHTML = inner1;
+  if (w2) w2.innerHTML = inner2;
+  else if (heads[1]) heads[1].innerHTML = inner2;
+  document.querySelectorAll('.session-quick .sq-chip').forEach(function (btn) {
+    var oc = btn.getAttribute('onclick') || '';
+    if (oc.indexOf("selectQuick('week1')") !== -1) btn.textContent = 'This Week (Apr 8–10)';
+    if (oc.indexOf("selectQuick('week2')") !== -1) btn.textContent = 'Next Week (Apr 15–17)';
+  });
+})();
+
+// ── COUPON CODES (edit here to add/remove codes) ──
+// Format: 'CODE': {type: 'free'|'half', label: 'display message'}
+const CODES = {
+  'GUEST2026':  {type:'free',  label:'Guest pass applied — no charge'},
+  'FOUNDING50': {type:'half',  label:'Founding member rate applied — 50% off'},
+  'STAFF':      {type:'free',  label:'Staff pass applied — complimentary'},
+};
+
+// ── ADMIN PIN (shared with check-in page via se_pin) ──
+let ADMIN_PIN = (typeof SEOpenPlay !== 'undefined' ? SEOpenPlay.getPin() : localStorage.getItem('se_pin')) || '1234';
+
+let selectedSessions = new Set();
+let appliedCode = null;
+
+function escapeHtml(s) {
+  if (s == null || s === '') return '';
+  var d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function collectProfileFromForm() {
+  var wl = document.getElementById('waiver-liability');
+  var wc = document.getElementById('waiver-communication');
+  var notesEl = document.getElementById('p-notes');
+  return {
+    firstName: document.getElementById('p-first').value.trim(),
+    lastName: document.getElementById('p-last').value.trim(),
+    phone: document.getElementById('p-phone').value.trim(),
+    skill: document.getElementById('p-skill').value,
+    membership: document.getElementById('p-member').value,
+    memberCard: (document.getElementById('p-member-card') && document.getElementById('p-member-card').value.trim()) || '',
+    hear: document.getElementById('p-hear').value || '',
+    notes: notesEl ? notesEl.value.trim() : '',
+    waiverLiabilityAccepted: !!(wl && wl.checked),
+    waiverCommunicationAccepted: !!(wc && wc.checked),
+    rsvpWaiversSchema:
+      typeof OpenPlayWaiverUI !== 'undefined' ? OpenPlayWaiverUI.RSVP_WAIVERS_SCHEMA : '2',
+  };
+}
+
+function applyProfileToForm(p) {
+  if (!p) return;
+  if (p.firstName) document.getElementById('p-first').value = p.firstName;
+  if (p.lastName) document.getElementById('p-last').value = p.lastName;
+  if (p.phone) document.getElementById('p-phone').value = p.phone;
+  if (p.skill) document.getElementById('p-skill').value = p.skill;
+  if (p.membership) {
+    document.getElementById('p-member').value = p.membership;
+    toggleMemberPay(p.membership);
+    if (p.membership === 'yes' && p.memberCard && document.getElementById('p-member-card')) {
+      document.getElementById('p-member-card').value = p.memberCard;
+    }
+  }
+  if (p.hear) document.getElementById('p-hear').value = p.hear;
+  if (p.notes && document.getElementById('p-notes')) document.getElementById('p-notes').value = p.notes;
+}
+
+function fillProfileSummaryBody(p) {
+  var el = document.getElementById('profile-summary-body');
+  if (!el || !p) return;
+  var hear = p.hear ? escapeHtml(p.hear) : '—';
+  var notes = p.notes ? escapeHtml(p.notes) : '—';
+  var em = document.getElementById('p-email') ? document.getElementById('p-email').value : '';
+  el.innerHTML =
+    '<div class="ps-line"><strong>Name</strong> — ' +
+    escapeHtml(p.firstName) +
+    ' ' +
+    escapeHtml(p.lastName) +
+    '</div>' +
+    '<div class="ps-line"><strong>Email</strong> — ' +
+    escapeHtml(em) +
+    '</div>' +
+    '<div class="ps-line"><strong>Phone</strong> — ' +
+    escapeHtml(p.phone) +
+    '</div>' +
+    '<div class="ps-line"><strong>Skill</strong> — ' +
+    escapeHtml(p.skill) +
+    '</div>' +
+    '<div class="ps-line"><strong>Member</strong> — ' +
+    (p.membership === 'yes' ? 'Yes — Member' : 'Guest') +
+    '</div>' +
+    '<div class="ps-line"><strong>Heard via</strong> — ' +
+    hear +
+    '</div>' +
+    '<div class="ps-line"><strong>Notes</strong> — ' +
+    notes +
+    '</div>';
+}
+
+function setRsvpProfileSummaryMode(on) {
+  var wrap = document.getElementById('profile-fields-wrap');
+  var sum = document.getElementById('profile-summary-wrap');
+  if (!wrap || !sum) return;
+  if (on) {
+    sum.classList.remove('hidden');
+    wrap.classList.add('profile-fields-wrap--hidden');
+  } else {
+    sum.classList.add('hidden');
+    wrap.classList.remove('profile-fields-wrap--hidden');
+  }
+}
+
+function saveProfileAfterRsvp() {
+  var u = SEOpenPlay.getCurrentUser();
+  if (!u) return;
+  SEOpenPlay.saveUserProfile(u.uid, collectProfileFromForm()).catch(function () {});
+}
+
+function accountPageHrefForRsvp() {
+  var page = 'SouthEnd_Session_RSVP.html';
+  try {
+    var seg = (window.location.pathname || '').split('/').filter(Boolean).pop();
+    if (seg && /\.html?$/i.test(seg)) page = seg;
+  } catch (e) {}
+  return 'SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent(page);
+}
+
+/** RSVP: no inline sign-in — account page holds email/password; Firebase Auth persists the session in-browser. */
+function initRsvpProfileOnly() {
+  if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()) return;
+  var psLink = document.getElementById('profile-summary-account-link');
+  if (psLink) psLink.href = accountPageHrefForRsvp();
+  var strip = document.getElementById('account-strip');
+  var stripMsg = document.getElementById('account-strip-msg');
+  var stripLink = document.getElementById('account-strip-link');
+  if (strip) strip.classList.remove('hidden');
+
+  SEOpenPlay.onAuthStateChanged(function (user) {
+    var pe = document.getElementById('p-email');
+    if (user) {
+      if (pe) {
+        pe.value = user.email || '';
+        pe.readOnly = true;
+      }
+      if (stripMsg) stripMsg.innerHTML = 'Signed in as <strong>' + escapeHtml(user.email) + '</strong>.';
+      if (stripLink) {
+        stripLink.textContent = 'Account page →';
+        stripLink.href = accountPageHrefForRsvp();
+      }
+      SEOpenPlay.loadUserProfile(user.uid).then(function (p) {
+        if (p) applyProfileToForm(p);
+        if (p && SEOpenPlay.isProfileComplete(p)) {
+          fillProfileSummaryBody(p);
+          setRsvpProfileSummaryMode(true);
+          if (typeof OpenPlayWaiverUI !== 'undefined') OpenPlayWaiverUI.setMode('confirm');
+        } else {
+          setRsvpProfileSummaryMode(false);
+          if (typeof OpenPlayWaiverUI !== 'undefined') OpenPlayWaiverUI.setMode('full');
+        }
+        if (p) toggleMemberPay(document.getElementById('p-member').value);
+      });
+    } else {
+      if (pe) pe.readOnly = false;
+      setRsvpProfileSummaryMode(false);
+      if (stripMsg) stripMsg.textContent = 'Sign in on the account page to continue.';
+      if (stripLink) {
+        stripLink.textContent = 'Account page →';
+        stripLink.href = accountPageHrefForRsvp();
+      }
+    }
+  });
+}
+
+var rsvpProfileGateDone = false;
+
+/** Require Firebase + signed-in user before showing the RSVP form; otherwise redirect to account or show config error. */
+function initRsvpAuthGate(onAllowed) {
+  var loading = document.getElementById('rsvp-auth-loading');
+  var noFb = document.getElementById('rsvp-no-firebase');
+  var main = document.getElementById('main-form-wrap');
+  function hideLoading() {
+    if (loading) {
+      loading.classList.add('hidden');
+      loading.setAttribute('aria-busy', 'false');
+    }
+  }
+  function showMain() {
+    if (main) main.classList.remove('rsvp-main-hidden');
+  }
+  function blockMain(msg) {
+    hideLoading();
+    if (main) main.classList.add('rsvp-main-hidden');
+    if (noFb) {
+      if (msg) {
+        var sub = noFb.querySelector('.rsvp-gate-sub');
+        if (sub) sub.textContent = msg;
+      }
+      noFb.classList.remove('hidden');
+    }
+  }
+
+  if (typeof SEOpenPlay === 'undefined') {
+    blockMain('Open Play scripts did not load.');
+    return;
+  }
+  if (!SEOpenPlay.firebaseConfigured()) {
+    blockMain();
+    return;
+  }
+
+  SEOpenPlay.initFirebase().then(function () {
+    if ((SEOpenPlay.firebaseInitFailed && SEOpenPlay.firebaseInitFailed()) || !SEOpenPlay.getFirebaseDb()) {
+      blockMain('Firebase could not load. Check your connection and try again.');
+      return;
+    }
+    SEOpenPlay.onAuthStateChanged(function (user) {
+      hideLoading();
+      if (user) {
+        showMain();
+        if (!rsvpProfileGateDone && typeof onAllowed === 'function') {
+          rsvpProfileGateDone = true;
+          onAllowed();
+        }
+        return;
+      }
+      window.location.replace(accountPageHrefForRsvp());
+    });
+  });
+}
+
+var SESSION_GROUPS = {
+  'tue-am': ['Tuesday Morning Apr 8', 'Tuesday Morning Apr 15'],
+  'tue-pm': ['Tuesday Evening Apr 8', 'Tuesday Evening Apr 15'],
+  'thu-pm': ['Thursday Evening Apr 10', 'Thursday Evening Apr 17'],
+  'week1': ['Tuesday Morning Apr 8', 'Tuesday Evening Apr 8', 'Thursday Evening Apr 10'],
+  'week2': ['Tuesday Morning Apr 15', 'Tuesday Evening Apr 15', 'Thursday Evening Apr 17'],
+  'all': [
+    'Tuesday Morning Apr 8', 'Tuesday Evening Apr 8', 'Thursday Evening Apr 10',
+    'Tuesday Morning Apr 15', 'Tuesday Evening Apr 15', 'Thursday Evening Apr 17',
+  ],
+};
+
+function findSessionCard(val) {
+  var found = null;
+  document.querySelectorAll('.session-card').forEach(function (c) {
+    if (!found && (c.getAttribute('data-session') === val || (c.querySelector('input') && c.querySelector('input').value === val))) found = c;
+  });
+  return found;
+}
+function setCardVisual(card, on) {
+  if (!card) return;
+  var inp = card.querySelector('input');
+  var chk = card.querySelector('.sc-check');
+  if (on) {
+    card.classList.add('selected');
+    if (inp) inp.checked = true;
+    card.setAttribute('aria-checked', 'true');
+    if (chk) chk.textContent = '✓';
+  } else {
+    card.classList.remove('selected');
+    if (inp) inp.checked = false;
+    card.setAttribute('aria-checked', 'false');
+    if (chk) chk.textContent = '';
+  }
+}
+function updateSessionSummary() {
+  var n = selectedSessions.size;
+  var el = document.getElementById('session-summary');
+  if (!el) return;
+  el.textContent = n === 0 ? 'No sessions selected' : '✓ ' + n + ' session' + (n === 1 ? '' : 's') + ' selected';
+  var btn = document.getElementById('submit-btn');
+  if (btn && !btn.disabled) {
+    if (n <= 1) btn.textContent = 'RESERVE MY SPOT →';
+    else btn.textContent = 'RESERVE MY SPOTS (' + n + ') →';
+  }
+}
+function toggleSession(card, val) {
+  if (selectedSessions.has(val)) {
+    selectedSessions.delete(val);
+    setCardVisual(card, false);
+  } else {
+    selectedSessions.add(val);
+    setCardVisual(card, true);
+  }
+  updateSessionSummary();
+  document.getElementById('err-session').classList.remove('show');
+}
+function clearSessionSelection() {
+  selectedSessions.clear();
+  document.querySelectorAll('.session-card').forEach(function (c) {
+    setCardVisual(c, false);
+  });
+  updateSessionSummary();
+}
+function selectQuick(mode) {
+  var list = SESSION_GROUPS[mode];
+  if (!list) return;
+  clearSessionSelection();
+  list.forEach(function (val) {
+    selectedSessions.add(val);
+    setCardVisual(findSessionCard(val), true);
+  });
+  updateSessionSummary();
+  document.getElementById('err-session').classList.remove('show');
+}
+
+// ── COUPON ZONE ──
+function openCoupon() {
+  document.getElementById('coupon-panel').classList.add('open');
+  document.getElementById('coupon-input').focus();
+}
+function closeCoupon() {
+  document.getElementById('coupon-panel').classList.remove('open');
+  document.getElementById('coupon-msg').textContent = '';
+  document.getElementById('pin-input').value = '';
+}
+function applyCoupon() {
+  const val = document.getElementById('coupon-input').value.trim().toUpperCase();
+  const msgEl = document.getElementById('coupon-msg');
+  const code = CODES[val];
+  if (code) {
+    appliedCode = {code: val, ...code};
+    msgEl.className = 'coupon-msg success';
+    msgEl.textContent = '✓ ' + code.label;
+    document.getElementById('discount-badge').textContent = '✓ ' + code.label;
+    document.getElementById('discount-badge').classList.add('show');
+    setTimeout(closeCoupon, 1200);
+  } else {
+    msgEl.className = 'coupon-msg error';
+    msgEl.textContent = 'Invalid code.';
+    appliedCode = null;
+    document.getElementById('discount-badge').classList.remove('show');
+  }
+}
+function checkPin() {
+  const pin = document.getElementById('pin-input').value;
+  const ok = (typeof SEOpenPlay !== 'undefined' ? SEOpenPlay.getPin() : localStorage.getItem('se_pin')) || '1234';
+  if (pin === ok) {
+    closeCoupon();
+    showAdminPanel();
+  } else {
+    document.getElementById('pin-input').value = '';
+    document.getElementById('pin-input').placeholder = 'Incorrect — try again';
+  }
+}
+function showAdminPanel() {
+  const newPin = prompt('Current PIN accepted. Enter new PIN to change it (or Cancel to keep):');
+  if (newPin && newPin.length >= 4) {
+    ADMIN_PIN = newPin;
+    if (typeof SEOpenPlay !== 'undefined') SEOpenPlay.setPin(newPin);
+    else localStorage.setItem('se_pin', newPin);
+    alert('PIN updated successfully.');
+  }
+}
+// Close on backdrop click
+document.getElementById('coupon-panel').addEventListener('click', function(e) {
+  if (e.target === this) closeCoupon();
+});
+// Enter key on coupon input
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('coupon-input').addEventListener('keydown', e => { if(e.key==='Enter') applyCoupon(); });
+  document.getElementById('pin-input').addEventListener('keydown', e => { if(e.key==='Enter') checkPin(); });
+  updateSessionSummary();
+  if (typeof OpenPlayWaiverUI !== 'undefined' && OpenPlayWaiverUI.wire) OpenPlayWaiverUI.wire();
+  initRsvpAuthGate(function () {
+    initRsvpProfileOnly();
+  });
+});
+
+// ── SESSION SELECT ──
+function toggleMemberPay(val) {
+  const payBox = document.getElementById('pay-box');
+  const cardRow = document.getElementById('member-card-row');
+  const cardInput = document.getElementById('p-member-card');
+  if (!payBox || !cardRow) return;
+  if (val === 'yes') {
+    payBox.style.opacity = '.4';
+    payBox.style.pointerEvents = 'none';
+    payBox.querySelector('.pay-num').textContent = 'No Charge';
+    payBox.querySelector('.pay-sub').textContent = 'South End member — open play included';
+    cardRow.classList.remove('hidden');
+  } else if (val === 'no') {
+    payBox.style.opacity = '1';
+    payBox.style.pointerEvents = '';
+    payBox.querySelector('.pay-num').textContent = '310-251-3804';
+    payBox.querySelector('.pay-sub').textContent = 'Zelle · Session fee';
+    cardRow.classList.add('hidden');
+    if (cardInput) { cardInput.value = ''; cardInput.classList.remove('error'); }
+    document.getElementById('err-member-card').classList.remove('show');
+  } else {
+    payBox.style.opacity = '1';
+    payBox.style.pointerEvents = '';
+    cardRow.classList.add('hidden');
+    if (cardInput) { cardInput.value = ''; cardInput.classList.remove('error'); }
+    document.getElementById('err-member-card').classList.remove('show');
+  }
+}
+
+// ── VALIDATION ──
+function showErr(id) { const el=document.getElementById(id); if(el) el.classList.add('show'); }
+function clearErrors() {
+  document.querySelectorAll('.err-msg').forEach(e=>e.classList.remove('show'));
+  document.querySelectorAll('.error').forEach(e=>e.classList.remove('error'));
+  var eph = document.getElementById('err-phone');
+  if (eph) eph.textContent = 'Required.';
+  var emc = document.getElementById('err-member-card');
+  if (emc) emc.textContent = 'Enter a 6-digit number starting with 2 or 3.';
+  var wb = document.getElementById('waiver-block');
+  if (wb) wb.classList.remove('waiver-error');
+}
+
+// ── PLAYER ID (shared prefix logic with check-in) ──
+function generateId(name, session) {
+  return SEOpenPlay.generatePlayerId(name, session);
+}
+
+// ── SUBMIT ──
+function submitRSVP() {
+  clearErrors();
+  if (typeof SEOpenPlay !== 'undefined' && SEOpenPlay.firebaseConfigured()) {
+    var cu = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
+    if (!cu) {
+      window.location.replace(accountPageHrefForRsvp());
+      return;
+    }
+  }
+  let valid = true;
+  const sessions = Array.from(selectedSessions);
+  if (!sessions.length) { showErr('err-session'); valid = false; }
+  const first = document.getElementById('p-first').value.trim();
+  const last  = document.getElementById('p-last').value.trim();
+  const email = document.getElementById('p-email').value.trim();
+  const phone = document.getElementById('p-phone').value.trim();
+  if (!first) { showErr('err-first'); document.getElementById('p-first').classList.add('error'); valid = false; }
+  if (!last)  { showErr('err-last');  document.getElementById('p-last').classList.add('error');  valid = false; }
+  if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) { showErr('err-email'); document.getElementById('p-email').classList.add('error'); valid = false; }
+  const phoneCheck =
+    typeof OpenPlayRsvpHelpers !== 'undefined' && OpenPlayRsvpHelpers.validatePhone
+      ? OpenPlayRsvpHelpers.validatePhone(phone)
+      : { ok: !!phone, message: 'Required.' };
+  if (!phoneCheck.ok) {
+    var errPhone = document.getElementById('err-phone');
+    if (errPhone && phoneCheck.message) errPhone.textContent = phoneCheck.message;
+    showErr('err-phone');
+    document.getElementById('p-phone').classList.add('error');
+    valid = false;
+  }
+  const skillPre = document.getElementById('p-skill').value;
+  if (!skillPre) {
+    showErr('err-skill');
+    document.getElementById('p-skill').classList.add('error');
+    valid = false;
+  }
+  const member = document.getElementById('p-member').value;
+  if (!member) {
+    showErr('err-member');
+    document.getElementById('p-member').classList.add('error');
+    valid = false;
+  }
+  const memberCard = document.getElementById('p-member-card').value.trim();
+  const cardCheck = OpenPlayRsvpHelpers.validateAccessCard(member, memberCard);
+  if (!cardCheck.ok) {
+    var errCard = document.getElementById('err-member-card');
+    if (cardCheck.message) errCard.textContent = cardCheck.message;
+    showErr('err-member-card');
+    document.getElementById('p-member-card').classList.add('error');
+    valid = false;
+  }
+  var wl = document.getElementById('waiver-liability');
+  var wc = document.getElementById('waiver-communication');
+  var wblock = document.getElementById('waiver-block');
+  if (!wl || !wl.checked) {
+    showErr('err-waiver-liability');
+    valid = false;
+    if (wblock) wblock.classList.add('waiver-error');
+  }
+  if (!wc || !wc.checked) {
+    showErr('err-waiver-communication');
+    valid = false;
+    if (wblock) wblock.classList.add('waiver-error');
+  }
+  if (!valid) return;
+
+  const name   = first + ' ' + last;
+  const skill  = skillPre;
+  const notes  = document.getElementById('p-notes').value.trim();
+  const isNew  = member !== 'yes';
+  const codeInfo = appliedCode ? appliedCode.code : 'none';
+  const tierHint = SEOpenPlay.tierFromRsvp(member, appliedCode);
+  const waiversAckIso = new Date().toISOString();
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = sessions.length > 1 ? ('Sending… 0/' + sessions.length) : 'Sending…';
+  document.getElementById('err-general').classList.remove('show');
+  document.getElementById('err-general').textContent = '';
+
+  const results = [];
+  var idx = 0;
+
+  function sendOne() {
+    if (idx >= sessions.length) {
+      showSuccessMulti(name, email, phone, skill, results, isNew, tierHint, memberCard, codeInfo, sessions.length);
+      return;
+    }
+    const selectedSession = sessions[idx];
+    const pid = generateId(name, selectedSession);
+    if (sessions.length > 1) btn.textContent = 'Sending… ' + (idx + 1) + '/' + sessions.length;
+
+    var firebaseUid = '';
+    try {
+      var cu = typeof SEOpenPlay !== 'undefined' && SEOpenPlay.getCurrentUser ? SEOpenPlay.getCurrentUser() : null;
+      if (cu && cu.uid) firebaseUid = cu.uid;
+    } catch (e) {}
+
+    const payload = {
+      _subject:   'Open Play RSVP — ' + name + ' · ' + selectedSession + (sessions.length > 1 ? ' (' + (idx + 1) + '/' + sessions.length + ')' : ''),
+      Player_ID:  pid,
+      Session:    selectedSession,
+      Sessions_Total: String(sessions.length),
+      Name:       name,
+      Email:      email,
+      Phone:      phone,
+      Firebase_UID: firebaseUid || 'none',
+      RSVP_Waivers_Schema: typeof OpenPlayWaiverUI !== 'undefined' ? OpenPlayWaiverUI.RSVP_WAIVERS_SCHEMA : '2',
+      Liability_Waiver_Accepted: 'Yes',
+      Communication_Waiver_Accepted: 'Yes',
+      Waivers_Acknowledged_At_UTC: waiversAckIso,
+      Skill:      skill || 'Not specified',
+      Member:     member === 'yes' ? 'Yes' : 'No',
+      Member_Access_Card: member === 'yes' ? memberCard : 'N/A',
+      Waiver:     isNew ? 'NEEDED' : 'On file',
+      Code_Used:  codeInfo,
+      Tier:       'PENDING — assign in check-in',
+      Charge:     member === 'yes' ? 'NO CHARGE (member)' : (appliedCode ? appliedCode.label : 'Standard rate'),
+      Heard_Via:  document.getElementById('p-hear').value || 'Not specified',
+      Notes:      notes || 'None',
+      _replyto:   email,
+      _template:  'table',
+    };
+
+    fetch('https://formsubmit.co/ajax/BrandonHookerPickleball@gmail.com', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify(payload),
+    })
+    .then(function(r) {
+      if (!r.ok) return r.text().then(function(t) { throw new Error(t || 'Send failed'); });
+      return r.json();
+    })
+    .then(function() {
+      results.push({ session: selectedSession, pid: pid });
+      var syncRecord = {
+        pid: pid,
+        name: name,
+        email: email,
+        phone: phone || '',
+        skill: skill || '',
+        session: selectedSession,
+        tier: tierHint,
+        waiver: isNew,
+        waiverDone: false,
+        paid: false,
+        checkedIn: false,
+        notes: notes || '',
+        code: codeInfo,
+        source: 'rsvp',
+        // Do not persist access card numbers in RTDB/check-in sync payload.
+        memberCard: '',
+        firebaseUid: firebaseUid || '',
+        rsvpWaiversSchema: typeof OpenPlayWaiverUI !== 'undefined' ? OpenPlayWaiverUI.RSVP_WAIVERS_SCHEMA : '2',
+        liabilityWaiverAccepted: true,
+        communicationWaiverAccepted: true,
+        waiversAcknowledgedAtUtc: waiversAckIso,
+      };
+      SEOpenPlay.broadcastRsvp(syncRecord);
+      idx++;
+      sendOne();
+    })
+    .catch(function() {
+      btn.disabled = false;
+      btn.textContent = sessions.length > 1 ? 'RESERVE MY SPOTS →' : 'RESERVE MY SPOT →';
+      var eg = document.getElementById('err-general');
+      eg.textContent = 'Could not send confirmation (failed on session ' + (idx + 1) + '). Check your connection and try again.';
+      eg.classList.add('show');
+    });
+  }
+
+  sendOne();
+
+  function showSuccessMulti(n, em, ph, sk, resList, newPlayer, tier, mc, cInfo, totalSessions) {
+    saveProfileAfterRsvp();
+    btn.textContent = 'Submitted ✓';
+    document.getElementById('main-form-wrap').classList.add('hidden');
+    var s = document.getElementById('success');
+    s.style.display = 'block';
+    s.classList.add('visible');
+
+    var badge = document.getElementById('player-id-badge');
+    var sub = document.getElementById('player-id-sub');
+    if (resList.length === 1) {
+      badge.textContent = resList[0].pid;
+      sub.textContent = 'Your Player ID';
+    } else {
+      badge.textContent = resList.length + ' sessions';
+      sub.textContent = 'One Player ID per session — scan the matching QR at the door';
+      var subm = document.getElementById('success-sub-msg');
+      if (subm) subm.innerHTML = 'Spots reserved. Show this screen at the door.<br><span style="color:var(--neon);">Screenshot each QR — one check-in ticket per session.</span>';
+    }
+
+    var hintEl = document.getElementById('qr-multi-hint');
+    if (hintEl) {
+      if (resList.length > 1) {
+        hintEl.style.display = 'block';
+        hintEl.textContent = 'Each ticket is for one session — scan the QR that matches the day you arrive.';
+      } else {
+        hintEl.style.display = 'none';
+        hintEl.textContent = '';
+      }
+    }
+
+    var qrMulti = document.getElementById('qr-multi');
+    qrMulti.innerHTML = '';
+    var memVal = document.getElementById('p-member').value;
+    var qrSize = resList.length > 4 ? 152 : 172;
+    resList.forEach(function (row) {
+      var timeStr = SEOpenPlay.timeForFullSession(row.session);
+      var qrData = JSON.stringify({
+        n:n,s:row.session,id:row.pid,w:newPlayer,c:cInfo,e:em,p:ph,sk:sk||'',t:tier,mc:memVal==='yes'?(mc||''):''
+      });
+      var wrap = document.createElement('div');
+      wrap.className = 'qr-wrap qr-tile';
+      var head = document.createElement('div');
+      head.className = 'qr-tile-head';
+      head.innerHTML = row.session + '<span class="qh-date">' + timeStr + '</span>';
+      wrap.appendChild(head);
+      var holder = document.createElement('div');
+      holder.className = 'qr-holder';
+      wrap.appendChild(holder);
+      var cap = document.createElement('div');
+      cap.className = 'qr-caption';
+      cap.textContent = row.pid;
+      wrap.appendChild(cap);
+      qrMulti.appendChild(wrap);
+      new QRCode(holder, {
+        text: qrData, width: qrSize, height: qrSize,
+        colorDark:'#0a1628', colorLight:'#ffffff',
+        correctLevel: QRCode.CorrectLevel.M,
+      });
+    });
+
+    var detailHtml = '';
+    if (resList.length === 1) {
+      var r0 = resList[0];
+      var ts0 = SEOpenPlay.timeForFullSession(r0.session);
+      detailHtml = '<div class="cc-line"><strong>Name:</strong> ' + n + '</div>';
+      detailHtml += '<div class="cc-line"><strong>Session:</strong> ' + r0.session + ' · ' + ts0 + '</div>';
+      detailHtml += '<div class="cc-line"><strong>Player ID:</strong> ' + r0.pid + '</div>';
+      if (sk) detailHtml += '<div class="cc-line"><strong>Level:</strong> ' + sk + '</div>';
+      detailHtml += '<div class="cc-line"><strong>Payment:</strong> Confirmed at check-in</div>';
+      if (appliedCode) detailHtml += '<div class="cc-line"><strong>Code:</strong> Applied ✓</div>';
+    } else {
+      detailHtml = '<div class="cc-line"><strong>Name:</strong> ' + n + '</div>';
+      detailHtml += '<div class="confirm-sessions-wrap"><table class="confirm-sessions-table"><thead><tr><th>Session</th><th>Time</th><th>Player ID</th></tr></thead><tbody>';
+      resList.forEach(function (row) {
+        var ts = SEOpenPlay.timeForFullSession(row.session);
+        detailHtml += '<tr><td>' + row.session + '</td><td class="col-time">' + ts + '</td><td class="mono">' + row.pid + '</td></tr>';
+      });
+      detailHtml += '</tbody></table></div>';
+      if (sk) detailHtml += '<div class="cc-line" style="margin-top:16px"><strong>Level:</strong> ' + sk + '</div>';
+      detailHtml += '<div class="cc-line"><strong>Payment:</strong> Confirmed at check-in</div>';
+      if (appliedCode) detailHtml += '<div class="cc-line"><strong>Code:</strong> Applied ✓</div>';
+    }
+    document.getElementById('confirm-detail').innerHTML = detailHtml;
+
+    if (newPlayer) document.getElementById('waiver-note').style.display = 'block';
+
+    if (appliedCode && appliedCode.type === 'free') {
+      document.getElementById('success-pay-box').style.display = 'none';
+    }
+    if (memVal === 'yes') {
+      document.getElementById('success-pay-box').style.display = 'none';
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+</script>
+</body>
+</html>

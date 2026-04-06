@@ -22,7 +22,7 @@ This folder holds **living documentation** for RSVP account features, cloud sync
 | **Firebase Authentication** | Email/password sign-up, sign-in, password reset | Firebase Console; client uses `openplay-firebase-config.js` |
 | **Firebase Realtime Database** | JSON tree: RSVPs for check-in, user profiles | Same config; paths under `openplay_se/` |
 | **FormSubmit.co** | Sends RSVP payloads to club email | URL embedded in `SouthEnd_Session_RSVP.html` |
-| **Firebase Hosting** | *Not required* — site can be hosted elsewhere | N/A unless you add it later |
+| **Firebase Hosting** | Recommended deploy target for this module (`Programs/Pickleball/live`) | `firebase.json`, `.firebaserc`, `npm run deploy:openplay` |
 | **Google Fonts (CDN)** | Oswald / Barlow typography | `<link>` in HTML |
 | **QRCode.js (cdnjs)** | QR codes on success screen | Script tag in RSVP HTML |
 | **Node (local)** | Unit tests for RSVP helpers | `npm test` from `Website/` |
@@ -36,7 +36,7 @@ This folder holds **living documentation** for RSVP account features, cloud sync
 |-------|---------------------|-------------------|
 | **Realtime Database** | RSVP rows synced to check-in; optional cloud queue | `openplay_se/rsvps/{playerId}` |
 | **Authentication** | Optional accounts: **`live/SouthEnd_OpenPlay_Account.html`** (then RSVP); session persists in the browser | `uid` from Firebase Auth |
-| **User profiles** | Saved name, phone, skill, membership, hear, **notes**, waiver flags + schema version + timestamps — **not** access card numbers | `openplay_se/user_profiles/{uid}` |
+| **User profiles** | Saved name, phone, skill, membership, member card, hear, **notes**, waiver flags + schema version + timestamps | `openplay_se/user_profiles/{uid}` |
 
 **Config file (ship with site):** `Programs/Pickleball/live/js/openplay-firebase-config.js`  
 `databaseURL` comes from the **Realtime Database** console page (not from the web app snippet alone). See comments in that file for rules.
@@ -56,7 +56,7 @@ This folder holds **living documentation** for RSVP account features, cloud sync
 | `se_pin` | Staff PIN (shared with check-in page) |
 | `se_pending_rsvps` | Local queue of RSVPs before check-in drains it |
 | `broadcastChannel` | Same-origin tab sync (`se-openplay-sync`) |
-| `se_ci_state` (check-in page) | Local roster state for staff UI |
+| `se_ci_state` (check-in page) | Local roster state for staff UI (device-local cache) |
 
 ## Waivers and schema version
 
@@ -86,8 +86,10 @@ This folder holds **living documentation** for RSVP account features, cloud sync
 2. **Realtime Database** created — copy **database URL** into `databaseURL`.
 3. Web app registered — copy `apiKey`, `authDomain`, `projectId`.
 4. **Authentication** → Email/Password enabled.
-5. **Authorized domains** for production (and localhost for dev).
-6. **Rules** published for `openplay_se` (see config file).
+5. **Authorized domains** include your deployment host(s) and localhost for dev.
+6. **Rules** published from `database.rules.json` (requires signed-in users; admin-gated roster reads).
+7. Create `openplay_se/admin_uids/{uid}: true` for each staff account that can access roster/check-in.
+8. In `openplay-firebase-config.js`, set `staffEmails` to enforce check-in allowlist at page level (empty list blocks check-in access).
 
 ## When to update this document
 

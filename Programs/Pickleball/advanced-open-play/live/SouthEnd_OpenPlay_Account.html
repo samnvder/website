@@ -63,6 +63,17 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   background:rgba(0,255,136,.06);border:1.5px solid rgba(0,255,136,.2);
   border-radius:10px;padding:22px 22px 24px;margin-bottom:24px;
 }
+.account-summary-panel{
+  background:rgba(0,255,136,.06);border:1.5px solid rgba(0,255,136,.2);
+  border-radius:10px;padding:18px 18px 20px;margin-bottom:20px;
+}
+.account-summary-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:8px;}
+.account-summary-sub{font-size:12px;color:rgba(255,255,255,.7);line-height:1.45;margin-bottom:12px;}
+.account-summary-body{font-size:12px;color:rgba(255,255,255,.86);line-height:1.6;}
+.account-summary-line{margin-bottom:6px;}
+.account-summary-line:last-child{margin-bottom:0;}
+.account-summary-line strong{color:rgba(255,255,255,.95);}
+.account-summary-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
 .profile-lead{font-size:12px;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:20px;}
 /* Extra air in the “Your information” card only (not auth panel) */
 .profile-data-panel .auth-title{margin-bottom:14px;}
@@ -113,6 +124,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 .acc-email-ro{font-size:14px;color:rgba(255,255,255,.9);padding:12px 2px 4px;line-height:1.45;}
 .req{color:var(--neon);}
 .cta-primary.cta-disabled{opacity:.45;pointer-events:none;cursor:not-allowed;}
+.cta-disabled{opacity:.45;pointer-events:none;cursor:not-allowed;}
 .row-1{grid-template-columns:1fr;}
 .profile-data-panel .profile-save-actions{margin-top:18px;padding-top:4px;}
 .profile-data-panel .profile-save-actions .auth-btn{padding:11px 20px;}
@@ -214,7 +226,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 
   <div class="profile-data-panel hidden" id="profile-data-panel">
     <div class="auth-title">Your information</div>
-    <p class="profile-lead">All fields below are required except where noted. Data is stored at <code style="font-size:10px;color:rgba(0,255,136,.7);">openplay_se/user_profiles/{your uid}</code>. Sign the liability and communications agreements below (same flow as RSVP). If you are a member, enter your access card # below (not stored in Firebase—RSVP will ask for it again when you reserve).</p>
+    <p class="profile-lead">All fields below are required except where noted. Data is stored at <code style="font-size:10px;color:rgba(0,255,136,.7);">openplay_se/user_profiles/{your uid}</code>. Sign the liability and communications agreements below (same flow as RSVP). If you are a member, enter your access card # below so it can auto-fill for future RSVPs.</p>
     <div class="row row-2">
       <div class="field"><label>First name <span class="req">*</span></label><input type="text" id="acc-first" autocomplete="given-name" placeholder="First"><div class="err-msg" id="acc-err-first">Required.</div></div>
       <div class="field"><label>Last name <span class="req">*</span></label><input type="text" id="acc-last" autocomplete="family-name" placeholder="Last"><div class="err-msg" id="acc-err-last">Required.</div></div>
@@ -292,6 +304,16 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
       <button type="button" class="auth-btn auth-btn-primary" id="acc-save-profile">Save profile</button>
     </div>
     <div class="auth-msg" id="acc-profile-msg" role="status"></div>
+  </div>
+
+  <div class="account-summary-panel hidden" id="account-summary-panel">
+    <div class="account-summary-title">Saved profile</div>
+    <div class="account-summary-sub">You are signed in and your profile is on file.</div>
+    <div class="account-summary-body" id="account-summary-body"></div>
+    <div class="account-summary-actions">
+      <button type="button" class="auth-btn auth-btn-secondary" id="acc-edit-profile">Edit profile</button>
+      <a class="auth-btn auth-btn-primary" id="acc-summary-rsvp" href="SouthEnd_Session_RSVP.html" style="text-decoration:none;">Proceed to RSVP →</a>
+    </div>
   </div>
 
   <div class="cta-block" id="cta-wrap">
@@ -389,11 +411,14 @@ function getReturnRsvpHref() {
 function syncAccountCtaRsvpHref() {
   var cta = document.getElementById('cta-rsvp');
   if (cta) cta.href = getReturnRsvpHref();
+  var compact = document.getElementById('acc-summary-rsvp');
+  if (compact) compact.href = getReturnRsvpHref();
 }
 
 var authMode = 'signin';
 /** True when RTDB has a complete profile, or user just saved — edits clear until Save again. */
 var accountProfileSynced = false;
+var accountViewMode = 'edit';
 
 function escapeHtml(s) {
   if (s == null || s === '') return '';
@@ -429,6 +454,8 @@ function accClearErrors() {
   document.querySelectorAll('.profile-data-panel .err-msg').forEach(function (e) {
     e.classList.remove('show');
   });
+  var eph = document.getElementById('acc-err-phone');
+  if (eph) eph.textContent = 'Required.';
   var emc = document.getElementById('acc-err-member-card');
   if (emc) emc.textContent = 'Enter a 6-digit number starting with 2 or 3.';
   ['acc-first', 'acc-last', 'acc-phone', 'acc-skill', 'acc-member', 'acc-member-card'].forEach(function (id) {
@@ -439,7 +466,7 @@ function accClearErrors() {
   if (wb) wb.classList.remove('waiver-error');
 }
 
-/** Show member card row when member=yes (card is not saved to RTDB—validation only). */
+/** Show member card row when member=yes. */
 function accToggleMemberCard(val, silent) {
   var row = document.getElementById('acc-member-card-row');
   var cardInput = document.getElementById('acc-member-card');
@@ -465,6 +492,9 @@ function accProfileComplete() {
   var wl = document.getElementById('waiver-liability');
   var wc = document.getElementById('waiver-communication');
   if (!(f && l && ph && sk && mem)) return false;
+  if (typeof OpenPlayRsvpHelpers !== 'undefined' && OpenPlayRsvpHelpers.validatePhone) {
+    if (!OpenPlayRsvpHelpers.validatePhone(ph).ok) return false;
+  }
   if (!wl || !wl.checked || !wc || !wc.checked) return false;
   if (mem === 'yes' && typeof OpenPlayRsvpHelpers !== 'undefined') {
     var card = (document.getElementById('acc-member-card') && document.getElementById('acc-member-card').value.trim()) || '';
@@ -486,6 +516,7 @@ function accCollectPatch() {
     phone: document.getElementById('acc-phone').value.trim(),
     skill: document.getElementById('acc-skill').value,
     membership: document.getElementById('acc-member').value,
+    memberCard: (document.getElementById('acc-member-card') && document.getElementById('acc-member-card').value.trim()) || '',
     hear: document.getElementById('acc-hear').value || '',
     notes: document.getElementById('acc-notes').value.trim() || '',
     waiverLiabilityAccepted: !!(wl && wl.checked),
@@ -508,9 +539,17 @@ function accValidateAndShowErrors() {
     document.getElementById('acc-err-last').classList.add('show');
     ok = false;
   }
-  if (!p.phone) {
+  var pc =
+    typeof OpenPlayRsvpHelpers !== 'undefined' && OpenPlayRsvpHelpers.validatePhone
+      ? OpenPlayRsvpHelpers.validatePhone(p.phone)
+      : { ok: !!p.phone, message: 'Required.' };
+  if (!pc.ok) {
     document.getElementById('acc-phone').classList.add('error');
-    document.getElementById('acc-err-phone').classList.add('show');
+    var eph = document.getElementById('acc-err-phone');
+    if (eph) {
+      eph.classList.add('show');
+      eph.textContent = pc.message || 'Required.';
+    }
     ok = false;
   }
   if (!p.skill) {
@@ -567,17 +606,21 @@ function markAccountProfileDirty() {
 
 function updateAccountCtaState() {
   var cta = document.getElementById('cta-rsvp');
+  var compact = document.getElementById('acc-summary-rsvp');
   if (!cta) return;
   syncAccountCtaRsvpHref();
   var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
   if (!u) {
     cta.classList.add('cta-disabled');
+    if (compact) compact.classList.add('cta-disabled');
     return;
   }
   if (!accProfileComplete() || !accountProfileSynced) {
     cta.classList.add('cta-disabled');
+    if (compact) compact.classList.add('cta-disabled');
   } else {
     cta.classList.remove('cta-disabled');
+    if (compact) compact.classList.remove('cta-disabled');
   }
 }
 
@@ -590,6 +633,9 @@ function loadAccountFormFromProfile(p) {
   if (p.membership) {
     document.getElementById('acc-member').value = p.membership;
     accToggleMemberCard(p.membership, true);
+    if (p.membership === 'yes' && p.memberCard && document.getElementById('acc-member-card')) {
+      document.getElementById('acc-member-card').value = p.memberCard;
+    }
   } else {
     accToggleMemberCard('', true);
   }
@@ -598,6 +644,42 @@ function loadAccountFormFromProfile(p) {
   if (typeof OpenPlayWaiverUI !== 'undefined' && OpenPlayWaiverUI.hydrateAccountWaivers) {
     OpenPlayWaiverUI.hydrateAccountWaivers(p);
   }
+}
+
+function setAccountViewMode(mode) {
+  accountViewMode = mode === 'summary' ? 'summary' : 'edit';
+  var profilePanel = document.getElementById('profile-data-panel');
+  var summaryPanel = document.getElementById('account-summary-panel');
+  var ctaWrap = document.getElementById('cta-wrap');
+  if (accountViewMode === 'summary') {
+    if (profilePanel) profilePanel.classList.add('hidden');
+    if (summaryPanel) summaryPanel.classList.remove('hidden');
+    if (ctaWrap) ctaWrap.classList.add('hidden');
+  } else {
+    if (summaryPanel) summaryPanel.classList.add('hidden');
+    if (profilePanel) profilePanel.classList.remove('hidden');
+    if (ctaWrap) ctaWrap.classList.remove('hidden');
+  }
+}
+
+function renderAccountSummary(user, p) {
+  var body = document.getElementById('account-summary-body');
+  if (!body || !user || !p) return;
+  var memberLine = p.membership === 'yes' ? 'Yes - Member' : 'No - Guest';
+  var cardLine = p.membership === 'yes' ? (p.memberCard || 'Not set') : 'N/A';
+  body.innerHTML =
+    '<div class="account-summary-line"><strong>Name:</strong> ' +
+    escapeHtml((p.firstName || '') + ' ' + (p.lastName || '')) +
+    '</div>' +
+    '<div class="account-summary-line"><strong>Email:</strong> ' +
+    escapeHtml(user.email || '') +
+    '</div>' +
+    '<div class="account-summary-line"><strong>Member:</strong> ' +
+    escapeHtml(memberLine) +
+    '</div>' +
+    '<div class="account-summary-line"><strong>Member access card:</strong> ' +
+    escapeHtml(cardLine) +
+    '</div>';
 }
 
 function initAccountPage() {
@@ -675,6 +757,8 @@ function initAccountPage() {
     SEOpenPlay.saveUserProfilePatch(u.uid, patch)
       .then(function () {
         accountProfileSynced = true;
+        renderAccountSummary(u, patch);
+        setAccountViewMode('summary');
         accShowProfileMsg('Profile saved.', 'ok');
         updateAccountCtaState();
       })
@@ -696,6 +780,13 @@ function initAccountPage() {
       accShowProfileMsg('Click “Save profile” so your information is stored before you RSVP.', 'err');
     }
   });
+  var editBtn = document.getElementById('acc-edit-profile');
+  if (editBtn) {
+    editBtn.addEventListener('click', function () {
+      setAccountViewMode('edit');
+      accShowProfileMsg('');
+    });
+  }
 
   var accMem = document.getElementById('acc-member');
   if (accMem) {
@@ -731,11 +822,16 @@ function initAccountPage() {
       if (statusLine) statusLine.innerHTML = 'Signed in as <strong>' + escapeHtml(user.email) + '</strong>.';
       var ae = document.getElementById('auth-email');
       if (ae) ae.value = user.email || '';
-      if (profilePanel) profilePanel.classList.remove('hidden');
       if (emailDisp) emailDisp.textContent = user.email || '—';
       SEOpenPlay.loadUserProfile(user.uid).then(function (p) {
         loadAccountFormFromProfile(p);
         accountProfileSynced = !!(p && SEOpenPlay.isProfileComplete(p));
+        if (p && accountProfileSynced) {
+          renderAccountSummary(user, p);
+          setAccountViewMode('summary');
+        } else {
+          setAccountViewMode('edit');
+        }
         updateAccountCtaState();
       });
     } else {
@@ -744,6 +840,7 @@ function initAccountPage() {
       if (signedBlock) signedBlock.classList.add('hidden');
       if (statusLine) statusLine.textContent = 'Create an account or sign in.';
       if (profilePanel) profilePanel.classList.add('hidden');
+      setAccountViewMode('edit');
     }
   });
 }

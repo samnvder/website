@@ -3,7 +3,7 @@
     "rules": "database.rules.json"
   },
   "hosting": {
-    "public": "Programs/Pickleball/live",
+    "public": "Programs/Pickleball/advanced-open-play/live",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
   }
 }

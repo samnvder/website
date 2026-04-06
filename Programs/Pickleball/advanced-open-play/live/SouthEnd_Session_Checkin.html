@@ -57,6 +57,9 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
 .search-box{flex:1;min-width:150px;padding:7px 13px;background:rgba(255,255,255,.05);border:1.5px solid var(--rule);border-radius:18px;font-family:'Barlow',sans-serif;font-size:11px;color:#fff;outline:none;}
 .search-box::placeholder{color:var(--muted);}
 .search-box:focus{border-color:var(--neon);}
+.toolbar-check{display:flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid var(--rule);border-radius:14px;background:rgba(255,255,255,.03);}
+.toolbar-check input[type=checkbox]{width:14px;height:14px;accent-color:var(--neon);cursor:pointer;}
+.toolbar-check span{font-size:9px;font-weight:700;letter-spacing:.6px;color:var(--muted);text-transform:uppercase;white-space:nowrap;}
 .btn{padding:6px 14px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;border:none;transition:all .13s;}
 .btn-neon{background:var(--neon);color:var(--ink);}
 .btn-neon:hover{box-shadow:0 0 12px var(--neon-glow);}
@@ -101,6 +104,9 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
 .prow-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
 .pr-name{font-size:13px;font-weight:600;color:#fff;line-height:1.25;word-break:break-word;}
 .pr-name.checked{color:var(--neon);}
+.pr-name-btn{background:transparent;border:none;padding:0;text-align:left;font:inherit;}
+.pr-name.tap-profile{cursor:pointer;}
+.pr-name.tap-profile:hover{color:var(--neon);}
 .prow-chev{font-size:10px;color:var(--muted);flex-shrink:0;margin-top:2px;user-select:none;}
 .prow.open .prow-chev{transform:rotate(0deg);}
 .prow:not(.open) .prow-chev{opacity:.7;}
@@ -153,6 +159,38 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
 .ci-absent{background:rgba(220,38,38,.1);color:#ff6666;}
 .edit-btn{padding:3px 7px;background:transparent;border:1px solid var(--rule);border-radius:3px;font-size:8px;color:var(--muted);cursor:pointer;}
 .edit-btn:hover{border-color:var(--neon);color:var(--neon);}
+
+/* QUICK ACTIONS + PROFILE SIDE PANELS */
+.drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:640;opacity:0;pointer-events:none;transition:opacity .15s;}
+.drawer-backdrop.open{opacity:1;pointer-events:auto;}
+.side-panel{position:fixed;top:0;right:0;height:100vh;width:min(420px,95vw);z-index:650;background:var(--navy-lt);border-left:1px solid rgba(0,255,136,.18);box-shadow:-18px 0 48px rgba(0,0,0,.45);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .2s ease;}
+.side-panel.open{transform:translateX(0);}
+.sp-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:16px;border-bottom:1px solid var(--rule);}
+.sp-kicker{font-size:8px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted);}
+.sp-title{font-family:'Oswald',sans-serif;font-size:18px;color:#fff;line-height:1.2;text-transform:uppercase;letter-spacing:.4px;}
+.sp-sub{font-size:10px;color:rgba(0,255,136,.72);margin-top:4px;}
+.sp-close{background:transparent;border:1px solid var(--rule);border-radius:4px;color:var(--muted);padding:3px 8px;font-size:16px;cursor:pointer;line-height:1;}
+.sp-close:hover{border-color:var(--neon);color:var(--neon);}
+.sp-body{flex:1;overflow:auto;padding:14px 16px;}
+.sp-actions{display:flex;gap:8px;flex-wrap:wrap;padding:14px 16px;border-top:1px solid var(--rule);}
+.qa-row{background:rgba(255,255,255,.04);border:1px solid var(--rule);border-radius:7px;padding:11px;margin-bottom:10px;}
+.qa-lbl{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.qa-select{width:100%;padding:9px 11px;background:rgba(255,255,255,.06);border:1.5px solid var(--rule);border-radius:4px;color:#fff;font-family:'Barlow',sans-serif;font-size:12px;outline:none;}
+.qa-select:focus{border-color:var(--neon);}
+.qa-select option{background:var(--navy-lt);}
+.qa-count{font-size:12px;color:rgba(255,255,255,.74);}
+.qa-preview{font-size:11px;color:rgba(255,255,255,.46);line-height:1.45;}
+.qa-toggle.active{border-color:var(--neon);color:var(--neon);}
+.select-wrap{display:flex;align-items:center;gap:5px;padding:2px 3px;border:1px solid var(--rule);border-radius:4px;background:rgba(255,255,255,.03);}
+.select-wrap input[type=checkbox]{width:13px;height:13px;accent-color:var(--neon);cursor:pointer;}
+.select-lbl{font-size:8px;font-weight:700;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;}
+.pp-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.pp-cell{background:rgba(255,255,255,.04);border:1px solid var(--rule);border-radius:6px;padding:8px;}
+.pp-k{font-size:8px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.pp-v{font-size:12px;color:rgba(255,255,255,.9);line-height:1.4;word-break:break-word;}
+.pp-v.mono{font-family:'Oswald',sans-serif;color:rgba(0,255,136,.82);}
+.pp-block{margin-top:10px;background:rgba(255,255,255,.04);border:1px solid var(--rule);border-radius:6px;padding:8px;}
+.pp-empty{font-size:12px;color:var(--muted);}
 
 /* SCAN */
 .scan-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
@@ -258,6 +296,11 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
   <div class="panel active" id="panel-roster">
     <div class="toolbar">
       <input class="search-box" type="text" id="roster-search" placeholder="Search name or ID..." oninput="renderRoster()">
+      <label class="toolbar-check" title="Select all visible roster rows">
+        <input type="checkbox" id="select-all-visible" onchange="toggleSelectAllVisible(this.checked)">
+        <span>Select All</span>
+      </label>
+      <button class="btn btn-ghost qa-toggle" id="quick-actions-toggle" onclick="toggleQuickActionsPanel()">Quick Actions</button>
       <button class="btn btn-ghost" onclick="exportCSV()">Export</button>
     </div>
     <div class="tier-chips">
@@ -350,6 +393,67 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
 
 </div>
 
+<div class="drawer-backdrop" id="drawer-backdrop" onclick="closeAllSidePanels()"></div>
+
+<aside class="side-panel" id="quick-actions-panel" aria-hidden="true">
+  <div class="sp-head">
+    <div>
+      <div class="sp-kicker">Roster Tools</div>
+      <div class="sp-title">Quick Actions</div>
+      <div class="sp-sub">Run actions across a group</div>
+    </div>
+    <button type="button" class="sp-close" onclick="closeQuickActionsPanel()" aria-label="Close quick actions">&times;</button>
+  </div>
+  <div class="sp-body">
+    <div class="qa-row">
+      <div class="qa-lbl">Group scope</div>
+      <select class="qa-select" id="qa-scope" onchange="setQuickScope(this.value)">
+        <option value="selected">Manually selected players</option>
+        <option value="filtered">Current filtered roster (search + tier)</option>
+        <option value="all">All players</option>
+        <option value="checkedIn">Checked in only</option>
+        <option value="notCheckedIn">Not checked in</option>
+        <option value="waiver">Waiver needed</option>
+      </select>
+    </div>
+    <div class="qa-row">
+      <div class="qa-count" id="qa-count">0 players selected</div>
+      <div class="qa-preview" id="qa-preview">No players in this group yet.</div>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-ghost" onclick="selectAllVisiblePlayers()">Select Visible</button>
+        <button class="btn btn-ghost" onclick="clearSelectedPlayers()">Clear Selected</button>
+      </div>
+    </div>
+  </div>
+  <div class="sp-actions">
+    <button class="btn btn-ghost" onclick="quickEmailGroup()">Email Group</button>
+    <button class="btn btn-ghost" onclick="quickSetCheckin(true)">Mark Checked In</button>
+    <button class="btn btn-ghost" onclick="quickSetPaid(true)">Mark Paid</button>
+    <button class="btn btn-ghost" onclick="quickSetCheckin(false)">Mark Not In</button>
+    <button class="btn btn-ghost" onclick="quickSetPaid(false)">Mark Unpaid</button>
+    <button class="btn btn-red" onclick="quickDeleteGroup()">Delete Group</button>
+  </div>
+</aside>
+
+<aside class="side-panel" id="player-profile-panel" aria-hidden="true">
+  <div class="sp-head">
+    <div>
+      <div class="sp-kicker">Player</div>
+      <div class="sp-title" id="pp-name">Select a player</div>
+      <div class="sp-sub" id="pp-sub">Profile side panel</div>
+    </div>
+    <button type="button" class="sp-close" onclick="closePlayerProfilePanel()" aria-label="Close player profile">&times;</button>
+  </div>
+  <div class="sp-body" id="pp-body">
+    <div class="pp-empty">Click <strong>Profile</strong> on a roster row to view and manage this player.</div>
+  </div>
+  <div class="sp-actions">
+    <button class="btn btn-ghost" onclick="emailPlayerFromPanel()">Email</button>
+    <button class="btn btn-ghost" onclick="editPlayerFromPanel()">Edit</button>
+    <button class="btn btn-red" onclick="removePlayerFromPanel()">Remove</button>
+  </div>
+</aside>
+
 <div class="modal-bg" id="add-modal">
   <div class="modal">
     <div class="modal-title" id="modal-title">Add Player</div>
@@ -432,6 +536,11 @@ SEOpenPlay.migratePin();
 let state = loadState();
 let tierFilter = 'all';
 let editIdx = null;
+let quickScope = 'filtered';
+let quickActionsPanelOpen = false;
+let playerProfilePanelOpen = false;
+let playerProfileIdx = null;
+const selectedPlayerKeys = new Set();
 let scanning = false;
 let scanStream = null;
 let scanInterval = null;
@@ -472,7 +581,64 @@ function loadState() {
 }
 function save() { localStorage.setItem('se_ci_state', JSON.stringify(state)); }
 
-document.addEventListener('DOMContentLoaded', () => {
+function accountPageHrefForCheckin() {
+  var page = 'SouthEnd_Session_Checkin.html';
+  try {
+    var seg = (window.location.pathname || '').split('/').filter(Boolean).pop();
+    if (seg && /\.html?$/i.test(seg)) page = seg;
+  } catch (e) {}
+  return 'SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent(page);
+}
+
+function isStaffEmailAllowed(user) {
+  var cfg = window.SE_OPENPLAY_FIREBASE || {};
+  var allow = Array.isArray(cfg.staffEmails) ? cfg.staffEmails : [];
+  if (!user || !user.email) return false;
+  var email = String(user.email).trim().toLowerCase();
+  if (!allow.length) return false; // fail-closed: require explicit staff allowlist
+  for (var i = 0; i < allow.length; i++) {
+    if (String(allow[i] || '').trim().toLowerCase() === email) return true;
+  }
+  return false;
+}
+
+function initCheckinAuthGate() {
+  if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()) {
+    alert('Check-in requires Firebase auth configuration. Add js/openplay-firebase-config.js first.');
+    window.location.replace(accountPageHrefForCheckin());
+    return Promise.reject(new Error('Firebase auth/config required'));
+  }
+  return SEOpenPlay.initFirebase().then(function () {
+    return new Promise(function (resolve, reject) {
+      var done = false;
+      SEOpenPlay.onAuthStateChanged(function (user) {
+        if (done) return;
+        if (!user) {
+          done = true;
+          window.location.replace(accountPageHrefForCheckin());
+          reject(new Error('Signed-in account required'));
+          return;
+        }
+        if (!isStaffEmailAllowed(user)) {
+          done = true;
+          alert('This account is not allowed to access check-in. Ask an admin to add your email to staffEmails (empty list blocks all access).');
+          window.location.replace(accountPageHrefForCheckin());
+          reject(new Error('Staff allowlist blocked account'));
+          return;
+        }
+        done = true;
+        resolve(user);
+      });
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    await initCheckinAuthGate();
+  } catch (e) {
+    return;
+  }
   document.getElementById('sm-date').value = new Date().toISOString().slice(0,10);
   updateBadge();
   if (drainPendingRsvps()) { save(); }
@@ -502,6 +668,11 @@ document.addEventListener('DOMContentLoaded', () => {
       fbSt.style.color = 'rgba(255,255,255,.45)';
     }
   }
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Escape' && (quickActionsPanelOpen || playerProfilePanelOpen)) closeAllSidePanels();
+  });
+  renderQuickActionsPanel();
+  renderPlayerProfilePanel();
 });
 
 function mergePlayerFromRsvp(incoming) {
@@ -559,7 +730,7 @@ function updateBadge() {
   } else { b.textContent = 'No Session'; }
 }
 
-function renderAll() { renderStats(); renderRoster(); renderBracket(); }
+function renderAll() { renderStats(); renderRoster(); renderBracket(); renderQuickActionsPanel(); renderPlayerProfilePanel(); }
 
 function renderStats() {
   const p = state.players;
@@ -619,6 +790,270 @@ function compareRosterPlayers(a, b) {
   return (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base' });
 }
 
+function getRosterPlayersForView() {
+  const q = (document.getElementById('roster-search').value || '').toLowerCase();
+  let players = state.players.map((p, i) => ({ ...p, _i: i }));
+  if (tierFilter === 'free') players = players.filter((p) => p.tier === 'free');
+  else if (tierFilter === 'disc') players = players.filter((p) => p.tier === 'disc');
+  else if (tierFilter === 'full') players = players.filter((p) => p.tier === 'full');
+  else if (tierFilter === 'ua') players = players.filter((p) => !p.tier || p.tier === 'ua');
+  else if (tierFilter === 'waiver') players = players.filter((p) => p.waiver && !p.waiverDone);
+  if (q) {
+    players = players.filter((p) => {
+      const n = (p.name || '').toLowerCase();
+      const id = (p.pid || '').toLowerCase();
+      const em = (p.email || '').toLowerCase();
+      const ph = (p.phone || '').toLowerCase();
+      return n.includes(q) || id.includes(q) || em.includes(q) || ph.includes(q);
+    });
+  }
+  players.sort(compareRosterPlayers);
+  return players;
+}
+
+function getQuickScopePlayers() {
+  if (quickScope === 'selected') return getSelectedPlayers();
+  if (quickScope === 'filtered') return getRosterPlayersForView();
+  let players = state.players.map((p, i) => ({ ...p, _i: i }));
+  if (quickScope === 'checkedIn') players = players.filter((p) => !!p.checkedIn);
+  else if (quickScope === 'notCheckedIn') players = players.filter((p) => !p.checkedIn);
+  else if (quickScope === 'waiver') players = players.filter((p) => p.waiver && !p.waiverDone);
+  players.sort(compareRosterPlayers);
+  return players;
+}
+
+function playerKeyFor(p, i) {
+  return (p.pid && String(p.pid).trim()) ? String(p.pid) : `__idx_${i}`;
+}
+function getSelectedPlayers() {
+  const out = [];
+  state.players.forEach((p, i) => {
+    const k = playerKeyFor(p, i);
+    if (selectedPlayerKeys.has(k)) out.push({ ...p, _i: i });
+  });
+  out.sort(compareRosterPlayers);
+  return out;
+}
+function selectedCountInVisible() {
+  const visible = getRosterPlayersForView();
+  let count = 0;
+  visible.forEach((p) => {
+    if (selectedPlayerKeys.has(playerKeyFor(p, p._i))) count++;
+  });
+  return { visibleCount: visible.length, selectedCount: count };
+}
+function updateSelectAllVisibleUi() {
+  const el = document.getElementById('select-all-visible');
+  if (!el) return;
+  const meta = selectedCountInVisible();
+  el.checked = meta.visibleCount > 0 && meta.selectedCount === meta.visibleCount;
+  el.indeterminate = meta.selectedCount > 0 && meta.selectedCount < meta.visibleCount;
+}
+function togglePlayerSelected(key, on) {
+  if (!key) return;
+  if (on) selectedPlayerKeys.add(key);
+  else selectedPlayerKeys.delete(key);
+  renderQuickActionsPanel();
+  updateSelectAllVisibleUi();
+}
+function selectAllVisiblePlayers() {
+  const visible = getRosterPlayersForView();
+  visible.forEach((p) => selectedPlayerKeys.add(playerKeyFor(p, p._i)));
+  quickScope = 'selected';
+  renderAll();
+}
+function toggleSelectAllVisible(on) {
+  const visible = getRosterPlayersForView();
+  visible.forEach((p) => {
+    const k = playerKeyFor(p, p._i);
+    if (on) selectedPlayerKeys.add(k);
+    else selectedPlayerKeys.delete(k);
+  });
+  quickScope = 'selected';
+  renderAll();
+}
+function clearSelectedPlayers() {
+  selectedPlayerKeys.clear();
+  if (quickScope === 'selected') quickScope = 'filtered';
+  renderAll();
+}
+function pruneSelectedPlayerKeys() {
+  const valid = new Set(state.players.map((p, i) => playerKeyFor(p, i)));
+  [...selectedPlayerKeys].forEach((k) => { if (!valid.has(k)) selectedPlayerKeys.delete(k); });
+}
+
+function syncSidePanels() {
+  const qa = document.getElementById('quick-actions-panel');
+  const pp = document.getElementById('player-profile-panel');
+  const bd = document.getElementById('drawer-backdrop');
+  const qaToggle = document.getElementById('quick-actions-toggle');
+  if (!qa || !pp || !bd) return;
+  qa.classList.toggle('open', quickActionsPanelOpen);
+  pp.classList.toggle('open', playerProfilePanelOpen);
+  qa.setAttribute('aria-hidden', quickActionsPanelOpen ? 'false' : 'true');
+  pp.setAttribute('aria-hidden', playerProfilePanelOpen ? 'false' : 'true');
+  bd.classList.toggle('open', quickActionsPanelOpen || playerProfilePanelOpen);
+  if (qaToggle) qaToggle.classList.toggle('active', quickActionsPanelOpen);
+}
+
+function closeAllSidePanels() {
+  quickActionsPanelOpen = false;
+  playerProfilePanelOpen = false;
+  playerProfileIdx = null;
+  syncSidePanels();
+}
+
+function toggleQuickActionsPanel() {
+  quickActionsPanelOpen = !quickActionsPanelOpen;
+  if (quickActionsPanelOpen) playerProfilePanelOpen = false;
+  syncSidePanels();
+  renderQuickActionsPanel();
+}
+function closeQuickActionsPanel() {
+  quickActionsPanelOpen = false;
+  syncSidePanels();
+}
+function setQuickScope(scope) {
+  quickScope = scope || 'filtered';
+  renderQuickActionsPanel();
+}
+function renderQuickActionsPanel() {
+  const countEl = document.getElementById('qa-count');
+  const previewEl = document.getElementById('qa-preview');
+  const sel = document.getElementById('qa-scope');
+  if (!countEl || !previewEl || !sel) return;
+  sel.value = quickScope;
+  pruneSelectedPlayerKeys();
+  const players = getQuickScopePlayers();
+  countEl.textContent = `${players.length} player${players.length === 1 ? '' : 's'} selected`;
+  if (!players.length) {
+    previewEl.textContent = 'No players in this group yet.';
+    return;
+  }
+  const names = players.slice(0, 6).map((p) => p.name || '—');
+  const suffix = players.length > 6 ? ` +${players.length - 6} more` : '';
+  previewEl.textContent = names.join(' · ') + suffix;
+}
+function ensureQuickTargets() {
+  const players = getQuickScopePlayers();
+  if (!players.length) {
+    alert('No players in the selected quick-action group.');
+    return null;
+  }
+  return players;
+}
+function quickSetCheckin(on) {
+  const targets = ensureQuickTargets();
+  if (!targets) return;
+  targets.forEach((p) => { state.players[p._i].checkedIn = !!on; });
+  save();
+  renderAll();
+}
+function quickSetPaid(on) {
+  const targets = ensureQuickTargets();
+  if (!targets) return;
+  targets.forEach((p) => { state.players[p._i].paid = !!on; });
+  save();
+  renderAll();
+}
+function quickDeleteGroup() {
+  const targets = ensureQuickTargets();
+  if (!targets) return;
+  const msg = `Delete ${targets.length} player${targets.length === 1 ? '' : 's'} from this group? This cannot be undone.`;
+  if (!confirm(msg)) return;
+  const removeIdx = new Set(targets.map((p) => p._i));
+  state.players = state.players.filter((_, i) => !removeIdx.has(i));
+  if (playerProfilePanelOpen) {
+    playerProfilePanelOpen = false;
+    playerProfileIdx = null;
+  }
+  save();
+  renderAll();
+}
+function quickEmailGroup() {
+  const targets = ensureQuickTargets();
+  if (!targets) return;
+  const emails = [...new Set(targets.map((p) => String(p.email || '').trim()).filter(Boolean))];
+  if (!emails.length) {
+    alert('No email addresses found in this group.');
+    return;
+  }
+  const session = state.session || 'Open Play';
+  const subject = `South End Open Play — ${session}`;
+  const body = `Hi everyone,\n\nQuick note for ${session}.\n\nThanks!`;
+  window.location.href = 'mailto:?bcc=' + encodeURIComponent(emails.join(',')) + '&subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+}
+
+function openPlayerProfilePanel(i) {
+  playerProfileIdx = i;
+  playerProfilePanelOpen = true;
+  quickActionsPanelOpen = false;
+  syncSidePanels();
+  renderPlayerProfilePanel();
+}
+function closePlayerProfilePanel() {
+  playerProfilePanelOpen = false;
+  playerProfileIdx = null;
+  syncSidePanels();
+}
+function renderPlayerProfilePanel() {
+  const nameEl = document.getElementById('pp-name');
+  const subEl = document.getElementById('pp-sub');
+  const bodyEl = document.getElementById('pp-body');
+  if (!nameEl || !subEl || !bodyEl) return;
+  const p = playerProfileIdx !== null ? state.players[playerProfileIdx] : null;
+  if (!p) {
+    nameEl.textContent = 'Select a player';
+    subEl.textContent = 'Profile side panel';
+    bodyEl.innerHTML = '<div class="pp-empty">Click <strong>Profile</strong> on a roster row to view and manage this player.</div>';
+    return;
+  }
+  nameEl.textContent = p.name || '—';
+  subEl.textContent = `ID: ${p.pid || '—'}`;
+  const tier = tierDisplayLabel(p.tier);
+  const session = p.session || '—';
+  const waiver = waiverPreview(p);
+  bodyEl.innerHTML = `
+    <div class="pp-grid">
+      <div class="pp-cell"><div class="pp-k">Email</div><div class="pp-v">${escapeHtml(p.email && String(p.email).trim() ? p.email : '—')}</div></div>
+      <div class="pp-cell"><div class="pp-k">Phone</div><div class="pp-v">${escapeHtml(p.phone && String(p.phone).trim() ? p.phone : '—')}</div></div>
+      <div class="pp-cell"><div class="pp-k">Skill</div><div class="pp-v">${escapeHtml(p.skill || '—')}</div></div>
+      <div class="pp-cell"><div class="pp-k">Tier</div><div class="pp-v">${escapeHtml(tier)}</div></div>
+      <div class="pp-cell"><div class="pp-k">Check-in</div><div class="pp-v">${p.checkedIn ? 'Checked in' : 'Not checked in'}</div></div>
+      <div class="pp-cell"><div class="pp-k">Payment</div><div class="pp-v">${p.paid ? 'Paid' : 'Unpaid'}</div></div>
+      <div class="pp-cell"><div class="pp-k">Waiver</div><div class="pp-v">${escapeHtml(waiver)}</div></div>
+      <div class="pp-cell"><div class="pp-k">Session</div><div class="pp-v mono">${escapeHtml(session)}</div></div>
+    </div>
+    <div class="pp-block">
+      <div class="pp-k">Notes</div>
+      <div class="pp-v">${p.notes && String(p.notes).trim() ? escapeHtml(p.notes).replace(/\n/g, '<br>') : '—'}</div>
+    </div>`;
+}
+function emailPlayerFromPanel() {
+  if (playerProfileIdx === null) return;
+  const p = state.players[playerProfileIdx];
+  const em = String((p && p.email) || '').trim();
+  if (!em) { alert('This player has no email address.'); return; }
+  window.location.href = 'mailto:' + encodeURIComponent(em);
+}
+function editPlayerFromPanel() {
+  if (playerProfileIdx === null) return;
+  const i = playerProfileIdx;
+  closePlayerProfilePanel();
+  editPlayer(i);
+}
+function removePlayerFromPanel() {
+  if (playerProfileIdx === null) return;
+  const p = state.players[playerProfileIdx];
+  if (!p) return;
+  const nm = p.name || 'this player';
+  if (!confirm(`Remove ${nm} from the roster?`)) return;
+  state.players.splice(playerProfileIdx, 1);
+  save();
+  closePlayerProfilePanel();
+  renderAll();
+}
+
 function formatRosterDateHeader(ts) {
   return new Date(ts).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
 }
@@ -641,24 +1076,8 @@ function prowRowKeydown(ev) {
 }
 
 function renderRoster() {
-  const q=(document.getElementById('roster-search').value||'').toLowerCase();
-  let players = state.players.map((p,i)=>({...p,_i:i}));
-  if (tierFilter==='free') players=players.filter(p=>p.tier==='free');
-  else if (tierFilter==='disc') players=players.filter(p=>p.tier==='disc');
-  else if (tierFilter==='full') players=players.filter(p=>p.tier==='full');
-  else if (tierFilter==='ua') players=players.filter(p=>!p.tier||p.tier==='ua');
-  else if (tierFilter==='waiver') players=players.filter(p=>p.waiver&&!p.waiverDone);
-  if (q) {
-    players = players.filter((p) => {
-      const n = (p.name || '').toLowerCase();
-      const id = (p.pid || '').toLowerCase();
-      const em = (p.email || '').toLowerCase();
-      const ph = (p.phone || '').toLowerCase();
-      return n.includes(q) || id.includes(q) || em.includes(q) || ph.includes(q);
-    });
-  }
-
-  players.sort(compareRosterPlayers);
+  pruneSelectedPlayerKeys();
+  const players = getRosterPlayersForView();
 
   const list=document.getElementById('player-list');
   if (!players.length) {
@@ -687,8 +1106,9 @@ function renderRoster() {
         html += `<div class="roster-day-hd"><span class="roster-day-lbl">No dated session</span><span class="roster-day-ct">${n} player${n !== 1 ? 's' : ''}</span></div>`;
       }
     }
-    const rk = (p.pid && String(p.pid).trim()) ? p.pid : `__idx_${p._i}`;
+    const rk = playerKeyFor(p, p._i);
     const isOpen = rosterExpandedKeys.has(rk);
+    const isSel = selectedPlayerKeys.has(rk);
     const chev = isOpen ? '▾' : '▸';
     const pvEmail = escapeHtml(truncatePreview(p.email, 36));
     const pvPhone = escapeHtml(truncatePreview(p.phone, 22));
@@ -708,7 +1128,7 @@ function renderRoster() {
         <div class="tier-dot ${TIER_DOT[p.tier]||'td-ua'}" title="${escapeAttr(tierDisplayLabel(p.tier))}"></div>
         <div class="prow-mid">
           <div class="prow-hd">
-            <div class="pr-name ${p.checkedIn?'checked':''}">${escapeHtml(p.name || '—')}</div>
+            <button type="button" class="pr-name pr-name-btn tap-profile ${p.checkedIn?'checked':''}" onclick="openPlayerProfilePanel(${p._i});event.stopPropagation();" title="Open player profile">${escapeHtml(p.name || '—')}</button>
             <span class="prow-chev" aria-hidden="true">${chev}</span>
           </div>
           <div class="pr-preview-grid">
@@ -732,6 +1152,10 @@ function renderRoster() {
           </div>
         </div>
         <div class="prow-actions">
+          <label class="select-wrap" title="Select for bulk actions" onclick="event.stopPropagation();">
+            <input type="checkbox" ${isSel ? 'checked' : ''} onchange="togglePlayerSelected(${JSON.stringify(rk)}, this.checked)" onclick="event.stopPropagation();">
+            <span class="select-lbl">Select</span>
+          </label>
           <select class="tier-sel" onchange="setTier(${p._i},this.value)">
             <option value="ua" ${!p.tier||p.tier==='ua'?'selected':''}>Unassigned</option>
             <option value="free" ${p.tier==='free'?'selected':''}>Free</option>
@@ -746,6 +1170,7 @@ function renderRoster() {
     </div>`;
   });
   list.innerHTML = html;
+  updateSelectAllVisibleUi();
 }
 
 function setTier(i,t){state.players[i].tier=t;save();renderAll();}
@@ -908,6 +1333,7 @@ function switchTab(t){
   document.getElementById('panel-'+t).classList.add('active');
   if(t!=='scan'&&scanning)stopScan();
   if(t==='bracket')renderBracket();
+  if (t !== 'roster') closeAllSidePanels();
 }
 </script>
 </body>

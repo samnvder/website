@@ -2,8 +2,14 @@
   "rules": {
     "openplay_se": {
       "rsvps": {
-        ".read": true,
-        ".write": true
+        ".read": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
+        "$pid": {
+          ".write": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (((!data.exists()) || data.child('firebaseUid').val() === auth.uid) && newData.child('firebaseUid').val() === auth.uid && newData.child('pid').val() === $pid))"
+        }
+      },
+      "admin_uids": {
+        ".read": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
+        ".write": false
       },
       "user_profiles": {
         "$uid": {
