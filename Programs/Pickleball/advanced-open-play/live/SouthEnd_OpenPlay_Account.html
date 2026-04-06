@@ -21,6 +21,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 .hdr-title span{color:var(--neon);}
 .hdr-sub{font-size:9px;color:rgba(255,255,255,.65);margin-top:3px;}
 .body-wrap{max-width:520px;margin:0 auto;padding:28px 20px 48px;}
+.body-wrap.body-wrap--wide{max-width:720px;}
 .page-lead{font-size:13px;color:rgba(255,255,255,.72);line-height:1.55;margin-bottom:18px;}
 .page-lead a{color:var(--electric);}
 .auth-panel{
@@ -55,6 +56,13 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   text-align:center;text-decoration:none;margin-bottom:10px;
 }
 .cta-primary:hover{filter:brightness(1.05);}
+.cta-staff{
+  display:block;width:100%;padding:12px 14px;background:transparent;color:var(--electric);
+  font-family:'Oswald',sans-serif;font-size:15px;letter-spacing:.5px;text-transform:uppercase;
+  border:2px solid rgba(168,85,247,.55);border-radius:6px;cursor:pointer;font-weight:700;
+  text-align:center;text-decoration:none;margin-bottom:0;
+}
+.cta-staff:hover{background:rgba(168,85,247,.12);border-color:var(--electric);}
 .cta-secondary{display:block;text-align:center;font-size:12px;color:rgba(255,255,255,.55);margin-top:8px;}
 .cta-secondary a{color:var(--electric);}
 .hidden{display:none!important;}
@@ -181,6 +189,81 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 }
 .waiver-modal-agree:disabled{opacity:.4;cursor:not-allowed;}
 .waiver-modal-agree:not(:disabled):hover{filter:brightness(1.06);}
+.manage-rsvp-empty{font-size:12px;color:rgba(255,255,255,.55);margin:0;}
+.manage-rsvp-row{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;
+  padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(255,255,255,.86);
+}
+.manage-rsvp-row:last-child{border-bottom:none;}
+.manage-rsvp-row-main{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1;}
+.manage-rsvp-pid{font-size:10px;color:rgba(255,255,255,.45);font-family:ui-monospace,monospace;}
+.manage-rsvp-cancel{
+  padding:8px 14px;border-radius:5px;border:1px solid rgba(255,100,100,.45);
+  background:rgba(255,80,80,.12);color:#ffb4b4;font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.5px;cursor:pointer;flex-shrink:0;
+}
+.manage-rsvp-cancel:hover{filter:brightness(1.08);}
+#cta-manage-rsvps{margin-bottom:10px;}
+.account-hub-panel{
+  background:rgba(0,255,136,.06);border:1.5px solid rgba(0,255,136,.2);
+  border-radius:10px;padding:18px 16px 22px;margin-bottom:24px;
+}
+.hub-lead{font-size:12px;color:rgba(255,255,255,.65);line-height:1.5;margin-bottom:16px;}
+.cal-nav{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;
+}
+.cal-nav button{
+  width:40px;height:40px;border-radius:8px;border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.08);color:#fff;font-size:22px;line-height:1;cursor:pointer;
+}
+.cal-nav button:hover{background:rgba(255,255,255,.12);}
+#cal-month-label{
+  font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:.5px;text-transform:uppercase;
+  color:var(--neon);margin:0;flex:1;text-align:center;
+}
+.cal-weekdays{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px;
+  font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);
+  text-align:center;
+}
+.cal-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:4px;
+}
+.cal-day{
+  min-height:88px;border-radius:6px;border:1px solid rgba(255,255,255,.08);
+  background:rgba(0,0,0,.15);padding:6px 4px 6px;display:flex;flex-direction:column;gap:4px;
+}
+.cal-day--empty{border-color:transparent;background:transparent;min-height:88px;}
+.cal-day--muted{opacity:.35;}
+.cal-day-num{font-size:11px;font-weight:700;color:rgba(255,255,255,.55);line-height:1;}
+.cal-day--today .cal-day-num{color:var(--neon);}
+.cal-day-events{display:flex;flex-direction:column;gap:4px;flex:1;min-height:0;}
+.cal-ev{
+  font-size:9px;line-height:1.25;padding:4px 4px;border-radius:4px;
+  background:rgba(0,255,136,.12);border:1px solid rgba(0,255,136,.25);color:rgba(255,255,255,.92);
+}
+.cal-ev-slot{color:rgba(255,255,255,.55);display:block;font-size:8px;text-transform:uppercase;letter-spacing:.04em;}
+.cal-ev-cancel{
+  margin-top:4px;width:100%;padding:4px 0;border-radius:3px;border:1px solid rgba(255,100,100,.4);
+  background:rgba(255,60,60,.1);color:#ffaaa0;font-size:8px;font-weight:700;cursor:pointer;font-family:'Oswald',sans-serif;
+}
+.cal-ev-cancel:hover{filter:brightness(1.1);}
+.cal-open{
+  margin-top:4px;
+  font-size:8px;
+  line-height:1.2;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:rgba(0,255,136,.75);
+}
+.cal-unparsed{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1);}
+.cal-unparsed-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:8px;}
+.hub-actions{display:flex;flex-direction:column;gap:10px;margin-top:20px;}
+.hub-actions .cta-primary{margin-bottom:0;}
+@media(max-width:400px){
+  .cal-day{min-height:100px;}
+  .cal-ev{font-size:8px;}
+}
 </style>
 </head>
 <body>
@@ -220,11 +303,13 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
     <div id="auth-signed-block" class="hidden">
       <div class="auth-actions">
         <button type="button" class="auth-btn auth-btn-secondary" id="auth-signout">Sign out</button>
+        <button type="button" class="auth-btn auth-btn-secondary hidden" id="hub-edit-profile">Edit profile</button>
       </div>
     </div>
   </div>
 
   <div class="profile-data-panel hidden" id="profile-data-panel">
+    <button type="button" class="auth-btn auth-btn-secondary hidden" id="acc-back-to-hub" style="width:100%;margin-bottom:14px;">← Back to my schedule</button>
     <div class="auth-title">Your information</div>
     <p class="profile-lead">All fields below are required except where noted. Data is stored at <code style="font-size:10px;color:rgba(0,255,136,.7);">openplay_se/user_profiles/{your uid}</code>. Sign the liability and communications agreements below (same flow as RSVP). If you are a member, enter your access card # below so it can auto-fill for future RSVPs.</p>
     <div class="row row-2">
@@ -306,18 +391,29 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
     <div class="auth-msg" id="acc-profile-msg" role="status"></div>
   </div>
 
-  <div class="account-summary-panel hidden" id="account-summary-panel">
-    <div class="account-summary-title">Saved profile</div>
-    <div class="account-summary-sub">You are signed in and your profile is on file.</div>
-    <div class="account-summary-body" id="account-summary-body"></div>
-    <div class="account-summary-actions">
-      <button type="button" class="auth-btn auth-btn-secondary" id="acc-edit-profile">Edit profile</button>
-      <a class="auth-btn auth-btn-primary" id="acc-summary-rsvp" href="SouthEnd_Session_RSVP.html" style="text-decoration:none;">Proceed to RSVP →</a>
+  <div id="acc-toast" style="display:none;position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#1db954;color:#fff;padding:10px 24px;border-radius:8px;font-weight:600;z-index:9999;box-shadow:0 4px 14px rgba(0,0,0,.25);transition:opacity .3s;pointer-events:none;"></div>
+  <div class="account-hub-panel hidden" id="account-hub-panel">
+    <div class="auth-title">Your schedule</div>
+    <p class="hub-lead" id="hub-user-line">Your upcoming open play reservations appear on the calendar. Cancel a spot below or book more.</p>
+    <div class="cal-nav">
+      <button type="button" id="cal-prev" aria-label="Previous month">‹</button>
+      <h2 id="cal-month-label"></h2>
+      <button type="button" id="cal-next" aria-label="Next month">›</button>
+    </div>
+    <div class="cal-weekdays" aria-hidden="true">
+      <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+    </div>
+    <div class="cal-grid" id="cal-grid" role="grid" aria-label="RSVP calendar"></div>
+    <div id="cal-unparsed" class="cal-unparsed hidden"></div>
+    <div class="hub-actions">
+      <a class="cta-primary" id="hub-cta-rsvp" href="SouthEnd_Session_RSVP.html">Book sessions →</a>
+      <a class="cta-staff hidden" id="hub-cta-checkin" href="SouthEnd_Session_Checkin.html">Check-ins →</a>
     </div>
   </div>
 
-  <div class="cta-block" id="cta-wrap">
+  <div class="cta-block hidden" id="cta-wrap">
     <a class="cta-primary" id="cta-rsvp" href="SouthEnd_Session_RSVP.html">Continue to RSVP →</a>
+    <a class="cta-staff hidden" id="cta-checkin" href="SouthEnd_Session_Checkin.html">Check-ins →</a>
   </div>
 </div>
 
@@ -408,17 +504,57 @@ function getReturnRsvpHref() {
   return 'SouthEnd_Session_RSVP.html';
 }
 
+/** True when ?return= points at check-in (Firebase filenames or WordPress slug). */
+function accountReturnIsCheckin(href) {
+  if (!href) return false;
+  var h = String(href);
+  return /SouthEnd_Session_Checkin\.html|check-ins|checkin/i.test(h);
+}
+
 function syncAccountCtaRsvpHref() {
+  var href = getReturnRsvpHref();
+  var toCheckin = accountReturnIsCheckin(href);
   var cta = document.getElementById('cta-rsvp');
-  if (cta) cta.href = getReturnRsvpHref();
-  var compact = document.getElementById('acc-summary-rsvp');
-  if (compact) compact.href = getReturnRsvpHref();
+  if (cta) {
+    cta.href = href;
+    cta.textContent = toCheckin ? 'Continue to check-in →' : 'Continue to RSVP →';
+  }
+  var hubCta = document.getElementById('hub-cta-rsvp');
+  if (hubCta) {
+    hubCta.href = href;
+    hubCta.textContent = toCheckin ? 'Continue to check-in →' : 'Book sessions →';
+  }
 }
 
 var authMode = 'signin';
 /** True when RTDB has a complete profile, or user just saved — edits clear until Save again. */
 var accountProfileSynced = false;
 var accountViewMode = 'edit';
+var accountMyRsvpRows = [];
+/** Month shown in the hub calendar (first day of that month). */
+var accountCalendarCursor = new Date(pacificNowDate().getFullYear(), pacificNowDate().getMonth(), 1);
+var SESSION_MONTHS_ACC = {
+  jan: 0,
+  feb: 1,
+  mar: 2,
+  apr: 3,
+  may: 4,
+  jun: 5,
+  jul: 6,
+  aug: 7,
+  sep: 8,
+  oct: 9,
+  nov: 10,
+  dec: 11,
+};
+var ACCOUNT_OPEN_SESSIONS = [
+  'Tuesday Morning Apr 8',
+  'Tuesday Evening Apr 8',
+  'Thursday Evening Apr 10',
+  'Tuesday Morning Apr 15',
+  'Tuesday Evening Apr 15',
+  'Thursday Evening Apr 17',
+];
 
 function escapeHtml(s) {
   if (s == null || s === '') return '';
@@ -598,30 +734,64 @@ function accShowProfileMsg(text, cls) {
   el.textContent = text || '';
   el.className = 'auth-msg' + (cls ? ' ' + cls : '');
 }
+function showAccToast(msg, ms) {
+  var t = document.getElementById('acc-toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.style.display = 'block';
+  t.style.opacity = '1';
+  setTimeout(function () { t.style.opacity = '0'; setTimeout(function () { t.style.display = 'none'; }, 350); }, ms || 2200);
+}
 
 function markAccountProfileDirty() {
   accountProfileSynced = false;
   updateAccountCtaState();
 }
 
-function updateAccountCtaState() {
-  var cta = document.getElementById('cta-rsvp');
-  var compact = document.getElementById('acc-summary-rsvp');
-  if (!cta) return;
-  syncAccountCtaRsvpHref();
-  var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
-  if (!u) {
-    cta.classList.add('cta-disabled');
-    if (compact) compact.classList.add('cta-disabled');
+/** Staff see Session Check-in (staffEmails in config and/or openplay_se/admin_uids/{uid} in RTDB). */
+function updateStaffCheckinButtons(user) {
+  var hub = document.getElementById('hub-cta-checkin');
+  var cta = document.getElementById('cta-checkin');
+  if (!hub && !cta) return;
+  function showBoth(on) {
+    if (hub) hub.classList.toggle('hidden', !on);
+    if (cta) cta.classList.toggle('hidden', !on);
+  }
+  if (!user || typeof SEOpenPlay === 'undefined') {
+    showBoth(false);
     return;
   }
-  if (!accProfileComplete() || !accountProfileSynced) {
-    cta.classList.add('cta-disabled');
-    if (compact) compact.classList.add('cta-disabled');
-  } else {
-    cta.classList.remove('cta-disabled');
-    if (compact) compact.classList.remove('cta-disabled');
+  if (SEOpenPlay.isStaffEmailAllowed && SEOpenPlay.isStaffEmailAllowed(user)) {
+    showBoth(true);
+    return;
   }
+  showBoth(false);
+  if (SEOpenPlay.loadAdminUidFlag) {
+    SEOpenPlay.loadAdminUidFlag(user.uid).then(function (ok) {
+      showBoth(!!ok);
+    });
+  }
+}
+
+function updateAccountCtaState() {
+  var cta = document.getElementById('cta-rsvp');
+  var hubCta = document.getElementById('hub-cta-rsvp');
+  if (!cta && !hubCta) return;
+  syncAccountCtaRsvpHref();
+  var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
+  function setDisabled(el, on) {
+    if (!el) return;
+    if (on) el.classList.add('cta-disabled');
+    else el.classList.remove('cta-disabled');
+  }
+  if (!u) {
+    setDisabled(cta, true);
+    setDisabled(hubCta, true);
+    return;
+  }
+  var block = !accProfileComplete() || !accountProfileSynced;
+  setDisabled(cta, block);
+  setDisabled(hubCta, block);
 }
 
 function loadAccountFormFromProfile(p) {
@@ -647,39 +817,295 @@ function loadAccountFormFromProfile(p) {
 }
 
 function setAccountViewMode(mode) {
-  accountViewMode = mode === 'summary' ? 'summary' : 'edit';
+  var uCheck = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
+  if (!uCheck) return;
+  accountViewMode = mode === 'hub' ? 'hub' : 'edit';
   var profilePanel = document.getElementById('profile-data-panel');
-  var summaryPanel = document.getElementById('account-summary-panel');
+  var hubPanel = document.getElementById('account-hub-panel');
   var ctaWrap = document.getElementById('cta-wrap');
-  if (accountViewMode === 'summary') {
+  var bodyWrap = document.querySelector('.body-wrap');
+  if (accountViewMode === 'hub') {
     if (profilePanel) profilePanel.classList.add('hidden');
-    if (summaryPanel) summaryPanel.classList.remove('hidden');
+    if (hubPanel) hubPanel.classList.remove('hidden');
     if (ctaWrap) ctaWrap.classList.add('hidden');
+    if (bodyWrap) bodyWrap.classList.add('body-wrap--wide');
+    var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
+    if (u) {
+      renderAccountHubUserLine(u, {});
+      SEOpenPlay.loadUserProfile(u.uid).then(function (p) {
+        renderAccountHubUserLine(u, p || {});
+      });
+    }
+    renderAccountRsvpCalendar();
   } else {
-    if (summaryPanel) summaryPanel.classList.add('hidden');
+    if (hubPanel) hubPanel.classList.add('hidden');
     if (profilePanel) profilePanel.classList.remove('hidden');
     if (ctaWrap) ctaWrap.classList.remove('hidden');
+    if (bodyWrap) bodyWrap.classList.remove('body-wrap--wide');
+  }
+  var backHub = document.getElementById('acc-back-to-hub');
+  var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
+  if (backHub) {
+    if (accountViewMode === 'edit' && u && accountProfileSynced) backHub.classList.remove('hidden');
+    else backHub.classList.add('hidden');
+  }
+  var hubEditTop = document.getElementById('hub-edit-profile');
+  if (hubEditTop) {
+    if (accountViewMode === 'hub') hubEditTop.classList.remove('hidden');
+    else hubEditTop.classList.add('hidden');
   }
 }
 
-function renderAccountSummary(user, p) {
-  var body = document.getElementById('account-summary-body');
-  if (!body || !user || !p) return;
-  var memberLine = p.membership === 'yes' ? 'Yes - Member' : 'No - Guest';
-  var cardLine = p.membership === 'yes' ? (p.memberCard || 'Not set') : 'N/A';
-  body.innerHTML =
-    '<div class="account-summary-line"><strong>Name:</strong> ' +
-    escapeHtml((p.firstName || '') + ' ' + (p.lastName || '')) +
-    '</div>' +
-    '<div class="account-summary-line"><strong>Email:</strong> ' +
+function renderAccountHubUserLine(user, p) {
+  var el = document.getElementById('hub-user-line');
+  if (!el || !user) return;
+  var name =
+    p && ((p.firstName || '') + ' ' + (p.lastName || '')).trim()
+      ? ((p.firstName || '') + ' ' + (p.lastName || '')).trim()
+      : '';
+  el.innerHTML =
+    'Signed in as <strong>' +
     escapeHtml(user.email || '') +
-    '</div>' +
-    '<div class="account-summary-line"><strong>Member:</strong> ' +
-    escapeHtml(memberLine) +
-    '</div>' +
-    '<div class="account-summary-line"><strong>Member access card:</strong> ' +
-    escapeHtml(cardLine) +
-    '</div>';
+    '</strong>' +
+    (name ? ' · ' + escapeHtml(name) : '') +
+    '. Your upcoming open play reservations are on the calendar below.';
+}
+
+function pad2(n) {
+  return n < 10 ? '0' + n : String(n);
+}
+
+function pacificNowDate() {
+  // Build a Date from Pacific local wall-clock parts so day/month math stays aligned to PT.
+  var p = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Los_Angeles',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  }).formatToParts(new Date());
+  var y = parseInt(
+    p.filter(function (x) {
+      return x.type === 'year';
+    })[0].value,
+    10
+  );
+  var m = parseInt(
+    p.filter(function (x) {
+      return x.type === 'month';
+    })[0].value,
+    10
+  );
+  var d = parseInt(
+    p.filter(function (x) {
+      return x.type === 'day';
+    })[0].value,
+    10
+  );
+  return new Date(y, m - 1, d);
+}
+
+function normalizeSessionDateToExpectedWeekday(d, expectedDow) {
+  if (!d || typeof expectedDow !== 'number') return d;
+  var normalized = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  var diff = expectedDow - normalized.getDay();
+  if (Math.abs(diff) > 3) diff += diff > 0 ? -7 : 7;
+  normalized.setDate(normalized.getDate() + diff);
+  normalized.setHours(0, 0, 0, 0);
+  return normalized;
+}
+
+function parseSessionToDate(sessionStr) {
+  if (!sessionStr) return null;
+  var m = String(sessionStr).match(/^(Tuesday Morning|Tuesday Evening|Thursday Evening)\s+(\w+)\s+(\d+)/i);
+  if (!m) return null;
+  var mon = SESSION_MONTHS_ACC[m[2].toLowerCase()];
+  if (mon === undefined) return null;
+  var day = parseInt(m[3], 10);
+  var pacNow = pacificNowDate();
+  var y = pacNow.getFullYear();
+  var d = new Date(y, mon, day);
+  d.setHours(0, 0, 0, 0);
+  var expectedDow = /^Thursday/i.test(m[1]) ? 4 : 2; // Thu=4, Tue=2
+  d = normalizeSessionDateToExpectedWeekday(d, expectedDow);
+  if (d.getTime() < pacNow.getTime() - 14 * 864e5) {
+    d = new Date(y + 1, mon, day);
+    d.setHours(0, 0, 0, 0);
+    d = normalizeSessionDateToExpectedWeekday(d, expectedDow);
+  }
+  return d;
+}
+
+function normalizeSessionKey(s) {
+  return String(s || '')
+    .trim()
+    .replace(/\s+/g, ' ')
+    .toLowerCase();
+}
+
+function abbrevSessionLabel(full) {
+  if (!full) return '';
+  var m = String(full).match(/^(Tuesday Morning|Tuesday Evening|Thursday Evening)\s+(.+)$/i);
+  if (!m) return full;
+  var map = {
+    'Tuesday Morning': 'Tue AM',
+    'Tuesday Evening': 'Tue PM',
+    'Thursday Evening': 'Thu PM',
+  };
+  return (map[m[1]] || m[1]) + ' · ' + m[2];
+}
+
+/** Short label using the calendar-normalized date (matches grid cell), not raw session text. */
+function abbrevSessionLabelCalendar(full) {
+  var d = parseSessionToDate(full);
+  if (!d) return abbrevSessionLabel(full);
+  var m = String(full).match(/^(Tuesday Morning|Tuesday Evening|Thursday Evening)/i);
+  if (!m) return abbrevSessionLabel(full);
+  var map = {
+    'Tuesday Morning': 'Tue AM',
+    'Tuesday Evening': 'Tue PM',
+    'Thursday Evening': 'Thu PM',
+  };
+  var slot = map[m[1]] || m[1];
+  var mon = d.toLocaleDateString('en-US', { month: 'short' });
+  return slot + ' · ' + mon + ' ' + d.getDate();
+}
+
+function renderAccountRsvpCalendar() {
+  var grid = document.getElementById('cal-grid');
+  var label = document.getElementById('cal-month-label');
+  if (!grid || !label) return;
+  var cur = new Date(accountCalendarCursor.getFullYear(), accountCalendarCursor.getMonth(), 1);
+  var y = cur.getFullYear();
+  var mo = cur.getMonth();
+  label.textContent = cur.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+  var byDay = {};
+  var openByDay = {};
+  var unparsed = [];
+  var userBookedByDay = {};
+  var dedupedRows = [];
+  var seenSessionStr = {};
+  (accountMyRsvpRows || []).forEach(function (r) {
+    var s = String(r.session || '').trim();
+    if (!s) return;
+    var nk = normalizeSessionKey(s);
+    if (seenSessionStr[nk]) return;
+    seenSessionStr[nk] = true;
+    dedupedRows.push(r);
+  });
+  dedupedRows.forEach(function (r) {
+    var sessKey = String(r.session || '').trim();
+    var d = parseSessionToDate(r.session);
+    if (!d) {
+      unparsed.push(r);
+      return;
+    }
+    var dk = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+    if (!byDay[dk]) byDay[dk] = [];
+    byDay[dk].push(r);
+    if (!userBookedByDay[dk]) userBookedByDay[dk] = {};
+    if (sessKey) userBookedByDay[dk][normalizeSessionKey(sessKey)] = true;
+  });
+  ACCOUNT_OPEN_SESSIONS.forEach(function (sessionLabel) {
+    var d = parseSessionToDate(sessionLabel);
+    if (!d) return;
+    var dk = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+    if (!openByDay[dk]) openByDay[dk] = [];
+    openByDay[dk].push(sessionLabel);
+  });
+
+  var firstDow = new Date(y, mo, 1).getDay();
+  var daysInMonth = new Date(y, mo + 1, 0).getDate();
+  var html = '';
+  var i;
+  for (i = 0; i < firstDow; i++) {
+    html += '<div class="cal-day cal-day--empty"></div>';
+  }
+  var today = pacificNowDate();
+  today.setHours(0, 0, 0, 0);
+  for (var day = 1; day <= daysInMonth; day++) {
+    var cellDate = new Date(y, mo, day);
+    var dk = cellDate.getFullYear() + '-' + pad2(cellDate.getMonth() + 1) + '-' + pad2(cellDate.getDate());
+    var isToday = cellDate.getTime() === today.getTime();
+    var rows = byDay[dk] || [];
+    html += '<div class="cal-day' + (isToday ? ' cal-day--today' : '') + '" role="gridcell">';
+    html += '<div class="cal-day-num">' + day + '</div>';
+    html += '<div class="cal-day-events">';
+    rows.forEach(function (r) {
+      var slot = abbrevSessionLabelCalendar(r.session);
+      var pidRaw = String(r.pid || '');
+      var pidAttr = pidRaw.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+      html += '<div class="cal-ev">';
+      html += '<span class="cal-ev-slot">' + escapeHtml(slot) + '</span>';
+      html += '<button type="button" class="cal-ev-cancel" data-pid="' + pidAttr + '">Cancel</button>';
+      html += '</div>';
+    });
+    var openList = openByDay[dk] || [];
+    var bookedMap = userBookedByDay[dk] || {};
+    var hasUnbookedSlot = openList.some(function (sessLabel) {
+      return !bookedMap[normalizeSessionKey(sessLabel)];
+    });
+    // Do not show "available" in a cell that already lists your RSVP(s) — avoids implying the day is empty when Tue PM is still bookable elsewhere.
+    if (hasUnbookedSlot && rows.length === 0) {
+      html += '<div class="cal-open">Open Play available</div>';
+    }
+    html += '</div></div>';
+  }
+  grid.innerHTML = html;
+  grid.querySelectorAll('.cal-ev-cancel').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      cancelAccountRsvpFromModal(btn.getAttribute('data-pid'));
+    });
+  });
+
+  var unpEl = document.getElementById('cal-unparsed');
+  if (unpEl) {
+    if (!unparsed.length) {
+      unpEl.classList.add('hidden');
+      unpEl.innerHTML = '';
+    } else {
+      unpEl.classList.remove('hidden');
+      unpEl.innerHTML =
+        '<div class="cal-unparsed-title">Other reservations</div>' +
+        unparsed
+          .map(function (r) {
+            var pidRaw = String(r.pid || '');
+            var pidAttr = pidRaw.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+            return (
+              '<div class="manage-rsvp-row">' +
+              '<div class="manage-rsvp-row-main"><strong>' +
+              escapeHtml(r.session || 'Session') +
+              '</strong><span class="manage-rsvp-pid">Player ID: ' +
+              escapeHtml(pidRaw) +
+              '</span></div>' +
+              '<button type="button" class="manage-rsvp-cancel" data-pid="' +
+              pidAttr +
+              '">Cancel</button></div>'
+            );
+          })
+          .join('');
+      unpEl.querySelectorAll('.manage-rsvp-cancel').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          cancelAccountRsvpFromModal(btn.getAttribute('data-pid'));
+        });
+      });
+    }
+  }
+}
+
+function cancelAccountRsvpFromModal(pid) {
+  if (!pid || typeof SEOpenPlay === 'undefined' || !SEOpenPlay.deleteMyRsvp) return;
+  if (!window.confirm('Cancel this RSVP? You can book again later if space is available.')) return;
+  SEOpenPlay.initFirebase()
+    .then(function () {
+      return SEOpenPlay.deleteMyRsvp(pid);
+    })
+    .then(function () {
+      showAccToast('RSVP cancelled.');
+    })
+    .catch(function (err) {
+      window.alert('Could not cancel. ' + (err && err.message ? err.message : 'Try again.'));
+    });
 }
 
 function initAccountPage() {
@@ -757,9 +1183,8 @@ function initAccountPage() {
     SEOpenPlay.saveUserProfilePatch(u.uid, patch)
       .then(function () {
         accountProfileSynced = true;
-        renderAccountSummary(u, patch);
-        setAccountViewMode('summary');
-        accShowProfileMsg('Profile saved.', 'ok');
+        setAccountViewMode('hub');
+        showAccToast('Profile saved!');
         updateAccountCtaState();
       })
       .catch(function (err) {
@@ -767,24 +1192,60 @@ function initAccountPage() {
       });
   });
 
-  document.getElementById('cta-rsvp').addEventListener('click', function (e) {
-    var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
-    if (!u) return;
-    if (!accProfileComplete()) {
-      e.preventDefault();
-      accShowProfileMsg('Fill all required fields.', 'err');
-      return;
-    }
-    if (!accountProfileSynced) {
-      e.preventDefault();
-      accShowProfileMsg('Click “Save profile” so your information is stored before you RSVP.', 'err');
-    }
-  });
-  var editBtn = document.getElementById('acc-edit-profile');
-  if (editBtn) {
-    editBtn.addEventListener('click', function () {
+  function wireRsvpCtaClick(el) {
+    if (!el) return;
+    el.addEventListener('click', function (e) {
+      var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
+      if (!u) return;
+      if (!accProfileComplete()) {
+        e.preventDefault();
+        accShowProfileMsg('Fill all required fields.', 'err');
+        return;
+      }
+      if (!accountProfileSynced) {
+        e.preventDefault();
+        accShowProfileMsg('Save your profile on this page before booking.', 'err');
+      }
+    });
+  }
+  wireRsvpCtaClick(document.getElementById('cta-rsvp'));
+  wireRsvpCtaClick(document.getElementById('hub-cta-rsvp'));
+
+  var hubEdit = document.getElementById('hub-edit-profile');
+  if (hubEdit) {
+    hubEdit.addEventListener('click', function () {
       setAccountViewMode('edit');
       accShowProfileMsg('');
+    });
+  }
+  var backToHub = document.getElementById('acc-back-to-hub');
+  if (backToHub) {
+    backToHub.addEventListener('click', function () {
+      setAccountViewMode('hub');
+      accShowProfileMsg('');
+    });
+  }
+
+  var calPrev = document.getElementById('cal-prev');
+  var calNext = document.getElementById('cal-next');
+  if (calPrev) {
+    calPrev.addEventListener('click', function () {
+      accountCalendarCursor = new Date(
+        accountCalendarCursor.getFullYear(),
+        accountCalendarCursor.getMonth() - 1,
+        1
+      );
+      renderAccountRsvpCalendar();
+    });
+  }
+  if (calNext) {
+    calNext.addEventListener('click', function () {
+      accountCalendarCursor = new Date(
+        accountCalendarCursor.getFullYear(),
+        accountCalendarCursor.getMonth() + 1,
+        1
+      );
+      renderAccountRsvpCalendar();
     });
   }
 
@@ -816,31 +1277,49 @@ function initAccountPage() {
     var statusLine = document.getElementById('auth-status-line');
     var profilePanel = document.getElementById('profile-data-panel');
     var emailDisp = document.getElementById('acc-email-display');
+    var hubPanel = document.getElementById('account-hub-panel');
     if (user) {
+      updateStaffCheckinButtons(user);
       if (formBlock) formBlock.classList.add('hidden');
       if (signedBlock) signedBlock.classList.remove('hidden');
       if (statusLine) statusLine.innerHTML = 'Signed in as <strong>' + escapeHtml(user.email) + '</strong>.';
       var ae = document.getElementById('auth-email');
       if (ae) ae.value = user.email || '';
       if (emailDisp) emailDisp.textContent = user.email || '—';
+      if (SEOpenPlay.subscribeMyRsvps) {
+        SEOpenPlay.subscribeMyRsvps(user.uid, function (list) {
+          accountMyRsvpRows = list || [];
+          if (accountViewMode === 'hub') renderAccountRsvpCalendar();
+        }, user.email || '');
+      }
       SEOpenPlay.loadUserProfile(user.uid).then(function (p) {
         loadAccountFormFromProfile(p);
         accountProfileSynced = !!(p && SEOpenPlay.isProfileComplete(p));
         if (p && accountProfileSynced) {
-          renderAccountSummary(user, p);
-          setAccountViewMode('summary');
+          setAccountViewMode('hub');
         } else {
+          if (hubPanel) hubPanel.classList.add('hidden');
           setAccountViewMode('edit');
         }
         updateAccountCtaState();
       });
     } else {
+      updateStaffCheckinButtons(null);
       accountProfileSynced = false;
+      if (SEOpenPlay.unsubscribeMyRsvps) SEOpenPlay.unsubscribeMyRsvps();
+      accountMyRsvpRows = [];
       if (formBlock) formBlock.classList.remove('hidden');
       if (signedBlock) signedBlock.classList.add('hidden');
       if (statusLine) statusLine.textContent = 'Create an account or sign in.';
       if (profilePanel) profilePanel.classList.add('hidden');
-      setAccountViewMode('edit');
+      if (hubPanel) hubPanel.classList.add('hidden');
+      var ctaWrapEl = document.getElementById('cta-wrap');
+      var bodyWrapEl = document.querySelector('.body-wrap');
+      if (ctaWrapEl) ctaWrapEl.classList.add('hidden');
+      if (bodyWrapEl) bodyWrapEl.classList.remove('body-wrap--wide');
+      var backHubEl = document.getElementById('acc-back-to-hub');
+      if (backHubEl) backHubEl.classList.add('hidden');
+      accountViewMode = 'edit';
     }
   });
 }

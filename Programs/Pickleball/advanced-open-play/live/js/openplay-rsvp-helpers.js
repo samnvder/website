@@ -1,5 +1,5 @@
 /**
- * Pure RSVP validation helpers — shared by live RSVP HTML and Programs/Pickleball/testing/unit tests.
+ * Pure RSVP validation helpers — shared by live RSVP HTML and advanced-open-play/testing/unit tests.
  */
 (function (root, factory) {
   var exp = factory();

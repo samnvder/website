@@ -2,19 +2,23 @@
   "rules": {
     "openplay_se": {
       "rsvps": {
-        ".read": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
+        ".indexOn": ["firebaseUid", "email"],
+        ".read": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (query.orderByChild === 'firebaseUid' && query.equalTo === auth.uid) || (auth.token.email_verified === true && auth.token.email != null && query.orderByChild === 'email' && query.equalTo === auth.token.email))",
         "$pid": {
-          ".write": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (((!data.exists()) || data.child('firebaseUid').val() === auth.uid) && newData.child('firebaseUid').val() === auth.uid && newData.child('pid').val() === $pid))"
+          ".read": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || !data.exists() || data.child('firebaseUid').val() === auth.uid || (auth.token.email_verified === true && auth.token.email != null && data.child('email').val() === auth.token.email))",
+          ".write": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (data.exists() && !newData.exists() && (data.child('firebaseUid').val() === auth.uid || (auth.token.email_verified === true && auth.token.email != null && data.child('email').val() === auth.token.email))) || ((!data.exists() || data.child('firebaseUid').val() === auth.uid) && newData.exists() && newData.child('firebaseUid').val() === auth.uid && newData.child('pid').val() === $pid))"
         }
       },
       "admin_uids": {
-        ".read": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
-        ".write": false
+        "$uid": {
+          ".read": "auth != null && (auth.uid === $uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
+          ".write": false
+        }
       },
       "user_profiles": {
         "$uid": {
-          ".read": "$uid === auth.uid",
-          ".write": "$uid === auth.uid"
+          ".read": "auth != null && $uid === auth.uid",
+          ".write": "auth != null && $uid === auth.uid"
         }
       }
     }

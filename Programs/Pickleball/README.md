@@ -1,58 +1,50 @@
-# Pickleball — Open Play (RSVP & check-in)
+# Pickleball programs (`Programs/Pickleball/`)
+
+This folder holds **multiple program lineups** under one umbrella. They share the same **Firebase project** (Auth + Realtime Database) for club-wide account creation and member profiles.
 
 | Path | Role |
 |------|------|
-| **`staging/`** | **Default dev tree** — edit here first. Mirrored by `local-test` when `openplay-mode.json` has `activeTree: "staging"`. Not the Firebase deploy folder. |
-| **`live/`** | **Production source** for Firebase Hosting (`firebase.json` → `hosting.public`). Deploy **only** promotes content here + passes guards. |
-| **`openplay-mode.json`** | **`activeTree`**: `staging` \| `live` (which tree `local-test` copies). **`allowProductionHostingDeploy`**: must be `true` to deploy hosting without `OPENPLAY_CONFIRM_PRODUCTION=1`. |
-| **`scripts/`** | `openplay-resolve-tree.js`, `openplay-deploy.js`, bootstrap / promote / switch-tree helpers. |
-| **`testing/`** | Unit tests, `local-test.js` mirror script, generated **`local-page/`** (gitignored). |
-| **`account-creation/`** | **Living docs:** [README](./account-creation/README.md), **[MANAGING-ACCOUNTS.md](./account-creation/MANAGING-ACCOUNTS.md)**, [CHANGELOG](./account-creation/CHANGELOG.md). |
+| **`advanced-open-play/`** | Advanced Open Play — RSVP, account/calendar hub, staff check-in, deployable static app. **[README →](./advanced-open-play/README.md)** |
+| **`account-creation/`** | Shared Firebase docs (Auth, RTDB, staff UIDs, managing accounts) — applies to all programs. **[README →](./account-creation/README.md)** |
 
-## Staging vs live workflow
+Future programs (e.g. leagues, ladders) can add sibling folders:
 
-1. **Develop in `staging/`** (or run `npm run openplay:bootstrap-staging` once to clone `live/` → `staging/`).
-2. **`npm run local-test`** — copies the **active** tree (`staging` or `live`) into gitignored `local-page/` hubs.
-3. **Ship to Firebase:** promote `staging/` → `live/`, then deploy:
-   - **PowerShell:** `$env:OPENPLAY_CONFIRM_PROMOTE='1'; npm run openplay:promote`
-   - **cmd:** `set OPENPLAY_CONFIRM_PROMOTE=1&& npm run openplay:promote`
-   - Set **`openplay-mode.json`**: `"activeTree": "live"`, `"allowProductionHostingDeploy": true` after QA.
-   - **`npm run deploy:openplay`** or **`deploy:openplay:all`**.
+```
+Programs/Pickleball/
+  advanced-open-play/     ← Open Play app
+  some-other-program/
+  account-creation/       ← shared operational docs
+```
 
-**Deploy guard:** `deploy:openplay` refuses to run if `activeTree` is not `live` (Firebase always deploys `live/`). It also refuses if `allowProductionHostingDeploy` is false unless **`OPENPLAY_CONFIRM_PRODUCTION=1`** is set for a one-off.
+## Shared database (accounts)
 
-**Database rules:** `npm run firebase:deploy-rules` is unchanged (deploys root `database.rules.json` only — no staging split).
+- **Authentication** (email/password) and **`openplay_se/user_profiles/{uid}`** are project-wide in Firebase. Any program's pages that use the same `openplay-firebase-config.js` keys participate in the same member accounts.
+- Program-specific data (e.g. RSVPs under `openplay_se/rsvps`) stays namespaced in RTDB rules.
 
-## Commands (from `Website/`)
+## Security rules
 
-| Script | Purpose |
-|--------|---------|
-| `npm run openplay:use-staging` | `activeTree` → `staging` |
-| `npm run openplay:use-live` | `activeTree` → `live` |
-| `npm run openplay:bootstrap-staging` | Replace `staging/` from `live/` |
-| `npm run openplay:promote` | Replace `live/` from `staging/` (needs `OPENPLAY_CONFIRM_PROMOTE=1`) |
-| `npm test` | Unit tests |
-| `npm run firebase:deploy-rules` | RTDB rules only |
-| `npm run deploy:openplay` | Guarded Firebase **hosting** deploy |
-| `npm run deploy:openplay:all` | Guarded **hosting + database** |
-| `npm run local-test:sync` | Refresh `local-page/` mirrors |
-| `npm run local-test` | Sync + live-server port **3456** |
+Source of truth: **`Website/database.rules.json`** (repo root). Key features:
 
-**URLs (live-server, repo root = site root):** `http://127.0.0.1:3456/local-page/…`
+- RSVPs scoped by `firebaseUid` or verified `email` (query-based `.read` rules)
+- Email-based access requires `auth.token.email_verified === true`
+- User profiles locked to `auth.uid === $uid`
+- Admin access gated by `openplay_se/admin_uids/{uid}: true`
+- `admin_uids` is `.write: false` — manage via Firebase Console only
 
-## CI
+Deploy: `npm run firebase:deploy-rules` from `Website/`.
 
-Workflow: `.github/workflows/deploy-openplay-firebase-hosting.yml`
+## Commands
 
-- Runs on **`workflow_dispatch`**, or on **`push`** only if GitHub repo variable **`OPENPLAY_CI_AUTO_DEPLOY`** is **`true`** (avoids accidental prod deploys).
-- Needs **`FIREBASE_TOKEN`** secret; uses the same deploy guard as local CLI.
+Program-specific scripts live in `package.json` at the **Website** root:
 
-## Firebase (RSVP): sync + optional accounts
+| Command | What it does |
+|---------|-------------|
+| `npm test` | Unit tests (RSVP helpers + Firebase rules) |
+| `npm run deploy:openplay` | Deploy `live/` to Firebase Hosting |
+| `npm run deploy:openplay:all` | Deploy Hosting + database rules |
+| `npm run firebase:deploy-rules` | Database rules only |
+| `npm run local-test` | Mirror active tree → `local-page/` + live-server on 3456 |
+| `npm run openplay:promote` | Copy staging → live |
+| `npm run openplay:use-staging` / `openplay:use-live` | Switch active tree |
 
-Configure **`staging/js/openplay-firebase-config.js`** and **`live/js/openplay-firebase-config.js`** (keep in sync when promoting, or use identical keys).
-
-1. **Realtime Database** — RSVP → check-in sync (`openplay_se/rsvps`).
-2. **Authentication** — accounts on **`SouthEnd_OpenPlay_Account.html`**, profiles at `openplay_se/user_profiles/{uid}`.
-3. **RSVP email (FormSubmit)** + RTDB waiver fields — see `account-creation` docs.
-4. **Authorized domains** for production hostname.
-5. **`admin_uids`** + `staffEmails` for check-in — see `MANAGING-ACCOUNTS.md`.
+When you add another program, add parallel npm scripts or a small wrapper.

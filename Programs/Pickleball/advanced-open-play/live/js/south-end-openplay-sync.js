@@ -13,6 +13,7 @@
   var BC_NAME = 'se-openplay-sync';
   var FB_PATH = 'openplay_se/rsvps';
   var USER_PROFILE_PATH = 'openplay_se/user_profiles';
+  var ADMIN_UIDS_PATH = 'openplay_se/admin_uids';
 
   var SE_OPENPLAY_FIREBASE = Object.assign(
     { apiKey: '', authDomain: '', databaseURL: '', projectId: '' },
@@ -71,6 +72,104 @@
       .toUpperCase()
       .substring(0, 2);
     return pre + ini + Math.floor(1000 + Math.random() * 9000);
+  }
+
+  /** Deterministic Player ID for signed-in RSVPs — same account + session → same pid (no duplicate rows). */
+  function hashUint32(str) {
+    var h = 5381;
+    for (var i = 0; i < str.length; i++) {
+      h = ((h << 5) + h) + str.charCodeAt(i);
+    }
+    return h >>> 0;
+  }
+
+  function stableRsvpPlayerId(firebaseUid, fullSession) {
+    if (!firebaseUid || !fullSession) return null;
+    var slot = parseSessionSlot(fullSession);
+    if (!slot) slot = 'Tuesday Evening';
+    var pre = idPrefixFromSlot(slot);
+    var h = hashUint32(firebaseUid + '\x1e' + fullSession);
+    var hex = ('0000000' + h.toString(16)).slice(-8).toUpperCase();
+    return pre + 'U' + hex;
+  }
+
+  var myRsvpQueryRef = null;
+  var myRsvpEmailQueryRef = null;
+
+  function rowsFromRsvpSnapshot(v) {
+    var list = [];
+    if (!v) return list;
+    Object.keys(v).forEach(function (k) {
+      var row = v[k];
+      if (row) {
+        var copy = Object.assign({}, row);
+        if (!copy.pid) copy.pid = k;
+        list.push(copy);
+      }
+    });
+    return list;
+  }
+
+  function subscribeMyRsvps(uid, callback, email) {
+    if (!firebaseConfigured() || !uid || typeof callback !== 'function') return Promise.resolve();
+    return initFirebase().then(function () {
+      if (!firebaseDb) return;
+      unsubscribeMyRsvps();
+
+      var uidRows = [];
+      var emailRows = [];
+      function emitMerged() {
+        var merged = {};
+        uidRows.concat(emailRows).forEach(function (r, i) {
+          if (!r) return;
+          var key = r.pid ? String(r.pid) : 'row-' + i;
+          merged[key] = r;
+        });
+        callback(
+          Object.keys(merged).map(function (k) {
+            return merged[k];
+          })
+        );
+      }
+
+      myRsvpQueryRef = firebaseDb.ref(FB_PATH).orderByChild('firebaseUid').equalTo(uid);
+      myRsvpQueryRef.on('value', function (snap) {
+        uidRows = rowsFromRsvpSnapshot(snap.val());
+        emitMerged();
+      });
+
+      var normalizedEmail = String(email || '').trim();
+      if (!normalizedEmail) {
+        emitMerged();
+        return;
+      }
+
+      myRsvpEmailQueryRef = firebaseDb.ref(FB_PATH).orderByChild('email').equalTo(normalizedEmail);
+      myRsvpEmailQueryRef.on('value', function (snap) {
+        emailRows = rowsFromRsvpSnapshot(snap.val()).filter(function (row) {
+          // Keep legacy rows that predate firebaseUid ownership, and any row already owned by this uid.
+          var rowUid = String((row && row.firebaseUid) || '');
+          return !rowUid || rowUid === uid;
+        });
+        emitMerged();
+      });
+    });
+  }
+
+  function unsubscribeMyRsvps() {
+    if (myRsvpQueryRef) {
+      myRsvpQueryRef.off();
+      myRsvpQueryRef = null;
+    }
+    if (myRsvpEmailQueryRef) {
+      myRsvpEmailQueryRef.off();
+      myRsvpEmailQueryRef = null;
+    }
+  }
+
+  function deleteMyRsvp(pid) {
+    if (!firebaseDb || !pid) return Promise.reject(new Error('Missing database or pid'));
+    return firebaseDb.ref(FB_PATH + '/' + String(pid)).remove();
   }
 
   function timeSlotLabel(slot) {
@@ -230,7 +329,7 @@
       waiversAcknowledgedAt: global.firebase.database.ServerValue.TIMESTAMP,
       updatedAt: global.firebase.database.ServerValue.TIMESTAMP,
     };
-    return ref.set(payload);
+    return ref.update(payload);
   }
 
   /**
@@ -286,12 +385,15 @@
   }
 
   function pushRsvpToFirebase(record) {
-    if (!firebaseDb || !record || !record.pid || !global.firebase) return;
+    if (!firebaseDb || !record || !record.pid || !global.firebase) return Promise.resolve();
     try {
       var copy = JSON.parse(JSON.stringify(record));
       copy.updatedAt = global.firebase.database.ServerValue.TIMESTAMP;
-      firebaseDb.ref(FB_PATH + '/' + record.pid).set(copy);
-    } catch (e) {}
+      return firebaseDb.ref(FB_PATH + '/' + record.pid).update(copy);
+    } catch (e) {
+      console.warn('[SEOpenPlay] pushRsvpToFirebase failed:', e);
+      return Promise.resolve();
+    }
   }
 
   /**
@@ -352,17 +454,57 @@
     } catch (e) {}
   }
 
+  /**
+   * Staff check-in allowlist from openplay-firebase-config.js (same as Session Check-in page).
+   * Fail-closed when staffEmails is empty.
+   */
+  function isStaffEmailAllowed(user) {
+    var cfg =
+      (typeof window !== 'undefined' && window.SE_OPENPLAY_FIREBASE) || global.SE_OPENPLAY_FIREBASE || {};
+    var allow = Array.isArray(cfg.staffEmails) ? cfg.staffEmails : [];
+    if (!user || !user.email) return false;
+    var email = String(user.email).trim().toLowerCase();
+    if (!allow.length) return false;
+    for (var i = 0; i < allow.length; i++) {
+      if (String(allow[i] || '').trim().toLowerCase() === email) return true;
+    }
+    return false;
+  }
+
+  /** True if openplay_se/admin_uids/{uid} === true (set in Firebase Console). */
+  function loadAdminUidFlag(uid) {
+    if (!firebaseConfigured() || !uid) return Promise.resolve(false);
+    return initFirebase()
+      .then(function () {
+        if (!firebaseDb) return false;
+        return firebaseDb
+          .ref(ADMIN_UIDS_PATH + '/' + uid)
+          .once('value')
+          .then(function (snap) {
+            return snap.val() === true;
+          });
+      })
+      .catch(function () {
+        return false;
+      });
+  }
+
   global.SEOpenPlay = {
     PIN_KEY: PIN_KEY,
     PENDING_KEY: PENDING_KEY,
     BC_NAME: BC_NAME,
     FB_PATH: FB_PATH,
     USER_PROFILE_PATH: USER_PROFILE_PATH,
+    ADMIN_UIDS_PATH: ADMIN_UIDS_PATH,
     migratePin: migratePin,
     getPin: getPin,
     setPin: setPin,
     parseSessionSlot: parseSessionSlot,
     generatePlayerId: generatePlayerId,
+    stableRsvpPlayerId: stableRsvpPlayerId,
+    subscribeMyRsvps: subscribeMyRsvps,
+    unsubscribeMyRsvps: unsubscribeMyRsvps,
+    deleteMyRsvp: deleteMyRsvp,
     timeSlotLabel: timeSlotLabel,
     timeForFullSession: timeForFullSession,
     tierFromRsvp: tierFromRsvp,
@@ -389,5 +531,7 @@
     saveUserProfilePatch: saveUserProfilePatch,
     loadUserProfile: loadUserProfile,
     isProfileComplete: isProfileComplete,
+    isStaffEmailAllowed: isStaffEmailAllowed,
+    loadAdminUidFlag: loadAdminUidFlag,
   };
 })(typeof window !== 'undefined' ? window : this);

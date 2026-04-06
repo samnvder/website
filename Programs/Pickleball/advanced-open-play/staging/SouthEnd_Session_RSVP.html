@@ -106,6 +106,15 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 }
 .session-card:hover{border-color:var(--neon);background:var(--neon-dim);}
 .session-card.selected{border-color:var(--neon);background:var(--neon-dim);box-shadow:0 0 16px var(--neon-glow);}
+.session-card.session-card--registered{
+  opacity:.42;pointer-events:none;cursor:not-allowed;border-color:rgba(255,255,255,.08);
+  background:rgba(0,0,0,.18);box-shadow:none;
+}
+.session-card.session-card--registered:hover{border-color:rgba(255,255,255,.08);background:rgba(0,0,0,.18);}
+.sc-registered-label{
+  margin-top:8px;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.42);
+}
 .session-card input{position:absolute;opacity:0;width:0;height:0;}
 .sc-tag{font-size:8px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.6);margin-bottom:4px;}
 .sc-day{font-family:'Oswald',sans-serif;font-size:22px;color:#fff;line-height:1;}
@@ -157,7 +166,10 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 .pay-num{font-family:'Oswald',sans-serif;font-size:22px;color:#fff;letter-spacing:1px;}
 .pay-sub{font-size:10px;color:rgba(255,255,255,.6);}
 .pay-note{font-size:10px;color:rgba(255,255,255,.65);line-height:1.6;margin-top:8px;}
+.pay-note-member,.pay-note-nonmember{margin-bottom:0.45em;}
 .pay-note strong{color:var(--neon);}
+.pay-note-nonmember > strong:first-child{color:#f87171!important;}
+.pay-note-nonmember strong.pay-fee{color:#fecaca;font-weight:800;}
 
 /* SUBMIT */
 .submit-btn{
@@ -230,6 +242,16 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 @media(max-width:520px){
   .confirm-sessions-table th:nth-child(2),.confirm-sessions-table td:nth-child(2){display:none;}
 }
+.success-account-cta{
+  margin:0 auto 22px;max-width:min(100%,640px);text-align:center;
+}
+.success-account-cta-link{
+  display:inline-block;padding:10px 20px;border:1.5px solid rgba(0,255,136,.4);border-radius:8px;
+  font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;letter-spacing:.4px;color:var(--neon);
+  text-decoration:none;transition:background .15s,border-color .15s;
+}
+.success-account-cta-link:hover{background:rgba(0,255,136,.1);border-color:var(--neon);}
+.success-account-cta-sub{font-size:11px;color:rgba(255,255,255,.42);margin-top:8px;line-height:1.45;}
 .id-badge{
   display:inline-block;background:var(--neon);color:var(--ink);
   font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:2px;
@@ -327,6 +349,23 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   color:var(--electric);text-decoration:none;white-space:nowrap;
 }
 .account-strip-link:hover{text-decoration:underline;}
+.account-strip-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+button.account-strip-link{border:none;background:transparent;padding:0;font:inherit;color:var(--electric);cursor:pointer;}
+button.account-strip-link:hover{text-decoration:underline;}
+.manage-rsvp-empty{font-size:12px;color:rgba(255,255,255,.55);margin:0;}
+.manage-rsvp-row{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;
+  padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(255,255,255,.86);
+}
+.manage-rsvp-row:last-child{border-bottom:none;}
+.manage-rsvp-row-main{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1;}
+.manage-rsvp-pid{font-size:10px;color:rgba(255,255,255,.45);font-family:ui-monospace,monospace;}
+.manage-rsvp-cancel{
+  padding:8px 14px;border-radius:5px;border:1px solid rgba(255,100,100,.45);
+  background:rgba(255,80,80,.12);color:#ffb4b4;font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.5px;cursor:pointer;flex-shrink:0;
+}
+.manage-rsvp-cancel:hover{filter:brightness(1.08);}
 .profile-summary-card{
   background:rgba(0,255,136,.06);border:1.5px solid rgba(0,255,136,.2);
   border-radius:8px;padding:14px 16px;margin-bottom:18px;
@@ -406,7 +445,10 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 
     <div class="account-strip hidden" id="account-strip" aria-label="Open Play account">
       <span class="account-strip-text" id="account-strip-msg">Sign in on the account page to save your details for next time.</span>
-      <a class="account-strip-link" id="account-strip-link" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Session_RSVP.html">Account page →</a>
+      <span class="account-strip-actions">
+        <button type="button" class="account-strip-link" id="btn-manage-rsvps">Manage RSVPs</button>
+        <a class="account-strip-link" id="account-strip-link" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Session_RSVP.html">Account page →</a>
+      </span>
     </div>
 
     <div class="section" id="section-your-info">
@@ -554,9 +596,15 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
       <div class="pay-num">310-251-3804</div>
       <div class="pay-sub">Zelle · Session fee</div>
       <div class="pay-note">
-        <strong style="color:var(--neon);">South End Members:</strong> no charge — membership covers open play.<br>
-        <strong style="color:#f87171;">Non-Members:</strong> session fee applies — pay at front desk upon arrival.<br>
-        <strong>First-time players:</strong> arrive 10 minutes early for a quick waiver.
+        <div class="pay-note-member hidden" id="pay-note-member">
+          <strong style="color:var(--neon);">South End Members:</strong> no charge — membership covers open play.
+        </div>
+        <div class="pay-note-nonmember hidden" id="pay-note-nonmember">
+          <strong>Non-Members:</strong> <strong class="pay-fee">$20</strong> session fee — pay at front desk upon arrival.
+        </div>
+        <div class="pay-note-firsttime">
+          <strong>First-time players:</strong> arrive 10 minutes early for a quick waiver.
+        </div>
       </div>
     </div>
 
@@ -691,6 +739,11 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 
   <div class="confirm-card" id="confirm-detail"></div>
 
+  <div class="success-account-cta">
+    <a class="success-account-cta-link" id="success-view-rsvps-link" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Session_RSVP.html">View or cancel RSVPs →</a>
+    <div class="success-account-cta-sub">Opens your Open Play account — calendar, cancellations, and profile.</div>
+  </div>
+
   <div class="waiver-note" id="waiver-note" style="display:none;">
     📋 <strong>First-time player?</strong> Please arrive 10 minutes early — you'll need to complete a quick waiver at the front desk.
   </div>
@@ -703,6 +756,16 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   </div>
 
   <div class="show-qr-note">📱 Show QR code + Player ID to staff at the door</div>
+</div>
+
+<div id="manage-rsvp-modal" class="waiver-modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="manage-rsvp-modal-title">
+  <div class="waiver-modal-box" role="document">
+    <div class="waiver-modal-head">
+      <h2 id="manage-rsvp-modal-title">Your RSVPs</h2>
+      <button type="button" class="waiver-modal-close" id="manage-rsvp-modal-close" aria-label="Close">×</button>
+    </div>
+    <div class="waiver-modal-scroll" id="manage-rsvp-list"></div>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -744,6 +807,10 @@ let ADMIN_PIN = (typeof SEOpenPlay !== 'undefined' ? SEOpenPlay.getPin() : local
 
 let selectedSessions = new Set();
 let appliedCode = null;
+/** Rows from Firebase for the signed-in user (see subscribeMyRsvps). */
+var myRsvpRows = [];
+/** True once the first subscribeMyRsvps callback fires (even if list is empty). */
+var myRsvpLoaded = false;
 
 function escapeHtml(s) {
   if (s == null || s === '') return '';
@@ -854,6 +921,8 @@ function initRsvpProfileOnly() {
   if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()) return;
   var psLink = document.getElementById('profile-summary-account-link');
   if (psLink) psLink.href = accountPageHrefForRsvp();
+  var successRsvpLink = document.getElementById('success-view-rsvps-link');
+  if (successRsvpLink) successRsvpLink.href = accountPageHrefForRsvp();
   var strip = document.getElementById('account-strip');
   var stripMsg = document.getElementById('account-strip-msg');
   var stripLink = document.getElementById('account-strip-link');
@@ -898,6 +967,135 @@ function initRsvpProfileOnly() {
 var rsvpProfileGateDone = false;
 
 /** Require Firebase + signed-in user before showing the RSVP form; otherwise redirect to account or show config error. */
+function isSessionRegisteredForMe(sessionVal) {
+  var s = String(sessionVal);
+  return myRsvpRows.some(function (r) {
+    return r && String(r.session) === s;
+  });
+}
+
+function paintRegisteredSessions() {
+  document.querySelectorAll('.session-card').forEach(function (card) {
+    var val = card.getAttribute('data-session');
+    if (!val) return;
+    var regEl = card.querySelector('.sc-registered-label');
+    if (isSessionRegisteredForMe(val)) {
+      card.classList.add('session-card--registered');
+      card.setAttribute('aria-disabled', 'true');
+      card.tabIndex = -1;
+      if (!regEl) {
+        regEl = document.createElement('div');
+        regEl.className = 'sc-registered-label';
+        regEl.textContent = 'Already registered';
+        card.appendChild(regEl);
+      }
+      if (selectedSessions.has(val)) {
+        selectedSessions.delete(val);
+        setCardVisual(card, false);
+        updateSessionSummary();
+      }
+    } else {
+      card.classList.remove('session-card--registered');
+      card.removeAttribute('aria-disabled');
+      card.tabIndex = 0;
+      if (regEl) regEl.remove();
+    }
+  });
+}
+
+function initRsvpMyRsvpsWatch() {
+  if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.subscribeMyRsvps) return;
+  SEOpenPlay.onAuthStateChanged(function (user) {
+    if (user && SEOpenPlay.subscribeMyRsvps) {
+      SEOpenPlay.subscribeMyRsvps(user.uid, function (list) {
+        myRsvpRows = list || [];
+        myRsvpLoaded = true;
+        paintRegisteredSessions();
+        renderManageRsvpListIfOpen();
+      }, user.email || '');
+    } else {
+      if (SEOpenPlay.unsubscribeMyRsvps) SEOpenPlay.unsubscribeMyRsvps();
+      myRsvpRows = [];
+      myRsvpLoaded = false;
+      paintRegisteredSessions();
+      renderManageRsvpListIfOpen();
+    }
+  });
+}
+
+function renderManageRsvpList() {
+  var el = document.getElementById('manage-rsvp-list');
+  if (!el) return;
+  if (!myRsvpRows.length) {
+    el.innerHTML = '<p class="manage-rsvp-empty">No upcoming RSVPs found.</p>';
+    return;
+  }
+  el.innerHTML = myRsvpRows
+    .map(function (r) {
+      var sess = escapeHtml(r.session || '');
+      var pidRaw = String(r.pid || '');
+      var pidEsc = escapeHtml(pidRaw);
+      var pidAttr = pidRaw.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+      return (
+        '<div class="manage-rsvp-row">' +
+        '<div class="manage-rsvp-row-main"><strong>' +
+        sess +
+        '</strong><span class="manage-rsvp-pid">Player ID: ' +
+        pidEsc +
+        '</span></div>' +
+        '<button type="button" class="manage-rsvp-cancel" data-pid="' +
+        pidAttr +
+        '">Cancel</button></div>'
+      );
+    })
+    .join('');
+  el.querySelectorAll('.manage-rsvp-cancel').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      cancelRsvpFromModal(btn.getAttribute('data-pid'));
+    });
+  });
+}
+
+function renderManageRsvpListIfOpen() {
+  var m = document.getElementById('manage-rsvp-modal');
+  if (m && m.classList.contains('open')) renderManageRsvpList();
+}
+
+function openManageRsvpModal() {
+  var m = document.getElementById('manage-rsvp-modal');
+  if (!m) return;
+  m.classList.add('open');
+  m.setAttribute('aria-hidden', 'false');
+  renderManageRsvpList();
+}
+
+function closeManageRsvpModal() {
+  var m = document.getElementById('manage-rsvp-modal');
+  if (!m) return;
+  m.classList.remove('open');
+  m.setAttribute('aria-hidden', 'true');
+  if (window.location.hash === '#manage') {
+    try {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    } catch (e) {}
+  }
+}
+
+function cancelRsvpFromModal(pid) {
+  if (!pid || typeof SEOpenPlay === 'undefined' || !SEOpenPlay.deleteMyRsvp) return;
+  if (!window.confirm('Cancel this RSVP? You can book again later if space is available.')) return;
+  SEOpenPlay.initFirebase()
+    .then(function () {
+      return SEOpenPlay.deleteMyRsvp(pid);
+    })
+    .then(function () {
+      renderManageRsvpList();
+    })
+    .catch(function (err) {
+      window.alert('Could not cancel. ' + (err && err.message ? err.message : 'Try again.'));
+    });
+}
+
 function initRsvpAuthGate(onAllowed) {
   var loading = document.getElementById('rsvp-auth-loading');
   var noFb = document.getElementById('rsvp-no-firebase');
@@ -999,6 +1197,7 @@ function updateSessionSummary() {
   }
 }
 function toggleSession(card, val) {
+  if (card && card.classList.contains('session-card--registered')) return;
   if (selectedSessions.has(val)) {
     selectedSessions.delete(val);
     setCardVisual(card, false);
@@ -1021,6 +1220,7 @@ function selectQuick(mode) {
   if (!list) return;
   clearSessionSelection();
   list.forEach(function (val) {
+    if (isSessionRegisteredForMe(val)) return;
     selectedSessions.add(val);
     setCardVisual(findSessionCard(val), true);
   });
@@ -1088,7 +1288,25 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof OpenPlayWaiverUI !== 'undefined' && OpenPlayWaiverUI.wire) OpenPlayWaiverUI.wire();
   initRsvpAuthGate(function () {
     initRsvpProfileOnly();
+    initRsvpMyRsvpsWatch();
   });
+  setTimeout(function () {
+    if (window.location.hash === '#manage') openManageRsvpModal();
+  }, 400);
+  var btnManage = document.getElementById('btn-manage-rsvps');
+  if (btnManage) {
+    btnManage.addEventListener('click', function () {
+      openManageRsvpModal();
+    });
+  }
+  var mClose = document.getElementById('manage-rsvp-modal-close');
+  var mModal = document.getElementById('manage-rsvp-modal');
+  if (mClose) mClose.addEventListener('click', closeManageRsvpModal);
+  if (mModal) {
+    mModal.addEventListener('click', function (e) {
+      if (e.target === mModal) closeManageRsvpModal();
+    });
+  }
 });
 
 // ── SESSION SELECT ──
@@ -1118,6 +1336,20 @@ function toggleMemberPay(val) {
     if (cardInput) { cardInput.value = ''; cardInput.classList.remove('error'); }
     document.getElementById('err-member-card').classList.remove('show');
   }
+  var payM = document.getElementById('pay-note-member');
+  var payN = document.getElementById('pay-note-nonmember');
+  if (payM && payN) {
+    if (val === 'yes') {
+      payM.classList.remove('hidden');
+      payN.classList.add('hidden');
+    } else if (val === 'no') {
+      payM.classList.add('hidden');
+      payN.classList.remove('hidden');
+    } else {
+      payM.classList.add('hidden');
+      payN.classList.add('hidden');
+    }
+  }
 }
 
 // ── VALIDATION ──
@@ -1137,6 +1369,13 @@ function clearErrors() {
 function generateId(name, session) {
   return SEOpenPlay.generatePlayerId(name, session);
 }
+function pickPidForRsvp(firebaseUid, name, session) {
+  if (firebaseUid && SEOpenPlay.stableRsvpPlayerId) {
+    var st = SEOpenPlay.stableRsvpPlayerId(firebaseUid, session);
+    if (st) return st;
+  }
+  return generateId(name, session);
+}
 
 // ── SUBMIT ──
 function submitRSVP() {
@@ -1148,9 +1387,35 @@ function submitRSVP() {
       return;
     }
   }
+  // Refresh registered-session state with the latest subscription data before filtering.
+  paintRegisteredSessions();
+  // If subscription hasn't returned yet, warn but still allow proceed (server-side PID check is the safety net).
+  if (!myRsvpLoaded && typeof SEOpenPlay !== 'undefined' && SEOpenPlay.firebaseConfigured()) {
+    var egWarn = document.getElementById('err-general');
+    if (egWarn) {
+      egWarn.textContent = 'Still loading your existing RSVPs — please wait a moment and try again.';
+      egWarn.classList.add('show');
+    }
+    return;
+  }
   let valid = true;
-  const sessions = Array.from(selectedSessions);
-  if (!sessions.length) { showErr('err-session'); valid = false; }
+  const sessions = Array.from(selectedSessions).filter(function (s) {
+    return !isSessionRegisteredForMe(s);
+  });
+  if (!sessions.length) {
+    if (selectedSessions.size > 0) {
+      showErr('err-session');
+      var egDup = document.getElementById('err-general');
+      if (egDup) {
+        egDup.textContent =
+          'You are already registered for the selected session(s). Use Manage RSVPs to cancel or pick another time.';
+        egDup.classList.add('show');
+      }
+    } else {
+      showErr('err-session');
+    }
+    return;
+  }
   const first = document.getElementById('p-first').value.trim();
   const last  = document.getElementById('p-last').value.trim();
   const email = document.getElementById('p-email').value.trim();
@@ -1224,90 +1489,156 @@ function submitRSVP() {
 
   function sendOne() {
     if (idx >= sessions.length) {
-      showSuccessMulti(name, email, phone, skill, results, isNew, tierHint, memberCard, codeInfo, sessions.length);
+      var okRes = results.filter(function (r) {
+        return !r.skipped;
+      });
+      if (!okRes.length) {
+        btn.disabled = false;
+        btn.textContent = sessions.length > 1 ? 'RESERVE MY SPOTS →' : 'RESERVE MY SPOT →';
+        var egAll = document.getElementById('err-general');
+        if (egAll) {
+          egAll.textContent = 'Those sessions are already booked for your account.';
+          egAll.classList.add('show');
+        }
+        return;
+      }
+      showSuccessMulti(name, email, phone, skill, okRes, isNew, tierHint, memberCard, codeInfo, sessions.length);
       return;
     }
     const selectedSession = sessions[idx];
-    const pid = generateId(name, selectedSession);
-    if (sessions.length > 1) btn.textContent = 'Sending… ' + (idx + 1) + '/' + sessions.length;
+    var cu =
+      typeof SEOpenPlay !== 'undefined' && SEOpenPlay.getCurrentUser ? SEOpenPlay.getCurrentUser() : null;
+    var firebaseUid = cu && cu.uid ? cu.uid : '';
+    var pid = pickPidForRsvp(firebaseUid, name, selectedSession);
 
-    var firebaseUid = '';
-    try {
-      var cu = typeof SEOpenPlay !== 'undefined' && SEOpenPlay.getCurrentUser ? SEOpenPlay.getCurrentUser() : null;
-      if (cu && cu.uid) firebaseUid = cu.uid;
-    } catch (e) {}
-
-    const payload = {
-      _subject:   'Open Play RSVP — ' + name + ' · ' + selectedSession + (sessions.length > 1 ? ' (' + (idx + 1) + '/' + sessions.length + ')' : ''),
-      Player_ID:  pid,
-      Session:    selectedSession,
-      Sessions_Total: String(sessions.length),
-      Name:       name,
-      Email:      email,
-      Phone:      phone,
-      Firebase_UID: firebaseUid || 'none',
-      RSVP_Waivers_Schema: typeof OpenPlayWaiverUI !== 'undefined' ? OpenPlayWaiverUI.RSVP_WAIVERS_SCHEMA : '2',
-      Liability_Waiver_Accepted: 'Yes',
-      Communication_Waiver_Accepted: 'Yes',
-      Waivers_Acknowledged_At_UTC: waiversAckIso,
-      Skill:      skill || 'Not specified',
-      Member:     member === 'yes' ? 'Yes' : 'No',
-      Member_Access_Card: member === 'yes' ? memberCard : 'N/A',
-      Waiver:     isNew ? 'NEEDED' : 'On file',
-      Code_Used:  codeInfo,
-      Tier:       'PENDING — assign in check-in',
-      Charge:     member === 'yes' ? 'NO CHARGE (member)' : (appliedCode ? appliedCode.label : 'Standard rate'),
-      Heard_Via:  document.getElementById('p-hear').value || 'Not specified',
-      Notes:      notes || 'None',
-      _replyto:   email,
-      _template:  'table',
-    };
-
-    fetch('https://formsubmit.co/ajax/BrandonHookerPickleball@gmail.com', {
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify(payload),
-    })
-    .then(function(r) {
-      if (!r.ok) return r.text().then(function(t) { throw new Error(t || 'Send failed'); });
-      return r.json();
-    })
-    .then(function() {
-      results.push({ session: selectedSession, pid: pid });
-      var syncRecord = {
-        pid: pid,
-        name: name,
-        email: email,
-        phone: phone || '',
-        skill: skill || '',
-        session: selectedSession,
-        tier: tierHint,
-        waiver: isNew,
-        waiverDone: false,
-        paid: false,
-        checkedIn: false,
-        notes: notes || '',
-        code: codeInfo,
-        source: 'rsvp',
-        // Do not persist access card numbers in RTDB/check-in sync payload.
-        memberCard: '',
-        firebaseUid: firebaseUid || '',
-        rsvpWaiversSchema: typeof OpenPlayWaiverUI !== 'undefined' ? OpenPlayWaiverUI.RSVP_WAIVERS_SCHEMA : '2',
-        liabilityWaiverAccepted: true,
-        communicationWaiverAccepted: true,
-        waiversAcknowledgedAtUtc: waiversAckIso,
-      };
-      SEOpenPlay.broadcastRsvp(syncRecord);
+    function skipDuplicate() {
+      results.push({ session: selectedSession, pid: pid, skipped: true });
       idx++;
       sendOne();
-    })
-    .catch(function() {
-      btn.disabled = false;
-      btn.textContent = sessions.length > 1 ? 'RESERVE MY SPOTS →' : 'RESERVE MY SPOT →';
-      var eg = document.getElementById('err-general');
-      eg.textContent = 'Could not send confirmation (failed on session ' + (idx + 1) + '). Check your connection and try again.';
-      eg.classList.add('show');
-    });
+    }
+
+    function runFetch() {
+      if (sessions.length > 1) btn.textContent = 'Sending… ' + (idx + 1) + '/' + sessions.length;
+
+      const payload = {
+        _subject:
+          'Open Play RSVP — ' +
+          name +
+          ' · ' +
+          selectedSession +
+          (sessions.length > 1 ? ' (' + (idx + 1) + '/' + sessions.length + ')' : ''),
+        Player_ID: pid,
+        Session: selectedSession,
+        Sessions_Total: String(sessions.length),
+        Name: name,
+        Email: email,
+        Phone: phone,
+        Firebase_UID: firebaseUid || 'none',
+        RSVP_Waivers_Schema:
+          typeof OpenPlayWaiverUI !== 'undefined' ? OpenPlayWaiverUI.RSVP_WAIVERS_SCHEMA : '2',
+        Liability_Waiver_Accepted: 'Yes',
+        Communication_Waiver_Accepted: 'Yes',
+        Waivers_Acknowledged_At_UTC: waiversAckIso,
+        Skill: skill || 'Not specified',
+        Member: member === 'yes' ? 'Yes' : 'No',
+        Member_Access_Card: member === 'yes' ? memberCard : 'N/A',
+        Waiver: isNew ? 'NEEDED' : 'On file',
+        Code_Used: codeInfo,
+        Tier: 'PENDING — assign in check-in',
+        Charge:
+          member === 'yes' ? 'NO CHARGE (member)' : appliedCode ? appliedCode.label : 'Standard rate',
+        Heard_Via: document.getElementById('p-hear').value || 'Not specified',
+        Notes: notes || 'None',
+        _replyto: email,
+        _template: 'table',
+      };
+
+      fetch('https://formsubmit.co/ajax/BrandonHookerPickleball@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload),
+      })
+        .then(function (r) {
+          if (!r.ok) return r.text().then(function (t) { throw new Error(t || 'Send failed'); });
+          return r.json();
+        })
+        .then(function () {
+          results.push({ session: selectedSession, pid: pid });
+          var syncRecord = {
+            pid: pid,
+            name: name,
+            email: email,
+            phone: phone || '',
+            skill: skill || '',
+            session: selectedSession,
+            tier: tierHint,
+            waiver: isNew,
+            waiverDone: false,
+            paid: false,
+            checkedIn: false,
+            notes: notes || '',
+            code: codeInfo,
+            source: 'rsvp',
+            memberCard: member === 'yes' ? memberCard : '',
+            firebaseUid: firebaseUid || '',
+            rsvpWaiversSchema:
+              typeof OpenPlayWaiverUI !== 'undefined' ? OpenPlayWaiverUI.RSVP_WAIVERS_SCHEMA : '2',
+            liabilityWaiverAccepted: true,
+            communicationWaiverAccepted: true,
+            waiversAcknowledgedAtUtc: waiversAckIso,
+          };
+          SEOpenPlay.broadcastRsvp(syncRecord);
+          idx++;
+          sendOne();
+        })
+        .catch(function () {
+          btn.disabled = false;
+          btn.textContent = sessions.length > 1 ? 'RESERVE MY SPOTS →' : 'RESERVE MY SPOT →';
+          var eg = document.getElementById('err-general');
+          eg.textContent =
+            'Could not send confirmation (failed on session ' +
+            (idx + 1) +
+            '). Check your connection and try again.';
+          eg.classList.add('show');
+        });
+    }
+
+    if (isSessionRegisteredForMe(selectedSession)) {
+      skipDuplicate();
+      return;
+    }
+
+    if (firebaseUid && SEOpenPlay.initFirebase && SEOpenPlay.getFirebaseDb && SEOpenPlay.FB_PATH) {
+      SEOpenPlay.initFirebase()
+        .then(function () {
+          var db = SEOpenPlay.getFirebaseDb();
+          if (!db) {
+            runFetch();
+            return;
+          }
+          return db
+            .ref(SEOpenPlay.FB_PATH + '/' + pid)
+            .once('value')
+            .then(function (snap) {
+              if (snap.exists()) {
+                var v = snap.val();
+                // The PID is deterministic per (uid, session) so if the node exists
+                // with this session it is always this user's booking — no uid re-check needed.
+                if (v && String(v.session || '') === String(selectedSession)) {
+                  skipDuplicate();
+                  return;
+                }
+              }
+              runFetch();
+            });
+        })
+        .catch(function () {
+          runFetch();
+        });
+      return;
+    }
+
+    runFetch();
   }
 
   sendOne();
@@ -1356,7 +1687,7 @@ function submitRSVP() {
       wrap.className = 'qr-wrap qr-tile';
       var head = document.createElement('div');
       head.className = 'qr-tile-head';
-      head.innerHTML = row.session + '<span class="qh-date">' + timeStr + '</span>';
+      head.innerHTML = escapeHtml(row.session) + '<span class="qh-date">' + escapeHtml(timeStr) + '</span>';
       wrap.appendChild(head);
       var holder = document.createElement('div');
       holder.className = 'qr-holder';
@@ -1377,21 +1708,21 @@ function submitRSVP() {
     if (resList.length === 1) {
       var r0 = resList[0];
       var ts0 = SEOpenPlay.timeForFullSession(r0.session);
-      detailHtml = '<div class="cc-line"><strong>Name:</strong> ' + n + '</div>';
-      detailHtml += '<div class="cc-line"><strong>Session:</strong> ' + r0.session + ' · ' + ts0 + '</div>';
-      detailHtml += '<div class="cc-line"><strong>Player ID:</strong> ' + r0.pid + '</div>';
-      if (sk) detailHtml += '<div class="cc-line"><strong>Level:</strong> ' + sk + '</div>';
+      detailHtml = '<div class="cc-line"><strong>Name:</strong> ' + escapeHtml(n) + '</div>';
+      detailHtml += '<div class="cc-line"><strong>Session:</strong> ' + escapeHtml(r0.session) + ' · ' + escapeHtml(ts0) + '</div>';
+      detailHtml += '<div class="cc-line"><strong>Player ID:</strong> ' + escapeHtml(r0.pid) + '</div>';
+      if (sk) detailHtml += '<div class="cc-line"><strong>Level:</strong> ' + escapeHtml(sk) + '</div>';
       detailHtml += '<div class="cc-line"><strong>Payment:</strong> Confirmed at check-in</div>';
       if (appliedCode) detailHtml += '<div class="cc-line"><strong>Code:</strong> Applied ✓</div>';
     } else {
-      detailHtml = '<div class="cc-line"><strong>Name:</strong> ' + n + '</div>';
+      detailHtml = '<div class="cc-line"><strong>Name:</strong> ' + escapeHtml(n) + '</div>';
       detailHtml += '<div class="confirm-sessions-wrap"><table class="confirm-sessions-table"><thead><tr><th>Session</th><th>Time</th><th>Player ID</th></tr></thead><tbody>';
       resList.forEach(function (row) {
         var ts = SEOpenPlay.timeForFullSession(row.session);
-        detailHtml += '<tr><td>' + row.session + '</td><td class="col-time">' + ts + '</td><td class="mono">' + row.pid + '</td></tr>';
+        detailHtml += '<tr><td>' + escapeHtml(row.session) + '</td><td class="col-time">' + escapeHtml(ts) + '</td><td class="mono">' + escapeHtml(row.pid) + '</td></tr>';
       });
       detailHtml += '</tbody></table></div>';
-      if (sk) detailHtml += '<div class="cc-line" style="margin-top:16px"><strong>Level:</strong> ' + sk + '</div>';
+      if (sk) detailHtml += '<div class="cc-line" style="margin-top:16px"><strong>Level:</strong> ' + escapeHtml(sk) + '</div>';
       detailHtml += '<div class="cc-line"><strong>Payment:</strong> Confirmed at check-in</div>';
       if (appliedCode) detailHtml += '<div class="cc-line"><strong>Code:</strong> Applied ✓</div>';
     }

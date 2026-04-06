@@ -356,7 +356,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
 
       <div class="setting-row">
         <div class="setting-lbl">Coupon Codes</div>
-        <div class="setting-desc">Current codes active on the RSVP form. To add or remove codes, edit <code style="font-size:10px;color:rgba(0,255,136,.5);">Programs/Pickleball/live/SouthEnd_Session_RSVP.html</code> — search for <code style="font-size:10px;color:rgba(0,255,136,.5);">CODES</code> near the top of the script section.</div>
+        <div class="setting-desc">Current codes active on the RSVP form. To add or remove codes, edit <code style="font-size:10px;color:rgba(0,255,136,.5);">Programs/Pickleball/advanced-open-play/live/SouthEnd_Session_RSVP.html</code> — search for <code style="font-size:10px;color:rgba(0,255,136,.5);">CODES</code> near the top of the script section.</div>
         <div style="font-size:11px;color:rgba(0,255,136,.6);font-family:'Oswald',sans-serif;letter-spacing:1px;">GUEST2026 · FOUNDING50 · STAFF</div>
       </div>
 
@@ -540,6 +540,7 @@ let quickScope = 'filtered';
 let quickActionsPanelOpen = false;
 let playerProfilePanelOpen = false;
 let playerProfileIdx = null;
+let playerProfilePid = null;
 const selectedPlayerKeys = new Set();
 let scanning = false;
 let scanStream = null;
@@ -579,7 +580,7 @@ function loadState() {
   try { return JSON.parse(localStorage.getItem('se_ci_state') || 'null') || {session:'',date:'',players:[]}; }
   catch { return {session:'',date:'',players:[]}; }
 }
-function save() { localStorage.setItem('se_ci_state', JSON.stringify(state)); }
+function save() { try { localStorage.setItem('se_ci_state', JSON.stringify(state)); } catch (e) { console.warn('[Checkin] localStorage save failed:', e); } }
 
 function accountPageHrefForCheckin() {
   var page = 'SouthEnd_Session_Checkin.html';
@@ -590,6 +591,7 @@ function accountPageHrefForCheckin() {
   return 'SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent(page);
 }
 
+/** staffEmails always read from window.SE_OPENPLAY_FIREBASE (config script) — do not delegate to SEOpenPlay first or a cached sync bundle can deny access while the config file is correct. */
 function isStaffEmailAllowed(user) {
   var cfg = window.SE_OPENPLAY_FIREBASE || {};
   var allow = Array.isArray(cfg.staffEmails) ? cfg.staffEmails : [];
@@ -602,6 +604,15 @@ function isStaffEmailAllowed(user) {
   return false;
 }
 
+/** Same rule as Account page: staffEmails in config OR openplay_se/admin_uids/{uid} in RTDB. */
+function checkStaffAccessForCheckin(user) {
+  if (isStaffEmailAllowed(user)) return Promise.resolve(true);
+  if (typeof SEOpenPlay !== 'undefined' && SEOpenPlay.loadAdminUidFlag) {
+    return SEOpenPlay.loadAdminUidFlag(user.uid);
+  }
+  return Promise.resolve(false);
+}
+
 function initCheckinAuthGate() {
   if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()) {
     alert('Check-in requires Firebase auth configuration. Add js/openplay-firebase-config.js first.');
@@ -611,6 +622,7 @@ function initCheckinAuthGate() {
   return SEOpenPlay.initFirebase().then(function () {
     return new Promise(function (resolve, reject) {
       var done = false;
+      var pending = false;
       SEOpenPlay.onAuthStateChanged(function (user) {
         if (done) return;
         if (!user) {
@@ -619,15 +631,28 @@ function initCheckinAuthGate() {
           reject(new Error('Signed-in account required'));
           return;
         }
-        if (!isStaffEmailAllowed(user)) {
+        if (pending) return;
+        pending = true;
+        checkStaffAccessForCheckin(user).then(function (ok) {
+          pending = false;
+          if (done) return;
+          if (!ok) {
+            done = true;
+            var signedInAs = user.email ? String(user.email).trim() : '(no email on this account)';
+            alert(
+              'Check-in access denied.\n\nYou are signed in as:\n' +
+                signedInAs +
+                '\n\nThat address must exactly match an entry in staffEmails in js/openplay-firebase-config.js (then redeploy), or set openplay_se/admin_uids/' +
+                user.uid +
+                ' = true in Realtime Database.\n\nIf you just edited the config file, hard-refresh (Ctrl+Shift+R) or redeploy so the browser loads the new list.'
+            );
+            window.location.replace(accountPageHrefForCheckin());
+            reject(new Error('Staff allowlist blocked account'));
+            return;
+          }
           done = true;
-          alert('This account is not allowed to access check-in. Ask an admin to add your email to staffEmails (empty list blocks all access).');
-          window.location.replace(accountPageHrefForCheckin());
-          reject(new Error('Staff allowlist blocked account'));
-          return;
-        }
-        done = true;
-        resolve(user);
+          resolve(user);
+        });
       });
     });
   });
@@ -655,6 +680,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     records.forEach((r) => { if (mergePlayerFromRsvp(r)) ch = true; });
     if (ch) { save(); renderAll(); }
   });
+  // Fallback for non-admin signed-in users: load "my RSVPs" directly by uid/email query.
+  // This keeps check-in aligned with account-calendar ownership rules.
+  SEOpenPlay.onAuthStateChanged((user) => {
+    if (!user || !SEOpenPlay.subscribeMyRsvps) return;
+    SEOpenPlay.subscribeMyRsvps(user.uid, (records) => {
+      let ch = false;
+      (records || []).forEach((r) => { if (mergePlayerFromRsvp(r)) ch = true; });
+      if (ch) { save(); renderAll(); }
+    }, user.email || '');
+  });
   const fbSt = document.getElementById('fb-cloud-status');
   if (fbSt) {
     if (SEOpenPlay.firebaseConfigured()) {
@@ -677,7 +712,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function mergePlayerFromRsvp(incoming) {
   if (!incoming || !incoming.pid) return false;
-  const idx = state.players.findIndex((p) => p.pid === incoming.pid);
+  var idx = state.players.findIndex((p) => p.pid === incoming.pid);
+  if (idx < 0 && incoming.email && incoming.session) {
+    idx = state.players.findIndex((p) =>
+      p.email && p.session &&
+      p.email.toLowerCase() === incoming.email.toLowerCase() &&
+      p.session === incoming.session
+    );
+  }
   if (idx < 0) {
     state.players.push({
       name: incoming.name || '',
@@ -859,8 +901,8 @@ function togglePlayerSelected(key, on) {
 function selectAllVisiblePlayers() {
   const visible = getRosterPlayersForView();
   visible.forEach((p) => selectedPlayerKeys.add(playerKeyFor(p, p._i)));
-  quickScope = 'selected';
-  renderAll();
+  renderQuickActionsPanel();
+  updateSelectAllVisibleUi();
 }
 function toggleSelectAllVisible(on) {
   const visible = getRosterPlayersForView();
@@ -869,8 +911,8 @@ function toggleSelectAllVisible(on) {
     if (on) selectedPlayerKeys.add(k);
     else selectedPlayerKeys.delete(k);
   });
-  quickScope = 'selected';
-  renderAll();
+  renderQuickActionsPanel();
+  updateSelectAllVisibleUi();
 }
 function clearSelectedPlayers() {
   selectedPlayerKeys.clear();
@@ -900,6 +942,7 @@ function closeAllSidePanels() {
   quickActionsPanelOpen = false;
   playerProfilePanelOpen = false;
   playerProfileIdx = null;
+  playerProfilePid = null;
   syncSidePanels();
 }
 
@@ -966,6 +1009,7 @@ function quickDeleteGroup() {
   if (playerProfilePanelOpen) {
     playerProfilePanelOpen = false;
     playerProfileIdx = null;
+    playerProfilePid = null;
   }
   save();
   renderAll();
@@ -984,8 +1028,16 @@ function quickEmailGroup() {
   window.location.href = 'mailto:?bcc=' + encodeURIComponent(emails.join(',')) + '&subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 }
 
+function resolveProfileIdx() {
+  if (playerProfilePid) {
+    var i = state.players.findIndex(function(p) { return p.pid === playerProfilePid; });
+    if (i >= 0) { playerProfileIdx = i; return i; }
+  }
+  return playerProfileIdx;
+}
 function openPlayerProfilePanel(i) {
   playerProfileIdx = i;
+  playerProfilePid = (state.players[i] && state.players[i].pid) || null;
   playerProfilePanelOpen = true;
   quickActionsPanelOpen = false;
   syncSidePanels();
@@ -994,6 +1046,7 @@ function openPlayerProfilePanel(i) {
 function closePlayerProfilePanel() {
   playerProfilePanelOpen = false;
   playerProfileIdx = null;
+  playerProfilePid = null;
   syncSidePanels();
 }
 function renderPlayerProfilePanel() {
@@ -1001,6 +1054,7 @@ function renderPlayerProfilePanel() {
   const subEl = document.getElementById('pp-sub');
   const bodyEl = document.getElementById('pp-body');
   if (!nameEl || !subEl || !bodyEl) return;
+  resolveProfileIdx();
   const p = playerProfileIdx !== null ? state.players[playerProfileIdx] : null;
   if (!p) {
     nameEl.textContent = 'Select a player';
@@ -1030,6 +1084,7 @@ function renderPlayerProfilePanel() {
     </div>`;
 }
 function emailPlayerFromPanel() {
+  resolveProfileIdx();
   if (playerProfileIdx === null) return;
   const p = state.players[playerProfileIdx];
   const em = String((p && p.email) || '').trim();
@@ -1037,12 +1092,14 @@ function emailPlayerFromPanel() {
   window.location.href = 'mailto:' + encodeURIComponent(em);
 }
 function editPlayerFromPanel() {
+  resolveProfileIdx();
   if (playerProfileIdx === null) return;
   const i = playerProfileIdx;
   closePlayerProfilePanel();
   editPlayer(i);
 }
 function removePlayerFromPanel() {
+  resolveProfileIdx();
   if (playerProfileIdx === null) return;
   const p = state.players[playerProfileIdx];
   if (!p) return;
@@ -1187,7 +1244,7 @@ function renderBracket() {
     const g=grouped[lvl];if(!g||!g.length)return;
     const b=bConfig[lvl]||{lbl:lvl,cls:'bb-gold'};
     html+=`<div class="bracket-sec"><div class="bracket-hd"><span class="bracket-lbl">${b.lbl}</span><span class="b-badge ${b.cls}">${b.lbl.toUpperCase()}</span><span class="b-ct">${g.length} player${g.length!==1?'s':''}</span></div>
-    <div class="b-players">${g.map(p=>`<div class="b-player ${p.checkedIn?'in':''}"><div class="bp-name">${p.name}${p.checkedIn?' ✓':''}</div><div class="bp-id">${p.pid||''}</div><div class="bp-tier ${TIER_CLS[p.tier]||''}">${TIER_TXT[p.tier]||'—'}</div><div class="bp-flags">${p.waiver&&!p.waiverDone?'<span class="bf bf-waiver">WAIVER</span>':''}${p.paid?'<span class="bf bf-paid">PAID</span>':''}</div></div>`).join('')}</div></div>`;
+    <div class="b-players">${g.map(p=>`<div class="b-player ${p.checkedIn?'in':''}"><div class="bp-name">${escapeHtml(p.name||'')}${p.checkedIn?' ✓':''}</div><div class="bp-id">${escapeHtml(p.pid||'')}</div><div class="bp-tier ${TIER_CLS[p.tier]||''}">${TIER_TXT[p.tier]||'—'}</div><div class="bp-flags">${p.waiver&&!p.waiverDone?'<span class="bf bf-waiver">WAIVER</span>':''}${p.paid?'<span class="bf bf-paid">PAID</span>':''}</div></div>`).join('')}</div></div>`;
   });
   document.getElementById('bracket-content').innerHTML=html||'<div class="empty"><div class="empty-icon">⚡</div>Add players and assign skill levels to see brackets.</div>';
 }
@@ -1323,7 +1380,7 @@ function exportCSV(){if(!state.players.length){alert('No players.');return;}
   const tl={free:'Free',disc:'Discounted $10',full:'Full $20',ua:'Unassigned'};
   const sorted=[...state.players].sort(compareRosterPlayers);
   const rows=[h,...sorted.map(p=>[p.pid||'',p.name,p.email||'',p.phone||'',p.skill||'',tl[p.tier]||'',p.paid?'Yes':'No',p.waiver&&!p.waiverDone?'Yes':'No',p.checkedIn?'Yes':'No',p.session||'',p.notes||''])];
-  const csv=rows.map(r=>r.map(c=>'"'+(c||'')+'"').join(',')).join('\n');
+  const csv=rows.map(r=>r.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='session_'+(state.date||'unknown')+'.csv';a.click();}
 
 function switchTab(t){

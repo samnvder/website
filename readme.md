@@ -6,46 +6,85 @@ Standalone marketing site (HTML, CSS, vanilla JS). Exported from the WebsiteV1 m
 
 | Path | Purpose |
 |------|---------|
-| `Website/Pages/` | Site pages |
+| `Pages/` | Site pages |
 | `Components/` | Reusable components |
 | `Templates/` | Templates |
 | `css/`, `js/`, `media/` | Global assets |
-| `Programs/Pickleball/live/` | Open Play RSVP + staff check-in (deploy this tree; `js/` beside HTML) |
-| `Programs/Pickleball/testing/` | Unit tests, `local-test.js` mirror — see `Programs/Pickleball/README.md` |
-| `Website/dev/` | Dev/snippet HTML (e.g. tennis carousel target) |
-| `scripts/build/` | Carousel build (`build-carousel.js`) |
-| `.cursor/rules/` | Cursor rules for this site (flat `*.mdc` + `README.md` index) |
+| `Programs/Pickleball/` | Pickleball programs hub — [README](./Programs/Pickleball/README.md) |
+| `Programs/Pickleball/advanced-open-play/live/` | Advanced Open Play (RSVP, account, check-in) — Firebase Hosting deploy root |
+| `Programs/Pickleball/advanced-open-play/staging/` | Staging mirror (dev work before promoting to live) |
+| `Programs/Pickleball/advanced-open-play/testing/` | Unit tests + local-test mirror — `npm test` |
+| `Programs/Pickleball/account-creation/` | Firebase Auth/RTDB docs, changelog, managing accounts |
+| `scripts/` | Carousel build, convert, scaffold — [README](./scripts/README.md) |
+| `.cursor/rules/` | Cursor rules for this site |
 
-### Pickleball Open Play (local QA)
+## Pickleball Open Play
 
-From the `Website` folder: `npm test` (unit), `npm run local-test:sync` (mirror), `npm run local-test` (mirror + live-server on **3456**). Short URL: `http://127.0.0.1:3456/local-page/` (duplicate mirror under `Programs/Pickleball/testing/local-page/`).
+Production URLs (Firebase Hosting):
 
-## Local server
+| Page | URL |
+|------|-----|
+| Account (sign-in / profile / calendar hub) | `https://pickleball-advanced-open-play.web.app/SouthEnd_OpenPlay_Account.html` |
+| RSVP | `https://pickleball-advanced-open-play.web.app/SouthEnd_Session_RSVP.html` |
+| Check-in (staff) | `https://pickleball-advanced-open-play.web.app/SouthEnd_Session_Checkin.html` |
+
+### Local QA
+
+From `Website/`:
+
+```bash
+npm test                   # unit tests
+npm run local-test:sync    # mirror active tree → local-page/
+npm run local-test         # mirror + live-server on port 3456
+```
+
+### Deploy
+
+```bash
+npm run deploy:openplay          # Firebase Hosting (live/)
+npm run deploy:openplay:all      # Hosting + database rules
+npm run firebase:deploy-rules    # database rules only
+```
+
+### Staging workflow
+
+```bash
+npm run openplay:use-staging        # switch active tree to staging
+npm run openplay:bootstrap-staging  # copy live → staging
+npm run openplay:promote            # copy staging → live
+npm run openplay:use-live           # switch active tree back to live
+```
+
+## Local server (marketing site)
 
 ```bash
 npm install
 npm run serve
 ```
 
-Then open `http://localhost:3000/index.html` or a page under `http://localhost:3000/Website/Pages/...`.
+Then open `http://localhost:3000/index.html` or a page under `http://localhost:3000/Pages/...`.
 
 ## Carousels
 
 ```bash
 npm run build:pickleball-carousel
+npm run build:tennis-carousel
 ```
 
-Tennis (dev page): `node scripts/build/build-carousel.js scripts/build/carousel-configs/tennis.json`
-
-`scaffold:carousel` writes new shells under `Website/dev/`.
+Scaffold new shells: `npm run scaffold:carousel` (writes under `dev/`).
 
 ## Booking / Supabase
 
 Some membership and tour pages call Supabase Edge Functions (`check-availability`, `validate-referral`, `book-tour`). See `WEBSITE-ONLY-PROJECT-EXPORT.md` §5 for file paths.
 
-## Cursor
+## Key config files (repo root)
 
-Rules live in `.cursor/rules/` — see `.cursor/rules/README.md` for the grouped index. Do not introduce frontend frameworks unless requested.
+| File | Purpose |
+|------|---------|
+| `firebase.json` | Hosting public dir (`Programs/Pickleball/advanced-open-play/live`), DB rules path, cache headers |
+| `.firebaserc` | Default Firebase project (`pickleball-advanced-open-play`) |
+| `database.rules.json` | Realtime Database security rules (deployed via CLI) |
+| `package.json` | All npm scripts for test, deploy, local-test, carousels |
 
 ## Dependency contract
 

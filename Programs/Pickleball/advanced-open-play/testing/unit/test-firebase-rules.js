@@ -5,7 +5,7 @@ const { describe, it } = require('node:test');
 const fs = require('fs');
 const path = require('path');
 
-const RULES_PATH = path.join(__dirname, '..', '..', '..', '..', 'database.rules.json');
+const RULES_PATH = path.join(__dirname, '..', '..', '..', '..', '..', 'database.rules.json');
 
 describe('database.rules.json', () => {
   it('exists and parses as JSON', () => {
@@ -17,5 +17,7 @@ describe('database.rules.json', () => {
     assert.ok(data.rules.openplay_se.rsvps, 'must define openplay_se/rsvps');
     assert.ok(data.rules.openplay_se.user_profiles, 'must define openplay_se/user_profiles');
     assert.ok(data.rules.openplay_se.user_profiles.$uid, 'must define user_profiles/$uid');
+    assert.ok(data.rules.openplay_se.admin_uids, 'must define openplay_se/admin_uids');
+    assert.ok(data.rules.openplay_se.admin_uids.$uid, 'must define admin_uids/$uid');
   });
 });

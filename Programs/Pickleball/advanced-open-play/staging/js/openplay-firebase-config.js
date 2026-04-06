@@ -6,7 +6,7 @@
  *    does not include it; paste it into databaseURL below.
  * 2. Project settings → Your apps → Web app → copy apiKey, authDomain, projectId into this file.
  * 3. Keep this beside the app pages (same path on RSVP + check-in pages). While testing
- *    locally, this still lives under Programs/Pickleball/live because that folder is the
+ *    locally, this still lives under Programs/Pickleball/advanced-open-play/live because that folder is the
  *    source of truth and future deploy root in this repo.
  *
  * Firebase Console → Authentication → Sign-in method → enable Email/Password (free tier).
@@ -48,6 +48,7 @@ window.SE_OPENPLAY_FIREBASE = {
   // Fail-closed behavior: if this list is empty, check-in access is blocked.
   staffEmails: [
     'samnader21@gmail.com',
+    'brandonhookertennis@gmail.com',
     'brandonhookerpickleball@gmail.com',
     's@southendclub.com',
   ],

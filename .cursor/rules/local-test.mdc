@@ -1,12 +1,12 @@
 ---
-description: Pickleball Open Play local mirror — Programs/Pickleball/testing. Invoke with command-local-test.
+description: Pickleball Advanced Open Play local mirror — advanced-open-play/testing. Invoke with command-local-test.
 globs: []
 alwaysApply: false
 ---
 
-# command-local-test — Quick local QA (Pickleball Open Play)
+# command-local-test — Quick local QA (Pickleball Advanced Open Play)
 
-> **Invoke:** Type `command-local-test`, `@command-local-test`, or "run local test" for mirrored Pickleball Open Play pages.
+> **Invoke:** Type `command-local-test`, `@command-local-test`, or "run local test" for mirrored Open Play pages.
 
 ---
 
@@ -16,7 +16,7 @@ alwaysApply: false
    ```powershell
    npm run local-test
    ```
-   This runs `Programs/Pickleball/testing/scripts/local-test.js` (copies `Programs/Pickleball/live/` into **both** `local-page/` at repo root and `Programs/Pickleball/testing/local-page/`, writes hub `index.html` in each) then starts **live-server** on port **3456** and opens `/local-page/index.html`.
+   This runs `Programs/Pickleball/advanced-open-play/testing/scripts/local-test.js` (copies the active tree from `Programs/Pickleball/advanced-open-play/{staging|live}/` into **both** `local-page/` at repo root and `Programs/Pickleball/advanced-open-play/testing/local-page/`, writes hub `index.html` in each) then starts **live-server** on port **3456** and opens `/local-page/index.html`.
 
 2. **Copy only** (no browser):
    ```powershell
@@ -27,7 +27,7 @@ alwaysApply: false
 
 ## What gets mirrored
 
-Configured in `Programs/Pickleball/testing/scripts/local-test.js` (`FILES` array). Includes RSVP, check-in, and shared `js/` under `live/`.
+Configured in `Programs/Pickleball/advanced-open-play/testing/scripts/local-test.js` (`FILES` array). Includes RSVP, check-in, and shared `js/` under the active tree.
 
 ---
 
@@ -36,8 +36,8 @@ Configured in `Programs/Pickleball/testing/scripts/local-test.js` (`FILES` array
 | Path | Purpose |
 |------|---------|
 | `local-page/index.html` | Hub (short URL — same content as below) |
-| `local-page/...` | Mirror of `live/` — **not** for deploy |
-| `Programs/Pickleball/testing/local-page/...` | Canonical mirror — **not** for deploy |
+| `local-page/...` | Mirror — **not** for deploy |
+| `Programs/Pickleball/advanced-open-play/testing/local-page/...` | Canonical mirror — **not** for deploy |
 
 Both mirror folders are gitignored — regenerate with `npm run local-test:sync` anytime.
 
@@ -51,16 +51,10 @@ Both mirrors are identical. Short path (default browser open):
 
 Canonical path:
 
-`http://127.0.0.1:3456/Programs/Pickleball/testing/local-page/index.html`
+`http://127.0.0.1:3456/Programs/Pickleball/advanced-open-play/testing/local-page/index.html`
 
 ---
 
 ## Staging vs live (Open Play)
 
-Default dev edits go to **`Programs/Pickleball/staging/`**. **`npm run local-test`** mirrors whichever tree **`openplay-mode.json`** selects (`activeTree`: `staging` or `live`). Firebase Hosting always deploys **`live/`** — guarded by **`openplay-deploy.js`**. See **`openplay-mode.mdc`** and **`Programs/Pickleball/README.md`**.
-
----
-
-## Cache / “changes not showing” (Open Play)
-
-See **`openplay-testing-cache.mdc`** — testing-mode gating (`SE_OPENPLAY_TESTING`, `?se_test=1`, mirror `se_cb` on synced HTML), and why hard refresh alone is not always enough for `js/` assets.
+Default dev edits go to **`Programs/Pickleball/advanced-open-play/staging/`**. **`npm run local-test`** mirrors whichever tree **`openplay-mode.json`** selects (`activeTree`: `staging` or `live`). Firebase Hosting always deploys **`advanced-open-play/live/`** — guarded by **`openplay-deploy.js`**. See **`openplay-mode.mdc`** and **`Programs/Pickleball/README.md`**.

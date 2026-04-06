@@ -10,6 +10,9 @@ This folder holds **living documentation** for RSVP account features, cloud sync
 |------|-----|
 | Cross-device RSVP queue for staff check-in | Firebase **Realtime Database** (optional) |
 | Optional **member accounts** (email/password) with saved profile | Firebase **Authentication** + RTDB **`user_profiles`** |
+| Deterministic Player IDs for signed-in users | `stableRsvpPlayerId` in `south-end-openplay-sync.js` (prevents duplicate bookings) |
+| Duplicate RSVP prevention | Client-side check + greyed-out sessions + Firebase `once` probe |
+| RSVP management (view + cancel) | "Manage RSVPs" modals on RSVP + Account pages; calendar hub on Account page |
 | Club receives RSVP details by email | **FormSubmit.co** (AJAX from RSVP page) |
 | Same-browser / same-tab queue without cloud | `localStorage` + `BroadcastChannel` |
 | Liability + communications consent with audit trail | In-page modals + payload fields + profile fields |
@@ -20,12 +23,12 @@ This folder holds **living documentation** for RSVP account features, cloud sync
 | Tool / service | Role | Config / entry in repo |
 |----------------|------|-------------------------|
 | **Firebase Authentication** | Email/password sign-up, sign-in, password reset | Firebase Console; client uses `openplay-firebase-config.js` |
-| **Firebase Realtime Database** | JSON tree: RSVPs for check-in, user profiles | Same config; paths under `openplay_se/` |
+| **Firebase Realtime Database** | JSON tree: RSVPs for check-in, user profiles, admin UIDs | Same config; paths under `openplay_se/` |
 | **FormSubmit.co** | Sends RSVP payloads to club email | URL embedded in `SouthEnd_Session_RSVP.html` |
-| **Firebase Hosting** | Recommended deploy target for this module (`Programs/Pickleball/live`) | `firebase.json`, `.firebaserc`, `npm run deploy:openplay` |
+| **Firebase Hosting** | Deploy target for Advanced Open Play (`live/`) | `firebase.json`, `.firebaserc`, `npm run deploy:openplay` |
 | **Google Fonts (CDN)** | Oswald / Barlow typography | `<link>` in HTML |
 | **QRCode.js (cdnjs)** | QR codes on success screen | Script tag in RSVP HTML |
-| **Node (local)** | Unit tests for RSVP helpers | `npm test` from `Website/` |
+| **Node (local)** | Unit tests for RSVP helpers + Firebase rules | `npm test` from `Website/` |
 | **live-server** | Local preview of mirrored pages | `npm run local-test` |
 
 ## Firebase (Realtime Database + Auth)
@@ -34,28 +37,34 @@ This folder holds **living documentation** for RSVP account features, cloud sync
 
 | Piece | Use in this project | RTDB path / notes |
 |-------|---------------------|-------------------|
-| **Realtime Database** | RSVP rows synced to check-in; optional cloud queue | `openplay_se/rsvps/{playerId}` |
-| **Authentication** | Optional accounts: **`live/SouthEnd_OpenPlay_Account.html`** (then RSVP); session persists in the browser | `uid` from Firebase Auth |
-| **User profiles** | Saved name, phone, skill, membership, member card, hear, **notes**, waiver flags + schema version + timestamps | `openplay_se/user_profiles/{uid}` |
+| **Realtime Database** | RSVP rows synced to check-in; user profiles; admin UIDs | `openplay_se/rsvps/{playerId}`, `openplay_se/user_profiles/{uid}`, `openplay_se/admin_uids/{uid}` |
+| **Authentication** | Accounts: sign-up/sign-in on Account page, then RSVP; session persists in the browser | `uid` from Firebase Auth |
+| **User profiles** | Saved name, phone, skill, membership, member card, hear, notes, waiver flags + schema version + timestamps | `openplay_se/user_profiles/{uid}` |
 
-**Config file (ship with site):** `Programs/Pickleball/live/js/openplay-firebase-config.js`  
-`databaseURL` comes from the **Realtime Database** console page (not from the web app snippet alone). See comments in that file for rules.
+**Config file (ship with site):** `Programs/Pickleball/advanced-open-play/live/js/openplay-firebase-config.js`
+`databaseURL` comes from the Realtime Database console page. See comments in that file.
 
-**Rules (source of truth in repo):** `database.rules.json` at **Website root** (deploy with `npm run firebase:deploy-rules` after `firebase login`). See [MANAGING-ACCOUNTS.md](./MANAGING-ACCOUNTS.md) for where you manage users and data in the console.
+**Rules (source of truth in repo):** `database.rules.json` at **Website root**. Deploy with `npm run firebase:deploy-rules`. Key security features:
+- RSVPs: query-based read rules scoped by `firebaseUid` or verified `email` (`email_verified === true`)
+- User profiles: `auth.uid === $uid` with explicit `auth != null` guard
+- Admin access: `openplay_se/admin_uids/{uid}: true` (`.write: false` — manage via Console only)
+- Indexes on `firebaseUid` and `email` for RSVP queries
+
+See [MANAGING-ACCOUNTS.md](./MANAGING-ACCOUNTS.md) for console-based user/profile management.
 
 ## FormSubmit (email)
 
-- RSVP submits JSON via `fetch` to FormSubmit’s AJAX endpoint.
+- RSVP submits JSON via `fetch` to FormSubmit's AJAX endpoint.
 - **Change recipient** by editing the RSVP HTML (search for `formsubmit.co`).
 - FormSubmit is a third-party mail bridge; keep their spam/verification steps in mind for new domains.
 
 ## Browser-only storage (no cloud)
 
 | Key / mechanism | Purpose |
-|-----------------|--------|
+|-----------------|---------|
 | `se_pin` | Staff PIN (shared with check-in page) |
 | `se_pending_rsvps` | Local queue of RSVPs before check-in drains it |
-| `broadcastChannel` | Same-origin tab sync (`se-openplay-sync`) |
+| `BroadcastChannel` (`se-openplay-sync`) | Same-origin tab sync |
 | `se_ci_state` (check-in page) | Local roster state for staff UI (device-local cache) |
 
 ## Waivers and schema version
@@ -68,15 +77,16 @@ This folder holds **living documentation** for RSVP account features, cloud sync
 
 | File | Role |
 |------|------|
-| `live/SouthEnd_Session_RSVP.html` | RSVP UI, waivers, profile when signed in, FormSubmit |
-| `live/SouthEnd_OpenPlay_Account.html` | Sign-in / sign-up / password reset (entry to RSVP) |
-| `live/SouthEnd_Session_Checkin.html` | Check-in; drains queue; subscribes to RTDB RSVPs |
-| `live/js/openplay-firebase-config.js` | Firebase web config + rules comment |
-| `live/js/south-end-openplay-sync.js` | PIN, queue, Firebase init, Auth, profiles, RTDB sync |
-| `live/js/openplay-profile-panel.js` | Signed-in profile icon + modal (read-only; extend `PROFILE_FIELD_DEFS` with new RTDB fields) |
-| `live/js/openplay-rsvp-helpers.js` | Member card validation |
-| **`database.rules.json`** (repo root) | RTDB security rules — deploy with Firebase CLI |
-| **`firebase.json`**, **`.firebaserc`** (repo root) | Firebase CLI deploy target for rules |
+| `advanced-open-play/live/SouthEnd_Session_RSVP.html` | RSVP UI, waivers, duplicate prevention, manage RSVPs modal, profile when signed in, FormSubmit |
+| `advanced-open-play/live/SouthEnd_OpenPlay_Account.html` | Sign-in / sign-up / password reset / profile editor / calendar hub with RSVP management |
+| `advanced-open-play/live/SouthEnd_Session_Checkin.html` | Check-in roster; drains queue; subscribes to RTDB RSVPs; QR scan; brackets; bulk actions |
+| `advanced-open-play/live/js/openplay-firebase-config.js` | Firebase web config (API key, Auth domain, RTDB URL, staff emails) |
+| `advanced-open-play/live/js/south-end-openplay-sync.js` | PIN, queue, Firebase init, Auth, profiles, RTDB sync, `stableRsvpPlayerId`, `subscribeMyRsvps` (dual uid+email), `deleteMyRsvp` |
+| `advanced-open-play/live/js/openplay-profile-panel.js` | Signed-in profile icon + modal (read-only; extend `PROFILE_FIELD_DEFS` with new RTDB fields) |
+| `advanced-open-play/live/js/openplay-rsvp-helpers.js` | Member card validation, session time helpers |
+| `advanced-open-play/live/js/openplay-waiver-modals.js` | Waiver modal rendering and scroll-to-agree logic |
+| **`database.rules.json`** (repo root) | RTDB security rules — deploy with `npm run firebase:deploy-rules` |
+| **`firebase.json`**, **`.firebaserc`** (repo root) | Firebase CLI deploy targets |
 
 **How you manage accounts:** [MANAGING-ACCOUNTS.md](./MANAGING-ACCOUNTS.md)
 
@@ -87,17 +97,17 @@ This folder holds **living documentation** for RSVP account features, cloud sync
 3. Web app registered — copy `apiKey`, `authDomain`, `projectId`.
 4. **Authentication** → Email/Password enabled.
 5. **Authorized domains** include your deployment host(s) and localhost for dev.
-6. **Rules** published from `database.rules.json` (requires signed-in users; admin-gated roster reads).
+6. **Rules** published from `database.rules.json` (requires signed-in users; admin-gated roster reads; email branches require `email_verified`).
 7. Create `openplay_se/admin_uids/{uid}: true` for each staff account that can access roster/check-in.
-8. In `openplay-firebase-config.js`, set `staffEmails` to enforce check-in allowlist at page level (empty list blocks check-in access).
+8. In `openplay-firebase-config.js`, set `staffEmails` to enforce check-in allowlist at page level.
 
 ## When to update this document
 
 - **Always** add a row to [CHANGELOG.md](./CHANGELOG.md) when you:
   - Add or remove a CDN, API, npm package, or Firebase product
   - Change waiver schema version, FormSubmit URL, or major RSVP flow
-  - Change RTDB paths or Auth providers
-- **Optionally** update the tables in this README so the “Stack at a glance” stays accurate.
+  - Change RTDB paths, rules structure, or Auth providers
+- **Optionally** update the tables in this README so the "Stack at a glance" stays accurate.
 
 ---
 

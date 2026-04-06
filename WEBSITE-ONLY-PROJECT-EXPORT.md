@@ -14,9 +14,9 @@
 | `css/` | Site stylesheets. |
 | `js/` | Site scripts. |
 | `media/` | Assets and carousel source markdown (e.g. pickleball images list). |
-| `Programs/Pickleball/live/` | Open Play RSVP + check-in HTML and `js/` (deploy paths). |
-| `Programs/Pickleball/testing/unit/` | Node tests for Open Play helpers. |
-| `Programs/Pickleball/testing/scripts/` | `local-test.js` (mirrors `live/` → `local-page/` + `testing/local-page/`). |
+| `Programs/Pickleball/advanced-open-play/live/` | Advanced Open Play RSVP + check-in HTML and `js/` (deploy paths). |
+| `Programs/Pickleball/advanced-open-play/testing/unit/` | Node tests for Open Play helpers. |
+| `Programs/Pickleball/advanced-open-play/testing/scripts/` | `local-test.js` (mirrors active tree → `local-page/` + `advanced-open-play/testing/local-page/`). |
 
 ---
 
