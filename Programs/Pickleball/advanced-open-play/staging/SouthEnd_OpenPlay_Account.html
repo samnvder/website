@@ -501,10 +501,8 @@ function getReturnRsvpHref() {
   try {
     var q = new URLSearchParams(window.location.search);
     var r = String(q.get('return') || '').trim();
-    // Allow only known booking destinations so staff/admin return params
-    // cannot hijack the main "Book sessions" CTA.
+    // Keep booking CTA pinned to RSVP; do not route this button to check-in.
     if (/^SouthEnd_Session_RSVP\.html$/i.test(r)) return 'SouthEnd_Session_RSVP.html';
-    if (/^SouthEnd_Session_Checkin\.html$/i.test(r)) return 'SouthEnd_Session_Checkin.html';
   } catch (e) {}
   return 'SouthEnd_Session_RSVP.html';
 }
@@ -535,17 +533,16 @@ function accountReturnIsAdminActivity(href) {
 function syncAccountCtaRsvpHref() {
   var href = getReturnRsvpHref();
   var rawReturn = getAccountReturnParamRaw();
-  var toCheckin = accountReturnIsCheckin(href);
   var toAdminActivity = accountReturnIsAdminActivity(rawReturn);
   var cta = document.getElementById('cta-rsvp');
   if (cta) {
     cta.href = href;
-    cta.textContent = toCheckin ? 'Continue to check-in →' : 'Continue to RSVP →';
+    cta.textContent = 'Continue to RSVP →';
   }
   var hubCta = document.getElementById('hub-cta-rsvp');
   if (hubCta) {
     hubCta.href = href;
-    hubCta.textContent = toCheckin ? 'Continue to check-in →' : 'Book sessions →';
+    hubCta.textContent = 'Book sessions →';
   }
   var hubActivity = document.getElementById('hub-cta-activity');
   if (hubActivity) {
