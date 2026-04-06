@@ -774,6 +774,8 @@ function updateBadge() {
 }
 
 function renderAll() { syncTierChips(); renderStats(); renderRoster(); renderBracket(); renderQuickActionsPanel(); renderPlayerProfilePanel(); }
+/** Lightweight re-render for in-row toggles — skips bracket/panels rebuild. */
+function renderInline() { syncTierChips(); renderStats(); renderRoster(); }
 
 function renderStats() {
   const p = state.players;
@@ -1216,9 +1218,9 @@ function renderRoster() {
             <div class="pe-block"><div class="pe-k">Notes</div><div class="pe-v">${p.notes && String(p.notes).trim() ? escapeHtml(p.notes).replace(/\n/g, '<br>') : '—'}</div></div>
           </div>
         </div>
-        <div class="prow-actions">
-          <label class="select-wrap" title="Select for bulk actions" onclick="event.stopPropagation();">
-            <input type="checkbox" ${isSel ? 'checked' : ''} onchange="togglePlayerSelected(${JSON.stringify(rk)}, this.checked)" onclick="event.stopPropagation();">
+        <div class="prow-actions" onclick="event.stopPropagation();">
+          <label class="select-wrap" title="Select for bulk actions">
+            <input type="checkbox" ${isSel ? 'checked' : ''} onchange="togglePlayerSelected(${JSON.stringify(rk)}, this.checked)">
             <span class="select-lbl">Select</span>
           </label>
           <select class="tier-sel" onchange="setTier(${p._i},this.value)">
@@ -1238,9 +1240,18 @@ function renderRoster() {
   updateSelectAllVisibleUi();
 }
 
-function setTier(i,t){state.players[i].tier=t;save();renderAll();}
-function toggleCI(i){state.players[i].checkedIn=!state.players[i].checkedIn;save();renderAll();}
-function togglePaid(i){state.players[i].paid=!state.players[i].paid;save();renderAll();}
+function setTier(i,t){
+  state.players[i].tier=t;
+  save();
+  // If a tier filter is active and the new tier no longer matches, reset to 'all'
+  // so the player doesn't silently vanish from the list after the change.
+  if (tierFilter !== 'all' && tierFilter !== 'waiver' && tierFilter !== t) {
+    tierFilter = 'all';
+  }
+  renderInline();
+}
+function toggleCI(i){state.players[i].checkedIn=!state.players[i].checkedIn;save();renderInline();}
+function togglePaid(i){state.players[i].paid=!state.players[i].paid;save();renderInline();}
 
 function renderBracket() {
   const levels=['Beginner','3.0-3.5','3.5-4.0','Advanced 4.0+','Open 5.0+'];
