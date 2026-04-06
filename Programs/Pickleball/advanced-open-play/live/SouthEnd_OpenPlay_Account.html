@@ -577,22 +577,76 @@ var SESSION_MONTHS_ACC = {
   nov: 10, november: 10,
   dec: 11, december: 11,
 };
-var ACCOUNT_OPEN_SESSIONS = (function () {
-  try {
-    var cards = document.querySelectorAll
-      ? Array.prototype.slice.call(document.querySelectorAll('.session-card[data-session]'))
-      : [];
-    if (cards.length) return cards.map(function (c) { return c.getAttribute('data-session'); });
-  } catch (e) {}
-  return [
-    'Tuesday Morning Apr 8',
-    'Tuesday Evening Apr 8',
-    'Thursday Evening Apr 10',
-    'Tuesday Morning Apr 15',
-    'Tuesday Evening Apr 15',
-    'Thursday Evening Apr 17',
-  ];
-})();
+// ── SCHEDULE CONFIGURATION (same as RSVP page) ──
+var SCHEDULE_CONFIG_ACC = {
+  slots: [
+    { day: 2, label: 'Tuesday Morning' },
+    { day: 2, label: 'Tuesday Evening' },
+    { day: 4, label: 'Thursday Evening' },
+  ],
+  weeksToShow: 2,
+  lastSessionEndHour: 21,
+};
+
+function pacificNowAcc() {
+  var parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Los_Angeles',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    hour12: false,
+  }).formatToParts(new Date());
+  var year = parseInt(parts.find(function (p) { return p.type === 'year'; }).value, 10);
+  var month = parseInt(parts.find(function (p) { return p.type === 'month'; }).value, 10);
+  var day = parseInt(parts.find(function (p) { return p.type === 'day'; }).value, 10);
+  var hour = parseInt(parts.find(function (p) { return p.type === 'hour'; }).value, 10);
+  return { year: year, month: month, day: day, hour: hour, dow: new Date(year, month - 1, day).getDay() };
+}
+
+function computeAccountSessions(config) {
+  var now = pacificNowAcc();
+  var slots = config.slots || [];
+  if (!slots.length) return [];
+  
+  var minDay = Math.min.apply(null, slots.map(function (s) { return s.day; }));
+  var maxDay = Math.max.apply(null, slots.map(function (s) { return s.day; }));
+  
+  var rollPast = now.dow > maxDay || (now.dow === maxDay && now.hour >= config.lastSessionEndHour);
+  
+  var anchor = new Date(now.year, now.month - 1, now.day);
+  
+  if (rollPast) {
+    var daysToAdd = (minDay - anchor.getDay() + 7) % 7;
+    if (daysToAdd === 0) daysToAdd = 7;
+    anchor.setDate(anchor.getDate() + daysToAdd);
+  } else {
+    var daysToSub = (anchor.getDay() - minDay + 7) % 7;
+    anchor.setDate(anchor.getDate() - daysToSub);
+  }
+  
+  var sessions = [];
+  for (var w = 0; w < config.weeksToShow; w++) {
+    var weekStart = new Date(anchor.getTime());
+    weekStart.setDate(weekStart.getDate() + w * 7);
+    
+    slots.forEach(function (slot) {
+      var sessionDate = new Date(weekStart.getTime());
+      var dayOffset = (slot.day - minDay + 7) % 7;
+      sessionDate.setDate(sessionDate.getDate() + dayOffset);
+      
+      var monthName = sessionDate.toLocaleDateString('en-US', { month: 'short' });
+      var dayNum = sessionDate.getDate();
+      var fullLabel = slot.label + ' ' + monthName + ' ' + dayNum;
+      
+      sessions.push(fullLabel);
+    });
+  }
+  
+  return sessions;
+}
+
+var ACCOUNT_OPEN_SESSIONS = computeAccountSessions(SCHEDULE_CONFIG_ACC);
 
 function escapeHtml(s) {
   if (s == null || s === '') return '';

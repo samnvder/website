@@ -77,6 +77,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
 .tc.a-disc{background:rgba(245,158,11,.1);border-color:var(--gold);color:var(--gold-lt);}
 .tc.a-full{background:rgba(168,85,247,.1);border-color:var(--electric);color:var(--electric);}
 .tc.a-ua{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.2);color:#fff;}
+.tc.a-waiver{background:rgba(245,158,11,.1);border-color:var(--gold);color:var(--gold-lt);}
 
 /* ROSTER DATE GROUPS */
 .roster-day-hd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:12px 4px 6px;margin-top:4px;border-bottom:1px solid var(--rule);}
@@ -304,12 +305,12 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
       <button class="btn btn-ghost" onclick="exportCSV()">Export</button>
     </div>
     <div class="tier-chips">
-      <span class="tc a-all" onclick="filterTier('all',this)">All</span>
-      <span class="tc" onclick="filterTier('free',this)">🟢 Free</span>
-      <span class="tc" onclick="filterTier('disc',this)">🟡 Disc</span>
-      <span class="tc" onclick="filterTier('full',this)">💜 Full</span>
-      <span class="tc" onclick="filterTier('ua',this)">⚪ Unassigned</span>
-      <span class="tc" onclick="filterTier('waiver',this)">📋 Waiver Needed</span>
+      <span class="tc a-all" data-tier="all" onclick="filterTier('all')">All</span>
+      <span class="tc" data-tier="free" onclick="filterTier('free')">🟢 Free</span>
+      <span class="tc" data-tier="disc" onclick="filterTier('disc')">🟡 Disc</span>
+      <span class="tc" data-tier="full" onclick="filterTier('full')">💜 Full</span>
+      <span class="tc" data-tier="ua" onclick="filterTier('ua')">⚪ Unassigned</span>
+      <span class="tc" data-tier="waiver" onclick="filterTier('waiver')">📋 Waiver Needed</span>
     </div>
     <div class="player-list" id="player-list"></div>
   </div>
@@ -644,9 +645,11 @@ function initCheckinAuthGate() {
   });
 }
 
+let checkinAdminUser = null;
+
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    await initCheckinAuthGate();
+    checkinAdminUser = await initCheckinAuthGate();
   } catch (e) {
     return;
   }
@@ -667,16 +670,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     records.forEach((r) => { if (mergePlayerFromRsvp(r)) ch = true; });
     if (ch) { save(); renderAll(); }
   });
-  // Fallback for non-admin signed-in users: load "my RSVPs" directly by uid/email query.
-  // This keeps check-in aligned with account-calendar ownership rules.
-  SEOpenPlay.onAuthStateChanged((user) => {
-    if (!user || !SEOpenPlay.subscribeMyRsvps) return;
-    SEOpenPlay.subscribeMyRsvps(user.uid, (records) => {
-      let ch = false;
-      (records || []).forEach((r) => { if (mergePlayerFromRsvp(r)) ch = true; });
-      if (ch) { save(); renderAll(); }
-    }, user.email || '');
-  });
+  // subscribeRsvps above already covers all RSVPs for the admin user.
+  // subscribeMyRsvps is only needed if somehow a non-admin reaches this page,
+  // which the auth gate already blocks. Skip it to avoid double-processing.
+  void 0;
   const fbSt = document.getElementById('fb-cloud-status');
   if (fbSt) {
     if (SEOpenPlay.firebaseConfigured()) {
@@ -707,6 +704,15 @@ function mergePlayerFromRsvp(incoming) {
       p.session === incoming.session
     );
   }
+  if (idx < 0 && incoming.name) {
+    var inName = incoming.name.trim().toLowerCase();
+    idx = state.players.findIndex((p) => {
+      if (!p.name) return false;
+      if (p.name.trim().toLowerCase() !== inName) return false;
+      if (incoming.session && p.session && p.session !== incoming.session) return false;
+      return true;
+    });
+  }
   if (idx < 0) {
     state.players.push({
       name: incoming.name || '',
@@ -726,18 +732,26 @@ function mergePlayerFromRsvp(incoming) {
     return true;
   }
   const cur = state.players[idx];
-  const merged = {
+  const newName = incoming.name || cur.name;
+  const newEmail = incoming.email || cur.email;
+  const newPhone = incoming.phone || cur.phone;
+  const newSkill = incoming.skill || cur.skill;
+  const newSession = incoming.session || cur.session;
+  const newWaiver = incoming.waiver !== undefined ? !!incoming.waiver : cur.waiver;
+  const newMemberCard = incoming.memberCard !== undefined && incoming.memberCard !== '' ? incoming.memberCard : (cur.memberCard || '');
+  const newTier = (!cur.tier || cur.tier === 'ua') ? (incoming.tier || cur.tier) : cur.tier;
+  const newPid = incoming.pid || cur.pid;
+  if (cur.name === newName && cur.email === newEmail && cur.phone === newPhone &&
+      cur.skill === newSkill && cur.session === newSession && cur.waiver === newWaiver &&
+      cur.memberCard === newMemberCard && cur.tier === newTier && cur.pid === newPid) {
+    return false;
+  }
+  state.players[idx] = {
     ...cur,
-    name: incoming.name || cur.name,
-    email: incoming.email || cur.email,
-    phone: incoming.phone || cur.phone,
-    skill: incoming.skill || cur.skill,
-    session: incoming.session || cur.session,
-    waiver: incoming.waiver !== undefined ? !!incoming.waiver : cur.waiver,
-    memberCard: incoming.memberCard !== undefined && incoming.memberCard !== '' ? incoming.memberCard : (cur.memberCard || ''),
+    name: newName, email: newEmail, phone: newPhone, skill: newSkill,
+    session: newSession, waiver: newWaiver, memberCard: newMemberCard,
+    tier: newTier, pid: newPid,
   };
-  if (!cur.tier || cur.tier === 'ua') merged.tier = incoming.tier || cur.tier;
-  state.players[idx] = merged;
   return true;
 }
 
@@ -759,7 +773,7 @@ function updateBadge() {
   } else { b.textContent = 'No Session'; }
 }
 
-function renderAll() { renderStats(); renderRoster(); renderBracket(); renderQuickActionsPanel(); renderPlayerProfilePanel(); }
+function renderAll() { syncTierChips(); renderStats(); renderRoster(); renderBracket(); renderQuickActionsPanel(); renderPlayerProfilePanel(); }
 
 function renderStats() {
   const p = state.players;
@@ -779,11 +793,16 @@ function renderStats() {
   document.getElementById('s-rev').textContent='$'+rev;
 }
 
-function filterTier(t, el) {
+function filterTier(t) {
   tierFilter = t;
-  document.querySelectorAll('.tc').forEach(c=>c.className='tc');
-  el.className = 'tc a-'+t;
+  syncTierChips();
   renderRoster();
+}
+function syncTierChips() {
+  document.querySelectorAll('.tier-chips .tc').forEach(function(c) {
+    var chip = c.getAttribute('data-tier');
+    c.className = chip === tierFilter ? 'tc a-' + chip : 'tc';
+  });
 }
 
 const SESSION_MONTHS = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
@@ -992,6 +1011,7 @@ function quickDeleteGroup() {
   const msg = `Delete ${targets.length} player${targets.length === 1 ? '' : 's'} from this group? This cannot be undone.`;
   if (!confirm(msg)) return;
   const removeIdx = new Set(targets.map((p) => p._i));
+  targets.forEach((p) => rosterExpandedKeys.delete(playerKeyFor(p, p._i)));
   state.players = state.players.filter((_, i) => !removeIdx.has(i));
   if (playerProfilePanelOpen) {
     playerProfilePanelOpen = false;
@@ -1092,6 +1112,7 @@ function removePlayerFromPanel() {
   if (!p) return;
   const nm = p.name || 'this player';
   if (!confirm(`Remove ${nm} from the roster?`)) return;
+  rosterExpandedKeys.delete(playerKeyFor(p, playerProfileIdx));
   state.players.splice(playerProfileIdx, 1);
   save();
   closePlayerProfilePanel();
@@ -1248,10 +1269,32 @@ function savePlayer(){
   const f=document.getElementById('m-first').value.trim();
   if(!f){alert('First name required.');return;}
   const entry={name:(f+' '+document.getElementById('m-last').value.trim()).trim(),email:document.getElementById('m-email').value.trim(),phone:document.getElementById('m-phone').value.trim(),skill:document.getElementById('m-skill').value,tier:document.getElementById('m-tier').value,session:document.getElementById('m-session').value,pid:document.getElementById('m-pid').value||genId(f,document.getElementById('m-session').value),waiver:document.getElementById('m-waiver').checked,paid:document.getElementById('m-paid').checked,notes:document.getElementById('m-notes').value.trim(),checkedIn:editIdx!==null?state.players[editIdx].checkedIn:false,waiverDone:editIdx!==null?state.players[editIdx].waiverDone:false,memberCard:editIdx!==null?(state.players[editIdx].memberCard||''):''};
-  if(editIdx!==null)state.players[editIdx]=entry;else state.players.push(entry);
+  if(editIdx!==null){
+    state.players[editIdx]=entry;
+  } else {
+    var dupIdx = findDuplicatePlayer(entry);
+    if (dupIdx >= 0) {
+      if (!confirm('A player named "' + state.players[dupIdx].name + '" already exists for this session. Add anyway?')) return;
+    }
+    state.players.push(entry);
+  }
   save();closeModal();renderAll();
 }
-function deletePlayer(){if(editIdx===null||!confirm('Remove player?'))return;state.players.splice(editIdx,1);save();closeModal();renderAll();}
+function findDuplicatePlayer(entry) {
+  var name = (entry.name || '').trim().toLowerCase();
+  var email = (entry.email || '').trim().toLowerCase();
+  var session = entry.session || '';
+  for (var i = 0; i < state.players.length; i++) {
+    var p = state.players[i];
+    if (entry.pid && p.pid && entry.pid === p.pid) return i;
+    if (email && p.email && p.email.trim().toLowerCase() === email &&
+        session && p.session && p.session === session) return i;
+    if (name && p.name && p.name.trim().toLowerCase() === name &&
+        (!session || !p.session || p.session === session)) return i;
+  }
+  return -1;
+}
+function deletePlayer(){if(editIdx===null||!confirm('Remove player?'))return;const rk=playerKeyFor(state.players[editIdx],editIdx);rosterExpandedKeys.delete(rk);state.players.splice(editIdx,1);save();closeModal();renderAll();}
 
 async function toggleScan(){if(scanning)stopScan();else await startScan();}
 async function startScan(){
@@ -1260,8 +1303,14 @@ async function startScan(){
   try{
     const det=new BarcodeDetector({formats:['qr_code']});
     scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});
-    vid.srcObject=scanStream;scanning=true;
+    vid.srcObject=scanStream;
     btn.textContent='⏹ Stop';btn.className='btn btn-ghost';
+    st.textContent='Starting camera…';
+    await new Promise(function(resolve){
+      if(vid.readyState>=2){resolve();return;}
+      vid.addEventListener('canplay',resolve,{once:true});
+    });
+    scanning=true;
     st.textContent='Scanning — point at player QR code';
     scanInterval=setInterval(async()=>{if(!scanning)return;try{const bc=await det.detect(vid);if(bc.length)processQR(bc[0].rawValue);}catch(e){}},500);
   }catch(e){st.textContent='Camera denied. Use name search in Roster tab.';btn.textContent='📷 Start Scan';}}
@@ -1270,7 +1319,7 @@ function processQR(raw){
   try{
     const d=JSON.parse(raw);if(!d.n)throw new Error();
     stopScan();
-    const idx=state.players.findIndex(p=>p.name.toLowerCase()===d.n.toLowerCase()||(p.pid&&p.pid===d.id));
+    const idx=state.players.findIndex(p=>(p.name||'').toLowerCase()===d.n.toLowerCase()||(p.pid&&p.pid===d.id));
     pendingScan={d,idx};
     document.getElementById('sr-id').textContent=d.id||'';
     document.getElementById('sr-name').textContent=d.n;
@@ -1320,7 +1369,15 @@ function confirmCheckin(){
 function dismissScan(){document.getElementById('scan-result').classList.remove('show');pendingScan=null;startScan();}
 
 function showSessionModal(){document.getElementById('session-modal').classList.add('open');}
-function setSession(){state.session=document.getElementById('sm-day').value;state.date=document.getElementById('sm-date').value;state.players.forEach(p=>p.checkedIn=false);save();updateBadge();renderAll();document.getElementById('session-modal').classList.remove('open');}
+function setSession(){
+  const newSession=document.getElementById('sm-day').value;
+  const newDate=document.getElementById('sm-date').value;
+  const sessionChanged = newSession !== state.session;
+  state.session=newSession;
+  state.date=newDate;
+  if(sessionChanged) state.players.forEach(p=>p.checkedIn=false);
+  save();updateBadge();renderAll();document.getElementById('session-modal').classList.remove('open');
+}
 function resetCheckins(){if(!confirm('Reset all check-in statuses?'))return;state.players.forEach(p=>p.checkedIn=false);save();renderAll();}
 function newSession(){if(!confirm('Clear all players and start fresh?'))return;state={session:document.getElementById('sm-day').value,date:document.getElementById('sm-date').value,players:[]};save();updateBadge();renderAll();document.getElementById('session-modal').classList.remove('open');}
 

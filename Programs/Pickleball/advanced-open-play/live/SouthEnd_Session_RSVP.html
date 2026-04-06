@@ -538,65 +538,7 @@ button.account-strip-link:hover{text-decoration:underline;}
       <button type="button" class="sq-chip muted" onclick="clearSessionSelection()">Clear</button>
     </div>
 
-    <div class="session-week-block">
-      <div class="swb-head" id="swb-week-1"><span class="swb-label">This Week</span> · <span class="swb-range">Apr 8 – 10</span></div>
-      <div class="session-grid">
-        <div class="session-card" role="checkbox" tabindex="0" aria-checked="false" data-session="Tuesday Morning Apr 8" onclick="toggleSession(this,'Tuesday Morning Apr 8')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSession(this,'Tuesday Morning Apr 8');}">
-          <input type="checkbox" name="session" value="Tuesday Morning Apr 8">
-          <div class="sc-tag" style="color:rgba(0,255,136,.6)">☀ MORNING</div>
-          <div class="sc-day">TUES<span>.</span></div>
-          <div class="sc-date">Apr 8</div>
-          <div class="sc-time" style="color:var(--neon);">8:00 AM – 12:00 PM</div>
-          <div class="sc-check"></div>
-        </div>
-        <div class="session-card" role="checkbox" tabindex="0" aria-checked="false" data-session="Tuesday Evening Apr 8" onclick="toggleSession(this,'Tuesday Evening Apr 8')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSession(this,'Tuesday Evening Apr 8');}">
-          <input type="checkbox" name="session" value="Tuesday Evening Apr 8">
-          <div class="sc-tag" style="color:rgba(168,85,247,.6)">🌙 EVENING</div>
-          <div class="sc-day">TUES<span>.</span></div>
-          <div class="sc-date">Apr 8</div>
-          <div class="sc-time" style="color:var(--electric);">6:00 – 9:00 PM</div>
-          <div class="sc-check"></div>
-        </div>
-        <div class="session-card" role="checkbox" tabindex="0" aria-checked="false" data-session="Thursday Evening Apr 10" onclick="toggleSession(this,'Thursday Evening Apr 10')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSession(this,'Thursday Evening Apr 10');}">
-          <input type="checkbox" name="session" value="Thursday Evening Apr 10">
-          <div class="sc-tag" style="color:rgba(168,85,247,.6)">🌙 EVENING</div>
-          <div class="sc-day">THURS<span>.</span></div>
-          <div class="sc-date">Apr 10</div>
-          <div class="sc-time" style="color:var(--electric);">6:00 – 9:00 PM</div>
-          <div class="sc-check"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="session-week-block">
-      <div class="swb-head" id="swb-week-2"><span class="swb-label">Next Week</span> · <span class="swb-range">Apr 15 – 17</span></div>
-      <div class="session-grid">
-        <div class="session-card" role="checkbox" tabindex="0" aria-checked="false" data-session="Tuesday Morning Apr 15" onclick="toggleSession(this,'Tuesday Morning Apr 15')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSession(this,'Tuesday Morning Apr 15');}">
-          <input type="checkbox" name="session" value="Tuesday Morning Apr 15">
-          <div class="sc-tag" style="color:rgba(0,255,136,.6)">☀ MORNING</div>
-          <div class="sc-day">TUES<span>.</span></div>
-          <div class="sc-date">Apr 15</div>
-          <div class="sc-time" style="color:var(--neon);">8:00 AM – 12:00 PM</div>
-          <div class="sc-check"></div>
-        </div>
-        <div class="session-card" role="checkbox" tabindex="0" aria-checked="false" data-session="Tuesday Evening Apr 15" onclick="toggleSession(this,'Tuesday Evening Apr 15')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSession(this,'Tuesday Evening Apr 15');}">
-          <input type="checkbox" name="session" value="Tuesday Evening Apr 15">
-          <div class="sc-tag" style="color:rgba(168,85,247,.6)">🌙 EVENING</div>
-          <div class="sc-day">TUES<span>.</span></div>
-          <div class="sc-date">Apr 15</div>
-          <div class="sc-time" style="color:var(--electric);">6:00 – 9:00 PM</div>
-          <div class="sc-check"></div>
-        </div>
-        <div class="session-card" role="checkbox" tabindex="0" aria-checked="false" data-session="Thursday Evening Apr 17" onclick="toggleSession(this,'Thursday Evening Apr 17')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSession(this,'Thursday Evening Apr 17');}">
-          <input type="checkbox" name="session" value="Thursday Evening Apr 17">
-          <div class="sc-tag" style="color:rgba(168,85,247,.6)">🌙 EVENING</div>
-          <div class="sc-day">THURS<span>.</span></div>
-          <div class="sc-date">Apr 17</div>
-          <div class="sc-time" style="color:var(--electric);">6:00 – 9:00 PM</div>
-          <div class="sc-check"></div>
-        </div>
-      </div>
-    </div>
+    <div id="session-weeks-container"></div>
 
     <div class="session-summary" id="session-summary">No sessions selected</div>
     <div class="err-msg" id="err-session" style="margin-bottom:14px;">Select at least one session.</div>
@@ -772,24 +714,137 @@ button.account-strip-link:hover{text-decoration:underline;}
 <script src="js/openplay-rsvp-helpers.js"></script>
 <script src="js/openplay-waiver-modals.js"></script>
 <script>
-(function applyOpenPlayWeekHeadings() {
-  var inner1 =
-    '<span class="swb-label">This Week</span> · <span class="swb-range">Apr 8 – 10</span>';
-  var inner2 =
-    '<span class="swb-label">Next Week</span> · <span class="swb-range">Apr 15 – 17</span>';
-  var w1 = document.getElementById('swb-week-1');
-  var w2 = document.getElementById('swb-week-2');
-  var heads = document.querySelectorAll('.session-week-block .swb-head');
-  if (w1) w1.innerHTML = inner1;
-  else if (heads[0]) heads[0].innerHTML = inner1;
-  if (w2) w2.innerHTML = inner2;
-  else if (heads[1]) heads[1].innerHTML = inner2;
-  document.querySelectorAll('.session-quick .sq-chip').forEach(function (btn) {
-    var oc = btn.getAttribute('onclick') || '';
-    if (oc.indexOf("selectQuick('week1')") !== -1) btn.textContent = 'This Week (Apr 8–10)';
-    if (oc.indexOf("selectQuick('week2')") !== -1) btn.textContent = 'Next Week (Apr 15–17)';
+// Removed applyOpenPlayWeekHeadings - now handled by dynamic schedule generator
+
+// ── SCHEDULE CONFIGURATION (edit slots here if times change) ──
+var SCHEDULE_CONFIG = {
+  slots: [
+    { day: 2, label: 'Tuesday Morning',  abbr: 'TUES.', time: '8:00 AM – 12:00 PM', tag: 'MORNING',  emoji: '☀', tagColor: 'rgba(0,255,136,.6)', timeColor: 'var(--neon)' },
+    { day: 2, label: 'Tuesday Evening',  abbr: 'TUES.', time: '6:00 – 9:00 PM',     tag: 'EVENING',  emoji: '🌙', tagColor: 'rgba(168,85,247,.6)', timeColor: 'var(--electric)' },
+    { day: 4, label: 'Thursday Evening', abbr: 'THURS.', time: '6:00 – 9:00 PM',    tag: 'EVENING',  emoji: '🌙', tagColor: 'rgba(168,85,247,.6)', timeColor: 'var(--electric)' },
+  ],
+  weeksToShow: 2,
+  lastSessionEndHour: 21, // 9 PM PT - roll after this
+};
+
+function pacificNow() {
+  var parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Los_Angeles',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    hour12: false,
+  }).formatToParts(new Date());
+  var year = parseInt(parts.find(function (p) { return p.type === 'year'; }).value, 10);
+  var month = parseInt(parts.find(function (p) { return p.type === 'month'; }).value, 10);
+  var day = parseInt(parts.find(function (p) { return p.type === 'day'; }).value, 10);
+  var hour = parseInt(parts.find(function (p) { return p.type === 'hour'; }).value, 10);
+  return { year: year, month: month, day: day, hour: hour, dow: new Date(year, month - 1, day).getDay() };
+}
+
+function computeSessionWeeks(config) {
+  var now = pacificNow();
+  var slots = config.slots || [];
+  if (!slots.length) return [];
+  
+  var minDay = Math.min.apply(null, slots.map(function (s) { return s.day; }));
+  var maxDay = Math.max.apply(null, slots.map(function (s) { return s.day; }));
+  
+  var rollPast = now.dow > maxDay || (now.dow === maxDay && now.hour >= config.lastSessionEndHour);
+  
+  var anchor = new Date(now.year, now.month - 1, now.day);
+  var targetDow = rollPast ? minDay : minDay;
+  var currentDow = anchor.getDay();
+  
+  if (rollPast) {
+    var daysToAdd = (minDay - currentDow + 7) % 7;
+    if (daysToAdd === 0) daysToAdd = 7;
+    anchor.setDate(anchor.getDate() + daysToAdd);
+  } else {
+    var daysToSub = (currentDow - minDay + 7) % 7;
+    anchor.setDate(anchor.getDate() - daysToSub);
+  }
+  
+  var weeks = [];
+  for (var w = 0; w < config.weeksToShow; w++) {
+    var weekStart = new Date(anchor.getTime());
+    weekStart.setDate(weekStart.getDate() + w * 7);
+    
+    var sessions = [];
+    slots.forEach(function (slot) {
+      var sessionDate = new Date(weekStart.getTime());
+      var dayOffset = (slot.day - minDay + 7) % 7;
+      sessionDate.setDate(sessionDate.getDate() + dayOffset);
+      
+      var monthName = sessionDate.toLocaleDateString('en-US', { month: 'short' });
+      var dayNum = sessionDate.getDate();
+      var fullLabel = slot.label + ' ' + monthName + ' ' + dayNum;
+      
+      sessions.push({
+        fullLabel: fullLabel,
+        abbr: slot.abbr,
+        monthDay: monthName + ' ' + dayNum,
+        time: slot.time,
+        tag: slot.tag,
+        emoji: slot.emoji,
+        tagColor: slot.tagColor,
+        timeColor: slot.timeColor,
+        date: sessionDate,
+      });
+    });
+    
+    sessions.sort(function (a, b) {
+      return a.date.getTime() - b.date.getTime();
+    });
+    
+    var firstDate = sessions[0].date;
+    var lastDate = sessions[sessions.length - 1].date;
+    var weekLabel = w === 0 ? 'This Week' : 'Next Week';
+    var rangeLabel = firstDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) +
+      ' – ' + lastDate.getDate();
+    
+    weeks.push({
+      label: weekLabel,
+      range: rangeLabel,
+      sessions: sessions,
+    });
+  }
+  
+  return weeks;
+}
+
+function renderSessionCards(weeks) {
+  var container = document.getElementById('session-weeks-container');
+  if (!container) return;
+  
+  var html = '';
+  weeks.forEach(function (week) {
+    html += '<div class="session-week-block">';
+    html += '<div class="swb-head"><span class="swb-label">' + week.label + '</span> · <span class="swb-range">' + week.range + '</span></div>';
+    html += '<div class="session-grid">';
+    
+    week.sessions.forEach(function (sess) {
+      var fullLabel = sess.fullLabel;
+      var escapedLabel = fullLabel.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      
+      html += '<div class="session-card" role="checkbox" tabindex="0" aria-checked="false" data-session="' + escapedLabel + '" ';
+      html += 'onclick="toggleSession(this,\'' + escapedLabel.replace(/'/g, "\\'") + '\')" ';
+      html += 'onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();toggleSession(this,\'' + escapedLabel.replace(/'/g, "\\'") + '\');}">';
+      html += '<input type="checkbox" name="session" value="' + escapedLabel + '">';
+      html += '<div class="sc-tag" style="color:' + sess.tagColor + '">' + sess.emoji + ' ' + sess.tag + '</div>';
+      html += '<div class="sc-day">' + sess.abbr + '</div>';
+      html += '<div class="sc-date">' + sess.monthDay + '</div>';
+      html += '<div class="sc-time" style="color:' + sess.timeColor + ';">' + sess.time + '</div>';
+      html += '<div class="sc-check"></div>';
+      html += '</div>';
+    });
+    
+    html += '</div></div>';
   });
-})();
+  
+  container.innerHTML = html;
+}
 
 // ── COUPON CODES (edit here to add/remove codes) ──
 // Format: 'CODE': {type: 'free'|'half', label: 'display message'}
@@ -1271,17 +1326,53 @@ function initRsvpAuthGate(onAllowed) {
   });
 }
 
-var SESSION_GROUPS = {
-  'tue-am': ['Tuesday Morning Apr 8', 'Tuesday Morning Apr 15'],
-  'tue-pm': ['Tuesday Evening Apr 8', 'Tuesday Evening Apr 15'],
-  'thu-pm': ['Thursday Evening Apr 10', 'Thursday Evening Apr 17'],
-  'week1': ['Tuesday Morning Apr 8', 'Tuesday Evening Apr 8', 'Thursday Evening Apr 10'],
-  'week2': ['Tuesday Morning Apr 15', 'Tuesday Evening Apr 15', 'Thursday Evening Apr 17'],
-  'all': [
-    'Tuesday Morning Apr 8', 'Tuesday Evening Apr 8', 'Thursday Evening Apr 10',
-    'Tuesday Morning Apr 15', 'Tuesday Evening Apr 15', 'Thursday Evening Apr 17',
-  ],
-};
+var SESSION_GROUPS = {}; // Built dynamically from computed schedule
+
+function buildSessionGroups(weeks) {
+  var groups = {
+    'tue-am': [],
+    'tue-pm': [],
+    'thu-pm': [],
+    'week1': [],
+    'week2': [],
+    'all': [],
+  };
+  
+  weeks.forEach(function (week, weekIdx) {
+    week.sessions.forEach(function (sess) {
+      var label = sess.fullLabel;
+      groups.all.push(label);
+      
+      if (weekIdx === 0) groups.week1.push(label);
+      if (weekIdx === 1) groups.week2.push(label);
+      
+      if (/Tuesday Morning/i.test(label)) groups['tue-am'].push(label);
+      if (/Tuesday Evening/i.test(label)) groups['tue-pm'].push(label);
+      if (/Thursday Evening/i.test(label)) groups['thu-pm'].push(label);
+    });
+  });
+  
+  SESSION_GROUPS = groups;
+}
+
+function updateQuickSelectChips(weeks) {
+  document.querySelectorAll('.session-quick .sq-chip').forEach(function (btn) {
+    var oc = btn.getAttribute('onclick') || '';
+    if (oc.indexOf("selectQuick('week1')") !== -1 && weeks[0]) {
+      btn.textContent = weeks[0].label + ' (' + weeks[0].range + ')';
+    }
+    if (oc.indexOf("selectQuick('week2')") !== -1 && weeks[1]) {
+      btn.textContent = weeks[1].label + ' (' + weeks[1].range + ')';
+    }
+  });
+}
+
+function initializeSchedule() {
+  var weeks = computeSessionWeeks(SCHEDULE_CONFIG);
+  renderSessionCards(weeks);
+  buildSessionGroups(weeks);
+  updateQuickSelectChips(weeks);
+}
 
 function findSessionCard(val) {
   var found = null;
@@ -1847,6 +1938,11 @@ function submitRSVP() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
+
+// Initialize dynamic schedule on page load
+document.addEventListener('DOMContentLoaded', function () {
+  initializeSchedule();
+});
 </script>
 </body>
 </html>
