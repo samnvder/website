@@ -169,10 +169,12 @@
   }
 
   function deleteMyRsvp(pid) {
-    if (!firebaseDb || !pid) return Promise.reject(new Error('Missing database or pid'));
-    var pidStr = String(pid);
-    var ref = firebaseDb.ref(FB_PATH + '/' + pidStr);
-    return ref.once('value').then(function (snap) {
+    if (!pid) return Promise.reject(new Error('Missing pid'));
+    return initFirebase().then(function () {
+      if (!firebaseDb) return Promise.reject(new Error('Firebase database unavailable'));
+      var pidStr = String(pid);
+      var ref = firebaseDb.ref(FB_PATH + '/' + pidStr);
+      return ref.once('value').then(function (snap) {
       var row = snap.val() || null;
       return ref.remove().then(function () {
         if (!row) return;
@@ -188,6 +190,7 @@
           details: 'RSVP cancelled',
         });
       });
+    });
     });
   }
 

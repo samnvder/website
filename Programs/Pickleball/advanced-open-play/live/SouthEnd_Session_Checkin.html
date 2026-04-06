@@ -1007,12 +1007,22 @@ function quickSetPaid(on) {
   save();
   renderAll();
 }
-function quickDeleteGroup() {
+async function quickDeleteGroup() {
   const targets = ensureQuickTargets();
   if (!targets) return;
   const msg = `Delete ${targets.length} player${targets.length === 1 ? '' : 's'} from this group? This cannot be undone.`;
   if (!confirm(msg)) return;
   const removeIdx = new Set(targets.map((p) => p._i));
+  const pids = [...new Set(targets.map((p) => (p.pid && String(p.pid).trim()) || '').filter(Boolean))];
+  if (typeof SEOpenPlay !== 'undefined' && SEOpenPlay.firebaseConfigured && SEOpenPlay.firebaseConfigured() && pids.length) {
+    try {
+      await Promise.all(pids.map((pid) => SEOpenPlay.deleteMyRsvp(pid)));
+    } catch (e) {
+      console.error('[Checkin] bulk delete (Firebase) failed:', e);
+      alert('Could not remove one or more registrations from the database. Check your connection and try again.');
+      return;
+    }
+  }
   targets.forEach((p) => rosterExpandedKeys.delete(playerKeyFor(p, p._i)));
   state.players = state.players.filter((_, i) => !removeIdx.has(i));
   if (playerProfilePanelOpen) {
@@ -1107,15 +1117,26 @@ function editPlayerFromPanel() {
   closePlayerProfilePanel();
   editPlayer(i);
 }
-function removePlayerFromPanel() {
+async function removePlayerFromPanel() {
   resolveProfileIdx();
   if (playerProfileIdx === null) return;
-  const p = state.players[playerProfileIdx];
+  const idx = playerProfileIdx;
+  const p = state.players[idx];
   if (!p) return;
   const nm = p.name || 'this player';
   if (!confirm(`Remove ${nm} from the roster?`)) return;
-  rosterExpandedKeys.delete(playerKeyFor(p, playerProfileIdx));
-  state.players.splice(playerProfileIdx, 1);
+  const pid = p.pid ? String(p.pid).trim() : '';
+  if (typeof SEOpenPlay !== 'undefined' && SEOpenPlay.firebaseConfigured && SEOpenPlay.firebaseConfigured() && pid) {
+    try {
+      await SEOpenPlay.deleteMyRsvp(pid);
+    } catch (e) {
+      console.error('[Checkin] delete RSVP (Firebase) failed:', e);
+      alert('Could not remove this registration from the database. Check your connection and try again.');
+      return;
+    }
+  }
+  rosterExpandedKeys.delete(playerKeyFor(p, idx));
+  state.players.splice(idx, 1);
   save();
   closePlayerProfilePanel();
   renderAll();
@@ -1305,7 +1326,28 @@ function findDuplicatePlayer(entry) {
   }
   return -1;
 }
-function deletePlayer(){if(editIdx===null||!confirm('Remove player?'))return;const rk=playerKeyFor(state.players[editIdx],editIdx);rosterExpandedKeys.delete(rk);state.players.splice(editIdx,1);save();closeModal();renderAll();}
+async function deletePlayer() {
+  if (editIdx === null || !confirm('Remove player?')) return;
+  const idx = editIdx;
+  const p = state.players[idx];
+  if (!p) return;
+  const pid = p.pid ? String(p.pid).trim() : '';
+  if (typeof SEOpenPlay !== 'undefined' && SEOpenPlay.firebaseConfigured && SEOpenPlay.firebaseConfigured() && pid) {
+    try {
+      await SEOpenPlay.deleteMyRsvp(pid);
+    } catch (e) {
+      console.error('[Checkin] delete RSVP (Firebase) failed:', e);
+      alert('Could not remove this registration from the database. Check your connection and try again.');
+      return;
+    }
+  }
+  const rk = playerKeyFor(p, idx);
+  rosterExpandedKeys.delete(rk);
+  state.players.splice(idx, 1);
+  save();
+  closeModal();
+  renderAll();
+}
 
 async function toggleScan(){if(scanning)stopScan();else await startScan();}
 async function startScan(){
