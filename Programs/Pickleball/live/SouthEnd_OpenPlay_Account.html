@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="js/openplay-testing-env.js"></script>
+<title>Account — South End Open Play</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0a1628;--navy-lt:#152342;
+  --purple-lt:#9333ea;--electric:#a855f7;
+  --neon:#00ff88;--neon-glow:rgba(0,255,136,.25);
+  --ink:#0a0a1a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-height:100vh;}
+.header{background:var(--navy-lt);padding:18px 28px 14px;border-bottom:3px solid var(--neon);}
+.hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--neon);margin-bottom:3px;}
+.hdr-title{font-family:'Oswald',sans-serif;font-size:24px;color:#fff;letter-spacing:1px;text-transform:uppercase;line-height:1;}
+.hdr-title span{color:var(--neon);}
+.hdr-sub{font-size:9px;color:rgba(255,255,255,.65);margin-top:3px;}
+.body-wrap{max-width:520px;margin:0 auto;padding:28px 20px 48px;}
+.page-lead{font-size:13px;color:rgba(255,255,255,.72);line-height:1.55;margin-bottom:18px;}
+.page-lead a{color:var(--electric);}
+.auth-panel{
+  background:rgba(0,255,136,.06);border:1.5px solid rgba(0,255,136,.2);
+  border-radius:8px;padding:16px 18px;margin-bottom:20px;
+}
+.auth-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:10px;}
+.auth-status{font-size:12px;color:rgba(255,255,255,.75);margin-bottom:12px;line-height:1.45;}
+.auth-status strong{color:rgba(255,255,255,.95);}
+.row{display:grid;gap:12px;margin-bottom:12px;}
+.row-2{grid-template-columns:1fr 1fr;}
+@media(max-width:520px){.row-2{grid-template-columns:1fr;}}
+.field label{display:block;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:4px;}
+.field input{
+  width:100%;padding:10px 13px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:5px;font-family:'Barlow',sans-serif;font-size:13px;color:#fff;outline:none;
+}
+.field input:focus{border-color:var(--neon);}
+.auth-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px;}
+.auth-btn{padding:9px 16px;border:none;border-radius:5px;font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;cursor:pointer;}
+.auth-btn-primary{background:var(--neon);color:var(--ink);}
+.auth-btn-primary:hover{filter:brightness(1.05);}
+.auth-btn-secondary{background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);}
+.auth-btn-secondary:hover{background:rgba(255,255,255,.14);}
+.auth-msg{font-size:11px;margin-top:8px;min-height:1.2em;}
+.auth-msg.err{color:#ff8888;}
+.auth-msg.ok{color:var(--neon);}
+.cta-block{margin-top:8px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);}
+.cta-primary{
+  display:block;width:100%;padding:14px;background:var(--neon);color:var(--ink);font-family:'Oswald',sans-serif;
+  font-size:18px;letter-spacing:.5px;text-transform:uppercase;border:none;border-radius:6px;cursor:pointer;font-weight:700;
+  text-align:center;text-decoration:none;margin-bottom:10px;
+}
+.cta-primary:hover{filter:brightness(1.05);}
+.cta-secondary{display:block;text-align:center;font-size:12px;color:rgba(255,255,255,.55);margin-top:8px;}
+.cta-secondary a{color:var(--electric);}
+.hidden{display:none!important;}
+.no-firebase{font-size:12px;color:rgba(255,255,255,.55);line-height:1.5;margin-bottom:16px;}
+.profile-data-panel{
+  background:rgba(0,255,136,.06);border:1.5px solid rgba(0,255,136,.2);
+  border-radius:8px;padding:16px 18px;margin-bottom:20px;
+}
+.profile-lead{font-size:12px;color:rgba(255,255,255,.65);line-height:1.5;margin-bottom:14px;}
+.field input,.field select,.field textarea{
+  width:100%;padding:10px 13px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:5px;font-family:'Barlow',sans-serif;font-size:13px;color:#fff;outline:none;
+}
+.field select option{background:var(--navy-lt);}
+.field textarea{resize:vertical;min-height:52px;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--neon);}
+.err-msg{font-size:10px;color:#ff8888;margin-top:4px;display:none;}
+.err-msg.show{display:block;}
+.field input.error,.field select.error,.field textarea.error{border-color:#ff6666;}
+.acc-email-ro{font-size:13px;color:rgba(255,255,255,.9);padding:10px 0;}
+.req{color:var(--neon);}
+.cta-primary.cta-disabled{opacity:.45;pointer-events:none;cursor:not-allowed;}
+.row-1{grid-template-columns:1fr;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+    <div class="hdr-title">OPEN PLAY <span>ACCOUNT</span></div>
+    <div class="hdr-sub">Sign in once on this device — your session stays signed in until you sign out.</div>
+  </div>
+</div>
+
+<div class="body-wrap">
+  <p class="page-lead">
+    <strong>Open Play RSVP</strong> requires a signed-in account. Sign in, complete <strong>Your information</strong> below (saved to your unique ID in Firebase), then continue to RSVP.
+  </p>
+
+  <div id="no-firebase-msg" class="no-firebase hidden">
+    Firebase is not configured in <code>js/openplay-firebase-config.js</code>. Add your project keys to enable sign-in and RSVP.
+  </div>
+
+  <div class="auth-panel hidden" id="auth-panel">
+    <div class="auth-title">Email &amp; password</div>
+    <div class="auth-status" id="auth-status-line">Create an account or sign in.</div>
+    <div id="auth-form-block">
+      <div class="row row-2">
+        <div class="field"><label>Email</label><input type="email" id="auth-email" autocomplete="email" placeholder="you@email.com"></div>
+        <div class="field"><label>Password</label><input type="password" id="auth-password" autocomplete="current-password" placeholder="6+ characters"></div>
+      </div>
+      <div class="auth-actions">
+        <button type="button" class="auth-btn auth-btn-primary" id="auth-primary-btn">Sign in</button>
+        <button type="button" class="auth-btn auth-btn-secondary" id="auth-toggle-mode">Create account instead</button>
+        <button type="button" class="auth-btn auth-btn-secondary" id="auth-forgot">Forgot password?</button>
+      </div>
+      <div class="auth-msg" id="auth-msg" role="status"></div>
+    </div>
+    <div id="auth-signed-block" class="hidden">
+      <div class="auth-actions">
+        <button type="button" class="auth-btn auth-btn-secondary" id="auth-signout">Sign out</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-data-panel hidden" id="profile-data-panel">
+    <div class="auth-title">Your information</div>
+    <p class="profile-lead">All fields below are required except where noted. Data is stored at <code style="font-size:10px;color:rgba(0,255,136,.7);">openplay_se/user_profiles/{your uid}</code>. Member access card is entered on RSVP when you reserve (not stored here).</p>
+    <div class="row row-2">
+      <div class="field"><label>First name <span class="req">*</span></label><input type="text" id="acc-first" autocomplete="given-name" placeholder="First"><div class="err-msg" id="acc-err-first">Required.</div></div>
+      <div class="field"><label>Last name <span class="req">*</span></label><input type="text" id="acc-last" autocomplete="family-name" placeholder="Last"><div class="err-msg" id="acc-err-last">Required.</div></div>
+    </div>
+    <div class="field"><label>Email</label><div id="acc-email-display" class="acc-email-ro">—</div></div>
+    <div class="row row-2">
+      <div class="field"><label>Phone <span class="req">*</span></label><input type="tel" id="acc-phone" autocomplete="tel" placeholder="(555) 555-5555"><div class="err-msg" id="acc-err-phone">Required.</div></div>
+      <div class="field">
+        <label>Skill level <span class="req">*</span></label>
+        <select id="acc-skill">
+          <option value="">Select level...</option>
+          <option value="Advanced 4.0+">Advanced 4.0+</option>
+          <option value="Open 5.0+">Open 5.0+</option>
+        </select>
+        <div class="err-msg" id="acc-err-skill">Select a skill level.</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>South End member? <span class="req">*</span></label>
+      <select id="acc-member">
+        <option value="">Select...</option>
+        <option value="yes">Yes — Member</option>
+        <option value="no">No — Guest</option>
+      </select>
+      <div class="err-msg" id="acc-err-member">Required.</div>
+    </div>
+    <div class="row row-2">
+      <div class="field">
+        <label>How did you hear about us? <span style="color:rgba(255,255,255,.35);font-weight:400;text-transform:none">(optional)</span></label>
+        <select id="acc-hear">
+          <option value="">Select...</option>
+          <option value="Friend / Word of mouth">Friend / Word of mouth</option>
+          <option value="Social media">Social media</option>
+          <option value="South End member">South End member</option>
+          <option value="Google / Search">Google / Search</option>
+          <option value="Walk-in / Drove by">Walk-in / Drove by</option>
+          <option value="Event / Tournament">Event / Tournament</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Notes <span style="color:rgba(255,255,255,.35);font-weight:400;text-transform:none">(optional)</span></label><textarea id="acc-notes" placeholder="Anything we should know."></textarea></div>
+    </div>
+    <div class="auth-actions" style="margin-top:14px;">
+      <button type="button" class="auth-btn auth-btn-primary" id="acc-save-profile">Save profile</button>
+    </div>
+    <div class="auth-msg" id="acc-profile-msg" role="status"></div>
+  </div>
+
+  <div class="cta-block" id="cta-wrap">
+    <a class="cta-primary" id="cta-rsvp" href="SouthEnd_Session_RSVP.html">Continue to RSVP →</a>
+  </div>
+</div>
+
+<script src="js/openplay-firebase-config.js"></script>
+<script src="js/south-end-openplay-sync.js"></script>
+<script src="js/openplay-profile-panel.js"></script>
+<script>
+function getReturnRsvpHref() {
+  try {
+    var q = new URLSearchParams(window.location.search);
+    var r = q.get('return');
+    if (r && /^[a-zA-Z0-9_.-]+\.html$/.test(r)) return r;
+  } catch (e) {}
+  return 'SouthEnd_Session_RSVP.html';
+}
+
+function syncAccountCtaRsvpHref() {
+  var cta = document.getElementById('cta-rsvp');
+  if (cta) cta.href = getReturnRsvpHref();
+}
+
+var authMode = 'signin';
+/** True when RTDB has a complete profile, or user just saved — edits clear until Save again. */
+var accountProfileSynced = false;
+
+function escapeHtml(s) {
+  if (s == null || s === '') return '';
+  var d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function setAuthModeUI() {
+  var primary = document.getElementById('auth-primary-btn');
+  var toggle = document.getElementById('auth-toggle-mode');
+  var forgot = document.getElementById('auth-forgot');
+  if (!primary || !toggle) return;
+  if (authMode === 'signup') {
+    primary.textContent = 'Create account';
+    toggle.textContent = 'Sign in instead';
+    if (forgot) forgot.classList.add('hidden');
+  } else {
+    primary.textContent = 'Sign in';
+    toggle.textContent = 'Create account instead';
+    if (forgot) forgot.classList.remove('hidden');
+  }
+}
+
+function authShowMsg(text, cls) {
+  var el = document.getElementById('auth-msg');
+  if (!el) return;
+  el.textContent = text || '';
+  el.className = 'auth-msg' + (cls ? ' ' + cls : '');
+}
+
+function accClearErrors() {
+  document.querySelectorAll('.profile-data-panel .err-msg').forEach(function (e) {
+    e.classList.remove('show');
+  });
+  ['acc-first', 'acc-last', 'acc-phone', 'acc-skill', 'acc-member'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('error');
+  });
+}
+
+function accProfileComplete() {
+  var f = (document.getElementById('acc-first') && document.getElementById('acc-first').value.trim()) || '';
+  var l = (document.getElementById('acc-last') && document.getElementById('acc-last').value.trim()) || '';
+  var ph = (document.getElementById('acc-phone') && document.getElementById('acc-phone').value.trim()) || '';
+  var sk = document.getElementById('acc-skill') && document.getElementById('acc-skill').value;
+  var mem = document.getElementById('acc-member') && document.getElementById('acc-member').value;
+  return !!(f && l && ph && sk && mem);
+}
+
+function accCollectPatch() {
+  return {
+    firstName: document.getElementById('acc-first').value.trim(),
+    lastName: document.getElementById('acc-last').value.trim(),
+    phone: document.getElementById('acc-phone').value.trim(),
+    skill: document.getElementById('acc-skill').value,
+    membership: document.getElementById('acc-member').value,
+    hear: document.getElementById('acc-hear').value || '',
+    notes: document.getElementById('acc-notes').value.trim() || '',
+  };
+}
+
+function accValidateAndShowErrors() {
+  accClearErrors();
+  var p = accCollectPatch();
+  var ok = true;
+  if (!p.firstName) {
+    document.getElementById('acc-first').classList.add('error');
+    document.getElementById('acc-err-first').classList.add('show');
+    ok = false;
+  }
+  if (!p.lastName) {
+    document.getElementById('acc-last').classList.add('error');
+    document.getElementById('acc-err-last').classList.add('show');
+    ok = false;
+  }
+  if (!p.phone) {
+    document.getElementById('acc-phone').classList.add('error');
+    document.getElementById('acc-err-phone').classList.add('show');
+    ok = false;
+  }
+  if (!p.skill) {
+    document.getElementById('acc-skill').classList.add('error');
+    document.getElementById('acc-err-skill').classList.add('show');
+    ok = false;
+  }
+  if (!p.membership) {
+    document.getElementById('acc-member').classList.add('error');
+    document.getElementById('acc-err-member').classList.add('show');
+    ok = false;
+  }
+  return ok;
+}
+
+function accShowProfileMsg(text, cls) {
+  var el = document.getElementById('acc-profile-msg');
+  if (!el) return;
+  el.textContent = text || '';
+  el.className = 'auth-msg' + (cls ? ' ' + cls : '');
+}
+
+function markAccountProfileDirty() {
+  accountProfileSynced = false;
+  updateAccountCtaState();
+}
+
+function updateAccountCtaState() {
+  var cta = document.getElementById('cta-rsvp');
+  if (!cta) return;
+  syncAccountCtaRsvpHref();
+  var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
+  if (!u) {
+    cta.classList.add('cta-disabled');
+    return;
+  }
+  if (!accProfileComplete() || !accountProfileSynced) {
+    cta.classList.add('cta-disabled');
+  } else {
+    cta.classList.remove('cta-disabled');
+  }
+}
+
+function loadAccountFormFromProfile(p) {
+  if (!p) return;
+  if (p.firstName) document.getElementById('acc-first').value = p.firstName;
+  if (p.lastName) document.getElementById('acc-last').value = p.lastName;
+  if (p.phone) document.getElementById('acc-phone').value = p.phone;
+  if (p.skill) document.getElementById('acc-skill').value = p.skill;
+  if (p.membership) document.getElementById('acc-member').value = p.membership;
+  if (p.hear) document.getElementById('acc-hear').value = p.hear;
+  if (p.notes !== undefined && document.getElementById('acc-notes')) document.getElementById('acc-notes').value = p.notes || '';
+}
+
+function initAccountPage() {
+  var noFb = document.getElementById('no-firebase-msg');
+  var panel = document.getElementById('auth-panel');
+  if (!panel || typeof SEOpenPlay === 'undefined') return;
+
+  syncAccountCtaRsvpHref();
+
+  if (!SEOpenPlay.firebaseConfigured()) {
+    if (noFb) noFb.classList.remove('hidden');
+    return;
+  }
+
+  panel.classList.remove('hidden');
+  if (noFb) noFb.classList.add('hidden');
+  setAuthModeUI();
+
+  document.getElementById('auth-toggle-mode').addEventListener('click', function () {
+    authMode = authMode === 'signin' ? 'signup' : 'signin';
+    setAuthModeUI();
+    authShowMsg('');
+  });
+
+  document.getElementById('auth-primary-btn').addEventListener('click', function () {
+    authShowMsg('');
+    var email = (document.getElementById('auth-email').value || '').trim();
+    var pw = document.getElementById('auth-password').value || '';
+    if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+      authShowMsg('Enter a valid email.', 'err');
+      return;
+    }
+    if (pw.length < 6) {
+      authShowMsg('Password must be at least 6 characters.', 'err');
+      return;
+    }
+    var p = authMode === 'signup' ? SEOpenPlay.signUpEmail(email, pw) : SEOpenPlay.signInEmail(email, pw);
+    p.then(function () {
+      authShowMsg(authMode === 'signup' ? 'Account created. You are signed in.' : 'Signed in.', 'ok');
+      document.getElementById('auth-password').value = '';
+    }).catch(function (err) {
+      authShowMsg((err && err.message) || 'Something went wrong.', 'err');
+    });
+  });
+
+  document.getElementById('auth-forgot').addEventListener('click', function () {
+    authShowMsg('');
+    var email = (document.getElementById('auth-email').value || '').trim();
+    if (!email) {
+      authShowMsg('Enter your email first.', 'err');
+      return;
+    }
+    SEOpenPlay.sendPasswordReset(email).then(function () {
+      authShowMsg('Check your email for a reset link.', 'ok');
+    }).catch(function (err) {
+      authShowMsg((err && err.message) || 'Could not send reset email.', 'err');
+    });
+  });
+
+  document.getElementById('auth-signout').addEventListener('click', function () {
+    SEOpenPlay.signOutUser().then(function () {
+      authShowMsg('');
+    });
+  });
+
+  document.getElementById('acc-save-profile').addEventListener('click', function () {
+    accShowProfileMsg('');
+    var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
+    if (!u) return;
+    if (!accValidateAndShowErrors()) {
+      accShowProfileMsg('Please fill all required fields.', 'err');
+      return;
+    }
+    var patch = accCollectPatch();
+    SEOpenPlay.saveUserProfilePatch(u.uid, patch)
+      .then(function () {
+        accountProfileSynced = true;
+        accShowProfileMsg('Profile saved.', 'ok');
+        updateAccountCtaState();
+      })
+      .catch(function (err) {
+        accShowProfileMsg((err && err.message) || 'Could not save.', 'err');
+      });
+  });
+
+  document.getElementById('cta-rsvp').addEventListener('click', function (e) {
+    var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
+    if (!u) return;
+    if (!accProfileComplete()) {
+      e.preventDefault();
+      accShowProfileMsg('Fill all required fields.', 'err');
+      return;
+    }
+    if (!accountProfileSynced) {
+      e.preventDefault();
+      accShowProfileMsg('Click “Save profile” so your information is stored before you RSVP.', 'err');
+    }
+  });
+
+  ['acc-first', 'acc-last', 'acc-phone', 'acc-skill', 'acc-member', 'acc-hear', 'acc-notes'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', markAccountProfileDirty);
+    el.addEventListener('change', markAccountProfileDirty);
+  });
+
+  SEOpenPlay.onAuthStateChanged(function (user) {
+    var formBlock = document.getElementById('auth-form-block');
+    var signedBlock = document.getElementById('auth-signed-block');
+    var statusLine = document.getElementById('auth-status-line');
+    var profilePanel = document.getElementById('profile-data-panel');
+    var emailDisp = document.getElementById('acc-email-display');
+    if (user) {
+      if (formBlock) formBlock.classList.add('hidden');
+      if (signedBlock) signedBlock.classList.remove('hidden');
+      if (statusLine) statusLine.innerHTML = 'Signed in as <strong>' + escapeHtml(user.email) + '</strong>.';
+      var ae = document.getElementById('auth-email');
+      if (ae) ae.value = user.email || '';
+      if (profilePanel) profilePanel.classList.remove('hidden');
+      if (emailDisp) emailDisp.textContent = user.email || '—';
+      SEOpenPlay.loadUserProfile(user.uid).then(function (p) {
+        loadAccountFormFromProfile(p);
+        accountProfileSynced = !!(p && SEOpenPlay.isProfileComplete(p));
+        updateAccountCtaState();
+      });
+    } else {
+      accountProfileSynced = false;
+      if (formBlock) formBlock.classList.remove('hidden');
+      if (signedBlock) signedBlock.classList.add('hidden');
+      if (statusLine) statusLine.textContent = 'Create an account or sign in.';
+      if (profilePanel) profilePanel.classList.add('hidden');
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initAccountPage);
+</script>
+</body>
+</html>

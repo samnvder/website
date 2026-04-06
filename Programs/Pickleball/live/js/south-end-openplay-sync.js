@@ -96,6 +96,7 @@
   }
 
   var firebaseReady = false;
+  var firebaseInitFailed = false;
   var firebaseDb = null;
   var firebaseAuth = null;
 
@@ -126,7 +127,9 @@
         firebaseAuth = global.firebase.auth();
         firebaseReady = true;
       })
-      .catch(function () {});
+      .catch(function () {
+        firebaseInitFailed = true;
+      });
   }
 
   function onAuthStateChanged(cb) {
@@ -174,6 +177,7 @@
 
   /**
    * Saves profile fields (no access card — never store payment/access numbers in RTDB).
+   * New fields: add to payload here and to PROFILE_FIELD_DEFS in `openplay-profile-panel.js`.
    */
   function saveUserProfile(uid, data) {
     if (!firebaseDb || !uid || !global.firebase) return Promise.reject(new Error('Not ready'));
@@ -185,9 +189,30 @@
       skill: (data && data.skill) || '',
       membership: (data && data.membership) || '',
       hear: (data && data.hear) || '',
+      notes: (data && data.notes) || '',
+      waiverLiabilityAccepted: !!(data && data.waiverLiabilityAccepted),
+      waiverCommunicationAccepted: !!(data && data.waiverCommunicationAccepted),
+      rsvpWaiversSchema: (data && data.rsvpWaiversSchema) || '',
+      waiversAcknowledgedAt: global.firebase.database.ServerValue.TIMESTAMP,
       updatedAt: global.firebase.database.ServerValue.TIMESTAMP,
     };
     return ref.set(payload);
+  }
+
+  /**
+   * Partial update (merge) — use from account page so waiver timestamps aren’t reset.
+   * New fields: add to saveUserProfile payload, saveUserProfilePatch callers, and PROFILE_FIELD_DEFS in `openplay-profile-panel.js`.
+   */
+  function saveUserProfilePatch(uid, patch) {
+    if (!uid || !patch || typeof patch !== 'object') return Promise.reject(new Error('Invalid patch'));
+    return initFirebase().then(function () {
+      if (!firebaseDb || !global.firebase) return Promise.reject(new Error('Not ready'));
+      var ref = firebaseDb.ref(USER_PROFILE_PATH + '/' + uid);
+      var o = Object.assign({}, patch, {
+        updatedAt: global.firebase.database.ServerValue.TIMESTAMP,
+      });
+      return ref.update(o);
+    });
   }
 
   function loadUserProfile(uid) {
@@ -198,6 +223,11 @@
       .then(function (snap) {
         return snap.val() || null;
       });
+  }
+
+  /** Same rule on account + RSVP: required registration fields present in RTDB. */
+  function isProfileComplete(p) {
+    return !!(p && p.firstName && p.lastName && p.phone && p.skill && p.membership);
   }
 
   function pushRsvpToFirebase(record) {
@@ -282,6 +312,9 @@
     timeForFullSession: timeForFullSession,
     tierFromRsvp: tierFromRsvp,
     firebaseConfigured: firebaseConfigured,
+    firebaseInitFailed: function () {
+      return firebaseInitFailed;
+    },
     initFirebase: initFirebase,
     broadcastRsvp: broadcastRsvp,
     readPendingQueue: readPendingQueue,
@@ -298,6 +331,8 @@
     sendPasswordReset: sendPasswordReset,
     getCurrentUser: getCurrentUser,
     saveUserProfile: saveUserProfile,
+    saveUserProfilePatch: saveUserProfilePatch,
     loadUserProfile: loadUserProfile,
+    isProfileComplete: isProfileComplete,
   };
 })(typeof window !== 'undefined' ? window : this);
