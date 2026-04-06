@@ -408,12 +408,14 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
     <div class="hub-actions">
       <a class="cta-primary" id="hub-cta-rsvp" href="SouthEnd_Session_RSVP.html">Book sessions →</a>
       <a class="cta-staff hidden" id="hub-cta-checkin" href="SouthEnd_Session_Checkin.html">Check-ins →</a>
+      <a class="cta-staff hidden" id="hub-cta-activity" href="SouthEnd_Admin_Activity.html">Admin activity →</a>
     </div>
   </div>
 
   <div class="cta-block hidden" id="cta-wrap">
     <a class="cta-primary" id="cta-rsvp" href="SouthEnd_Session_RSVP.html">Continue to RSVP →</a>
     <a class="cta-staff hidden" id="cta-checkin" href="SouthEnd_Session_Checkin.html">Check-ins →</a>
+    <a class="cta-staff hidden" id="cta-activity" href="SouthEnd_Admin_Activity.html">Admin activity →</a>
   </div>
 </div>
 
@@ -498,10 +500,22 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 function getReturnRsvpHref() {
   try {
     var q = new URLSearchParams(window.location.search);
-    var r = q.get('return');
-    if (r && /^[a-zA-Z0-9_.-]+\.html$/.test(r)) return r;
+    var r = String(q.get('return') || '').trim();
+    // Allow only known booking destinations so staff/admin return params
+    // cannot hijack the main "Book sessions" CTA.
+    if (/^SouthEnd_Session_RSVP\.html$/i.test(r)) return 'SouthEnd_Session_RSVP.html';
+    if (/^SouthEnd_Session_Checkin\.html$/i.test(r)) return 'SouthEnd_Session_Checkin.html';
   } catch (e) {}
   return 'SouthEnd_Session_RSVP.html';
+}
+
+function getAccountReturnParamRaw() {
+  try {
+    var q = new URLSearchParams(window.location.search);
+    return String(q.get('return') || '').trim();
+  } catch (e) {
+    return '';
+  }
 }
 
 /** True when ?return= points at check-in (Firebase filenames or WordPress slug). */
@@ -511,9 +525,18 @@ function accountReturnIsCheckin(href) {
   return /SouthEnd_Session_Checkin\.html|check-ins|checkin/i.test(h);
 }
 
+/** True when ?return= points at admin activity. */
+function accountReturnIsAdminActivity(href) {
+  if (!href) return false;
+  var h = String(href);
+  return /SouthEnd_Admin_Activity\.html|admin[_\s-]*activity/i.test(h);
+}
+
 function syncAccountCtaRsvpHref() {
   var href = getReturnRsvpHref();
+  var rawReturn = getAccountReturnParamRaw();
   var toCheckin = accountReturnIsCheckin(href);
+  var toAdminActivity = accountReturnIsAdminActivity(rawReturn);
   var cta = document.getElementById('cta-rsvp');
   if (cta) {
     cta.href = href;
@@ -523,6 +546,16 @@ function syncAccountCtaRsvpHref() {
   if (hubCta) {
     hubCta.href = href;
     hubCta.textContent = toCheckin ? 'Continue to check-in →' : 'Book sessions →';
+  }
+  var hubActivity = document.getElementById('hub-cta-activity');
+  if (hubActivity) {
+    hubActivity.href = 'SouthEnd_Admin_Activity.html';
+    hubActivity.textContent = toAdminActivity ? 'Back to admin activity →' : 'Admin activity →';
+  }
+  var ctaActivity = document.getElementById('cta-activity');
+  if (ctaActivity) {
+    ctaActivity.href = 'SouthEnd_Admin_Activity.html';
+    ctaActivity.textContent = toAdminActivity ? 'Back to admin activity →' : 'Admin activity →';
   }
 }
 
@@ -752,23 +785,29 @@ function markAccountProfileDirty() {
 function updateStaffCheckinButtons(user) {
   var hub = document.getElementById('hub-cta-checkin');
   var cta = document.getElementById('cta-checkin');
-  if (!hub && !cta) return;
-  function showBoth(on) {
+  var hubActivity = document.getElementById('hub-cta-activity');
+  var ctaActivity = document.getElementById('cta-activity');
+  if (!hub && !cta && !hubActivity && !ctaActivity) return;
+  function showCheckin(on) {
     if (hub) hub.classList.toggle('hidden', !on);
     if (cta) cta.classList.toggle('hidden', !on);
   }
+  function showActivity(on) {
+    if (hubActivity) hubActivity.classList.toggle('hidden', !on);
+    if (ctaActivity) ctaActivity.classList.toggle('hidden', !on);
+  }
   if (!user || typeof SEOpenPlay === 'undefined') {
-    showBoth(false);
+    showCheckin(false);
+    showActivity(false);
     return;
   }
-  if (SEOpenPlay.isStaffEmailAllowed && SEOpenPlay.isStaffEmailAllowed(user)) {
-    showBoth(true);
-    return;
-  }
-  showBoth(false);
+  var byEmail = !!(SEOpenPlay.isStaffEmailAllowed && SEOpenPlay.isStaffEmailAllowed(user));
+  showCheckin(byEmail);
+  showActivity(byEmail);
   if (SEOpenPlay.loadAdminUidFlag) {
     SEOpenPlay.loadAdminUidFlag(user.uid).then(function (ok) {
-      showBoth(!!ok);
+      if (ok) showCheckin(true);
+      if (ok) showActivity(true);
     });
   }
 }
