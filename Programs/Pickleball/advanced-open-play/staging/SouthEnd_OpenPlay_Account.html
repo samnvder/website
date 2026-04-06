@@ -615,13 +615,20 @@ function computeAccountSessions(config) {
   var rollPast = now.dow > maxDay || (now.dow === maxDay && now.hour >= config.lastSessionEndHour);
   
   var anchor = new Date(now.year, now.month - 1, now.day);
+  var currentDow = anchor.getDay();
   
   if (rollPast) {
-    var daysToAdd = (minDay - anchor.getDay() + 7) % 7;
+    // After last session ends, go forward to next week's first session day
+    var daysToAdd = (minDay - currentDow + 7) % 7;
     if (daysToAdd === 0) daysToAdd = 7;
     anchor.setDate(anchor.getDate() + daysToAdd);
+  } else if (currentDow < minDay) {
+    // Before week starts (e.g., Monday before Tuesday), go forward to this week's first session
+    var daysToAdd = minDay - currentDow;
+    anchor.setDate(anchor.getDate() + daysToAdd);
   } else {
-    var daysToSub = (anchor.getDay() - minDay + 7) % 7;
+    // During the week (Tue-Thu), go back to this week's first session
+    var daysToSub = currentDow - minDay;
     anchor.setDate(anchor.getDate() - daysToSub);
   }
   
