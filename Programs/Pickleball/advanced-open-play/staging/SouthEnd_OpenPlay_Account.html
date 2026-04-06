@@ -564,27 +564,35 @@ var accountMyRsvpRows = [];
 /** Month shown in the hub calendar (first day of that month). */
 var accountCalendarCursor = new Date(pacificNowDate().getFullYear(), pacificNowDate().getMonth(), 1);
 var SESSION_MONTHS_ACC = {
-  jan: 0,
-  feb: 1,
-  mar: 2,
-  apr: 3,
+  jan: 0, january: 0,
+  feb: 1, february: 1,
+  mar: 2, march: 2,
+  apr: 3, april: 3,
   may: 4,
-  jun: 5,
-  jul: 6,
-  aug: 7,
-  sep: 8,
-  oct: 9,
-  nov: 10,
-  dec: 11,
+  jun: 5, june: 5,
+  jul: 6, july: 6,
+  aug: 7, august: 7,
+  sep: 8, sept: 8, september: 8,
+  oct: 9, october: 9,
+  nov: 10, november: 10,
+  dec: 11, december: 11,
 };
-var ACCOUNT_OPEN_SESSIONS = [
-  'Tuesday Morning Apr 8',
-  'Tuesday Evening Apr 8',
-  'Thursday Evening Apr 10',
-  'Tuesday Morning Apr 15',
-  'Tuesday Evening Apr 15',
-  'Thursday Evening Apr 17',
-];
+var ACCOUNT_OPEN_SESSIONS = (function () {
+  try {
+    var cards = document.querySelectorAll
+      ? Array.prototype.slice.call(document.querySelectorAll('.session-card[data-session]'))
+      : [];
+    if (cards.length) return cards.map(function (c) { return c.getAttribute('data-session'); });
+  } catch (e) {}
+  return [
+    'Tuesday Morning Apr 8',
+    'Tuesday Evening Apr 8',
+    'Thursday Evening Apr 10',
+    'Tuesday Morning Apr 15',
+    'Tuesday Evening Apr 15',
+    'Thursday Evening Apr 17',
+  ];
+})();
 
 function escapeHtml(s) {
   if (s == null || s === '') return '';
@@ -951,7 +959,8 @@ function normalizeSessionDateToExpectedWeekday(d, expectedDow) {
 
 function parseSessionToDate(sessionStr) {
   if (!sessionStr) return null;
-  var m = String(sessionStr).match(/^(Tuesday Morning|Tuesday Evening|Thursday Evening)\s+(\w+)\s+(\d+)/i);
+  var s = String(sessionStr).trim().replace(/\s+/g, ' ');
+  var m = s.match(/^((?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s+(?:Morning|Evening|Afternoon))\s+(\w+)\s+(\d+)/i);
   if (!m) return null;
   var mon = SESSION_MONTHS_ACC[m[2].toLowerCase()];
   if (mon === undefined) return null;
@@ -960,12 +969,13 @@ function parseSessionToDate(sessionStr) {
   var y = pacNow.getFullYear();
   var d = new Date(y, mon, day);
   d.setHours(0, 0, 0, 0);
-  var expectedDow = /^Thursday/i.test(m[1]) ? 4 : 2; // Thu=4, Tue=2
-  d = normalizeSessionDateToExpectedWeekday(d, expectedDow);
+  var dowMap = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
+  var expectedDow = dowMap[m[1].trim().split(/\s/)[0].toLowerCase().substring(0, 3)];
+  if (typeof expectedDow === 'number') d = normalizeSessionDateToExpectedWeekday(d, expectedDow);
   if (d.getTime() < pacNow.getTime() - 14 * 864e5) {
     d = new Date(y + 1, mon, day);
     d.setHours(0, 0, 0, 0);
-    d = normalizeSessionDateToExpectedWeekday(d, expectedDow);
+    if (typeof expectedDow === 'number') d = normalizeSessionDateToExpectedWeekday(d, expectedDow);
   }
   return d;
 }
@@ -977,30 +987,33 @@ function normalizeSessionKey(s) {
     .toLowerCase();
 }
 
-function abbrevSessionLabel(full) {
-  if (!full) return '';
-  var m = String(full).match(/^(Tuesday Morning|Tuesday Evening|Thursday Evening)\s+(.+)$/i);
-  if (!m) return full;
-  var map = {
-    'Tuesday Morning': 'Tue AM',
-    'Tuesday Evening': 'Tue PM',
-    'Thursday Evening': 'Thu PM',
-  };
-  return (map[m[1]] || m[1]) + ' · ' + m[2];
+function abbrevSlotName(slot) {
+  if (!slot) return '';
+  var s = String(slot).trim();
+  var dayMap = { monday: 'Mon', tuesday: 'Tue', wednesday: 'Wed', thursday: 'Thu', friday: 'Fri', saturday: 'Sat', sunday: 'Sun' };
+  var timeMap = { morning: 'AM', afternoon: 'PM', evening: 'PM' };
+  var parts = s.split(/\s+/);
+  if (parts.length >= 2) {
+    var dPart = dayMap[parts[0].toLowerCase()] || parts[0].substring(0, 3);
+    var tPart = timeMap[parts[1].toLowerCase()] || parts[1];
+    return dPart + ' ' + tPart;
+  }
+  return s;
 }
 
-/** Short label using the calendar-normalized date (matches grid cell), not raw session text. */
+function abbrevSessionLabel(full) {
+  if (!full) return '';
+  var m = String(full).match(/^((?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s+(?:Morning|Afternoon|Evening))\s+(.+)$/i);
+  if (!m) return full;
+  return abbrevSlotName(m[1]) + ' · ' + m[2];
+}
+
 function abbrevSessionLabelCalendar(full) {
   var d = parseSessionToDate(full);
   if (!d) return abbrevSessionLabel(full);
-  var m = String(full).match(/^(Tuesday Morning|Tuesday Evening|Thursday Evening)/i);
+  var m = String(full).match(/^((?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s+(?:Morning|Afternoon|Evening))/i);
   if (!m) return abbrevSessionLabel(full);
-  var map = {
-    'Tuesday Morning': 'Tue AM',
-    'Tuesday Evening': 'Tue PM',
-    'Thursday Evening': 'Thu PM',
-  };
-  var slot = map[m[1]] || m[1];
+  var slot = abbrevSlotName(m[1]);
   var mon = d.toLocaleDateString('en-US', { month: 'short' });
   return slot + ' · ' + mon + ' ' + d.getDate();
 }
@@ -1062,8 +1075,12 @@ function renderAccountRsvpCalendar() {
     var cellDate = new Date(y, mo, day);
     var dk = cellDate.getFullYear() + '-' + pad2(cellDate.getMonth() + 1) + '-' + pad2(cellDate.getDate());
     var isToday = cellDate.getTime() === today.getTime();
+    var isPast = cellDate.getTime() < today.getTime();
     var rows = byDay[dk] || [];
-    html += '<div class="cal-day' + (isToday ? ' cal-day--today' : '') + '" role="gridcell">';
+    var dayCls = 'cal-day';
+    if (isToday) dayCls += ' cal-day--today';
+    if (isPast && !isToday) dayCls += ' cal-day--muted';
+    html += '<div class="' + dayCls + '" role="gridcell">';
     html += '<div class="cal-day-num">' + day + '</div>';
     html += '<div class="cal-day-events">';
     rows.forEach(function (r) {
@@ -1072,17 +1089,20 @@ function renderAccountRsvpCalendar() {
       var pidAttr = pidRaw.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
       html += '<div class="cal-ev">';
       html += '<span class="cal-ev-slot">' + escapeHtml(slot) + '</span>';
-      html += '<button type="button" class="cal-ev-cancel" data-pid="' + pidAttr + '">Cancel</button>';
+      if (!isPast) {
+        html += '<button type="button" class="cal-ev-cancel" data-pid="' + pidAttr + '">Cancel</button>';
+      }
       html += '</div>';
     });
-    var openList = openByDay[dk] || [];
-    var bookedMap = userBookedByDay[dk] || {};
-    var hasUnbookedSlot = openList.some(function (sessLabel) {
-      return !bookedMap[normalizeSessionKey(sessLabel)];
-    });
-    // Do not show "available" in a cell that already lists your RSVP(s) — avoids implying the day is empty when Tue PM is still bookable elsewhere.
-    if (hasUnbookedSlot && rows.length === 0) {
-      html += '<div class="cal-open">Open Play available</div>';
+    if (!isPast) {
+      var openList = openByDay[dk] || [];
+      var bookedMap = userBookedByDay[dk] || {};
+      var hasUnbookedSlot = openList.some(function (sessLabel) {
+        return !bookedMap[normalizeSessionKey(sessLabel)];
+      });
+      if (hasUnbookedSlot && rows.length === 0) {
+        html += '<div class="cal-open">Open Play available</div>';
+      }
     }
     html += '</div></div>';
   }
@@ -1324,7 +1344,7 @@ function initAccountPage() {
       if (SEOpenPlay.subscribeMyRsvps) {
         SEOpenPlay.subscribeMyRsvps(user.uid, function (list) {
           accountMyRsvpRows = list || [];
-          if (accountViewMode === 'hub') renderAccountRsvpCalendar();
+          renderAccountRsvpCalendar();
         }, user.email || '');
       }
       SEOpenPlay.loadUserProfile(user.uid).then(function (p) {
