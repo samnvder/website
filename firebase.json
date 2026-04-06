@@ -1,0 +1,9 @@
+{
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "hosting": {
+    "public": "Programs/Pickleball/live",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+  }
+}

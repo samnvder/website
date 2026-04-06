@@ -97,39 +97,72 @@
 
   var firebaseReady = false;
   var firebaseInitFailed = false;
+  var firebaseInitPromise = null;
   var firebaseDb = null;
   var firebaseAuth = null;
 
+  var FB_APP_SRC = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js';
+  var FB_AUTH_SRC = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js';
+  var FB_DB_SRC = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js';
+
   function loadScript(src) {
     return new Promise(function (resolve, reject) {
+      var existing = document.querySelector('script[src="' + src + '"]');
+      if (existing) {
+        if (existing.getAttribute('data-se-loaded') === '1') {
+          resolve();
+          return;
+        }
+        existing.addEventListener('load', function () {
+          resolve();
+        });
+        existing.addEventListener('error', reject);
+        return;
+      }
       var s = document.createElement('script');
       s.src = src;
       s.async = true;
-      s.onload = resolve;
+      s.onload = function () {
+        s.setAttribute('data-se-loaded', '1');
+        resolve();
+      };
       s.onerror = reject;
       document.head.appendChild(s);
     });
   }
 
+  function wireFirebaseApp() {
+    if (!global.firebase) return;
+    try {
+      if (!global.firebase.apps || global.firebase.apps.length === 0) {
+        global.firebase.initializeApp(SE_OPENPLAY_FIREBASE);
+      }
+    } catch (e) {
+      /* duplicate default app — another init won the race */
+    }
+    firebaseDb = global.firebase.database();
+    firebaseAuth = global.firebase.auth();
+    firebaseReady = true;
+  }
+
   function initFirebase() {
     if (!firebaseConfigured() || firebaseReady) return Promise.resolve();
-    return loadScript('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js')
+    if (firebaseInitPromise) return firebaseInitPromise;
+    firebaseInitPromise = loadScript(FB_APP_SRC)
       .then(function () {
-        return loadScript('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js');
+        return loadScript(FB_AUTH_SRC);
       })
       .then(function () {
-        return loadScript('https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js');
+        return loadScript(FB_DB_SRC);
       })
       .then(function () {
-        if (!global.firebase) return;
-        global.firebase.initializeApp(SE_OPENPLAY_FIREBASE);
-        firebaseDb = global.firebase.database();
-        firebaseAuth = global.firebase.auth();
-        firebaseReady = true;
+        wireFirebaseApp();
       })
       .catch(function () {
         firebaseInitFailed = true;
+        firebaseInitPromise = null;
       });
+    return firebaseInitPromise;
   }
 
   function onAuthStateChanged(cb) {
@@ -211,6 +244,9 @@
       var o = Object.assign({}, patch, {
         updatedAt: global.firebase.database.ServerValue.TIMESTAMP,
       });
+      if (patch.waiverLiabilityAccepted === true || patch.waiverCommunicationAccepted === true) {
+        o.waiversAcknowledgedAt = global.firebase.database.ServerValue.TIMESTAMP;
+      }
       return ref.update(o);
     });
   }
@@ -225,9 +261,21 @@
       });
   }
 
-  /** Same rule on account + RSVP: required registration fields present in RTDB. */
+  var WAIVERS_SCHEMA_CURRENT = '2';
+
+  /** Same rule on account + RSVP: required registration fields + electronic waivers on file (schema v2). */
   function isProfileComplete(p) {
-    return !!(p && p.firstName && p.lastName && p.phone && p.skill && p.membership);
+    return !!(
+      p &&
+      p.firstName &&
+      p.lastName &&
+      p.phone &&
+      p.skill &&
+      p.membership &&
+      p.waiverLiabilityAccepted &&
+      p.waiverCommunicationAccepted &&
+      p.rsvpWaiversSchema === WAIVERS_SCHEMA_CURRENT
+    );
   }
 
   function pushRsvpToFirebase(record) {

@@ -6,3 +6,4 @@ Programs/Pickleball/testing/local-page/
 config.env
 .DS_Store
 supabase/.temp/
+.firebase/

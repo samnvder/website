@@ -1,0 +1,31 @@
+---
+description: Universal — after Open Play live/testing changes, sync mirrors, test, and deploy Firebase Hosting (testing site).
+globs: []
+alwaysApply: true
+---
+
+# Auto-deploy Open Play (testing + hosted site)
+
+## Scope
+
+Applies whenever **`Programs/Pickleball/live/`** (deployed HTML/JS) or **`Programs/Pickleball/testing/`** (unit tests, `local-test.js`, mirrors) is edited.
+
+## Agent must run (from `Website/` = repo root)
+
+1. **`npm run local-test:sync`** — refresh `local-page/` mirrors so local QA matches `live/`.
+2. **`npm test`** — must pass before deploy.
+3. **`npm run deploy:openplay`** — push **`Programs/Pickleball/live`** to **Firebase Hosting** (`firebase.json` → `hosting.public`). This updates the **hosted testing/staging URL** (e.g. `*.web.app` / custom domain for project `pickleball-advanced-open-play`).
+
+If deploy fails (auth): run **`firebase login`** once locally, or configure CI secret **`FIREBASE_TOKEN`** from **`firebase login:ci`**.
+
+## CI (no manual step after push)
+
+On push to **`main`** / **`master`**, **`.github/workflows/deploy-openplay-firebase-hosting.yml`** runs **`firebase deploy --only hosting`** when the paths above change. Requires **`FIREBASE_TOKEN`** in GitHub repo **Settings → Secrets**.
+
+## Not auto here
+
+- **Database rules** — use **`npm run firebase:deploy-rules`** when **`database.rules.json`** changes (or **`npm run deploy:openplay:all`** for hosting + rules together).
+
+## Do not deploy
+
+Gitignored mirrors (`local-page/`, `testing/local-page/`) — generated only; **Hosting serves `live/`** per `firebase.json`.

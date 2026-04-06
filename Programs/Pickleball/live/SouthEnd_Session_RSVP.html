@@ -82,7 +82,6 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 
 /* SESSION CARDS */
 .body-wrap{padding:28px;}
-.section-lbl{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--neon);margin-bottom:8px;}
 .session-help{font-size:12px;color:rgba(255,255,255,.55);line-height:1.45;margin-bottom:12px;max-width:520px;}
 .session-quick{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
 .sq-chip{
@@ -284,6 +283,8 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:600;align-items:center;justify-content:center;padding:16px;
 }
 .waiver-modal-overlay.open{display:flex;}
+.waiver-modal-overlay--view-only .waiver-modal-agree{display:none;}
+.waiver-modal-overlay--view-only .waiver-scroll-hint{display:none;}
 .waiver-modal-box{
   background:#0f1a2e;border:2px solid var(--neon);border-radius:12px;max-width:640px;width:100%;max-height:min(92vh,720px);
   display:flex;flex-direction:column;box-shadow:0 0 48px rgba(0,255,136,.12);
@@ -403,7 +404,75 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 <div id="main-form-wrap" class="rsvp-main-hidden">
   <div class="body-wrap">
 
-    <div class="section-lbl">Choose Your Session</div>
+    <div class="account-strip hidden" id="account-strip" aria-label="Open Play account">
+      <span class="account-strip-text" id="account-strip-msg">Sign in on the account page to save your details for next time.</span>
+      <a class="account-strip-link" id="account-strip-link" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Session_RSVP.html">Account page →</a>
+    </div>
+
+    <div class="section" id="section-your-info">
+      <div id="profile-summary-wrap" class="profile-summary-card hidden" aria-live="polite">
+        <div class="sec-head"><div class="sec-num">1</div><div class="sec-label">Your Information</div></div>
+        <p class="profile-summary-lead">Using your saved account profile. You can still add your access card below if you’re a member.</p>
+        <div class="profile-summary-body" id="profile-summary-body"></div>
+        <p class="profile-summary-edit"><a id="profile-summary-account-link" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Session_RSVP.html">Edit details on account page</a></p>
+      </div>
+      <div id="profile-fields-wrap">
+      <div class="sec-head"><div class="sec-num">1</div><div class="sec-label">Your Information</div></div>
+      <div class="row row-2">
+        <div class="field"><label>First Name <span class="req">*</span></label><input type="text" id="p-first" placeholder="First"><div class="err-msg" id="err-first">Required.</div></div>
+        <div class="field"><label>Last Name <span class="req">*</span></label><input type="text" id="p-last" placeholder="Last"><div class="err-msg" id="err-last">Required.</div></div>
+      </div>
+      <div class="row row-2">
+        <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="p-email" placeholder="your@email.com"><div class="err-msg" id="err-email">Valid email required.</div></div>
+        <div class="field"><label>Phone <span class="req">*</span></label><input type="tel" id="p-phone" placeholder="(555) 555-5555"><div class="err-msg" id="err-phone">Required.</div></div>
+      </div>
+      <div class="row row-2">
+        <div class="field">
+          <label>Skill Level <span class="req">*</span></label>
+          <select id="p-skill">
+            <option value="">Select level...</option>
+            <option value="Advanced 4.0+">Advanced 4.0+</option>
+            <option value="Open 5.0+">Open 5.0+</option>
+          </select>
+          <div class="err-msg" id="err-skill">Select a skill level.</div>
+        </div>
+        <div class="field">
+          <label>South End Member? <span class="req">*</span></label>
+          <select id="p-member" onchange="toggleMemberPay(this.value)">
+            <option value="">Select...</option>
+            <option value="yes">Yes — Member</option>
+            <option value="no">No — Guest</option>
+          </select>
+          <div class="err-msg" id="err-member">Required.</div>
+        </div>
+      </div>
+      <div class="row row-1 hidden" id="member-card-row">
+        <div class="field">
+          <label>Member access card # <span class="req">*</span></label>
+          <input type="text" id="p-member-card" placeholder="e.g. 212345" maxlength="6" pattern="[23][0-9]{5}" autocomplete="off" inputmode="numeric">
+          <div class="err-msg" id="err-member-card">Enter a 6-digit number starting with 2 or 3.</div>
+        </div>
+      </div>
+      <div class="row row-2">
+        <div class="field">
+          <label>How did you hear about us? <span style="color:rgba(255,255,255,.2);font-weight:400">(optional)</span></label>
+          <select id="p-hear">
+            <option value="">Select...</option>
+            <option value="Friend / Word of mouth">Friend / Word of mouth</option>
+            <option value="Social media">Social media</option>
+            <option value="South End member">South End member</option>
+            <option value="Google / Search">Google / Search</option>
+            <option value="Walk-in / Drove by">Walk-in / Drove by</option>
+            <option value="Event / Tournament">Event / Tournament</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field"><label>Notes <span style="color:rgba(255,255,255,.2);font-weight:400">(optional)</span></label><textarea id="p-notes" rows="2" placeholder="Anything we should know." style="resize:none;height:46px;"></textarea></div>
+      </div>
+      </div>
+    </div>
+
+    <div class="sec-head"><div class="sec-num">2</div><div class="sec-label">Choose Your Session</div></div>
     <p class="session-help">Select <strong>one or more</strong> sessions. Tap a card to toggle. Use quick add to grab every Tuesday morning, every evening slot, a full week, or all dates at once.</p>
     <div class="session-quick">
       <button type="button" class="sq-chip" onclick="selectQuick('tue-am')">All Tue AM</button>
@@ -480,74 +549,6 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 
     <div id="discount-badge">✓ Special rate applied</div>
 
-    <div class="account-strip hidden" id="account-strip" aria-label="Open Play account">
-      <span class="account-strip-text" id="account-strip-msg">Sign in on the account page to save your details for next time.</span>
-      <a class="account-strip-link" id="account-strip-link" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Session_RSVP.html">Account page →</a>
-    </div>
-
-    <div class="section" id="section-your-info">
-      <div id="profile-summary-wrap" class="profile-summary-card hidden" aria-live="polite">
-        <div class="sec-head"><div class="sec-num">1</div><div class="sec-label">Your Information</div></div>
-        <p class="profile-summary-lead">Using your saved account profile. You can still add your access card below if you’re a member.</p>
-        <div class="profile-summary-body" id="profile-summary-body"></div>
-        <p class="profile-summary-edit"><a id="profile-summary-account-link" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Session_RSVP.html">Edit details on account page</a></p>
-      </div>
-      <div id="profile-fields-wrap">
-      <div class="sec-head"><div class="sec-num">1</div><div class="sec-label">Your Information</div></div>
-      <div class="row row-2">
-        <div class="field"><label>First Name <span class="req">*</span></label><input type="text" id="p-first" placeholder="First"><div class="err-msg" id="err-first">Required.</div></div>
-        <div class="field"><label>Last Name <span class="req">*</span></label><input type="text" id="p-last" placeholder="Last"><div class="err-msg" id="err-last">Required.</div></div>
-      </div>
-      <div class="row row-2">
-        <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="p-email" placeholder="your@email.com"><div class="err-msg" id="err-email">Valid email required.</div></div>
-        <div class="field"><label>Phone <span class="req">*</span></label><input type="tel" id="p-phone" placeholder="(555) 555-5555"><div class="err-msg" id="err-phone">Required.</div></div>
-      </div>
-      <div class="row row-2">
-        <div class="field">
-          <label>Skill Level <span class="req">*</span></label>
-          <select id="p-skill">
-            <option value="">Select level...</option>
-            <option value="Advanced 4.0+">Advanced 4.0+</option>
-            <option value="Open 5.0+">Open 5.0+</option>
-          </select>
-          <div class="err-msg" id="err-skill">Select a skill level.</div>
-        </div>
-        <div class="field">
-          <label>South End Member? <span class="req">*</span></label>
-          <select id="p-member" onchange="toggleMemberPay(this.value)">
-            <option value="">Select...</option>
-            <option value="yes">Yes — Member</option>
-            <option value="no">No — Guest</option>
-          </select>
-          <div class="err-msg" id="err-member">Required.</div>
-        </div>
-      </div>
-      <div class="row row-1 hidden" id="member-card-row">
-        <div class="field">
-          <label>Member access card # <span class="req">*</span></label>
-          <input type="text" id="p-member-card" placeholder="e.g. 212345" maxlength="6" pattern="[23][0-9]{5}" autocomplete="off" inputmode="numeric">
-          <div class="err-msg" id="err-member-card">Enter a 6-digit number starting with 2 or 3.</div>
-        </div>
-      </div>
-      <div class="row row-2">
-        <div class="field">
-          <label>How did you hear about us? <span style="color:rgba(255,255,255,.2);font-weight:400">(optional)</span></label>
-          <select id="p-hear">
-            <option value="">Select...</option>
-            <option value="Friend / Word of mouth">Friend / Word of mouth</option>
-            <option value="Social media">Social media</option>
-            <option value="South End member">South End member</option>
-            <option value="Google / Search">Google / Search</option>
-            <option value="Walk-in / Drove by">Walk-in / Drove by</option>
-            <option value="Event / Tournament">Event / Tournament</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div class="field"><label>Notes <span style="color:rgba(255,255,255,.2);font-weight:400">(optional)</span></label><textarea id="p-notes" rows="2" placeholder="Anything we should know." style="resize:none;height:46px;"></textarea></div>
-      </div>
-      </div>
-    </div>
-
     <div class="pay-box" id="pay-box">
       <div class="pay-title">Payment</div>
       <div class="pay-num">310-251-3804</div>
@@ -583,7 +584,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
         <div class="err-msg" id="err-waiver-communication">Please read and sign the communications consent to continue.</div>
       </div>
 
-      <div style="font-size:10px;color:rgba(255,255,255,.38);margin-top:6px;">RSVP waivers schema v2 — acknowledgments are stored with your submission and, if you use an account, on your saved profile. Club counsel should review all legal text.</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.38);margin-top:6px;">Waivers schema v2 — sign once on your account; here you confirm they still apply. Club counsel should review all legal text.</div>
     </div>
 
     <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:14px 16px;margin-bottom:16px;font-size:11px;color:rgba(255,255,255,.45);line-height:1.8;">
@@ -709,6 +710,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 <script src="js/south-end-openplay-sync.js"></script>
 <script src="js/openplay-profile-panel.js"></script>
 <script src="js/openplay-rsvp-helpers.js"></script>
+<script src="js/openplay-waiver-modals.js"></script>
 <script>
 (function applyOpenPlayWeekHeadings() {
   var inner1 =
@@ -750,124 +752,6 @@ function escapeHtml(s) {
   return d.innerHTML;
 }
 
-var RSVP_WAIVERS_SCHEMA = '2';
-
-function waiverScrollRefresh(which) {
-  var scrollEl = document.getElementById('waiver-scroll-' + which);
-  var agree = document.getElementById('waiver-agree-' + which);
-  if (!scrollEl || !agree) return;
-  var threshold = 32;
-  var atBottom = scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight <= threshold;
-  agree.disabled = !atBottom;
-}
-
-function setupWaiverModalScroll(which) {
-  var scrollEl = document.getElementById('waiver-scroll-' + which);
-  if (!scrollEl || scrollEl.dataset.seWaiverBound) return;
-  scrollEl.dataset.seWaiverBound = '1';
-  var tick = function () {
-    waiverScrollRefresh(which);
-  };
-  scrollEl.addEventListener('scroll', tick);
-  scrollEl.addEventListener('touchmove', tick);
-  window.addEventListener('resize', tick);
-}
-
-function openWaiverModal(which) {
-  var overlay = document.getElementById('waiver-modal-' + which);
-  var scrollEl = document.getElementById('waiver-scroll-' + which);
-  var agree = document.getElementById('waiver-agree-' + which);
-  if (!overlay) return;
-  overlay.classList.add('open');
-  overlay.setAttribute('aria-hidden', 'false');
-  if (scrollEl) {
-    scrollEl.scrollTop = 0;
-    try {
-      scrollEl.focus();
-    } catch (e) {}
-  }
-  if (agree) agree.disabled = true;
-  requestAnimationFrame(function () {
-    waiverScrollRefresh(which);
-  });
-}
-
-function closeWaiverModal(which) {
-  var overlay = document.getElementById('waiver-modal-' + which);
-  if (!overlay) return;
-  overlay.classList.remove('open');
-  overlay.setAttribute('aria-hidden', 'true');
-}
-
-function wireWaiverModals() {
-  setupWaiverModalScroll('liability');
-  setupWaiverModalScroll('communication');
-  var btnL = document.getElementById('waiver-btn-open-liability');
-  var btnC = document.getElementById('waiver-btn-open-communication');
-  if (btnL) btnL.addEventListener('click', function () { openWaiverModal('liability'); });
-  if (btnC) btnC.addEventListener('click', function () { openWaiverModal('communication'); });
-  var clL = document.getElementById('waiver-modal-liability-close');
-  var clC = document.getElementById('waiver-modal-communication-close');
-  if (clL) clL.addEventListener('click', function () { closeWaiverModal('liability'); });
-  if (clC) clC.addEventListener('click', function () { closeWaiverModal('communication'); });
-  var ovL = document.getElementById('waiver-modal-liability');
-  var ovC = document.getElementById('waiver-modal-communication');
-  if (ovL) ovL.addEventListener('click', function (e) { if (e.target === ovL) closeWaiverModal('liability'); });
-  if (ovC) ovC.addEventListener('click', function (e) { if (e.target === ovC) closeWaiverModal('communication'); });
-  var agL = document.getElementById('waiver-agree-liability');
-  var agC = document.getElementById('waiver-agree-communication');
-  if (agL)
-    agL.addEventListener('click', function () {
-      var cb = document.getElementById('waiver-liability');
-      if (cb) {
-        cb.disabled = false;
-        cb.checked = true;
-      }
-      var it = document.getElementById('waiver-item-liability');
-      if (it) it.classList.add('waiver-item--done');
-      var b = document.getElementById('waiver-btn-open-liability');
-      if (b) b.textContent = 'Re-read full text';
-      closeWaiverModal('liability');
-    });
-  if (agC)
-    agC.addEventListener('click', function () {
-      var cb = document.getElementById('waiver-communication');
-      if (cb) {
-        cb.disabled = false;
-        cb.checked = true;
-      }
-      var it = document.getElementById('waiver-item-communication');
-      if (it) it.classList.add('waiver-item--done');
-      var b = document.getElementById('waiver-btn-open-communication');
-      if (b) b.textContent = 'Re-read full text';
-      closeWaiverModal('communication');
-    });
-  var cbL = document.getElementById('waiver-liability');
-  var cbCo = document.getElementById('waiver-communication');
-  if (cbL)
-    cbL.addEventListener('change', function () {
-      if (!this.checked) {
-        this.disabled = true;
-        var it = document.getElementById('waiver-item-liability');
-        if (it) it.classList.remove('waiver-item--done');
-      }
-    });
-  if (cbCo)
-    cbCo.addEventListener('change', function () {
-      if (!this.checked) {
-        this.disabled = true;
-        var it = document.getElementById('waiver-item-communication');
-        if (it) it.classList.remove('waiver-item--done');
-      }
-    });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') {
-      closeWaiverModal('liability');
-      closeWaiverModal('communication');
-    }
-  });
-}
-
 function collectProfileFromForm() {
   var wl = document.getElementById('waiver-liability');
   var wc = document.getElementById('waiver-communication');
@@ -882,7 +766,8 @@ function collectProfileFromForm() {
     notes: notesEl ? notesEl.value.trim() : '',
     waiverLiabilityAccepted: !!(wl && wl.checked),
     waiverCommunicationAccepted: !!(wc && wc.checked),
-    rsvpWaiversSchema: RSVP_WAIVERS_SCHEMA,
+    rsvpWaiversSchema:
+      typeof OpenPlayWaiverUI !== 'undefined' ? OpenPlayWaiverUI.RSVP_WAIVERS_SCHEMA : '2',
   };
 }
 
@@ -987,8 +872,10 @@ function initRsvpProfileOnly() {
         if (p && SEOpenPlay.isProfileComplete(p)) {
           fillProfileSummaryBody(p);
           setRsvpProfileSummaryMode(true);
+          if (typeof OpenPlayWaiverUI !== 'undefined') OpenPlayWaiverUI.setMode('confirm');
         } else {
           setRsvpProfileSummaryMode(false);
+          if (typeof OpenPlayWaiverUI !== 'undefined') OpenPlayWaiverUI.setMode('full');
         }
         if (p) toggleMemberPay(document.getElementById('p-member').value);
       });
@@ -1194,7 +1081,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('coupon-input').addEventListener('keydown', e => { if(e.key==='Enter') applyCoupon(); });
   document.getElementById('pin-input').addEventListener('keydown', e => { if(e.key==='Enter') checkPin(); });
   updateSessionSummary();
-  wireWaiverModals();
+  if (typeof OpenPlayWaiverUI !== 'undefined' && OpenPlayWaiverUI.wire) OpenPlayWaiverUI.wire();
   initRsvpAuthGate(function () {
     initRsvpProfileOnly();
   });
@@ -1343,7 +1230,7 @@ function submitRSVP() {
       Email:      email,
       Phone:      phone,
       Firebase_UID: firebaseUid || 'none',
-      RSVP_Waivers_Schema: RSVP_WAIVERS_SCHEMA,
+      RSVP_Waivers_Schema: typeof OpenPlayWaiverUI !== 'undefined' ? OpenPlayWaiverUI.RSVP_WAIVERS_SCHEMA : '2',
       Liability_Waiver_Accepted: 'Yes',
       Communication_Waiver_Accepted: 'Yes',
       Waivers_Acknowledged_At_UTC: waiversAckIso,
@@ -1388,7 +1275,7 @@ function submitRSVP() {
         source: 'rsvp',
         memberCard: member === 'yes' ? (memberCard || '') : '',
         firebaseUid: firebaseUid || '',
-        rsvpWaiversSchema: RSVP_WAIVERS_SCHEMA,
+        rsvpWaiversSchema: typeof OpenPlayWaiverUI !== 'undefined' ? OpenPlayWaiverUI.RSVP_WAIVERS_SCHEMA : '2',
         liabilityWaiverAccepted: true,
         communicationWaiverAccepted: true,
         waiversAcknowledgedAtUtc: waiversAckIso,

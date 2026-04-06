@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "openplay_se": {
+      "rsvps": {
+        ".read": true,
+        ".write": true
+      },
+      "user_profiles": {
+        "$uid": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid"
+        }
+      }
+    }
+  }
+}

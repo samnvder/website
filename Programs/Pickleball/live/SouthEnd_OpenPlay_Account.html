@@ -48,7 +48,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 .auth-msg{font-size:11px;margin-top:8px;min-height:1.2em;}
 .auth-msg.err{color:#ff8888;}
 .auth-msg.ok{color:var(--neon);}
-.cta-block{margin-top:8px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);}
+.cta-block{margin-top:4px;padding-top:24px;border-top:1px solid rgba(255,255,255,.1);}
 .cta-primary{
   display:block;width:100%;padding:14px;background:var(--neon);color:var(--ink);font-family:'Oswald',sans-serif;
   font-size:18px;letter-spacing:.5px;text-transform:uppercase;border:none;border-radius:6px;cursor:pointer;font-weight:700;
@@ -61,9 +61,45 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 .no-firebase{font-size:12px;color:rgba(255,255,255,.55);line-height:1.5;margin-bottom:16px;}
 .profile-data-panel{
   background:rgba(0,255,136,.06);border:1.5px solid rgba(0,255,136,.2);
-  border-radius:8px;padding:16px 18px;margin-bottom:20px;
+  border-radius:10px;padding:22px 22px 24px;margin-bottom:24px;
 }
-.profile-lead{font-size:12px;color:rgba(255,255,255,.65);line-height:1.5;margin-bottom:14px;}
+.profile-lead{font-size:12px;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:20px;}
+/* Extra air in the “Your information” card only (not auth panel) */
+.profile-data-panel .auth-title{margin-bottom:14px;}
+.profile-data-panel .row.row-1{grid-template-columns:1fr;}
+.profile-data-panel .row{
+  gap:16px;
+  margin-bottom:20px;
+}
+.profile-data-panel > .field{margin-bottom:20px;}
+.profile-data-panel .field label{
+  display:block;
+  margin-bottom:8px;
+  line-height:1.35;
+}
+.profile-data-panel .field input,
+.profile-data-panel .field select,
+.profile-data-panel .field textarea{
+  width:100%;
+  padding:12px 14px;
+  min-height:44px;
+  background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(255,255,255,.1);
+  border-radius:6px;
+  font-family:'Barlow',sans-serif;
+  font-size:13px;
+  color:#fff;
+  outline:none;
+}
+.profile-data-panel .field textarea{
+  min-height:72px;
+  resize:vertical;
+  line-height:1.45;
+}
+.profile-data-panel .field select option{background:var(--navy-lt);}
+.profile-data-panel .field input:focus,
+.profile-data-panel .field select:focus,
+.profile-data-panel .field textarea:focus{border-color:var(--neon);}
 .field input,.field select,.field textarea{
   width:100%;padding:10px 13px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);
   border-radius:5px;font-family:'Barlow',sans-serif;font-size:13px;color:#fff;outline:none;
@@ -71,13 +107,68 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 .field select option{background:var(--navy-lt);}
 .field textarea{resize:vertical;min-height:52px;}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--neon);}
-.err-msg{font-size:10px;color:#ff8888;margin-top:4px;display:none;}
+.err-msg{font-size:10px;color:#ff8888;margin-top:6px;display:none;}
 .err-msg.show{display:block;}
 .field input.error,.field select.error,.field textarea.error{border-color:#ff6666;}
-.acc-email-ro{font-size:13px;color:rgba(255,255,255,.9);padding:10px 0;}
+.acc-email-ro{font-size:14px;color:rgba(255,255,255,.9);padding:12px 2px 4px;line-height:1.45;}
 .req{color:var(--neon);}
 .cta-primary.cta-disabled{opacity:.45;pointer-events:none;cursor:not-allowed;}
 .row-1{grid-template-columns:1fr;}
+.profile-data-panel .profile-save-actions{margin-top:18px;padding-top:4px;}
+.profile-data-panel .profile-save-actions .auth-btn{padding:11px 20px;}
+/* WAIVERS (same behavior as RSVP full mode) */
+.waiver-block{
+  background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.1);
+  border-radius:7px;padding:14px 16px;margin-bottom:20px;font-size:11px;color:rgba(255,255,255,.78);line-height:1.55;
+}
+.waiver-block.waiver-error{border-color:rgba(255,68,68,.45);}
+.waiver-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:10px;}
+.waiver-block .err-msg{margin-top:4px;margin-bottom:8px;}
+.waiver-intro{font-size:11px;color:rgba(255,255,255,.55);margin-bottom:12px;line-height:1.5;}
+.waiver-item{border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px 14px;margin-bottom:12px;background:rgba(255,255,255,.03);}
+.waiver-item.waiver-item--done{border-color:rgba(0,255,136,.25);}
+.waiver-item-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px;}
+.waiver-item-head input[type=checkbox]{width:18px;height:18px;margin-top:2px;accent-color:var(--neon);flex-shrink:0;}
+.waiver-item-head input[type=checkbox]:disabled{opacity:.35;cursor:not-allowed;}
+.waiver-item-label{font-family:'Oswald',sans-serif;font-size:13px;color:#fff;letter-spacing:.3px;text-transform:none;}
+.waiver-item-sum{font-size:10px;color:rgba(255,255,255,.5);line-height:1.45;margin-bottom:10px;}
+.waiver-open-btn{
+  display:inline-block;padding:8px 14px;border-radius:5px;border:1.5px solid var(--neon);background:rgba(0,255,136,.1);
+  color:var(--neon);font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;
+}
+.waiver-open-btn:hover{background:rgba(0,255,136,.18);}
+.waiver-modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:600;align-items:center;justify-content:center;padding:16px;
+}
+.waiver-modal-overlay.open{display:flex;}
+.waiver-modal-overlay--view-only .waiver-modal-agree{display:none;}
+.waiver-modal-overlay--view-only .waiver-scroll-hint{display:none;}
+.waiver-modal-box{
+  background:#0f1a2e;border:2px solid var(--neon);border-radius:12px;max-width:640px;width:100%;max-height:min(92vh,720px);
+  display:flex;flex-direction:column;box-shadow:0 0 48px rgba(0,255,136,.12);
+}
+.waiver-modal-head{
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.1);
+}
+.waiver-modal-head h2{font-family:'Oswald',sans-serif;font-size:17px;color:var(--neon);text-transform:uppercase;letter-spacing:.5px;margin:0;}
+.waiver-modal-close{
+  background:rgba(255,255,255,.08);border:none;color:#fff;width:36px;height:36px;border-radius:6px;font-size:22px;line-height:1;cursor:pointer;
+}
+.waiver-modal-close:hover{background:rgba(255,255,255,.14);}
+.waiver-modal-scroll{
+  flex:1;overflow-y:auto;padding:16px 18px;font-size:11px;color:rgba(255,255,255,.82);line-height:1.6;-webkit-overflow-scrolling:touch;
+}
+.waiver-modal-scroll h3{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--neon);margin:16px 0 8px;}
+.waiver-modal-scroll h3:first-child{margin-top:0;}
+.waiver-modal-scroll p{margin:0 0 10px;}
+.waiver-modal-footer{flex-shrink:0;padding:12px 16px 16px;border-top:1px solid rgba(255,255,255,.1);}
+.waiver-scroll-hint{font-size:10px;color:rgba(255,255,255,.45);margin:0 0 8px;}
+.waiver-modal-agree{
+  width:100%;padding:12px;border:none;border-radius:6px;background:var(--neon);color:var(--ink);font-family:'Oswald',sans-serif;
+  font-size:15px;font-weight:700;letter-spacing:.5px;cursor:pointer;
+}
+.waiver-modal-agree:disabled{opacity:.4;cursor:not-allowed;}
+.waiver-modal-agree:not(:disabled):hover{filter:brightness(1.06);}
 </style>
 </head>
 <body>
@@ -123,7 +214,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 
   <div class="profile-data-panel hidden" id="profile-data-panel">
     <div class="auth-title">Your information</div>
-    <p class="profile-lead">All fields below are required except where noted. Data is stored at <code style="font-size:10px;color:rgba(0,255,136,.7);">openplay_se/user_profiles/{your uid}</code>. Member access card is entered on RSVP when you reserve (not stored here).</p>
+    <p class="profile-lead">All fields below are required except where noted. Data is stored at <code style="font-size:10px;color:rgba(0,255,136,.7);">openplay_se/user_profiles/{your uid}</code>. Sign the liability and communications agreements below (same flow as RSVP). If you are a member, enter your access card # below (not stored in Firebase—RSVP will ask for it again when you reserve).</p>
     <div class="row row-2">
       <div class="field"><label>First name <span class="req">*</span></label><input type="text" id="acc-first" autocomplete="given-name" placeholder="First"><div class="err-msg" id="acc-err-first">Required.</div></div>
       <div class="field"><label>Last name <span class="req">*</span></label><input type="text" id="acc-last" autocomplete="family-name" placeholder="Last"><div class="err-msg" id="acc-err-last">Required.</div></div>
@@ -150,6 +241,13 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
       </select>
       <div class="err-msg" id="acc-err-member">Required.</div>
     </div>
+    <div class="row row-1 hidden" id="acc-member-card-row">
+      <div class="field">
+        <label>Member access card # <span class="req">*</span></label>
+        <input type="text" id="acc-member-card" placeholder="e.g. 212345" maxlength="6" pattern="[23][0-9]{5}" autocomplete="off" inputmode="numeric">
+        <div class="err-msg" id="acc-err-member-card">Enter a 6-digit number starting with 2 or 3.</div>
+      </div>
+    </div>
     <div class="row row-2">
       <div class="field">
         <label>How did you hear about us? <span style="color:rgba(255,255,255,.35);font-weight:400;text-transform:none">(optional)</span></label>
@@ -166,7 +264,31 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
       </div>
       <div class="field"><label>Notes <span style="color:rgba(255,255,255,.35);font-weight:400;text-transform:none">(optional)</span></label><textarea id="acc-notes" placeholder="Anything we should know."></textarea></div>
     </div>
-    <div class="auth-actions" style="margin-top:14px;">
+
+    <div class="waiver-block" id="waiver-block">
+      <div class="waiver-title">Agreements &amp; waivers <span class="req" style="color:var(--neon);">*</span></div>
+      <p class="waiver-intro">Open each agreement below, read the full text, and sign electronically. The checkboxes are enabled only after you agree in the pop-up.</p>
+      <div class="waiver-item" id="waiver-item-liability">
+        <div class="waiver-item-head">
+          <input type="checkbox" id="waiver-liability" disabled aria-required="true" aria-describedby="err-waiver-liability">
+          <span class="waiver-item-label">Liability release &amp; assumption of risk</span>
+        </div>
+        <p class="waiver-item-sum">Industry-standard release: assumption of risk, release of claims (including negligence, where permitted by law), medical fitness, indemnity, facility use, media, and related terms. You must read the full document.</p>
+        <button type="button" class="waiver-open-btn" id="waiver-btn-open-liability">Read full text &amp; sign</button>
+        <div class="err-msg" id="err-waiver-liability">Please read and sign the liability waiver to continue.</div>
+      </div>
+      <div class="waiver-item" id="waiver-item-communication">
+        <div class="waiver-item-head">
+          <input type="checkbox" id="waiver-communication" disabled aria-required="true" aria-describedby="err-waiver-communication">
+          <span class="waiver-item-label">Communications consent</span>
+        </div>
+        <p class="waiver-item-sum">Generic club consent for calls, emails, and text messages about programs, reservations, and related updates (with opt-out rights).</p>
+        <button type="button" class="waiver-open-btn" id="waiver-btn-open-communication">Read full text &amp; sign</button>
+        <div class="err-msg" id="err-waiver-communication">Please read and sign the communications consent to continue.</div>
+      </div>
+    </div>
+
+    <div class="auth-actions profile-save-actions">
       <button type="button" class="auth-btn auth-btn-primary" id="acc-save-profile">Save profile</button>
     </div>
     <div class="auth-msg" id="acc-profile-msg" role="status"></div>
@@ -177,8 +299,82 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   </div>
 </div>
 
+<!-- Full-text waiver modals (same copy as RSVP) -->
+<div id="waiver-modal-liability" class="waiver-modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="waiver-modal-liability-title">
+  <div class="waiver-modal-box" role="document">
+    <div class="waiver-modal-head">
+      <h2 id="waiver-modal-liability-title">Liability waiver &amp; release</h2>
+      <button type="button" class="waiver-modal-close" id="waiver-modal-liability-close" aria-label="Close">×</button>
+    </div>
+    <div class="waiver-modal-scroll" id="waiver-scroll-liability" tabindex="0">
+      <h3>Please read carefully</h3>
+      <p>By indicating your agreement at the end of this document, you are consenting to assumption of risk, a release of certain legal rights, and other binding terms, except where prohibited by law. If you do not agree, do not participate.</p>
+      <h3>Parties and activities</h3>
+      <p>I wish to participate in or attend pickleball and related athletic, recreational, and conditioning activities, including without limitation open play, leagues, clinics, lessons, tournaments, demonstrations, practice, social events, and use of courts, equipment, parking, walkways, locker rooms, and common areas (collectively, the &quot;Activities&quot;) at or through <strong>South End Racquet &amp; Health Club</strong> (the &quot;Club&quot;). The Club and its affiliates, owners, successors, subsidiaries, officers, directors, managers, members, employees, independent contractors, volunteers, instructors, coaches, referees, agents, sponsoring organizations, and insurers, and the owners and lessors of any premises used for the Activities (collectively, the &quot;Releasees&quot;) are intended third-party beneficiaries of this agreement.</p>
+      <h3>Risks</h3>
+      <p>I understand that the Activities are inherently hazardous. Risks include, without limitation: falls, trips, slips, dives, and collisions; contact or impact with the playing surface, nets, fences, walls, posts, doors, glass, dividers, benches, spectators, staff, or other participants; being struck by a ball, paddle, or other object; equipment failure or misuse; musculoskeletal injuries including sprains, strains, fractures, and concussions; overexertion; dehydration; heat-related illness; cardiac, circulatory, or neurological events; illness or complications from communicable disease; damage to or loss of personal property; and motor vehicle incidents in parking or access areas. Such risks may result in temporary or permanent injury, disability, or death. Releasees cannot eliminate all risks or guarantee safety.</p>
+      <h3>Voluntary assumption of risk</h3>
+      <p>I voluntarily elect to participate in the Activities with knowledge of the risks. I assume all risks, whether known or unknown, foreseeable or unforeseeable, that arise out of or relate to the Activities, my travel to or presence at the Club, the condition of facilities or equipment, or the acts or omissions of other persons, including other participants, spectators, or third parties.</p>
+      <h3>Release, waiver, and covenant not to sue</h3>
+      <p>To the fullest extent permitted by applicable law, I hereby release, acquit, waive, discharge, and covenant not to sue the Releasees from any and all claims, demands, actions, causes of action, judgments, liabilities, losses, or expenses (including attorneys&apos; fees) of any kind, whether known or unknown, arising out of or in any way connected with the Activities, my participation or observation, my use of the Club, or travel to or from the Club, including claims arising from the <strong>negligence, fault, or omissions</strong> of Releasees or others, and including claims for personal injury, illness, death, or property damage. I intend this release to be as broad and inclusive as the law allows. Nothing herein purports to release claims that cannot be released under applicable law (for example, certain claims based on gross negligence or willful misconduct where such limitations apply).</p>
+      <h3>Indemnification</h3>
+      <p>I agree to defend, indemnify, and hold harmless the Releasees from any loss, liability, damage, or cost (including reasonable attorneys&apos; fees) arising out of my participation, my breach of this agreement, my intoxication or use of prohibited substances where applicable, or claims brought by any other person (including a family member or minor) arising out of my conduct or registration.</p>
+      <h3>Medical fitness and insurance</h3>
+      <p>I represent that I am physically and mentally fit to participate and that I will not participate if impaired. I have obtained appropriate medical clearance or I voluntarily assume the risk of participation without it. I understand that Releasees do not provide medical insurance for me. I am solely responsible for any medical, ambulance, or hospital costs, and I am encouraged to maintain health and accident insurance.</p>
+      <h3>Equipment and property</h3>
+      <p>I am responsible for equipment I use or bring. I agree to reimburse the Club for damage to facilities or equipment caused by my reckless, intentional, or grossly negligent conduct.</p>
+      <h3>Emergency care</h3>
+      <p>I consent to emergency first aid, medical treatment, or transport as appropriate. I release Releasees from claims arising from such care except to the extent caused by willful misconduct.</p>
+      <h3>Photo, video, and likeness</h3>
+      <p>I grant the Club a non-exclusive, royalty-free license to capture, reproduce, and use my name, image, voice, and likeness in photographs, audio, or video for operational, promotional, training, or safety purposes, unless I submit a written opt-out where the Club offers one.</p>
+      <h3>Minors</h3>
+      <p>If I register a participant under 18, I am the parent or legal guardian; I enter this agreement on the minor&apos;s behalf; I consent to the minor&apos;s participation; and I agree to indemnify Releasees for claims brought by or on behalf of the minor.</p>
+      <h3>Rules and conduct</h3>
+      <p>I will comply with all posted rules, session director instructions, and staff directions. The Club may refuse or end participation for unsafe or disruptive behavior.</p>
+      <h3>Governing law and severability</h3>
+      <p>This agreement is governed by the laws of the state in which the Club is located, without regard to conflict-of-law principles. If any provision is held invalid, the remainder remains enforceable to the maximum extent permitted.</p>
+      <h3>Electronic signature</h3>
+      <p>I agree that selecting &quot;I have read and agree&quot; in this flow constitutes my electronic signature, that I have accessed and may retain a copy of this agreement, and that this agreement is binding.</p>
+    </div>
+    <div class="waiver-modal-footer">
+      <p class="waiver-scroll-hint" id="waiver-hint-liability">Scroll through the entire agreement to enable the button.</p>
+      <button type="button" class="waiver-modal-agree" id="waiver-agree-liability" disabled>I have read and agree to the above</button>
+    </div>
+  </div>
+</div>
+<div id="waiver-modal-communication" class="waiver-modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="waiver-modal-communication-title">
+  <div class="waiver-modal-box" role="document">
+    <div class="waiver-modal-head">
+      <h2 id="waiver-modal-communication-title">Communications consent</h2>
+      <button type="button" class="waiver-modal-close" id="waiver-modal-communication-close" aria-label="Close">×</button>
+    </div>
+    <div class="waiver-modal-scroll" id="waiver-scroll-communication" tabindex="0">
+      <h3>Please read carefully</h3>
+      <p>This is a <strong>generic club communications consent</strong> for transactional and promotional contact. Your club may customize procedures; consult counsel for compliance with TCPA, CAN-SPAM, and state privacy laws.</p>
+      <h3>Consent to be contacted</h3>
+      <p>By agreeing below, you consent to receive communications from <strong>South End Racquet &amp; Health Club</strong> and its service providers at the email address and telephone number(s) you provide, including via automated telephone dialing systems, prerecorded or artificial voice, SMS/MMS text messages, push notifications (if applicable), and email.</p>
+      <h3>Categories of messages</h3>
+      <p>Communications may include: (a) <strong>operational and transactional</strong> messages, such as reservation confirmations, cancellations, schedule changes, waitlist notices, check-in reminders, payment or billing notices, facility closures, and safety or policy updates; (b) <strong>account and service</strong> messages related to your participation in programs; and (c) where permitted, <strong>marketing or promotional</strong> messages about programs, events, membership offers, surveys, and club news.</p>
+      <h3>No purchase required</h3>
+      <p>Consent to marketing communications is not required to purchase goods or services, where applicable. Message frequency varies. <strong>Carrier message and data rates may apply</strong> for SMS.</p>
+      <h3>How to opt out</h3>
+      <p>You may opt out of promotional emails using the unsubscribe link where provided. You may opt out of promotional texts by following instructions in those messages (for example, replying <strong>STOP</strong>). You may also contact the club front desk to update preferences. Operational messages may continue where necessary to complete transactions or for legal or safety reasons.</p>
+      <h3>Use of contact information</h3>
+      <p>We use contact details to operate programs and communicate with you. We do not sell your personal information to unaffiliated third parties for their independent marketing without consent where required by law. No system is perfectly secure; we use reasonable safeguards.</p>
+      <h3>Electronic signature</h3>
+      <p>Selecting &quot;I have read and agree&quot; constitutes your electronic acceptance of this communications consent.</p>
+    </div>
+    <div class="waiver-modal-footer">
+      <p class="waiver-scroll-hint" id="waiver-hint-communication">Scroll through the entire consent to enable the button.</p>
+      <button type="button" class="waiver-modal-agree" id="waiver-agree-communication" disabled>I have read and agree to the above</button>
+    </div>
+  </div>
+</div>
+
 <script src="js/openplay-firebase-config.js"></script>
 <script src="js/south-end-openplay-sync.js"></script>
+<script src="js/openplay-rsvp-helpers.js"></script>
+<script src="js/openplay-waiver-modals.js"></script>
 <script src="js/openplay-profile-panel.js"></script>
 <script>
 function getReturnRsvpHref() {
@@ -233,10 +429,31 @@ function accClearErrors() {
   document.querySelectorAll('.profile-data-panel .err-msg').forEach(function (e) {
     e.classList.remove('show');
   });
-  ['acc-first', 'acc-last', 'acc-phone', 'acc-skill', 'acc-member'].forEach(function (id) {
+  var emc = document.getElementById('acc-err-member-card');
+  if (emc) emc.textContent = 'Enter a 6-digit number starting with 2 or 3.';
+  ['acc-first', 'acc-last', 'acc-phone', 'acc-skill', 'acc-member', 'acc-member-card'].forEach(function (id) {
     var el = document.getElementById(id);
     if (el) el.classList.remove('error');
   });
+  var wb = document.getElementById('waiver-block');
+  if (wb) wb.classList.remove('waiver-error');
+}
+
+/** Show member card row when member=yes (card is not saved to RTDB—validation only). */
+function accToggleMemberCard(val, silent) {
+  var row = document.getElementById('acc-member-card-row');
+  var cardInput = document.getElementById('acc-member-card');
+  var err = document.getElementById('acc-err-member-card');
+  if (!row) return;
+  if (val === 'yes') {
+    row.classList.remove('hidden');
+  } else {
+    row.classList.add('hidden');
+    if (cardInput) cardInput.value = '';
+    if (cardInput) cardInput.classList.remove('error');
+    if (err) err.classList.remove('show');
+  }
+  if (!silent) markAccountProfileDirty();
 }
 
 function accProfileComplete() {
@@ -245,10 +462,24 @@ function accProfileComplete() {
   var ph = (document.getElementById('acc-phone') && document.getElementById('acc-phone').value.trim()) || '';
   var sk = document.getElementById('acc-skill') && document.getElementById('acc-skill').value;
   var mem = document.getElementById('acc-member') && document.getElementById('acc-member').value;
-  return !!(f && l && ph && sk && mem);
+  var wl = document.getElementById('waiver-liability');
+  var wc = document.getElementById('waiver-communication');
+  if (!(f && l && ph && sk && mem)) return false;
+  if (!wl || !wl.checked || !wc || !wc.checked) return false;
+  if (mem === 'yes' && typeof OpenPlayRsvpHelpers !== 'undefined') {
+    var card = (document.getElementById('acc-member-card') && document.getElementById('acc-member-card').value.trim()) || '';
+    return OpenPlayRsvpHelpers.validateAccessCard('yes', card).ok;
+  }
+  return true;
 }
 
 function accCollectPatch() {
+  var wl = document.getElementById('waiver-liability');
+  var wc = document.getElementById('waiver-communication');
+  var schema =
+    typeof OpenPlayWaiverUI !== 'undefined' && OpenPlayWaiverUI.RSVP_WAIVERS_SCHEMA
+      ? OpenPlayWaiverUI.RSVP_WAIVERS_SCHEMA
+      : '2';
   return {
     firstName: document.getElementById('acc-first').value.trim(),
     lastName: document.getElementById('acc-last').value.trim(),
@@ -257,6 +488,9 @@ function accCollectPatch() {
     membership: document.getElementById('acc-member').value,
     hear: document.getElementById('acc-hear').value || '',
     notes: document.getElementById('acc-notes').value.trim() || '',
+    waiverLiabilityAccepted: !!(wl && wl.checked),
+    waiverCommunicationAccepted: !!(wc && wc.checked),
+    rsvpWaiversSchema: schema,
   };
 }
 
@@ -288,6 +522,33 @@ function accValidateAndShowErrors() {
     document.getElementById('acc-member').classList.add('error');
     document.getElementById('acc-err-member').classList.add('show');
     ok = false;
+  }
+  if (p.membership === 'yes' && typeof OpenPlayRsvpHelpers !== 'undefined') {
+    var card = (document.getElementById('acc-member-card') && document.getElementById('acc-member-card').value.trim()) || '';
+    var cc = OpenPlayRsvpHelpers.validateAccessCard('yes', card);
+    if (!cc.ok) {
+      var mic = document.getElementById('acc-member-card');
+      var ecard = document.getElementById('acc-err-member-card');
+      if (mic) mic.classList.add('error');
+      if (ecard) {
+        ecard.classList.add('show');
+        if (cc.message) ecard.textContent = cc.message;
+      }
+      ok = false;
+    }
+  }
+  var wl = document.getElementById('waiver-liability');
+  var wc = document.getElementById('waiver-communication');
+  var wblock = document.getElementById('waiver-block');
+  if (!wl || !wl.checked) {
+    if (document.getElementById('err-waiver-liability')) document.getElementById('err-waiver-liability').classList.add('show');
+    ok = false;
+    if (wblock) wblock.classList.add('waiver-error');
+  }
+  if (!wc || !wc.checked) {
+    if (document.getElementById('err-waiver-communication')) document.getElementById('err-waiver-communication').classList.add('show');
+    ok = false;
+    if (wblock) wblock.classList.add('waiver-error');
   }
   return ok;
 }
@@ -326,9 +587,17 @@ function loadAccountFormFromProfile(p) {
   if (p.lastName) document.getElementById('acc-last').value = p.lastName;
   if (p.phone) document.getElementById('acc-phone').value = p.phone;
   if (p.skill) document.getElementById('acc-skill').value = p.skill;
-  if (p.membership) document.getElementById('acc-member').value = p.membership;
+  if (p.membership) {
+    document.getElementById('acc-member').value = p.membership;
+    accToggleMemberCard(p.membership, true);
+  } else {
+    accToggleMemberCard('', true);
+  }
   if (p.hear) document.getElementById('acc-hear').value = p.hear;
   if (p.notes !== undefined && document.getElementById('acc-notes')) document.getElementById('acc-notes').value = p.notes || '';
+  if (typeof OpenPlayWaiverUI !== 'undefined' && OpenPlayWaiverUI.hydrateAccountWaivers) {
+    OpenPlayWaiverUI.hydrateAccountWaivers(p);
+  }
 }
 
 function initAccountPage() {
@@ -428,12 +697,27 @@ function initAccountPage() {
     }
   });
 
-  ['acc-first', 'acc-last', 'acc-phone', 'acc-skill', 'acc-member', 'acc-hear', 'acc-notes'].forEach(function (id) {
+  var accMem = document.getElementById('acc-member');
+  if (accMem) {
+    accMem.addEventListener('change', function () {
+      accToggleMemberCard(this.value);
+    });
+  }
+  ['acc-first', 'acc-last', 'acc-phone', 'acc-skill', 'acc-member', 'acc-hear', 'acc-notes', 'acc-member-card'].forEach(function (id) {
     var el = document.getElementById(id);
     if (!el) return;
     el.addEventListener('input', markAccountProfileDirty);
     el.addEventListener('change', markAccountProfileDirty);
   });
+  ['waiver-liability', 'waiver-communication'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('change', markAccountProfileDirty);
+  });
+
+  if (typeof OpenPlayWaiverUI !== 'undefined' && OpenPlayWaiverUI.wire) {
+    OpenPlayWaiverUI.wire();
+  }
 
   SEOpenPlay.onAuthStateChanged(function (user) {
     var formBlock = document.getElementById('auth-form-block');

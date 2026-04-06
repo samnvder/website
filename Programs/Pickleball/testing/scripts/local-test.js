@@ -23,6 +23,7 @@ const FILES = [
   'js/openplay-firebase-config.js',
   'js/openplay-firebase-config.example.js',
   'js/openplay-rsvp-helpers.js',
+  'js/openplay-waiver-modals.js',
   'js/openplay-testing-env.js',
 ];
 

@@ -30,20 +30,20 @@ describe('validateAccessCard', () => {
     assert.strictEqual(b.ok, false);
   });
 
-  it('passes when member yes and card is 5 digits starting with 2 or 3', () => {
-    assert.strictEqual(helpers.validateAccessCard('yes', '21234').ok, true);
-    assert.strictEqual(helpers.validateAccessCard('yes', ' 31234  ').ok, true);
-    assert.strictEqual(helpers.validateAccessCard('yes', '20000').ok, true);
-    assert.strictEqual(helpers.validateAccessCard('yes', '39999').ok, true);
+  it('passes when member yes and card is 6 digits starting with 2 or 3', () => {
+    assert.strictEqual(helpers.validateAccessCard('yes', '212345').ok, true);
+    assert.strictEqual(helpers.validateAccessCard('yes', ' 312345  ').ok, true);
+    assert.strictEqual(helpers.validateAccessCard('yes', '200000').ok, true);
+    assert.strictEqual(helpers.validateAccessCard('yes', '399999').ok, true);
   });
 
   it('fails when member yes and card is wrong length or prefix', () => {
-    assert.strictEqual(helpers.validateAccessCard('yes', '12345').ok, false);
-    assert.strictEqual(helpers.validateAccessCard('yes', '11234').ok, false);
-    assert.strictEqual(helpers.validateAccessCard('yes', '2123').ok, false);
-    assert.strictEqual(helpers.validateAccessCard('yes', '212345').ok, false);
+    assert.strictEqual(helpers.validateAccessCard('yes', '123456').ok, false);
+    assert.strictEqual(helpers.validateAccessCard('yes', '112345').ok, false);
+    assert.strictEqual(helpers.validateAccessCard('yes', '21234').ok, false);
+    assert.strictEqual(helpers.validateAccessCard('yes', '2123456').ok, false);
     assert.strictEqual(helpers.validateAccessCard('yes', 'abcde').ok, false);
-    var inv = helpers.validateAccessCard('yes', '12345');
+    var inv = helpers.validateAccessCard('yes', '123456');
     assert.strictEqual(inv.ok, false);
     assert.ok(inv.message);
   });

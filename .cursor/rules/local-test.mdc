@@ -55,6 +55,12 @@ Canonical path:
 
 ---
 
-## Production
+## Production / hosted testing site
 
-Deploy contents of **`Programs/Pickleball/live/`** (preserve `js/` paths next to the HTML files).
+Deploy **`Programs/Pickleball/live/`** via Firebase Hosting (`npm run deploy:openplay` from `Website/`). See **`auto-deploy-openplay-testing.mdc`** (always on) for sync + test + deploy after edits.
+
+---
+
+## Cache / “changes not showing” (Open Play)
+
+See **`openplay-testing-cache.mdc`** — testing-mode gating (`SE_OPENPLAY_TESTING`, `?se_test=1`, mirror `se_cb` on synced HTML), and why hard refresh alone is not always enough for `js/` assets.

@@ -19,7 +19,7 @@
    * @param {string} accessCardRaw - raw input (trimmed inside)
    * @returns {{ ok: boolean, field?: string, message?: string }}
    */
-  var ACCESS_CARD_RE = /^[23]\d{4}$/;
+  var ACCESS_CARD_RE = /^[23]\d{5}$/;
 
   function validateAccessCard(memberValue, accessCardRaw) {
     var t = (accessCardRaw || '').trim();
@@ -35,7 +35,7 @@
       return {
         ok: false,
         field: 'member-card',
-        message: 'Enter a 5-digit number starting with 2 or 3.',
+        message: 'Enter a 6-digit number starting with 2 or 3.',
       };
     }
     return { ok: true };

@@ -1,10 +1,11 @@
 /**
  * Firebase Realtime Database — enables RSVP → check-in sync across ALL devices.
  *
- * 1. Firebase Console → Build → Realtime Database → Create database.
- * 2. Project settings → Your apps → Web app → copy the config object fields.
- * 3. Paste apiKey, authDomain, databaseURL, projectId below (databaseURL must be the *.firebaseio.com URL).
- * 4. Deploy this file with the rest of the site (same path on RSVP + check-in pages).
+ * 1. Build → Realtime Database → Create database (required). Copy the URL shown at the top of the Data tab —
+ *    that string is databaseURL (often …-default-rtdb.<region>.firebasedatabase.app). The web app snippet
+ *    does not include it; paste it into databaseURL below.
+ * 2. Project settings → Your apps → Web app → copy apiKey, authDomain, projectId into this file.
+ * 3. Deploy with the site (same path on RSVP + check-in pages).
  *
  * Firebase Console → Authentication → Sign-in method → enable Email/Password (free tier).
  *
@@ -30,8 +31,8 @@
  * Auth + profiles require apiKey, authDomain, and databaseURL (same as RSVPs).
  */
 window.SE_OPENPLAY_FIREBASE = {
-  apiKey: '',
-  authDomain: '',
-  databaseURL: '',
-  projectId: '',
+  apiKey: 'AIzaSyAIpE6FIDlGPyIzsHPq77S0yCJBMVEK4Ak',
+  authDomain: 'pickleball-advanced-open-play.firebaseapp.com',
+  databaseURL: 'https://pickleball-advanced-open-play-default-rtdb.firebaseio.com',
+  projectId: 'pickleball-advanced-open-play',
 };
