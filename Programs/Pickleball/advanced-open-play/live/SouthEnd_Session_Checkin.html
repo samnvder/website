@@ -591,22 +591,8 @@ function accountPageHrefForCheckin() {
   return 'SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent(page);
 }
 
-/** staffEmails always read from window.SE_OPENPLAY_FIREBASE (config script) — do not delegate to SEOpenPlay first or a cached sync bundle can deny access while the config file is correct. */
-function isStaffEmailAllowed(user) {
-  var cfg = window.SE_OPENPLAY_FIREBASE || {};
-  var allow = Array.isArray(cfg.staffEmails) ? cfg.staffEmails : [];
-  if (!user || !user.email) return false;
-  var email = String(user.email).trim().toLowerCase();
-  if (!allow.length) return false; // fail-closed: require explicit staff allowlist
-  for (var i = 0; i < allow.length; i++) {
-    if (String(allow[i] || '').trim().toLowerCase() === email) return true;
-  }
-  return false;
-}
-
-/** Same rule as Account page: staffEmails in config OR openplay_se/admin_uids/{uid} in RTDB. */
+/** Admin-only rule: openplay_se/admin_uids/{uid} in RTDB. */
 function checkStaffAccessForCheckin(user) {
-  if (isStaffEmailAllowed(user)) return Promise.resolve(true);
   if (typeof SEOpenPlay !== 'undefined' && SEOpenPlay.loadAdminUidFlag) {
     return SEOpenPlay.loadAdminUidFlag(user.uid);
   }
@@ -642,12 +628,12 @@ function initCheckinAuthGate() {
             alert(
               'Check-in access denied.\n\nYou are signed in as:\n' +
                 signedInAs +
-                '\n\nThat address must exactly match an entry in staffEmails in js/openplay-firebase-config.js (then redeploy), or set openplay_se/admin_uids/' +
+                '\n\nSet openplay_se/admin_uids/' +
                 user.uid +
-                ' = true in Realtime Database.\n\nIf you just edited the config file, hard-refresh (Ctrl+Shift+R) or redeploy so the browser loads the new list.'
+                ' = true in Realtime Database.'
             );
             window.location.replace(accountPageHrefForCheckin());
-            reject(new Error('Staff allowlist blocked account'));
+            reject(new Error('Admin UID required'));
             return;
           }
           done = true;

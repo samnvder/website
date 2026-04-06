@@ -21,13 +21,14 @@ Deployable static app: RSVP, account/calendar hub, session check-in, shared `js/
 | `SouthEnd_OpenPlay_Account.html` | Sign-in / sign-up / profile editor / calendar hub with RSVP management |
 | `SouthEnd_Session_RSVP.html` | Session RSVP form, duplicate prevention, manage RSVPs modal |
 | `SouthEnd_Session_Checkin.html` | Staff check-in roster, QR scan, brackets, bulk actions |
+| `SouthEnd_Admin_Activity.html` | Staff-admin activity feed (registrations, cancellations, profile edits, waiver events) with filters and CSV export |
 
 ## Shared JS modules (`live/js/`)
 
 | File | Role |
 |------|------|
-| `openplay-firebase-config.js` | Firebase project config (API key, Auth domain, RTDB URL, staff emails) |
-| `south-end-openplay-sync.js` | PIN, queue, Firebase init, Auth, profiles, RTDB sync (`subscribeRsvps`, `subscribeMyRsvps`, `pushRsvpToFirebase`, `deleteMyRsvp`, `stableRsvpPlayerId`) |
+| `openplay-firebase-config.js` | Firebase project config (API key, Auth domain, RTDB URL; optional legacy email allowlist field) |
+| `south-end-openplay-sync.js` | PIN, queue, Firebase init, Auth, profiles, RTDB sync (`subscribeRsvps`, `subscribeMyRsvps`, `pushRsvpToFirebase`, `deleteMyRsvp`, `stableRsvpPlayerId`), activity logging (`openplay_se/activity`) |
 | `openplay-profile-panel.js` | Floating profile icon + modal when signed in |
 | `openplay-rsvp-helpers.js` | Member card validation, session helpers |
 | `openplay-waiver-modals.js` | Liability + communications consent modals |

@@ -8,8 +8,8 @@ window.SE_OPENPLAY_FIREBASE = {
   databaseURL: 'https://your-project-id-default-rtdb.firebaseio.com',
   projectId: 'your-project-id',
   staffEmails: [
-    // Required for check-in access in hardened mode (exact lowercase emails).
-    // If this list is empty, check-in access is blocked.
+    // Legacy optional email allowlist for custom gates.
+    // Admin-only pages use openplay_se/admin_uids/{uid} in RTDB.
     // 'staff1@southendclub.com',
     // 'staff2@southendclub.com',
   ],

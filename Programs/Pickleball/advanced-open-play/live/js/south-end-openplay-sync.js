@@ -14,6 +14,7 @@
   var FB_PATH = 'openplay_se/rsvps';
   var USER_PROFILE_PATH = 'openplay_se/user_profiles';
   var ADMIN_UIDS_PATH = 'openplay_se/admin_uids';
+  var ACTIVITY_PATH = 'openplay_se/activity';
 
   var SE_OPENPLAY_FIREBASE = Object.assign(
     { apiKey: '', authDomain: '', databaseURL: '', projectId: '' },
@@ -169,7 +170,25 @@
 
   function deleteMyRsvp(pid) {
     if (!firebaseDb || !pid) return Promise.reject(new Error('Missing database or pid'));
-    return firebaseDb.ref(FB_PATH + '/' + String(pid)).remove();
+    var pidStr = String(pid);
+    var ref = firebaseDb.ref(FB_PATH + '/' + pidStr);
+    return ref.once('value').then(function (snap) {
+      var row = snap.val() || null;
+      return ref.remove().then(function () {
+        if (!row) return;
+        var nm = splitName(String(row.name || ''));
+        return logActivity('registration_cancelled', {
+          source: 'rsvp',
+          targetUid: String(row.firebaseUid || ''),
+          targetEmail: String(row.email || ''),
+          firstName: nm.firstName,
+          lastName: nm.lastName,
+          session: String(row.session || ''),
+          pid: pidStr,
+          details: 'RSVP cancelled',
+        });
+      });
+    });
   }
 
   function timeSlotLabel(slot) {
@@ -278,7 +297,17 @@
   function signUpEmail(email, password) {
     return initFirebase().then(function () {
       if (!firebaseAuth) throw new Error('Firebase unavailable');
-      return firebaseAuth.createUserWithEmailAndPassword(email, password);
+      return firebaseAuth.createUserWithEmailAndPassword(email, password).then(function (cred) {
+        var u = cred && cred.user ? cred.user : null;
+        return logActivity('account_created', {
+          source: 'account',
+          targetUid: String((u && u.uid) || ''),
+          targetEmail: String((u && u.email) || email || ''),
+          details: 'Email/password account created',
+        }).then(function () {
+          return cred;
+        });
+      });
     });
   }
 
@@ -307,6 +336,68 @@
     return firebaseAuth ? firebaseAuth.currentUser : null;
   }
 
+  function splitName(fullName) {
+    var t = String(fullName || '').trim();
+    if (!t) return { firstName: '', lastName: '' };
+    var p = t.split(/\s+/);
+    return {
+      firstName: p[0] || '',
+      lastName: p.length > 1 ? p.slice(1).join(' ') : '',
+    };
+  }
+
+  function normalizeActivityNameKey(firstName, lastName, email) {
+    return String(
+      [String(firstName || '').trim(), String(lastName || '').trim(), String(email || '').trim()]
+        .join(' ')
+        .toLowerCase()
+    );
+  }
+
+  function logActivity(type, data) {
+    return initFirebase().then(function () {
+      if (!firebaseDb || !global.firebase) return false;
+      var u = getCurrentUser();
+      if (!u) return false;
+      var d = data || {};
+      var firstName = String(d.firstName || '').trim();
+      var lastName = String(d.lastName || '').trim();
+      var targetEmail = String(d.targetEmail || u.email || '').trim();
+      var payload = {
+        ts: global.firebase.database.ServerValue.TIMESTAMP,
+        type: String(type || 'event'),
+        source: String(d.source || 'web'),
+        actorUid: String(u.uid || ''),
+        actorEmail: String(u.email || ''),
+        targetUid: String(d.targetUid || u.uid || ''),
+        targetEmail: targetEmail,
+        firstName: firstName,
+        lastName: lastName,
+        nameKey: normalizeActivityNameKey(firstName, lastName, targetEmail),
+        session: String(d.session || ''),
+        pid: String(d.pid || ''),
+        details: String(d.details || ''),
+      };
+      if (Array.isArray(d.changedFields)) payload.changedFields = d.changedFields.slice(0, 40);
+      if (d.waiverLiabilityAccepted === true || d.waiverLiabilityAccepted === false) {
+        payload.waiverLiabilityAccepted = !!d.waiverLiabilityAccepted;
+      }
+      if (d.waiverCommunicationAccepted === true || d.waiverCommunicationAccepted === false) {
+        payload.waiverCommunicationAccepted = !!d.waiverCommunicationAccepted;
+      }
+      if (d.rsvpWaiversSchema) payload.rsvpWaiversSchema = String(d.rsvpWaiversSchema);
+      return firebaseDb
+        .ref(ACTIVITY_PATH)
+        .push(payload)
+        .then(function () {
+          return true;
+        })
+        .catch(function () {
+          return false;
+        });
+    });
+  }
+
   /**
    * Saves profile fields.
    * New fields: add to payload here and to PROFILE_FIELD_DEFS in `openplay-profile-panel.js`.
@@ -329,7 +420,31 @@
       waiversAcknowledgedAt: global.firebase.database.ServerValue.TIMESTAMP,
       updatedAt: global.firebase.database.ServerValue.TIMESTAMP,
     };
-    return ref.update(payload);
+    return ref.update(payload).then(function () {
+      var changed = [
+        'firstName',
+        'lastName',
+        'phone',
+        'skill',
+        'membership',
+        'memberCard',
+        'hear',
+        'notes',
+        'waiverLiabilityAccepted',
+        'waiverCommunicationAccepted',
+      ];
+      return logActivity('profile_saved', {
+        source: 'account',
+        targetUid: String(uid),
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        changedFields: changed,
+        waiverLiabilityAccepted: payload.waiverLiabilityAccepted,
+        waiverCommunicationAccepted: payload.waiverCommunicationAccepted,
+        rsvpWaiversSchema: payload.rsvpWaiversSchema,
+        details: 'Full profile save',
+      });
+    });
   }
 
   /**
@@ -347,7 +462,66 @@
       if (patch.waiverLiabilityAccepted === true || patch.waiverCommunicationAccepted === true) {
         o.waiversAcknowledgedAt = global.firebase.database.ServerValue.TIMESTAMP;
       }
-      return ref.update(o);
+      return ref.update(o).then(function () {
+        var changed = Object.keys(patch).filter(function (k) {
+          return k !== 'updatedAt' && k !== 'waiversAcknowledgedAt';
+        });
+        var firstName = patch.firstName;
+        var lastName = patch.lastName;
+        if (firstName == null || lastName == null) {
+          return loadUserProfile(uid).then(function (p) {
+            var prof = p || {};
+            return logActivity('profile_updated', {
+              source: 'account',
+              targetUid: String(uid),
+              firstName: firstName == null ? String(prof.firstName || '') : String(firstName || ''),
+              lastName: lastName == null ? String(prof.lastName || '') : String(lastName || ''),
+              changedFields: changed,
+              waiverLiabilityAccepted: patch.waiverLiabilityAccepted,
+              waiverCommunicationAccepted: patch.waiverCommunicationAccepted,
+              rsvpWaiversSchema: patch.rsvpWaiversSchema || prof.rsvpWaiversSchema,
+              details: 'Profile patch save',
+            }).then(function () {
+              if (patch.waiverLiabilityAccepted === true || patch.waiverCommunicationAccepted === true) {
+                return logActivity('waiver_signed', {
+                  source: 'account',
+                  targetUid: String(uid),
+                  firstName: String(prof.firstName || ''),
+                  lastName: String(prof.lastName || ''),
+                  waiverLiabilityAccepted: patch.waiverLiabilityAccepted,
+                  waiverCommunicationAccepted: patch.waiverCommunicationAccepted,
+                  rsvpWaiversSchema: patch.rsvpWaiversSchema || prof.rsvpWaiversSchema,
+                  details: 'Waiver acceptance updated',
+                });
+              }
+            });
+          });
+        }
+        return logActivity('profile_updated', {
+          source: 'account',
+          targetUid: String(uid),
+          firstName: String(firstName || ''),
+          lastName: String(lastName || ''),
+          changedFields: changed,
+          waiverLiabilityAccepted: patch.waiverLiabilityAccepted,
+          waiverCommunicationAccepted: patch.waiverCommunicationAccepted,
+          rsvpWaiversSchema: patch.rsvpWaiversSchema,
+          details: 'Profile patch save',
+        }).then(function () {
+          if (patch.waiverLiabilityAccepted === true || patch.waiverCommunicationAccepted === true) {
+            return logActivity('waiver_signed', {
+              source: 'account',
+              targetUid: String(uid),
+              firstName: String(firstName || ''),
+              lastName: String(lastName || ''),
+              waiverLiabilityAccepted: patch.waiverLiabilityAccepted,
+              waiverCommunicationAccepted: patch.waiverCommunicationAccepted,
+              rsvpWaiversSchema: patch.rsvpWaiversSchema,
+              details: 'Waiver acceptance updated',
+            });
+          }
+        });
+      });
     });
   }
 
@@ -387,9 +561,25 @@
   function pushRsvpToFirebase(record) {
     if (!firebaseDb || !record || !record.pid || !global.firebase) return Promise.resolve();
     try {
+      var ref = firebaseDb.ref(FB_PATH + '/' + record.pid);
       var copy = JSON.parse(JSON.stringify(record));
       copy.updatedAt = global.firebase.database.ServerValue.TIMESTAMP;
-      return firebaseDb.ref(FB_PATH + '/' + record.pid).update(copy);
+      return ref.once('value').then(function (snap) {
+        var existed = snap.exists();
+        return ref.update(copy).then(function () {
+          var nm = splitName(String(copy.name || ''));
+          return logActivity(existed ? 'registration_updated' : 'registration_created', {
+            source: 'rsvp',
+            targetUid: String(copy.firebaseUid || ''),
+            targetEmail: String(copy.email || ''),
+            firstName: nm.firstName,
+            lastName: nm.lastName,
+            session: String(copy.session || ''),
+            pid: String(copy.pid || ''),
+            details: existed ? 'RSVP row updated' : 'New RSVP created',
+          });
+        });
+      });
     } catch (e) {
       console.warn('[SEOpenPlay] pushRsvpToFirebase failed:', e);
       return Promise.resolve();
@@ -455,8 +645,8 @@
   }
 
   /**
-   * Staff check-in allowlist from openplay-firebase-config.js (same as Session Check-in page).
-   * Fail-closed when staffEmails is empty.
+   * Legacy email allowlist helper from openplay-firebase-config.js.
+   * Current admin-only pages use openplay_se/admin_uids/{uid} in RTDB.
    */
   function isStaffEmailAllowed(user) {
     var cfg =
@@ -496,6 +686,7 @@
     FB_PATH: FB_PATH,
     USER_PROFILE_PATH: USER_PROFILE_PATH,
     ADMIN_UIDS_PATH: ADMIN_UIDS_PATH,
+    ACTIVITY_PATH: ACTIVITY_PATH,
     migratePin: migratePin,
     getPin: getPin,
     setPin: setPin,
@@ -530,6 +721,7 @@
     saveUserProfile: saveUserProfile,
     saveUserProfilePatch: saveUserProfilePatch,
     loadUserProfile: loadUserProfile,
+    logActivity: logActivity,
     isProfileComplete: isProfileComplete,
     isStaffEmailAllowed: isStaffEmailAllowed,
     loadAdminUidFlag: loadAdminUidFlag,

@@ -20,6 +20,13 @@
           ".read": "auth != null && $uid === auth.uid",
           ".write": "auth != null && $uid === auth.uid"
         }
+      },
+      "activity": {
+        ".indexOn": ["ts", "type", "targetUid", "targetEmail", "nameKey"],
+        ".read": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
+        "$eventId": {
+          ".write": "auth != null && ((root.child('openplay_se/admin_uids/' + auth.uid).val() === true) || (!data.exists() && newData.exists() && newData.child('actorUid').val() === auth.uid && newData.child('targetUid').val() === auth.uid))"
+        }
       }
     }
   }

@@ -17,6 +17,7 @@ So **`live/`** is the deploy root (site root on Hosting). There is no separate c
 | Account (sign-in / profile / calendar hub) | `https://pickleball-advanced-open-play.web.app/SouthEnd_OpenPlay_Account.html` |
 | RSVP | `https://pickleball-advanced-open-play.web.app/SouthEnd_Session_RSVP.html` |
 | Session check-in (staff) | `https://pickleball-advanced-open-play.web.app/SouthEnd_Session_Checkin.html` |
+| Admin activity (staff admin UID) | `https://pickleball-advanced-open-play.web.app/SouthEnd_Admin_Activity.html` |
 
 Same paths work on **`https://pickleball-advanced-open-play.firebaseapp.com/...`**.
 
@@ -27,6 +28,7 @@ Same paths work on **`https://pickleball-advanced-open-play.firebaseapp.com/...`
 | `SouthEnd_OpenPlay_Account.html` | Sign-in / sign-up / profile / calendar hub / RSVP management |
 | `SouthEnd_Session_RSVP.html` | Session RSVP form, duplicate prevention, manage RSVPs modal |
 | `SouthEnd_Session_Checkin.html` | Staff check-in roster, QR scan, brackets, bulk actions |
+| `SouthEnd_Admin_Activity.html` | Staff-admin event log with filtering/sorting/export |
 | `js/openplay-firebase-config.js` | Firebase project config (API key, Auth domain, RTDB URL, staff emails) |
 | `js/south-end-openplay-sync.js` | Firebase init, Auth, RTDB sync, `stableRsvpPlayerId`, `subscribeMyRsvps`, `deleteMyRsvp` |
 | `js/openplay-profile-panel.js` | Floating profile icon + read-only modal |

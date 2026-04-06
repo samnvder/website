@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="js/openplay-testing-env.js"></script>
+<title>Admin Activity — South End Open Play</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0a1628;--navy-lt:#152342;--electric:#a855f7;--neon:#00ff88;--ink:#0a0a1a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-height:100vh;}
+.header{background:var(--navy-lt);padding:18px 28px 14px;border-bottom:3px solid var(--neon);}
+.hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--neon);margin-bottom:3px;}
+.hdr-title{font-family:'Oswald',sans-serif;font-size:24px;color:#fff;letter-spacing:1px;text-transform:uppercase;line-height:1;}
+.hdr-title span{color:var(--neon);}
+.hdr-sub{font-size:10px;color:rgba(255,255,255,.65);margin-top:4px;}
+.body-wrap{max-width:1180px;margin:0 auto;padding:22px 20px 40px;}
+.top-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+.status{font-size:12px;color:rgba(255,255,255,.78);}
+.status strong{color:#fff;}
+.back-link{font-size:12px;color:var(--electric);text-decoration:none;}
+.back-link:hover{text-decoration:underline;}
+.panel{background:rgba(0,255,136,.05);border:1.5px solid rgba(0,255,136,.18);border-radius:10px;padding:16px;}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:10px;margin-bottom:14px;}
+@media(max-width:960px){.filters{grid-template-columns:1fr 1fr;}}
+.field label{display:block;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:5px;}
+.field input,.field select{
+  width:100%;padding:10px 12px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:6px;color:#fff;font-family:'Barlow',sans-serif;font-size:13px;outline:none;
+}
+.field input:focus,.field select:focus{border-color:var(--neon);}
+.field select option{background:var(--navy-lt);}
+.btn{
+  align-self:end;padding:10px 14px;border-radius:6px;border:none;cursor:pointer;
+  font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.4px;
+}
+.btn-neon{background:var(--neon);color:var(--ink);}
+.btn-ghost{background:transparent;color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.2);}
+.meta{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+.meta .small{font-size:11px;color:rgba(255,255,255,.5);}
+.table-wrap{overflow:auto;border:1px solid rgba(255,255,255,.12);border-radius:8px;}
+table{width:100%;border-collapse:collapse;min-width:980px;}
+th,td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;vertical-align:top;}
+th{
+  position:sticky;top:0;background:rgba(10,22,40,.95);z-index:1;font-size:10px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--neon);
+}
+td{font-size:12px;color:rgba(255,255,255,.9);line-height:1.4;}
+tr:hover td{background:rgba(255,255,255,.03);}
+.mono{font-family:ui-monospace,'Consolas',monospace;font-size:11px;color:rgba(0,255,136,.9);}
+.pill{
+  display:inline-block;padding:2px 7px;border-radius:999px;font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.04em;background:rgba(255,255,255,.08);color:#fff;
+}
+.pill.type-registration_created,.pill.type-registration_updated{background:rgba(0,255,136,.16);color:var(--neon);}
+.pill.type-registration_cancelled{background:rgba(255,80,80,.16);color:#ff9a9a;}
+.pill.type-account_created{background:rgba(96,165,250,.2);color:#bfdbfe;}
+.pill.type-profile_saved,.pill.type-profile_updated{background:rgba(168,85,247,.16);color:#d8b4fe;}
+.pill.type-waiver_signed{background:rgba(245,158,11,.18);color:#fde68a;}
+.empty{padding:26px;text-align:center;color:rgba(255,255,255,.55);}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+  <div class="hdr-title">Admin <span>Activity</span></div>
+  <div class="hdr-sub">Staff-only event feed for RSVP, account, waiver, and cancellation activity.</div>
+</div>
+
+<div class="body-wrap">
+  <div class="top-row">
+    <div class="status" id="auth-status">Checking staff access...</div>
+    <a class="back-link" href="SouthEnd_OpenPlay_Account.html">← Back to account</a>
+  </div>
+
+  <div class="panel">
+    <div class="filters">
+      <div class="field">
+        <label>Search name / email / session / pid</label>
+        <input id="flt-search" type="text" placeholder="Sam Nader, email, Tuesday Evening, PID...">
+      </div>
+      <div class="field">
+        <label>Event type</label>
+        <select id="flt-type">
+          <option value="">All types</option>
+          <option value="registration_created">Registration created</option>
+          <option value="registration_updated">Registration updated</option>
+          <option value="registration_cancelled">Registration cancelled</option>
+          <option value="account_created">Account created</option>
+          <option value="profile_saved">Profile saved</option>
+          <option value="profile_updated">Profile updated</option>
+          <option value="waiver_signed">Waiver signed</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>From (date)</label>
+        <input id="flt-from" type="date">
+      </div>
+      <div class="field">
+        <label>To (date)</label>
+        <input id="flt-to" type="date">
+      </div>
+      <div class="field">
+        <label>Sort</label>
+        <select id="flt-sort">
+          <option value="new">Newest first</option>
+          <option value="old">Oldest first</option>
+          <option value="name">Name A-Z</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="meta">
+      <div class="small" id="meta-count">0 events</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" type="button" id="btn-clear">Clear filters</button>
+        <button class="btn btn-neon" type="button" id="btn-export">Export CSV</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table aria-label="Admin activity table">
+        <thead>
+          <tr>
+            <th>When</th>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Session</th>
+            <th>PID</th>
+            <th>Actor UID</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody id="activity-body">
+          <tr><td colspan="8" class="empty">Waiting for activity data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="js/openplay-firebase-config.js"></script>
+<script src="js/south-end-openplay-sync.js"></script>
+<script>
+var rawRows = [];
+var renderedRows = [];
+var activityRef = null;
+var activityAuthDone = false;
+
+function esc(v) {
+  var d = document.createElement('div');
+  d.textContent = v == null ? '' : String(v);
+  return d.innerHTML;
+}
+function toMs(v) {
+  var n = Number(v || 0);
+  return isNaN(n) ? 0 : n;
+}
+function fmtDate(ts) {
+  var ms = toMs(ts);
+  if (!ms) return '—';
+  return new Date(ms).toLocaleString();
+}
+function norm(s) {
+  return String(s == null ? '' : s).trim().toLowerCase();
+}
+function dateStartMs(yyyyMmDd) {
+  if (!yyyyMmDd) return 0;
+  var d = new Date(yyyyMmDd + 'T00:00:00');
+  return isNaN(d.getTime()) ? 0 : d.getTime();
+}
+function dateEndMs(yyyyMmDd) {
+  if (!yyyyMmDd) return 0;
+  var d = new Date(yyyyMmDd + 'T23:59:59');
+  return isNaN(d.getTime()) ? 0 : d.getTime();
+}
+function buildSearchBlob(r) {
+  return norm([
+    r.firstName,
+    r.lastName,
+    r.targetEmail,
+    r.session,
+    r.pid,
+    r.details,
+    r.type,
+  ].join(' '));
+}
+function applyFilters() {
+  var search = norm(document.getElementById('flt-search').value);
+  var type = document.getElementById('flt-type').value;
+  var fromMs = dateStartMs(document.getElementById('flt-from').value);
+  var toMsVal = dateEndMs(document.getElementById('flt-to').value);
+  var sort = document.getElementById('flt-sort').value;
+
+  var list = rawRows.filter(function (r) {
+    if (type && r.type !== type) return false;
+    var ts = toMs(r.ts);
+    if (fromMs && ts < fromMs) return false;
+    if (toMsVal && ts > toMsVal) return false;
+    if (search && buildSearchBlob(r).indexOf(search) === -1) return false;
+    return true;
+  });
+
+  if (sort === 'old') {
+    list.sort(function (a, b) { return toMs(a.ts) - toMs(b.ts); });
+  } else if (sort === 'name') {
+    list.sort(function (a, b) {
+      var an = norm((a.lastName || '') + ' ' + (a.firstName || ''));
+      var bn = norm((b.lastName || '') + ' ' + (b.firstName || ''));
+      if (an < bn) return -1;
+      if (an > bn) return 1;
+      return toMs(b.ts) - toMs(a.ts);
+    });
+  } else {
+    list.sort(function (a, b) { return toMs(b.ts) - toMs(a.ts); });
+  }
+
+  renderedRows = list;
+  renderTable();
+}
+function renderTable() {
+  var body = document.getElementById('activity-body');
+  if (!body) return;
+  document.getElementById('meta-count').textContent = renderedRows.length + ' event' + (renderedRows.length === 1 ? '' : 's');
+  if (!renderedRows.length) {
+    body.innerHTML = '<tr><td colspan="8" class="empty">No events match your filters.</td></tr>';
+    return;
+  }
+  body.innerHTML = renderedRows.map(function (r) {
+    var fullName = (String(r.firstName || '').trim() + ' ' + String(r.lastName || '').trim()).trim() || '—';
+    return (
+      '<tr>' +
+      '<td>' + esc(fmtDate(r.ts)) + '</td>' +
+      '<td><span class="pill type-' + esc(r.type || '') + '">' + esc(r.type || 'event') + '</span></td>' +
+      '<td>' + esc(fullName) + '</td>' +
+      '<td>' + esc(r.targetEmail || '—') + '</td>' +
+      '<td>' + esc(r.session || '—') + '</td>' +
+      '<td class="mono">' + esc(r.pid || '—') + '</td>' +
+      '<td class="mono">' + esc(r.actorUid || '—') + '</td>' +
+      '<td>' + esc(r.details || '—') + '</td>' +
+      '</tr>'
+    );
+  }).join('');
+}
+function exportCsv() {
+  var rows = renderedRows.slice();
+  if (!rows.length) return;
+  var cols = ['ts', 'type', 'firstName', 'lastName', 'targetEmail', 'session', 'pid', 'actorUid', 'details', 'changedFields', 'waiverLiabilityAccepted', 'waiverCommunicationAccepted', 'rsvpWaiversSchema'];
+  function q(v) {
+    var s = v == null ? '' : String(v);
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  var out = [cols.join(',')];
+  rows.forEach(function (r) {
+    out.push(cols.map(function (k) {
+      var v = r[k];
+      if (Array.isArray(v)) v = v.join('|');
+      if (k === 'ts') v = fmtDate(v);
+      return q(v);
+    }).join(','));
+  });
+  var blob = new Blob([out.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  var stamp = new Date().toISOString().replace(/[:T]/g, '-').slice(0, 16);
+  a.download = 'openplay-admin-activity-' + stamp + '.csv';
+  a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
+}
+function setStatus(html) {
+  var el = document.getElementById('auth-status');
+  if (el) el.innerHTML = html;
+}
+function attachUi() {
+  ['flt-search', 'flt-type', 'flt-from', 'flt-to', 'flt-sort'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', applyFilters);
+    el.addEventListener('change', applyFilters);
+  });
+  document.getElementById('btn-clear').addEventListener('click', function () {
+    document.getElementById('flt-search').value = '';
+    document.getElementById('flt-type').value = '';
+    document.getElementById('flt-from').value = '';
+    document.getElementById('flt-to').value = '';
+    document.getElementById('flt-sort').value = 'new';
+    applyFilters();
+  });
+  document.getElementById('btn-export').addEventListener('click', exportCsv);
+}
+function subscribeActivityFeed() {
+  var db = SEOpenPlay.getFirebaseDb && SEOpenPlay.getFirebaseDb();
+  if (!db) return;
+  if (activityRef) activityRef.off();
+  activityRef = db.ref(SEOpenPlay.ACTIVITY_PATH || 'openplay_se/activity').orderByChild('ts').limitToLast(2000);
+  activityRef.on('value', function (snap) {
+    var val = snap.val() || {};
+    rawRows = Object.keys(val).map(function (k) {
+      var row = val[k] || {};
+      row._id = k;
+      return row;
+    });
+    applyFilters();
+  }, function (err) {
+    var msg = (err && err.message) ? String(err.message) : 'Permission denied while reading activity.';
+    setStatus('Could not read activity feed. ' + esc(msg));
+    alert(
+      'Activity read failed.\n\n' +
+      msg +
+      '\n\nActivity is admin-only. Add openplay_se/admin_uids/{uid}=true for this user.'
+    );
+  });
+}
+
+function accountPageHrefForActivity() {
+  var page = 'SouthEnd_Admin_Activity.html';
+  try {
+    var seg = (window.location.pathname || '').split('/').filter(Boolean).pop();
+    if (seg && /\.html?$/i.test(seg)) page = seg;
+  } catch (e) {}
+  return 'SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent(page);
+}
+
+/** Admin-only rule: openplay_se/admin_uids/{uid} in RTDB. */
+function checkStaffAccessForActivity(user) {
+  if (typeof SEOpenPlay !== 'undefined' && SEOpenPlay.loadAdminUidFlag) {
+    return SEOpenPlay.loadAdminUidFlag(user.uid);
+  }
+  return Promise.resolve(false);
+}
+
+function initActivityAuthGate() {
+  if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()) {
+    alert('Activity requires Firebase auth configuration. Add js/openplay-firebase-config.js first.');
+    window.location.replace(accountPageHrefForActivity());
+    return Promise.reject(new Error('Firebase auth/config required'));
+  }
+  return SEOpenPlay.initFirebase().then(function () {
+    return new Promise(function (resolve, reject) {
+      var pending = false;
+      SEOpenPlay.onAuthStateChanged(function (user) {
+        if (activityAuthDone) return;
+        if (!user) {
+          activityAuthDone = true;
+          window.location.replace(accountPageHrefForActivity());
+          reject(new Error('Signed-in account required'));
+          return;
+        }
+        if (pending) return;
+        pending = true;
+        checkStaffAccessForActivity(user).then(function (ok) {
+          pending = false;
+          if (activityAuthDone) return;
+          if (!ok) {
+            activityAuthDone = true;
+            var signedInAs = user.email ? String(user.email).trim() : '(no email on this account)';
+            alert(
+              'Activity access denied.\n\nYou are signed in as:\n' +
+                signedInAs +
+                '\n\nSet openplay_se/admin_uids/' +
+                user.uid +
+                ' = true in Realtime Database.'
+            );
+            window.location.replace(accountPageHrefForActivity());
+            reject(new Error('Admin UID required'));
+            return;
+          }
+          activityAuthDone = true;
+          resolve(user);
+        });
+      });
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  attachUi();
+  initActivityAuthGate()
+    .then(function (user) {
+      setStatus('Signed in as <strong>' + esc(user.email || user.uid) + '</strong>.');
+      subscribeActivityFeed();
+    })
+    .catch(function () {});
+});
+</script>
+</body>
+</html>

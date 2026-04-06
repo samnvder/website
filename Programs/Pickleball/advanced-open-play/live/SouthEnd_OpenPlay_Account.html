@@ -781,7 +781,7 @@ function markAccountProfileDirty() {
   updateAccountCtaState();
 }
 
-/** Staff see Session Check-in (staffEmails in config and/or openplay_se/admin_uids/{uid} in RTDB). */
+/** Admin-only actions use openplay_se/admin_uids/{uid} in RTDB. */
 function updateStaffCheckinButtons(user) {
   var hub = document.getElementById('hub-cta-checkin');
   var cta = document.getElementById('cta-checkin');
@@ -801,13 +801,12 @@ function updateStaffCheckinButtons(user) {
     showActivity(false);
     return;
   }
-  var byEmail = !!(SEOpenPlay.isStaffEmailAllowed && SEOpenPlay.isStaffEmailAllowed(user));
-  showCheckin(byEmail);
-  showActivity(byEmail);
+  showCheckin(false);
+  showActivity(false);
   if (SEOpenPlay.loadAdminUidFlag) {
     SEOpenPlay.loadAdminUidFlag(user.uid).then(function (ok) {
-      if (ok) showCheckin(true);
-      if (ok) showActivity(true);
+      showCheckin(!!ok);
+      showActivity(!!ok);
     });
   }
 }
