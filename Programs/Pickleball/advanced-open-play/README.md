@@ -43,7 +43,8 @@ Deployable static app: RSVP, account/calendar hub, session check-in, shared `js/
 | `npm run deploy:openplay:all` | Hosting + database rules |
 | `npm run firebase:deploy-rules` | Realtime Database rules only |
 | `npm run openplay:promote` | Copy staging → live |
-| `npm run openplay:bootstrap-staging` | Copy live → staging |
+| `npm run openplay:bootstrap-staging` | Copy live → staging (full tree, including Firebase config) |
+| `npm run openplay:sync-from-live` | Copy live → staging + `local-page/` test mirrors; **preserves** each folder’s `openplay-firebase-config.js` |
 | `npm run openplay:use-staging` | Set active tree to staging |
 | `npm run openplay:use-live` | Set active tree to live |
 | `npm test` | Unit tests (RSVP helpers + Firebase rules) |

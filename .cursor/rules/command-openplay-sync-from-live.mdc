@@ -1,0 +1,43 @@
+---
+description: Sync Open Play staging + local test mirrors from live while preserving per-environment Firebase config files.
+globs: []
+alwaysApply: false
+---
+
+# @command-openplay-sync-from-live
+
+**Triggers:** `@command-openplay-sync-from-live`, `command-openplay-sync-from-live`, `openplay sync from live`, `sync openplay from live`
+
+**Scope:** Pickleball Advanced Open Play only — `Programs/Pickleball/advanced-open-play/`.
+
+## Purpose
+
+When **`live/`** (production source) is ahead of **`staging/`** and local test mirrors, align **app code** so all three match, **without** overwriting environment-specific Firebase credentials:
+
+- **`staging/`** keeps its existing `js/openplay-firebase-config.js` and `js/openplay-firebase-config.example.js` (if present before the run).
+- **`testing/local-page/`** and repo-root **`local-page/`** keep the same preserved files per folder (so test/staging Firebase projects stay separate from production).
+
+## Action (agent)
+
+1. From the **Website** repo root, run:
+
+   ```powershell
+   npm run openplay:sync-from-live
+   ```
+
+2. Confirm exit code **0** and log lines for `staging/` and both `local-page` mirrors.
+
+3. If the script warns that a prior `openplay-firebase-config.js` was missing in a folder, tell the user to paste **staging** / **test** Firebase keys into that folder’s `js/openplay-firebase-config.js` — do **not** copy production keys from `live/` for non-production.
+
+## What the script does
+
+| Target | Behavior |
+|--------|----------|
+| `staging/` | Full tree replace from `live/`, then restore preserved Firebase files from **before** the run. |
+| `testing/local-page/`, `local-page/` | Same **file set** as `local-test.js` (HTML + `js/*`), cache-bust on HTML script tags, `index.html` hub notes source **`live/`**, then restore preserved Firebase files. |
+
+## Related
+
+- **`npm run openplay:bootstrap-staging`** — replaces `staging/` with a **full** copy of `live/` (including Firebase config). Use only when you want staging to match production keys too.
+- **`npm run local-test`** / **`local-test:sync`** — mirrors the **active tree** (`openplay-mode.json`), not necessarily `live/`.
+- **`staging-live-deployment-pattern.mdc`** — full staging vs live workflow.

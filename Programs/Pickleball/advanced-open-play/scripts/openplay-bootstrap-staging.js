@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
- * Copy advanced-open-play/live → staging (first-time or refresh staging from live).
- * Excludes nothing by default — full tree copy for HTML + js.
+ * Copy advanced-open-play/live → staging (first-time or full reset).
+ * Overwrites Firebase config too. To refresh staging from live but **keep** staging
+ * `js/openplay-firebase-config.js` (+ `.example.js`), use `npm run openplay:sync-from-live`.
  */
 const fs = require('fs');
 const path = require('path');

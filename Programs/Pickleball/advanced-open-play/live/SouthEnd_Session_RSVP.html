@@ -165,11 +165,6 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 .pay-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--electric);margin-bottom:8px;}
 .pay-num{font-family:'Oswald',sans-serif;font-size:22px;color:#fff;letter-spacing:1px;}
 .pay-sub{font-size:10px;color:rgba(255,255,255,.6);}
-.pay-note{font-size:10px;color:rgba(255,255,255,.65);line-height:1.6;margin-top:8px;}
-.pay-note-member,.pay-note-nonmember{margin-bottom:0.45em;}
-.pay-note strong{color:var(--neon);}
-.pay-note-nonmember > strong:first-child{color:#f87171!important;}
-.pay-note-nonmember strong.pay-fee{color:#fecaca;font-weight:800;}
 
 /* SUBMIT */
 .submit-btn{
@@ -256,11 +251,6 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   display:inline-block;background:var(--neon);color:var(--ink);
   font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:2px;
   padding:4px 14px;border-radius:4px;margin-bottom:4px;
-}
-.waiver-note{
-  background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);
-  border-radius:6px;padding:10px 14px;max-width:400px;margin:0 auto 16px;
-  font-size:11px;color:var(--gold-lt);text-align:left;
 }
 .success-pay{
   background:rgba(147,51,234,.1);border:1.5px solid rgba(147,51,234,.25);
@@ -595,17 +585,6 @@ button.account-strip-link:hover{text-decoration:underline;}
       <div class="pay-title">Payment</div>
       <div class="pay-num">310-251-3804</div>
       <div class="pay-sub">Zelle · Session fee</div>
-      <div class="pay-note">
-        <div class="pay-note-member hidden" id="pay-note-member">
-          <strong style="color:var(--neon);">South End Members:</strong> no charge — membership covers open play.
-        </div>
-        <div class="pay-note-nonmember hidden" id="pay-note-nonmember">
-          <strong>Non-Members:</strong> <strong class="pay-fee">$20</strong> session fee — pay at front desk upon arrival.
-        </div>
-        <div class="pay-note-firsttime">
-          <strong>First-time players:</strong> arrive 10 minutes early for a quick waiver.
-        </div>
-      </div>
     </div>
 
     <div class="waiver-block" id="waiver-block">
@@ -744,10 +723,6 @@ button.account-strip-link:hover{text-decoration:underline;}
     <div class="success-account-cta-sub">Opens your Open Play account — calendar, cancellations, and profile.</div>
   </div>
 
-  <div class="waiver-note" id="waiver-note" style="display:none;">
-    📋 <strong>First-time player?</strong> Please arrive 10 minutes early — you'll need to complete a quick waiver at the front desk.
-  </div>
-
   <div class="success-pay" id="success-pay-box">
     <div class="sp-title">💜 Pay via Zelle</div>
     <div class="sp-num">310-251-3804</div>
@@ -819,6 +794,17 @@ function escapeHtml(s) {
   return d.innerHTML;
 }
 
+/** Map RTDB membership to select values (trim/legacy booleans so payment UI matches profile). */
+function normalizeMembership(m) {
+  if (m == null || m === '') return '';
+  if (m === true || m === 1) return 'yes';
+  if (m === false || m === 0) return 'no';
+  var s = String(m).trim().toLowerCase();
+  if (s === 'yes' || s === 'y') return 'yes';
+  if (s === 'no' || s === 'n') return 'no';
+  return '';
+}
+
 function collectProfileFromForm() {
   var wl = document.getElementById('waiver-liability');
   var wc = document.getElementById('waiver-communication');
@@ -845,10 +831,12 @@ function applyProfileToForm(p) {
   if (p.lastName) document.getElementById('p-last').value = p.lastName;
   if (p.phone) document.getElementById('p-phone').value = p.phone;
   if (p.skill) document.getElementById('p-skill').value = p.skill;
-  if (p.membership) {
-    document.getElementById('p-member').value = p.membership;
-    toggleMemberPay(p.membership);
-    if (p.membership === 'yes' && p.memberCard && document.getElementById('p-member-card')) {
+  var mem = normalizeMembership(p.membership);
+  var memSel = document.getElementById('p-member');
+  if (memSel) {
+    memSel.value = mem;
+    toggleMemberPay(mem);
+    if (mem === 'yes' && p.memberCard && document.getElementById('p-member-card')) {
       document.getElementById('p-member-card').value = p.memberCard;
     }
   }
@@ -878,7 +866,11 @@ function fillProfileSummaryBody(p) {
     escapeHtml(p.skill) +
     '</div>' +
     '<div class="ps-line"><strong>Member</strong> — ' +
-    (p.membership === 'yes' ? 'Yes — Member' : 'Guest') +
+    (normalizeMembership(p.membership) === 'yes'
+      ? 'Yes — Member'
+      : normalizeMembership(p.membership) === 'no'
+        ? 'Guest'
+        : '—') +
     '</div>' +
     '<div class="ps-line"><strong>Heard via</strong> — ' +
     hear +
@@ -950,7 +942,14 @@ function initRsvpProfileOnly() {
           setRsvpProfileSummaryMode(false);
           if (typeof OpenPlayWaiverUI !== 'undefined') OpenPlayWaiverUI.setMode('full');
         }
-        if (p) toggleMemberPay(document.getElementById('p-member').value);
+        if (p) {
+          var m = normalizeMembership(p.membership);
+          var ms = document.getElementById('p-member');
+          if (ms && m) {
+            ms.value = m;
+            toggleMemberPay(m);
+          } else if (ms) toggleMemberPay(ms.value);
+        }
       });
     } else {
       if (pe) pe.readOnly = false;
@@ -1336,20 +1335,6 @@ function toggleMemberPay(val) {
     if (cardInput) { cardInput.value = ''; cardInput.classList.remove('error'); }
     document.getElementById('err-member-card').classList.remove('show');
   }
-  var payM = document.getElementById('pay-note-member');
-  var payN = document.getElementById('pay-note-nonmember');
-  if (payM && payN) {
-    if (val === 'yes') {
-      payM.classList.remove('hidden');
-      payN.classList.add('hidden');
-    } else if (val === 'no') {
-      payM.classList.add('hidden');
-      payN.classList.remove('hidden');
-    } else {
-      payM.classList.add('hidden');
-      payN.classList.add('hidden');
-    }
-  }
 }
 
 // ── VALIDATION ──
@@ -1727,8 +1712,6 @@ function submitRSVP() {
       if (appliedCode) detailHtml += '<div class="cc-line"><strong>Code:</strong> Applied ✓</div>';
     }
     document.getElementById('confirm-detail').innerHTML = detailHtml;
-
-    if (newPlayer) document.getElementById('waiver-note').style.display = 'block';
 
     if (appliedCode && appliedCode.type === 'free') {
       document.getElementById('success-pay-box').style.display = 'none';

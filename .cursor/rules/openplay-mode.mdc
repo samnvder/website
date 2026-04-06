@@ -39,7 +39,8 @@ Default in repo: **`staging`** + **`allowProductionHostingDeploy: false`**.
 |---------|--------|
 | `npm run openplay:use-staging` | Set `activeTree` → `staging` (local-test uses `staging/`). |
 | `npm run openplay:use-live` | Set `activeTree` → `live` (local-test uses `live/`). |
-| `npm run openplay:bootstrap-staging` | Replace `staging/` with a full copy of `live/` (init or reset). |
+| `npm run openplay:bootstrap-staging` | Replace `staging/` with a full copy of `live/` (init or reset), including Firebase config. |
+| `npm run openplay:sync-from-live` | Copy `live/` → `staging/` + local `local-page/` mirrors **preserving** each folder’s Firebase config files. See **`command-openplay-sync-from-live.mdc`**. |
 | `npm run openplay:promote` | Copy `staging/` → `live/` with **`OPENPLAY_CONFIRM_PROMOTE=1`** (overwrites `live/`). |
 | `npm run local-test` / `local-test:sync` | Mirror **active** tree → gitignored `local-page/`. |
 | `npm run deploy:openplay` / `deploy:openplay:all` | Run guarded Firebase deploy (hosting + optional rules). |
