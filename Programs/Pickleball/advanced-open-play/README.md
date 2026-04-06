@@ -23,6 +23,8 @@ Deployable static app: RSVP, account/calendar hub, session check-in, shared `js/
 | `SouthEnd_Session_Checkin.html` | Staff check-in roster, QR scan, brackets, bulk actions |
 | `SouthEnd_Admin_Activity.html` | Staff-admin activity feed (registrations, cancellations, profile edits, waiver events) with filters and CSV export |
 
+Admin-only pages/actions require `openplay_se/admin_uids/{uid} === true` in Realtime Database.
+
 ## Shared JS modules (`live/js/`)
 
 | File | Role |

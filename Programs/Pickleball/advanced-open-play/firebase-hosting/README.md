@@ -29,6 +29,8 @@ Same paths work on **`https://pickleball-advanced-open-play.firebaseapp.com/...`
 | `SouthEnd_Session_RSVP.html` | Session RSVP form, duplicate prevention, manage RSVPs modal |
 | `SouthEnd_Session_Checkin.html` | Staff check-in roster, QR scan, brackets, bulk actions |
 | `SouthEnd_Admin_Activity.html` | Staff-admin event log with filtering/sorting/export |
+
+Admin-only pages/actions require `openplay_se/admin_uids/{uid} === true` in Realtime Database.
 | `js/openplay-firebase-config.js` | Firebase project config (API key, Auth domain, RTDB URL, staff emails) |
 | `js/south-end-openplay-sync.js` | Firebase init, Auth, RTDB sync, `stableRsvpPlayerId`, `subscribeMyRsvps`, `deleteMyRsvp` |
 | `js/openplay-profile-panel.js` | Floating profile icon + read-only modal |

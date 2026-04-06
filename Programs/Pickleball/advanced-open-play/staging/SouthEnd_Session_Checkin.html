@@ -530,7 +530,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
 
 <script src="js/openplay-firebase-config.js"></script>
 <script src="js/south-end-openplay-sync.js"></script>
-<script src="js/openplay-profile-panel.js"></script>
+<script src="js/openplay-profile-panel.js?v=20260406"></script>
 <script>
 SEOpenPlay.migratePin();
 let state = loadState();
@@ -654,6 +654,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateBadge();
   if (drainPendingRsvps()) { save(); }
   renderAll();
+  applyInitialTabFromQuery();
   window.addEventListener('storage', (e) => {
     if (e.key === SEOpenPlay.PENDING_KEY && drainPendingRsvps()) { save(); renderAll(); }
   });
@@ -1377,6 +1378,13 @@ function switchTab(t){
   if(t!=='scan'&&scanning)stopScan();
   if(t==='bracket')renderBracket();
   if (t !== 'roster') closeAllSidePanels();
+}
+
+function applyInitialTabFromQuery() {
+  try {
+    var tab = String(new URLSearchParams(window.location.search).get('tab') || '').toLowerCase();
+    if (tab === 'settings') switchTab('settings');
+  } catch (e) {}
 }
 </script>
 </body>
