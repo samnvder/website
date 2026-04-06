@@ -16,14 +16,30 @@ const OUT_DIRS = [
 
 const FILES = [
   'SouthEnd_Session_RSVP.html',
+  'SouthEnd_OpenPlay_Account.html',
   'SouthEnd_Session_Checkin.html',
   'js/south-end-openplay-sync.js',
+  'js/openplay-profile-panel.js',
   'js/openplay-firebase-config.js',
+  'js/openplay-firebase-config.example.js',
   'js/openplay-rsvp-helpers.js',
+  'js/openplay-testing-env.js',
 ];
 
 function mkdirp(dir) {
   fs.mkdirSync(dir, { recursive: true });
+}
+
+/**
+ * Append se_cb to relative js/ script URLs so each npm run local-test:sync
+ * produces a new query string — browsers treat it as a distinct resource.
+ */
+function bustHtmlJsRefs(html, token) {
+  const esc = encodeURIComponent(token);
+  return html.replace(/(<script\s+src=")(js\/[^"]+)(")/g, (_, a, b, c) => {
+    const sep = b.includes('?') ? '&' : '?';
+    return `${a}${b}${sep}se_cb=${esc}${c}`;
+  });
 }
 
 function copyInto(OUT, rel) {
@@ -34,7 +50,13 @@ function copyInto(OUT, rel) {
     return false;
   }
   mkdirp(path.dirname(dest));
-  fs.copyFileSync(src, dest);
+  if (rel.endsWith('.html')) {
+    let body = fs.readFileSync(src, 'utf8');
+    body = bustHtmlJsRefs(body, syncedAt);
+    fs.writeFileSync(dest, body, 'utf8');
+  } else {
+    fs.copyFileSync(src, dest);
+  }
   return true;
 }
 
@@ -81,6 +103,7 @@ const hub = `<!DOCTYPE html>
   <p class="meta">Synced ${syncedAt} · mirror of live/</p>
   <ul>
     <li><a href="SouthEnd_Session_RSVP.html">RSVP <small>Open Play — reservation form</small></a></li>
+    <li><a href="SouthEnd_OpenPlay_Account.html">Account <small>Sign in / create account (then RSVP)</small></a></li>
     <li><a href="SouthEnd_Session_Checkin.html">Check-in <small>Staff roster / scan</small></a></li>
   </ul>
   <p class="hint">Run <code>npm run local-test</code> from the Website folder to refresh. Short URL: <code>/local-page/</code> · canonical: <code>Programs/Pickleball/testing/local-page/</code>. Do not deploy these folders — production is <code>Programs/Pickleball/live/</code>.</p>
