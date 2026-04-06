@@ -15,7 +15,7 @@ alwaysApply: false
 When the user invokes **command-site**, the agent enters **site changer mode**:
 
 1. **Scope:** Only website-related files and repo items. Central platform work is off-limits.
-2. **Styling:** All edits follow `STYLE-GUIDE.md` and website MDC rules (this folder + `general-formatting/`).
+2. **Styling:** All edits follow `STYLE-GUIDE.md` and the relevant `.mdc` rules in `.cursor/rules/` (website + general-formatting rules — see `README.md` index).
 3. **Boundary:** Do not read, edit, or reference Central-related files or MDC rules.
 
 ---
@@ -32,7 +32,7 @@ When the user invokes **command-site**, the agent enters **site changer mode**:
 | **Media** | `media/` |
 | **Content** | `Create/`, `email-templates/`, `prompts-main/` |
 | **Docs** | `STYLE-GUIDE.md`, `LAYOUT-STANDARDS.md`, `SEO-GUIDELINES.md`, `ASSETS-REFERENCE.md`, `JS-PATTERNS.md` |
-| **Website rules** | `.cursor/rules/website-marketing/*.mdc`, `.cursor/rules/general-formatting/*.mdc` |
+| **Website rules** | `.cursor/rules/*.mdc` (see `README.md` — website & marketing + general formatting) |
 
 ---
 
@@ -53,8 +53,8 @@ When the user invokes **command-site**, the agent enters **site changer mode**:
 In site changer mode, apply these in order:
 
 1. **`STYLE-GUIDE.md`** — CSS variables, typography, navigation, hero, sections, CTAs, spacing.
-2. **`website-marketing/`** — `cta-formatting.mdc`, `header-subheader-centering.mdc`, `dynamic-image-carousel.mdc`, `Creative-Mode.mdc` (when doing copy).
-3. **`general-formatting/`** — typography, spacing, color, elevation, shape, motion, layout, accessibility.
+2. **Website & marketing `.mdc`** — `cta-formatting.mdc`, `header-subheader-centering.mdc`, `dynamic-image-carousel.mdc`, `Creative-Mode.mdc` (when doing copy).
+3. **General formatting `.mdc`** — `typography.mdc`, `spacing.mdc`, `color.mdc`, `elevation.mdc`, `shape.mdc`, `motion.mdc`, `layout.mdc`, `accessibility.mdc`.
 
 ---
 
@@ -71,6 +71,5 @@ Before editing any website file:
 ## References
 
 - `STYLE-GUIDE.md` — Authoritative design system
-- `website-marketing/README.md` — Website rules index
-- `general-formatting/` — Design primitives
-- `../MDC-FRAMEWORK.md` — Tier 3: Website-Scoped
+- `.cursor/rules/README.md` — Index of all rules in this folder
+- `MDC-FRAMEWORK.md` — Tier 3: Website-Scoped (if present in repo)

@@ -14,6 +14,9 @@
 | `css/` | Site stylesheets. |
 | `js/` | Site scripts. |
 | `media/` | Assets and carousel source markdown (e.g. pickleball images list). |
+| `Programs/Pickleball/live/` | Open Play RSVP + check-in HTML and `js/` (deploy paths). |
+| `Programs/Pickleball/testing/unit/` | Node tests for Open Play helpers. |
+| `Programs/Pickleball/testing/scripts/` | `local-test.js` (mirrors `live/` → `local-page/` + `testing/local-page/`). |
 
 ---
 
@@ -94,12 +97,11 @@ These files call **`https://zngbawafqjntciafhxgr.supabase.co`** and **`/function
 
 ## 6. Cursor rules for the website-only project
 
-Copy into the new repo as `.cursor/rules/` (preserve subfolders).
+Copy into the new repo as `.cursor/rules/` (all `*.mdc` files and `README.md` live at the root of that folder — no subfolders).
 
 | Source | Purpose |
 |--------|---------|
-| `.cursor/rules/website-marketing/` | Entire folder (already scoped away from Central in globs). |
-| `.cursor/rules/general-formatting/` | Entire folder (layout, type, color, motion, a11y, etc.). |
+| `.cursor/rules/*.mdc` | All rule files (website/marketing, general formatting, local-test — see `README.md` in that folder). |
 
 **Optional** (trim to taste): `project-style-guide.mdc`, `no-inline-horizontal-scroll.mdc`, `iframe-sandbox.mdc`, `context-aware-pages.mdc`, `ui-interaction-guards.mdc`, `universal-base.mdc`, `context-discipline.mdc`, `model-selection.mdc`, `human-only.mdc`.
 
@@ -115,7 +117,7 @@ After copy, **remove or rewrite** scripts that point at `Dev/central/`, for exam
 - `test:central`, `test:central:*`
 - `build:central-*`, `build:central-maps`, `build:all-pdfs` (unless you kept those scripts)
 
-**Keep** as needed: `start`, `serve`, `dev`, `build:pickleball-carousel`, `scaffold:carousel`, `convert:local`, `convert:live`.
+**Keep** as needed: `start`, `serve`, `dev`, `test`, `local-test`, `local-test:sync`, `build:pickleball-carousel`, `scaffold:carousel`, `convert:local`, `convert:live`.
 
 ---
 
@@ -140,7 +142,7 @@ Add any deploy or OS cruft you use locally.
 - [ ] §5 three HTML files open and booking flow still targets the correct Supabase project.
 - [ ] Carousel: run `npm run build:pickleball-carousel` (or equivalent) from the new repo root if you use carousels.
 - [ ] `npx serve . -p 3000` (or your choice) serves `index.html` and `Website/Pages/...` without broken asset paths.
-- [ ] Cursor loads `.cursor/rules/website-marketing/` and `general-formatting/` only (or your chosen set).
+- [ ] Cursor loads `.cursor/rules/*.mdc` (or your chosen set); see `.cursor/rules/README.md` for the index.
 
 ---
 

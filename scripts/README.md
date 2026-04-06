@@ -13,3 +13,5 @@ Scripts automate workflows: building derived files from source-of-truth data, co
 ## Advanced
 
 Node.js automation scripts organized by intent. Subdirs: `build/` (source→derived propagation), `convert/` (transform for env/format), `validate/` (checks and audits), `deploy/` (publish prep), `scaffold/` (generate from templates). Run via `npm run` or `node scripts/<subdir>/<script>.js`. Config lives alongside scripts (e.g. `build/carousel-configs/`).
+
+**Pickleball Open Play:** unit tests and `local-test.js` live under `Programs/Pickleball/testing/` (`npm test`, `npm run local-test:sync` from repo `Website/` root).

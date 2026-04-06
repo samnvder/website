@@ -1,0 +1,26 @@
+---
+description: Law 0 — when testing builds, terminal commands must be copy-pasteable blocks (no throwaway command files).
+alwaysApply: true
+---
+
+# Test / build commands (Law 0)
+
+When the user is **testing builds**, **running tests**, or **verifying CI locally**, you **must**:
+
+1. **Give commands as copy-pasteable terminal input** — one fenced code block, or **several blocks** if steps must stay separate (e.g. `cd` then run). Each block must be **complete lines** the user can paste into the agent terminal with no omissions.
+2. **Be deterministic** — fixed paths (prefer absolute or repo-root-relative from the documented folder), explicit script names, no vague “run your test command” unless the exact command is already defined in the project (then quote it verbatim).
+3. **Do not create files** whose only purpose is to list commands (no `RUN_ME.sh` / `commands.txt` for this). The deliverable is the **message**, not a new artifact.
+
+**Format**
+
+- Use ordinary markdown **fenced** code blocks (opening fence alone on its line).
+- For this repo on Windows, default shell examples to **PowerShell** unless the user or task clearly needs another shell.
+
+**Example (good)**
+
+```powershell
+Set-Location "C:\Users\Sam Work\Documents\Local Projects\online-sales-agent\Website"
+npm test
+```
+
+**Example (bad)** — “Run npm test in the Website folder” with no pasteable block.

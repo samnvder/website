@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "South End Club marketing website (standalone repo; exported from WebsiteV1)",
   "scripts": {
+    "test": "node --test Programs/Pickleball/testing/unit/test-openplay-rsvp.js",
+    "local-test": "node Programs/Pickleball/testing/scripts/local-test.js && npx live-server --port=3456 --open=/local-page/index.html",
+    "local-test:sync": "node Programs/Pickleball/testing/scripts/local-test.js",
     "start": "npx live-server --port=3000 --open=/",
     "serve": "npx serve -l 3000",
     "dev": "npx live-server --port=3000 --open=/ --watch=.",

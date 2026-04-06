@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>South End — Session Check-In</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0a1628;--navy-lt:#152342;--navy-mid:#1e3a5f;
+  --purple:#6b21a8;--purple-lt:#9333ea;--electric:#a855f7;
+  --neon:#00ff88;--neon-dim:rgba(0,255,136,.1);--neon-glow:rgba(0,255,136,.22);
+  --gold:#f59e0b;--gold-lt:#fcd34d;
+  --ink:#0a0a1a;--muted:rgba(255,255,255,.38);--rule:rgba(255,255,255,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:flex;flex-direction:column;}
+
+/* TOP BAR */
+.topbar{background:var(--navy-lt);border-bottom:2px solid var(--neon);padding:9px 18px;display:flex;align-items:center;gap:12px;flex-shrink:0;position:relative;}
+.topbar img{height:30px;filter:drop-shadow(0 0 6px var(--neon-glow));}
+.topbar-title{font-family:'Oswald',sans-serif;font-size:16px;color:#fff;letter-spacing:1px;text-transform:uppercase;}
+.topbar-title span{color:var(--neon);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.session-badge{padding:3px 10px;border-radius:12px;font-size:9px;font-weight:700;letter-spacing:.5px;background:var(--neon-dim);border:1px solid rgba(0,255,136,.25);color:var(--neon);}
+.live-ct{font-family:'Oswald',sans-serif;font-size:17px;color:var(--neon);}
+.live-ct span{font-size:9px;color:var(--muted);font-family:'Barlow',sans-serif;}
+.btn-sm{padding:5px 12px;border-radius:3px;font-size:10px;font-weight:700;cursor:pointer;border:none;transition:all .13s;}
+.btn-ghost-sm{background:transparent;color:var(--muted);border:1px solid var(--rule);}
+.btn-ghost-sm:hover{border-color:var(--neon);color:var(--neon);}
+
+/* STATS */
+.stats-bar{background:rgba(0,0,0,.18);border-bottom:1px solid var(--rule);padding:7px 18px;display:flex;gap:0;flex-shrink:0;align-items:center;}
+.stat{padding:0 16px;border-right:1px solid var(--rule);display:flex;flex-direction:column;align-items:center;}
+.stat:first-child{padding-left:0;}
+.stat:last-child{border:none;}
+.sv{font-family:'Oswald',sans-serif;font-size:21px;line-height:1;}
+.sl{font-size:7px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:1px;}
+.c-neon{color:var(--neon);} .c-gold{color:var(--gold-lt);} .c-purple{color:var(--electric);} .c-white{color:#fff;} .c-red{color:#ff6666;}
+
+/* TABS */
+.tab-nav{display:flex;background:rgba(0,0,0,.12);border-bottom:1px solid var(--rule);flex-shrink:0;}
+.tab{padding:11px 18px;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;transition:all .15s;}
+.tab:hover{color:#fff;}
+.tab.active{color:var(--neon);border-color:var(--neon);}
+
+/* PANELS */
+.panels{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.panel{display:none;flex:1;overflow-y:auto;padding:14px 18px;}
+.panel.active{display:flex;flex-direction:column;}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;flex-shrink:0;}
+.search-box{flex:1;min-width:150px;padding:7px 13px;background:rgba(255,255,255,.05);border:1.5px solid var(--rule);border-radius:18px;font-family:'Barlow',sans-serif;font-size:11px;color:#fff;outline:none;}
+.search-box::placeholder{color:var(--muted);}
+.search-box:focus{border-color:var(--neon);}
+.btn{padding:6px 14px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;border:none;transition:all .13s;}
+.btn-neon{background:var(--neon);color:var(--ink);}
+.btn-neon:hover{box-shadow:0 0 12px var(--neon-glow);}
+.btn-purple{background:var(--purple-lt);color:#fff;}
+.btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--rule);}
+.btn-ghost:hover{border-color:var(--neon);color:var(--neon);}
+.btn-red{background:#dc2626;color:#fff;}
+
+/* TIER CHIPS */
+.tier-chips{display:flex;gap:5px;margin-bottom:12px;flex-shrink:0;flex-wrap:wrap;}
+.tc{padding:3px 11px;border-radius:12px;font-size:9px;font-weight:700;cursor:pointer;border:1.5px solid transparent;color:var(--muted);transition:all .13s;}
+.tc:hover{color:#fff;}
+.tc.a-all{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);color:#fff;}
+.tc.a-free{background:var(--neon-dim);border-color:var(--neon);color:var(--neon);}
+.tc.a-disc{background:rgba(245,158,11,.1);border-color:var(--gold);color:var(--gold-lt);}
+.tc.a-full{background:rgba(168,85,247,.1);border-color:var(--electric);color:var(--electric);}
+.tc.a-ua{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.2);color:#fff;}
+
+/* ROSTER DATE GROUPS */
+.roster-day-hd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:12px 4px 6px;margin-top:4px;border-bottom:1px solid var(--rule);}
+.roster-day-hd:first-child{padding-top:2px;margin-top:0;}
+.roster-day-lbl{font-family:'Oswald',sans-serif;font-size:12px;color:var(--neon);letter-spacing:.6px;text-transform:uppercase;}
+.roster-day-ct{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;}
+
+/* PLAYER ROWS */
+.player-list{display:flex;flex-direction:column;gap:5px;}
+.prow{background:rgba(255,255,255,.04);border:1px solid var(--rule);border-radius:7px;padding:8px 12px;display:flex;align-items:center;gap:10px;transition:background .13s;}
+.prow:hover{background:rgba(255,255,255,.07);}
+.prow.in{border-color:rgba(0,255,136,.25);background:rgba(0,255,136,.03);}
+.prow.waiver{border-color:rgba(245,158,11,.3);}
+
+.tier-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.td-free{background:var(--neon);box-shadow:0 0 5px var(--neon-glow);}
+.td-disc{background:var(--gold);}
+.td-full{background:var(--electric);}
+.td-ua{background:rgba(255,255,255,.2);}
+
+.pr-main{flex:1;min-width:0;}
+.pr-name{font-size:12px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pr-name.checked{color:var(--neon);}
+.pr-meta{font-size:9px;color:var(--muted);margin-top:1px;display:flex;gap:8px;flex-wrap:wrap;}
+.pr-id{font-family:'Oswald',sans-serif;font-size:11px;color:rgba(0,255,136,.6);letter-spacing:.5px;}
+.waiver-flag{font-size:8px;font-weight:700;color:var(--gold-lt);background:rgba(245,158,11,.1);padding:1px 5px;border-radius:2px;}
+.paid-flag{font-size:8px;font-weight:700;color:var(--neon);background:var(--neon-dim);padding:1px 5px;border-radius:2px;}
+
+.tier-sel{padding:3px 7px;background:rgba(255,255,255,.06);border:1px solid var(--rule);border-radius:3px;font-size:9px;font-weight:700;color:#fff;cursor:pointer;outline:none;font-family:'Barlow',sans-serif;}
+.tier-sel option{background:var(--navy-lt);}
+.paid-btn{padding:3px 8px;border-radius:3px;font-size:9px;font-weight:700;border:1px solid;cursor:pointer;transition:all .13s;background:transparent;}
+.paid-btn.unpaid{color:var(--muted);border-color:var(--rule);}
+.paid-btn.unpaid:hover{color:var(--neon);border-color:var(--neon);}
+.paid-btn.paid{color:var(--neon);border-color:rgba(0,255,136,.3);background:var(--neon-dim);}
+.ci-btn{padding:4px 10px;border-radius:3px;font-size:9px;font-weight:700;border:none;cursor:pointer;transition:all .13s;white-space:nowrap;}
+.ci-pending{background:rgba(255,255,255,.07);color:var(--muted);}
+.ci-pending:hover{background:var(--neon-dim);color:var(--neon);}
+.ci-in{background:var(--neon-dim);color:var(--neon);border:1px solid rgba(0,255,136,.25);}
+.ci-absent{background:rgba(220,38,38,.1);color:#ff6666;}
+.edit-btn{padding:3px 7px;background:transparent;border:1px solid var(--rule);border-radius:3px;font-size:8px;color:var(--muted);cursor:pointer;}
+.edit-btn:hover{border-color:var(--neon);color:var(--neon);}
+
+/* SCAN */
+.scan-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+.scan-box{width:100%;max-width:320px;background:rgba(0,0,0,.3);border:2px solid var(--neon);border-radius:10px;overflow:hidden;box-shadow:0 0 32px var(--neon-glow);position:relative;}
+#scan-video{width:100%;display:block;}
+.scan-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.scan-cross{width:150px;height:150px;border:2px solid var(--neon);border-radius:8px;box-shadow:0 0 16px var(--neon-glow);}
+.scan-status{margin-top:14px;text-align:center;font-size:12px;color:var(--muted);}
+.scan-result{margin-top:14px;max-width:320px;width:100%;background:rgba(0,255,136,.07);border:1.5px solid var(--neon);border-radius:8px;padding:14px;display:none;}
+.scan-result.show{display:block;}
+.sr-id{font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:2px;}
+.sr-name{font-family:'Oswald',sans-serif;font-size:20px;color:var(--neon);}
+.sr-detail{font-size:11px;color:rgba(255,255,255,.45);margin:6px 0 12px;}
+.scan-acts{display:flex;gap:8px;}
+
+/* BRACKET */
+.bracket-sec{margin-bottom:18px;}
+.bracket-hd{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--rule);}
+.bracket-lbl{font-family:'Oswald',sans-serif;font-size:15px;color:#fff;text-transform:uppercase;letter-spacing:.5px;}
+.b-badge{font-size:8px;font-weight:700;padding:2px 7px;border-radius:2px;color:var(--ink);}
+.bb-neon{background:var(--neon);}
+.bb-gold{background:var(--gold);}
+.bb-purple{background:var(--electric);color:#fff;}
+.b-ct{font-size:10px;color:var(--muted);margin-left:auto;}
+.b-players{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:7px;}
+.b-player{background:rgba(255,255,255,.04);border:1px solid var(--rule);border-radius:6px;padding:7px 11px;}
+.b-player.in{border-color:rgba(0,255,136,.2);}
+.bp-name{font-size:11px;font-weight:600;color:#fff;}
+.bp-id{font-size:8px;color:rgba(0,255,136,.5);letter-spacing:.5px;font-family:'Oswald',sans-serif;}
+.bp-tier{font-size:8px;font-weight:700;letter-spacing:.3px;}
+.bt-free{color:var(--neon);} .bt-disc{color:var(--gold-lt);} .bt-full{color:var(--electric);}
+.bp-flags{display:flex;gap:4px;margin-top:2px;}
+.bf{font-size:7px;font-weight:700;padding:1px 4px;border-radius:2px;}
+.bf-waiver{background:rgba(245,158,11,.15);color:var(--gold-lt);}
+.bf-paid{background:var(--neon-dim);color:var(--neon);}
+
+/* MODALS */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--navy-lt);border:1.5px solid var(--neon);border-radius:10px;padding:22px;width:420px;max-width:95vw;max-height:90vh;overflow-y:auto;}
+.modal-title{font-family:'Oswald',sans-serif;font-size:18px;color:#fff;text-transform:uppercase;margin-bottom:14px;}
+.mrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.mrow-1{margin-bottom:10px;}
+.modal label{display:block;font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.modal input,.modal select{width:100%;padding:9px 12px;background:rgba(255,255,255,.06);border:1.5px solid var(--rule);border-radius:4px;font-family:'Barlow',sans-serif;font-size:12px;color:#fff;outline:none;transition:border-color .13s;}
+.modal input:focus,.modal select:focus{border-color:var(--neon);}
+.modal select option{background:var(--navy-lt);}
+.modal input::placeholder{color:rgba(255,255,255,.18);}
+.m-check-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:11px;color:rgba(255,255,255,.6);}
+.m-check-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--neon);}
+.modal-acts{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;}
+
+/* SETTINGS */
+.settings-body{max-width:440px;}
+.setting-row{background:rgba(255,255,255,.04);border:1px solid var(--rule);border-radius:7px;padding:14px 16px;margin-bottom:10px;}
+.setting-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.setting-desc{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:10px;line-height:1.5;}
+.setting-input{width:100%;padding:9px 12px;background:rgba(255,255,255,.06);border:1.5px solid var(--rule);border-radius:4px;font-family:'Barlow',sans-serif;font-size:13px;color:#fff;outline:none;margin-bottom:8px;}
+.setting-input:focus{border-color:var(--neon);}
+.setting-input[type=password]{letter-spacing:4px;}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--muted);}
+.empty-icon{font-size:36px;margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <img src="data:image/png;base64,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" alt="South End">
+  <div class="topbar-title">OPEN <span>PLAY</span> · Check-In</div>
+  <div class="topbar-right">
+    <span class="session-badge" id="session-badge">No Session</span>
+    <div class="live-ct"><span id="ct-in">0</span> <span>in</span></div>
+    <button class="btn-sm btn-ghost-sm" onclick="switchTab('settings')">⚙</button>
+    <button class="btn-sm btn-ghost-sm" onclick="showSessionModal()">Session</button>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="sv c-neon" id="s-total">0</div><div class="sl">Total</div></div>
+  <div class="stat"><div class="sv c-neon" id="s-in">0</div><div class="sl">Checked In</div></div>
+  <div class="stat"><div class="sv c-white" id="s-free">0</div><div class="sl">Free</div></div>
+  <div class="stat"><div class="sv c-gold" id="s-disc">0</div><div class="sl">Disc</div></div>
+  <div class="stat"><div class="sv c-purple" id="s-full">0</div><div class="sl">Full</div></div>
+  <div class="stat"><div class="sv c-red" id="s-waiver">0</div><div class="sl">Waiver Needed</div></div>
+  <div class="stat"><div class="sv c-gold" id="s-rev">$0</div><div class="sl">Revenue</div></div>
+  <div class="stat" style="margin-left:auto;border:none;">
+    <button class="btn btn-neon" onclick="showAddModal()">+ Add Player</button>
+  </div>
+</div>
+
+<div class="tab-nav">
+  <div class="tab active" onclick="switchTab('roster')">📋 Roster</div>
+  <div class="tab" onclick="switchTab('scan')">📷 Scan</div>
+  <div class="tab" onclick="switchTab('bracket')">⚡ Brackets</div>
+  <div class="tab" onclick="switchTab('settings')" id="tab-settings">⚙ Settings</div>
+</div>
+
+<div class="panels">
+
+  
+  <div class="panel active" id="panel-roster">
+    <div class="toolbar">
+      <input class="search-box" type="text" id="roster-search" placeholder="Search name or ID..." oninput="renderRoster()">
+      <button class="btn btn-ghost" onclick="exportCSV()">Export</button>
+    </div>
+    <div class="tier-chips">
+      <span class="tc a-all" onclick="filterTier('all',this)">All</span>
+      <span class="tc" onclick="filterTier('free',this)">🟢 Free</span>
+      <span class="tc" onclick="filterTier('disc',this)">🟡 Disc</span>
+      <span class="tc" onclick="filterTier('full',this)">💜 Full</span>
+      <span class="tc" onclick="filterTier('ua',this)">⚪ Unassigned</span>
+      <span class="tc" onclick="filterTier('waiver',this)">📋 Waiver Needed</span>
+    </div>
+    <div class="player-list" id="player-list"></div>
+  </div>
+
+  
+  <div class="panel" id="panel-scan">
+    <div class="scan-area">
+      <div class="scan-box">
+        <video id="scan-video" autoplay playsinline muted></video>
+        <div class="scan-overlay"><div class="scan-cross"></div></div>
+      </div>
+      <div class="scan-status" id="scan-status">Tap Start Scan to open camera</div>
+      <button class="btn btn-neon" id="scan-btn" onclick="toggleScan()" style="margin-top:12px;">📷 Start Scan</button>
+      <div class="scan-result" id="scan-result">
+        <div class="sr-id" id="sr-id"></div>
+        <div class="sr-name" id="sr-name"></div>
+        <div class="sr-detail" id="sr-detail"></div>
+        <div class="scan-acts">
+          <button class="btn btn-neon" onclick="confirmCheckin()">✓ Check In</button>
+          <button class="btn btn-ghost" onclick="dismissScan()">Dismiss</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="panel" id="panel-bracket">
+    <div id="bracket-content"></div>
+  </div>
+
+  
+  <div class="panel" id="panel-settings">
+    <div class="settings-body">
+
+      <div class="setting-row">
+        <div class="setting-lbl">Change PIN</div>
+        <div class="setting-desc">The PIN protects the hidden coupon zone on the player RSVP page. Default is 1234. Change it here anytime.</div>
+        <input class="setting-input" type="password" id="current-pin" placeholder="Current PIN">
+        <input class="setting-input" type="password" id="new-pin" placeholder="New PIN (min 4 characters)">
+        <input class="setting-input" type="password" id="confirm-pin" placeholder="Confirm new PIN">
+        <button class="btn btn-neon" onclick="changePin()" style="width:100%;">Update PIN</button>
+        <div id="pin-msg" style="font-size:11px;margin-top:8px;min-height:16px;"></div>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-lbl">Coupon Codes</div>
+        <div class="setting-desc">Current codes active on the RSVP form. To add or remove codes, edit <code style="font-size:10px;color:rgba(0,255,136,.5);">Programs/Pickleball/live/SouthEnd_Session_RSVP.html</code> — search for <code style="font-size:10px;color:rgba(0,255,136,.5);">CODES</code> near the top of the script section.</div>
+        <div style="font-size:11px;color:rgba(0,255,136,.6);font-family:'Oswald',sans-serif;letter-spacing:1px;">GUEST2026 · FOUNDING50 · STAFF</div>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-lbl">Session Data</div>
+        <div class="setting-desc">Export current roster or reset for a fresh session. Reset clears check-in status but keeps the player list. New Session clears everything.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-ghost" onclick="exportCSV()">Export CSV</button>
+          <button class="btn btn-neon" onclick="sendDailyList()">Email Today's List</button>
+          <button class="btn btn-ghost" onclick="resetCheckins()">Reset Check-Ins</button>
+          <button class="btn btn-red" onclick="newSession()">New Session</button>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-lbl">Session Times</div>
+        <div class="setting-desc">Reference only — actual session times are set on the RSVP form.</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:2;">
+          Tuesday Morning &nbsp;·&nbsp; 8:00 AM – 12:00 PM<br>
+          Tuesday Evening &nbsp;·&nbsp; 6:00 – 9:00 PM<br>
+          Thursday Evening &nbsp;·&nbsp; 6:00 – 9:00 PM
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-lbl">RSVP → Check-In Sync</div>
+        <div class="setting-desc">Same-browser updates use a local queue + tabs. <strong>All devices:</strong> set <code style="font-size:10px;color:rgba(0,255,136,.5);">js/openplay-firebase-config.js</code> (Realtime Database). Status: <span id="fb-cloud-status" style="color:rgba(0,255,136,.85);">…</span></div>
+        <div class="setting-desc" style="margin-top:6px;">PIN is shared with the RSVP page via <code style="font-size:10px;color:rgba(0,255,136,.5);">se_pin</code>.</div>
+        <button type="button" class="btn btn-ghost" onclick="if(drainPendingRsvps()){save();renderAll();}else{alert('No pending RSVPs in queue.');}">Pull pending RSVPs now</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-bg" id="add-modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Add Player</div>
+    <div class="mrow">
+      <div><label>First Name *</label><input type="text" id="m-first" placeholder="First"></div>
+      <div><label>Last Name *</label><input type="text" id="m-last" placeholder="Last"></div>
+    </div>
+    <div class="mrow">
+      <div><label>Email</label><input type="email" id="m-email" placeholder="email@..."></div>
+      <div><label>Phone</label><input type="tel" id="m-phone" placeholder="(555)..."></div>
+    </div>
+    <div class="mrow">
+      <div><label>Skill Level</label>
+        <select id="m-skill">
+          <option value="">—</option>
+          <option value="Advanced 4.0+">Advanced 4.0+</option>
+          <option value="Open 5.0+">Open 5.0+</option>
+        </select>
+      </div>
+      <div><label>Tier</label>
+        <select id="m-tier">
+          <option value="ua">Unassigned</option>
+          <option value="free">Free</option>
+          <option value="disc">Discounted ($10)</option>
+          <option value="full">Full Price ($20)</option>
+        </select>
+      </div>
+    </div>
+    <div class="mrow">
+      <div><label>Session</label>
+        <select id="m-session">
+          <option value="Tuesday Morning Apr 8">Tue Morning Apr 8</option>
+          <option value="Tuesday Evening Apr 8">Tue Evening Apr 8</option>
+          <option value="Tuesday Morning Apr 15">Tue Morning Apr 15</option>
+          <option value="Tuesday Evening Apr 15">Tue Evening Apr 15</option>
+          <option value="Thursday Evening Apr 10">Thu Evening Apr 10</option>
+          <option value="Thursday Evening Apr 17">Thu Evening Apr 17</option>
+          </select>
+      </div>
+      <div><label>Player ID</label><input type="text" id="m-pid" placeholder="Auto-generated" style="opacity:.6;"></div>
+    </div>
+    <div class="m-check-row"><input type="checkbox" id="m-waiver"><label for="m-waiver" style="font-size:11px;letter-spacing:0;text-transform:none;color:rgba(255,255,255,.6);">Waiver needed (first-time player)</label></div>
+    <div class="m-check-row"><input type="checkbox" id="m-paid"><label for="m-paid" style="font-size:11px;letter-spacing:0;text-transform:none;color:rgba(255,255,255,.6);">Payment received</label></div>
+    <div class="mrow-1"><label>Notes</label><input type="text" id="m-notes" placeholder="Optional"></div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-red" id="delete-btn" onclick="deletePlayer()" style="display:none;">Delete</button>
+      <button class="btn btn-neon" onclick="savePlayer()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="session-modal">
+  <div class="modal">
+    <div class="modal-title">Set Session</div>
+    <div class="mrow-1"><label>Day</label>
+      <select id="sm-day">
+        <option value="Tuesday Morning Apr 8">☀ Tue Morning Apr 8 · 8am–12pm</option>
+        <option value="Tuesday Evening Apr 8">🌙 Tue Evening Apr 8 · 6–9pm</option>
+        <option value="Tuesday Morning Apr 15">☀ Tue Morning Apr 15 · 8am–12pm</option>
+        <option value="Tuesday Evening Apr 15">🌙 Tue Evening Apr 15 · 6–9pm</option>
+        <option value="Thursday Evening Apr 10">🌙 Thu Evening Apr 10 · 6–9pm</option>
+        <option value="Thursday Evening Apr 17">🌙 Thu Evening Apr 17 · 6–9pm</option>
+        </select>
+    </div>
+    <div class="mrow-1"><label>Date</label><input type="date" id="sm-date"></div>
+    <div style="font-size:10px;color:rgba(255,255,255,.25);margin-bottom:12px;">Changing session resets all check-in statuses.</div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="document.getElementById('session-modal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-neon" onclick="setSession()">Set Session</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/openplay-firebase-config.js"></script>
+<script src="js/south-end-openplay-sync.js"></script>
+<script>
+SEOpenPlay.migratePin();
+let state = loadState();
+let tierFilter = 'all';
+let editIdx = null;
+let scanning = false;
+let scanStream = null;
+let scanInterval = null;
+let pendingScan = null;
+let ADMIN_PIN = SEOpenPlay.getPin();
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem('se_ci_state') || 'null') || {session:'',date:'',players:[]}; }
+  catch { return {session:'',date:'',players:[]}; }
+}
+function save() { localStorage.setItem('se_ci_state', JSON.stringify(state)); }
+
+const TIER_DOT = {free:'td-free',disc:'td-disc',full:'td-full',ua:'td-ua'};
+const TIER_TXT = {free:'FREE',disc:'$10',full:'$20',ua:'—'};
+const TIER_CLS = {free:'bt-free',disc:'bt-disc',full:'bt-full',ua:''};
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('sm-date').value = new Date().toISOString().slice(0,10);
+  updateBadge();
+  if (drainPendingRsvps()) { save(); }
+  renderAll();
+  window.addEventListener('storage', (e) => {
+    if (e.key === SEOpenPlay.PENDING_KEY && drainPendingRsvps()) { save(); renderAll(); }
+  });
+  try {
+    const bc = new BroadcastChannel(SEOpenPlay.BC_NAME);
+    bc.onmessage = () => { if (drainPendingRsvps()) { save(); renderAll(); } };
+  } catch (e) {}
+  SEOpenPlay.subscribeRsvps((records) => {
+    let ch = false;
+    records.forEach((r) => { if (mergePlayerFromRsvp(r)) ch = true; });
+    if (ch) { save(); renderAll(); }
+  });
+  const fbSt = document.getElementById('fb-cloud-status');
+  if (fbSt) {
+    if (SEOpenPlay.firebaseConfigured()) {
+      fbSt.textContent = 'On — Realtime DB (all devices)';
+      SEOpenPlay.initFirebase().catch(() => {
+        fbSt.textContent = 'Config set but SDK failed to load';
+        fbSt.style.color = '#f87171';
+      });
+    } else {
+      fbSt.textContent = 'Off — add Firebase in js/openplay-firebase-config.js';
+      fbSt.style.color = 'rgba(255,255,255,.45)';
+    }
+  }
+});
+
+function mergePlayerFromRsvp(incoming) {
+  if (!incoming || !incoming.pid) return false;
+  const idx = state.players.findIndex((p) => p.pid === incoming.pid);
+  if (idx < 0) {
+    state.players.push({
+      name: incoming.name || '',
+      email: incoming.email || '',
+      phone: incoming.phone || '',
+      skill: incoming.skill || '',
+      session: incoming.session || state.session || '',
+      tier: incoming.tier || 'ua',
+      pid: incoming.pid,
+      waiver: !!incoming.waiver,
+      waiverDone: !!incoming.waiverDone,
+      paid: !!incoming.paid,
+      checkedIn: !!incoming.checkedIn,
+      notes: incoming.notes || '',
+      memberCard: incoming.memberCard || '',
+    });
+    return true;
+  }
+  const cur = state.players[idx];
+  const merged = {
+    ...cur,
+    name: incoming.name || cur.name,
+    email: incoming.email || cur.email,
+    phone: incoming.phone || cur.phone,
+    skill: incoming.skill || cur.skill,
+    session: incoming.session || cur.session,
+    waiver: incoming.waiver !== undefined ? !!incoming.waiver : cur.waiver,
+    memberCard: incoming.memberCard !== undefined && incoming.memberCard !== '' ? incoming.memberCard : (cur.memberCard || ''),
+  };
+  if (!cur.tier || cur.tier === 'ua') merged.tier = incoming.tier || cur.tier;
+  state.players[idx] = merged;
+  return true;
+}
+
+function drainPendingRsvps() {
+  const q = SEOpenPlay.readPendingQueue();
+  if (!q.length) return false;
+  let changed = false;
+  q.forEach((item) => {
+    if (item && item.record && mergePlayerFromRsvp(item.record)) changed = true;
+  });
+  SEOpenPlay.clearPendingQueue();
+  return changed;
+}
+
+function updateBadge() {
+  const b = document.getElementById('session-badge');
+  if (state.session && state.date) {
+    b.textContent = state.session + ' · ' + new Date(state.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  } else { b.textContent = 'No Session'; }
+}
+
+function renderAll() { renderStats(); renderRoster(); renderBracket(); }
+
+function renderStats() {
+  const p = state.players;
+  const free=p.filter(x=>x.tier==='free').length;
+  const disc=p.filter(x=>x.tier==='disc').length;
+  const full=p.filter(x=>x.tier==='full').length;
+  const inn=p.filter(x=>x.checkedIn).length;
+  const waiv=p.filter(x=>x.waiver&&!x.waiverDone).length;
+  const rev=disc*10+full*20;
+  document.getElementById('s-total').textContent=p.length;
+  document.getElementById('s-in').textContent=inn;
+  document.getElementById('ct-in').textContent=inn;
+  document.getElementById('s-free').textContent=free;
+  document.getElementById('s-disc').textContent=disc;
+  document.getElementById('s-full').textContent=full;
+  document.getElementById('s-waiver').textContent=waiv;
+  document.getElementById('s-rev').textContent='$'+rev;
+}
+
+function filterTier(t, el) {
+  tierFilter = t;
+  document.querySelectorAll('.tc').forEach(c=>c.className='tc');
+  el.className = 'tc a-'+t;
+  renderRoster();
+}
+
+const SESSION_MONTHS = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
+const SESSION_SLOT_ORDER = { 'tuesday morning':0, 'tuesday evening':1, 'thursday evening':2 };
+
+function rosterYearHint() {
+  if (state.date && state.date.length >= 4) return parseInt(state.date.slice(0, 4), 10);
+  return new Date().getFullYear();
+}
+
+/** Parse RSVP session label → sortable meta (upcoming-first = ascending calendar + slot order). */
+function sessionSortMeta(sessionStr) {
+  if (!sessionStr) return { ts: null, slotOrder: 99 };
+  const m = String(sessionStr).match(/^(Tuesday Morning|Tuesday Evening|Thursday Evening)\s+(\w+)\s+(\d+)/i);
+  if (!m) return { ts: null, slotOrder: 99 };
+  const mon = SESSION_MONTHS[m[2].toLowerCase()];
+  if (mon === undefined) return { ts: null, slotOrder: 99 };
+  const day = parseInt(m[3], 10);
+  const y = rosterYearHint();
+  const ts = new Date(y, mon, day).getTime();
+  const slotOrder = SESSION_SLOT_ORDER[m[1].toLowerCase()] ?? 9;
+  return { ts, slotOrder };
+}
+
+function compareRosterPlayers(a, b) {
+  const A = sessionSortMeta(a.session);
+  const B = sessionSortMeta(b.session);
+  if (A.ts !== null && B.ts !== null) {
+    if (A.ts !== B.ts) return A.ts - B.ts;
+    if (A.slotOrder !== B.slotOrder) return A.slotOrder - B.slotOrder;
+  } else if (A.ts !== null && B.ts === null) return -1;
+  else if (A.ts === null && B.ts !== null) return 1;
+  return (a.name || '').localeCompare(b.name || '', undefined, { sensitivity: 'base' });
+}
+
+function formatRosterDateHeader(ts) {
+  return new Date(ts).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function renderRoster() {
+  const q=(document.getElementById('roster-search').value||'').toLowerCase();
+  let players = state.players.map((p,i)=>({...p,_i:i}));
+  if (tierFilter==='free') players=players.filter(p=>p.tier==='free');
+  else if (tierFilter==='disc') players=players.filter(p=>p.tier==='disc');
+  else if (tierFilter==='full') players=players.filter(p=>p.tier==='full');
+  else if (tierFilter==='ua') players=players.filter(p=>!p.tier||p.tier==='ua');
+  else if (tierFilter==='waiver') players=players.filter(p=>p.waiver&&!p.waiverDone);
+  if (q) players=players.filter(p=>(p.name||'').toLowerCase().includes(q)||(p.pid||'').toLowerCase().includes(q));
+
+  players.sort(compareRosterPlayers);
+
+  const list=document.getElementById('player-list');
+  if (!players.length) {
+    list.innerHTML='<div class="empty"><div class="empty-icon">📋</div>No players. Add using the button above.</div>';
+    return;
+  }
+
+  const dayCounts = {};
+  players.forEach((p) => {
+    const meta = sessionSortMeta(p.session);
+    const key = meta.ts !== null ? String(meta.ts) : 'unknown';
+    dayCounts[key] = (dayCounts[key] || 0) + 1;
+  });
+
+  let lastDayKey = null;
+  let html = '';
+  players.forEach((p) => {
+    const meta = sessionSortMeta(p.session);
+    const dayKey = meta.ts !== null ? String(meta.ts) : 'unknown';
+    if (dayKey !== lastDayKey) {
+      lastDayKey = dayKey;
+      const n = dayCounts[dayKey] || 0;
+      if (meta.ts !== null) {
+        html += `<div class="roster-day-hd"><span class="roster-day-lbl">${formatRosterDateHeader(meta.ts)}</span><span class="roster-day-ct">${n} player${n !== 1 ? 's' : ''}</span></div>`;
+      } else {
+        html += `<div class="roster-day-hd"><span class="roster-day-lbl">No dated session</span><span class="roster-day-ct">${n} player${n !== 1 ? 's' : ''}</span></div>`;
+      }
+    }
+    html += `
+    <div class="prow ${p.checkedIn?'in':''} ${p.waiver&&!p.waiverDone?'waiver':''}">
+      <div class="tier-dot ${TIER_DOT[p.tier]||'td-ua'}"></div>
+      <div class="pr-main">
+        <div class="pr-name ${p.checkedIn?'checked':''}">${p.name}</div>
+        <div class="pr-meta">
+          <span class="pr-id">${p.pid||'—'}</span>
+          <span>${p.skill||'—'}</span>
+          <span>${p.session||'—'}</span>
+          ${p.waiver&&!p.waiverDone?'<span class="waiver-flag">📋 WAIVER</span>':''}
+          ${p.paid?'<span class="paid-flag">✓ PAID</span>':''}
+        </div>
+      </div>
+      <select class="tier-sel" onchange="setTier(${p._i},this.value)">
+        <option value="ua" ${!p.tier||p.tier==='ua'?'selected':''}>Unassigned</option>
+        <option value="free" ${p.tier==='free'?'selected':''}>Free</option>
+        <option value="disc" ${p.tier==='disc'?'selected':''}>$10</option>
+        <option value="full" ${p.tier==='full'?'selected':''}>$20</option>
+      </select>
+      <button class="paid-btn ${p.paid?'paid':'unpaid'}" onclick="togglePaid(${p._i})">${p.paid?'✓ Paid':'Mark Paid'}</button>
+      <button class="ci-btn ${p.checkedIn?'ci-in':'ci-pending'}" onclick="toggleCI(${p._i})">${p.checkedIn?'✓ In':'Check In'}</button>
+      <button class="edit-btn" onclick="editPlayer(${p._i})">Edit</button>
+    </div>`;
+  });
+  list.innerHTML = html;
+}
+
+function setTier(i,t){state.players[i].tier=t;save();renderAll();}
+function toggleCI(i){state.players[i].checkedIn=!state.players[i].checkedIn;save();renderAll();}
+function togglePaid(i){state.players[i].paid=!state.players[i].paid;save();renderAll();}
+
+function renderBracket() {
+  const levels=['Beginner','3.0-3.5','3.5-4.0','Advanced 4.0+','Open 5.0+'];
+  const bConfig={'Advanced 4.0+':{lbl:'Advanced 4.0+',cls:'bb-purple'},'Open 5.0+':{lbl:'Open 5.0+',cls:'bb-neon'},unset:{lbl:'Level Not Set',cls:'bb-gold'}};
+  const grouped={};
+  state.players.forEach(p=>{const k=p.skill||'unset';if(!grouped[k])grouped[k]=[];grouped[k].push(p);});
+  let html='';
+  [...levels,'unset'].forEach(lvl=>{
+    const g=grouped[lvl];if(!g||!g.length)return;
+    const b=bConfig[lvl]||{lbl:lvl,cls:'bb-gold'};
+    html+=`<div class="bracket-sec"><div class="bracket-hd"><span class="bracket-lbl">${b.lbl}</span><span class="b-badge ${b.cls}">${b.lbl.toUpperCase()}</span><span class="b-ct">${g.length} player${g.length!==1?'s':''}</span></div>
+    <div class="b-players">${g.map(p=>`<div class="b-player ${p.checkedIn?'in':''}"><div class="bp-name">${p.name}${p.checkedIn?' ✓':''}</div><div class="bp-id">${p.pid||''}</div><div class="bp-tier ${TIER_CLS[p.tier]||''}">${TIER_TXT[p.tier]||'—'}</div><div class="bp-flags">${p.waiver&&!p.waiverDone?'<span class="bf bf-waiver">WAIVER</span>':''}${p.paid?'<span class="bf bf-paid">PAID</span>':''}</div></div>`).join('')}</div></div>`;
+  });
+  document.getElementById('bracket-content').innerHTML=html||'<div class="empty"><div class="empty-icon">⚡</div>Add players and assign skill levels to see brackets.</div>';
+}
+
+function genId(name,session) {
+  return SEOpenPlay.generatePlayerId(name, session);
+}
+
+function showAddModal(){editIdx=null;clearModal();document.getElementById('modal-title').textContent='Add Player';document.getElementById('delete-btn').style.display='none';const pid=genId('XX',state.session||'Tuesday Evening Apr 8');document.getElementById('m-pid').value=pid;document.getElementById('add-modal').classList.add('open');}
+function editPlayer(i){editIdx=i;const p=state.players[i];document.getElementById('modal-title').textContent='Edit Player';document.getElementById('delete-btn').style.display='';const parts=(p.name||'').split(' ');document.getElementById('m-first').value=parts[0]||'';document.getElementById('m-last').value=parts.slice(1).join(' ')||'';document.getElementById('m-email').value=p.email||'';document.getElementById('m-phone').value=p.phone||'';document.getElementById('m-skill').value=p.skill||'';document.getElementById('m-tier').value=p.tier||'ua';document.getElementById('m-session').value=p.session||state.session||'Tuesday Evening Apr 8';document.getElementById('m-pid').value=p.pid||'';document.getElementById('m-waiver').checked=!!p.waiver;document.getElementById('m-paid').checked=!!p.paid;document.getElementById('m-notes').value=p.notes||'';document.getElementById('add-modal').classList.add('open');}
+function clearModal(){['m-first','m-last','m-email','m-phone','m-notes'].forEach(id=>document.getElementById(id).value='');document.getElementById('m-skill').value='';document.getElementById('m-tier').value='ua';document.getElementById('m-session').value=state.session||'Tuesday Evening Apr 8';document.getElementById('m-waiver').checked=false;document.getElementById('m-paid').checked=false;}
+function closeModal(){document.getElementById('add-modal').classList.remove('open');editIdx=null;}
+function savePlayer(){
+  const f=document.getElementById('m-first').value.trim();
+  if(!f){alert('First name required.');return;}
+  const entry={name:(f+' '+document.getElementById('m-last').value.trim()).trim(),email:document.getElementById('m-email').value.trim(),phone:document.getElementById('m-phone').value.trim(),skill:document.getElementById('m-skill').value,tier:document.getElementById('m-tier').value,session:document.getElementById('m-session').value,pid:document.getElementById('m-pid').value||genId(f,document.getElementById('m-session').value),waiver:document.getElementById('m-waiver').checked,paid:document.getElementById('m-paid').checked,notes:document.getElementById('m-notes').value.trim(),checkedIn:editIdx!==null?state.players[editIdx].checkedIn:false,waiverDone:editIdx!==null?state.players[editIdx].waiverDone:false};
+  if(editIdx!==null)state.players[editIdx]=entry;else state.players.push(entry);
+  save();closeModal();renderAll();
+}
+function deletePlayer(){if(editIdx===null||!confirm('Remove player?'))return;state.players.splice(editIdx,1);save();closeModal();renderAll();}
+
+async function toggleScan(){if(scanning)stopScan();else await startScan();}
+async function startScan(){
+  const vid=document.getElementById('scan-video'),st=document.getElementById('scan-status'),btn=document.getElementById('scan-btn');
+  if(!('BarcodeDetector' in window)){st.textContent='QR scan not supported on this browser. Use name search instead.';return;}
+  try{
+    const det=new BarcodeDetector({formats:['qr_code']});
+    scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});
+    vid.srcObject=scanStream;scanning=true;
+    btn.textContent='⏹ Stop';btn.className='btn btn-ghost';
+    st.textContent='Scanning — point at player QR code';
+    scanInterval=setInterval(async()=>{if(!scanning)return;try{const bc=await det.detect(vid);if(bc.length)processQR(bc[0].rawValue);}catch(e){}},500);
+  }catch(e){st.textContent='Camera denied. Use name search in Roster tab.';btn.textContent='📷 Start Scan';}}
+function stopScan(){scanning=false;if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}if(scanInterval){clearInterval(scanInterval);scanInterval=null;}const btn=document.getElementById('scan-btn');btn.textContent='📷 Start Scan';btn.className='btn btn-neon';document.getElementById('scan-video').srcObject=null;document.getElementById('scan-status').textContent='Tap Start Scan to open camera';}
+function processQR(raw){
+  try{
+    const d=JSON.parse(raw);if(!d.n)throw new Error();
+    stopScan();
+    const idx=state.players.findIndex(p=>p.name.toLowerCase()===d.n.toLowerCase()||(p.pid&&p.pid===d.id));
+    pendingScan={d,idx};
+    document.getElementById('sr-id').textContent=d.id||'';
+    document.getElementById('sr-name').textContent=d.n;
+    const p=idx>=0?state.players[idx]:null;
+    document.getElementById('sr-detail').textContent=(p?(TIER_TXT[p.tier]||'Unassigned')+(p.checkedIn?' · Already checked in':' · Not checked in')+(p.waiver&&!p.waiverDone?' · ⚠ WAIVER NEEDED':''):'Not in roster — add manually')+' · '+d.s;
+    document.getElementById('scan-result').classList.add('show');
+    document.getElementById('scan-status').textContent='QR scanned ✓';
+  }catch(e){document.getElementById('scan-status').textContent='Invalid QR — try again';}
+}
+function openAddFromScan(d){
+  editIdx=null;
+  clearModal();
+  document.getElementById('modal-title').textContent='Add Player';
+  document.getElementById('delete-btn').style.display='none';
+  const pts=(d.n||'').split(' ');
+  document.getElementById('m-first').value=pts[0]||'';
+  document.getElementById('m-last').value=pts.slice(1).join(' ')||'';
+  document.getElementById('m-email').value=d.e||'';
+  document.getElementById('m-phone').value=d.p||'';
+  document.getElementById('m-skill').value=d.sk||'';
+  document.getElementById('m-session').value=d.s||state.session||'';
+  document.getElementById('m-pid').value=d.id||'';
+  const th=d.t||'ua';
+  document.getElementById('m-tier').value=['free','disc','full','ua'].includes(th)?th:'ua';
+  document.getElementById('m-waiver').checked=!!d.w;
+  document.getElementById('add-modal').classList.add('open');
+}
+function confirmCheckin(){
+  if(!pendingScan)return;
+  const {idx,d}=pendingScan;
+  if(idx>=0){
+    state.players[idx].checkedIn=true;
+    save();
+    renderAll();
+    document.getElementById('scan-result').classList.remove('show');
+    document.getElementById('scan-status').textContent='✓ Checked in! Ready for next.';
+    pendingScan=null;
+    setTimeout(()=>startScan(),1800);
+  } else {
+    const snap=d;
+    document.getElementById('scan-result').classList.remove('show');
+    document.getElementById('scan-status').textContent='Complete player details below, then save.';
+    pendingScan=null;
+    openAddFromScan(snap);
+  }
+}
+function dismissScan(){document.getElementById('scan-result').classList.remove('show');pendingScan=null;startScan();}
+
+function showSessionModal(){document.getElementById('session-modal').classList.add('open');}
+function setSession(){state.session=document.getElementById('sm-day').value;state.date=document.getElementById('sm-date').value;state.players.forEach(p=>p.checkedIn=false);save();updateBadge();renderAll();document.getElementById('session-modal').classList.remove('open');}
+function resetCheckins(){if(!confirm('Reset all check-in statuses?'))return;state.players.forEach(p=>p.checkedIn=false);save();renderAll();}
+function newSession(){if(!confirm('Clear all players and start fresh?'))return;state={session:document.getElementById('sm-day').value,date:document.getElementById('sm-date').value,players:[]};save();updateBadge();renderAll();document.getElementById('session-modal').classList.remove('open');}
+
+function changePin(){
+  const cur=document.getElementById('current-pin').value;
+  const nw=document.getElementById('new-pin').value;
+  const cf=document.getElementById('confirm-pin').value;
+  const msg=document.getElementById('pin-msg');
+  if(cur!==SEOpenPlay.getPin()){msg.style.color='#ff6666';msg.textContent='Current PIN incorrect.';return;}
+  if(nw.length<4){msg.style.color='#ff6666';msg.textContent='New PIN must be at least 4 characters.';return;}
+  if(nw!==cf){msg.style.color='#ff6666';msg.textContent='PINs do not match.';return;}
+  ADMIN_PIN=nw;SEOpenPlay.setPin(nw);
+  msg.style.color='var(--neon)';msg.textContent='✓ PIN updated successfully.';
+  ['current-pin','new-pin','confirm-pin'].forEach(id=>document.getElementById(id).value='');
+}
+
+function sendDailyList() {
+  if (!state.players.length) { alert('No players to send.'); return; }
+  const tl = {free:'Free',disc:'Discounted $10',full:'Full $20',ua:'Unassigned'};
+  const date = state.date || new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  const session = state.session || 'Session';
+  let body = 'SOUTH END OPEN PLAY — ' + session + ' (' + date + ')\n';
+  body += '='.repeat(50) + '\n\n';
+  body += 'TOTAL: ' + state.players.length + ' players\n';
+  body += 'CHECKED IN: ' + state.players.filter(p=>p.checkedIn).length + '\n';
+  body += 'REVENUE: $' + (state.players.filter(p=>p.tier==='disc').length*10 + state.players.filter(p=>p.tier==='full').length*20) + '\n\n';
+  body += 'ROSTER:\n' + '-'.repeat(50) + '\n';
+  state.players.forEach((p,i) => {
+    body += (i+1) + '. ' + p.name;
+    body += ' | ID: ' + (p.pid||'—');
+    body += ' | ' + (tl[p.tier]||'Unassigned');
+    body += ' | ' + (p.skill||'—');
+    body += p.checkedIn ? ' | CHECKED IN' : ' | NOT IN';
+    body += p.paid ? ' | PAID' : ' | UNPAID';
+    body += p.waiver && !p.waiverDone ? ' | WAIVER NEEDED' : '';
+    body += '\n';
+  });
+  const subject = 'Open Play Roster — ' + session + ' ' + date;
+  window.location.href = 'mailto:BrandonHookerPickleball@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+}
+
+function exportCSV(){if(!state.players.length){alert('No players.');return;}
+  const h=['ID','Name','Email','Phone','Skill','Tier','Paid','Waiver Needed','Checked In','Session','Notes'];
+  const tl={free:'Free',disc:'Discounted $10',full:'Full $20',ua:'Unassigned'};
+  const sorted=[...state.players].sort(compareRosterPlayers);
+  const rows=[h,...sorted.map(p=>[p.pid||'',p.name,p.email||'',p.phone||'',p.skill||'',tl[p.tier]||'',p.paid?'Yes':'No',p.waiver&&!p.waiverDone?'Yes':'No',p.checkedIn?'Yes':'No',p.session||'',p.notes||''])];
+  const csv=rows.map(r=>r.map(c=>'"'+(c||'')+'"').join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='session_'+(state.date||'unknown')+'.csv';a.click();}
+
+function switchTab(t){
+  const tabs=['roster','scan','bracket','settings'];
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',tabs[i]===t));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+t).classList.add('active');
+  if(t!=='scan'&&scanning)stopScan();
+  if(t==='bracket')renderBracket();
+}
+</script>
+</body>
+</html>
