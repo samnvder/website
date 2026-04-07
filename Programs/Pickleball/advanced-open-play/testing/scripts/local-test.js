@@ -34,7 +34,9 @@ const OUT_DIRS = [
 const FILES = [
   'SouthEnd_Session_RSVP.html',
   'SouthEnd_OpenPlay_Account.html',
+  'SouthEnd_Message_Board.html',
   'SouthEnd_Session_Checkin.html',
+  'SouthEnd_Admin_Activity.html',
   'js/south-end-openplay-sync.js',
   'js/openplay-profile-panel.js',
   'js/openplay-firebase-config.js',
@@ -122,7 +124,9 @@ const hub = `<!DOCTYPE html>
   <ul>
     <li><a href="SouthEnd_Session_RSVP.html">RSVP <small>Open Play — reservation form</small></a></li>
     <li><a href="SouthEnd_OpenPlay_Account.html">Account <small>Sign in / create account (then RSVP)</small></a></li>
+    <li><a href="SouthEnd_Message_Board.html">Message board <small>Community feed (signed-in)</small></a></li>
     <li><a href="SouthEnd_Session_Checkin.html">Check-in <small>Staff roster / scan</small></a></li>
+    <li><a href="SouthEnd_Admin_Activity.html">Admin activity <small>Staff event feed</small></a></li>
   </ul>
   <p class="hint">Run <code>npm run local-test</code> from the Website folder to refresh. Short URL: <code>/local-page/</code>. Mirrors are gitignored. Active tree: <strong>${TREE_LABEL}</strong> — switch with <code>npm run openplay:use-staging</code> / <code>npm run openplay:use-live</code>. Production deploy uses <code>live/</code> only (see <code>openplay-mode.json</code> + deploy guard).</p>
 </body>

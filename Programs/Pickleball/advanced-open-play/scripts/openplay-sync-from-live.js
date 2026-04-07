@@ -19,7 +19,9 @@ const ROOT = path.join(PROGRAM_ROOT, '..', '..', '..');
 const FILES = [
   'SouthEnd_Session_RSVP.html',
   'SouthEnd_OpenPlay_Account.html',
+  'SouthEnd_Message_Board.html',
   'SouthEnd_Session_Checkin.html',
+  'SouthEnd_Admin_Activity.html',
   'js/south-end-openplay-sync.js',
   'js/openplay-profile-panel.js',
   'js/openplay-firebase-config.js',
@@ -143,7 +145,9 @@ function hubHtml(syncedAt) {
   <ul>
     <li><a href="SouthEnd_Session_RSVP.html">RSVP <small>Open Play — reservation form</small></a></li>
     <li><a href="SouthEnd_OpenPlay_Account.html">Account <small>Sign in / create account (then RSVP)</small></a></li>
+    <li><a href="SouthEnd_Message_Board.html">Message board <small>Community feed (signed-in)</small></a></li>
     <li><a href="SouthEnd_Session_Checkin.html">Check-in <small>Staff roster / scan</small></a></li>
+    <li><a href="SouthEnd_Admin_Activity.html">Admin activity <small>Staff event feed</small></a></li>
   </ul>
   <p class="hint">Content matches <code>live/</code>; <code>js/openplay-firebase-config.js</code> here stays on your test/staging Firebase project. Run <code>npm run local-test</code> for active-tree mirroring. Production: <code>npm run deploy:openplay</code>.</p>
 </body>

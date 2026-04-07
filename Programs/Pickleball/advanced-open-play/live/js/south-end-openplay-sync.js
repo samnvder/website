@@ -15,6 +15,7 @@
   var USER_PROFILE_PATH = 'openplay_se/user_profiles';
   var ADMIN_UIDS_PATH = 'openplay_se/admin_uids';
   var ACTIVITY_PATH = 'openplay_se/activity';
+  var BOARD_MESSAGES_PATH = 'openplay_se/board_messages';
 
   var SE_OPENPLAY_FIREBASE = Object.assign(
     { apiKey: '', authDomain: '', databaseURL: '', projectId: '' },
@@ -665,6 +666,89 @@
   }
 
   /** True if openplay_se/admin_uids/{uid} === true (set in Firebase Console). */
+  var boardMessagesRef = null;
+
+  function subscribeBoardMessages(callback) {
+    if (!firebaseConfigured() || typeof callback !== 'function') return Promise.resolve();
+    return initFirebase().then(function () {
+      if (!firebaseDb) return;
+      if (boardMessagesRef) {
+        boardMessagesRef.off();
+        boardMessagesRef = null;
+      }
+      boardMessagesRef = firebaseDb.ref(BOARD_MESSAGES_PATH);
+      boardMessagesRef.on('value', function (snap) {
+        var v = snap.val();
+        var list = [];
+        if (v) {
+          Object.keys(v).forEach(function (k) {
+            var row = v[k];
+            if (row) {
+              var copy = Object.assign({}, row);
+              copy.id = k;
+              list.push(copy);
+            }
+          });
+          list.sort(function (a, b) {
+            return (b.ts || 0) - (a.ts || 0);
+          });
+        }
+        callback(list);
+      });
+    });
+  }
+
+  function unsubscribeBoardMessages() {
+    if (boardMessagesRef && firebaseDb) {
+      boardMessagesRef.off();
+      boardMessagesRef = null;
+    }
+  }
+
+  function pushBoardMessage(text) {
+    var u = getCurrentUser();
+    if (!u) return Promise.reject(new Error('Sign in required'));
+    var trimmed = String(text || '').trim();
+    if (!trimmed) return Promise.reject(new Error('Empty message'));
+    if (trimmed.length > 500) trimmed = trimmed.substring(0, 500);
+    return initFirebase().then(function () {
+      if (!firebaseDb || !global.firebase) return Promise.reject(new Error('Not ready'));
+      return loadUserProfile(u.uid).then(function (p) {
+        var prof = p || {};
+        var first = String(prof.firstName || '').trim();
+        var last = String(prof.lastName || '').trim();
+        var name = (first + ' ' + last).trim() || String(u.email || 'Member');
+        var skill = String(prof.skill || '').trim();
+        var ref = firebaseDb.ref(BOARD_MESSAGES_PATH).push();
+        return loadAdminUidFlag(u.uid).then(function (isAdmin) {
+          return ref.set({
+            uid: u.uid,
+            authorName: name,
+            skill: skill,
+            text: trimmed,
+            isStaffAdmin: !!isAdmin,
+            ts: global.firebase.database.ServerValue.TIMESTAMP,
+          });
+        });
+      });
+    });
+  }
+
+  function deleteBoardMessage(messageId) {
+    var u = getCurrentUser();
+    if (!u) return Promise.reject(new Error('Sign in required'));
+    if (!messageId) return Promise.reject(new Error('Invalid'));
+    return initFirebase().then(function () {
+      if (!firebaseDb) return Promise.reject(new Error('Not ready'));
+      var ref = firebaseDb.ref(BOARD_MESSAGES_PATH + '/' + String(messageId));
+      return ref.once('value').then(function (snap) {
+        var row = snap.val();
+        if (!row || String(row.uid) !== u.uid) return Promise.reject(new Error('Not allowed'));
+        return ref.remove();
+      });
+    });
+  }
+
   function loadAdminUidFlag(uid) {
     if (!firebaseConfigured() || !uid) return Promise.resolve(false);
     return initFirebase()
@@ -690,6 +774,7 @@
     USER_PROFILE_PATH: USER_PROFILE_PATH,
     ADMIN_UIDS_PATH: ADMIN_UIDS_PATH,
     ACTIVITY_PATH: ACTIVITY_PATH,
+    BOARD_MESSAGES_PATH: BOARD_MESSAGES_PATH,
     migratePin: migratePin,
     getPin: getPin,
     setPin: setPin,
@@ -728,5 +813,9 @@
     isProfileComplete: isProfileComplete,
     isStaffEmailAllowed: isStaffEmailAllowed,
     loadAdminUidFlag: loadAdminUidFlag,
+    subscribeBoardMessages: subscribeBoardMessages,
+    unsubscribeBoardMessages: unsubscribeBoardMessages,
+    pushBoardMessage: pushBoardMessage,
+    deleteBoardMessage: deleteBoardMessage,
   };
 })(typeof window !== 'undefined' ? window : this);

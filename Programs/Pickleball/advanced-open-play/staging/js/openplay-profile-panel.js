@@ -44,7 +44,8 @@
     var style = document.createElement('style');
     style.id = NS + '-css';
     style.textContent =
-      '.header{position:relative;}' +
+      '.header{position:relative;z-index:10;}' +
+      'nav.se-site-nav{position:relative;z-index:1;}' +
       '.' + NS + '-anchor{display:none;z-index:500;}' +
       '.header > .' + NS + '-anchor{' +
       'position:absolute;right:18px;top:12px;}' +
@@ -58,7 +59,7 @@
       '.' + NS + '-icon{width:20px;height:20px;display:block;}' +
       '.' + NS + '-label{white-space:nowrap;line-height:1;}' +
       '.' + NS + '-menu{' +
-      'position:absolute;right:0;top:44px;width:260px;background:#111e35;border:1.5px solid rgba(0,255,136,.35);' +
+      'position:absolute;right:0;top:44px;z-index:20;width:260px;background:#111e35;border:1.5px solid rgba(0,255,136,.35);' +
       'border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.45);padding:8px;display:none;}' +
       '.' + NS + '-menu.open{display:block;}' +
       '.' + NS + '-menu-head{padding:8px 10px 10px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:6px;}' +

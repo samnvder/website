@@ -531,7 +531,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
 
 <script src="js/openplay-firebase-config.js"></script>
 <script src="js/south-end-openplay-sync.js"></script>
-<script src="js/openplay-profile-panel.js?v=20260406"></script>
+<script src="js/openplay-profile-panel.js?v=20260407"></script>
 <script>
 SEOpenPlay.migratePin();
 let state = loadState();
@@ -666,8 +666,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     bc.onmessage = () => { if (drainPendingRsvps()) { save(); renderAll(); } };
   } catch (e) {}
   SEOpenPlay.subscribeRsvps((records) => {
-    let ch = false;
-    records.forEach((r) => { if (mergePlayerFromRsvp(r)) ch = true; });
+    const remotePids = new Set(
+      (records || []).map((r) => (r && r.pid ? String(r.pid).trim() : '')).filter(Boolean)
+    );
+    let ch = pruneStaleRsvpsFromLocalState(remotePids);
+    (records || []).forEach((r) => { if (mergePlayerFromRsvp(r)) ch = true; });
     if (ch) { save(); renderAll(); }
   });
   // subscribeRsvps above already covers all RSVPs for the admin user.
@@ -693,6 +696,41 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderQuickActionsPanel();
   renderPlayerProfilePanel();
 });
+
+/** Same pattern as stableRsvpPlayerId in js/south-end-openplay-sync.js (slot + U + 8 hex). */
+function looksLikeStableRsvpPid(pid) {
+  if (!pid || typeof pid !== 'string') return false;
+  return /^(TM|TE|TH|SE)U[0-9A-F]{8}$/i.test(String(pid).trim());
+}
+
+/**
+ * Firebase listener sends the full RSVP set; merge alone never removed rows when an RSVP was
+ * cancelled/deleted in RTDB, so ghosts stayed in localStorage + mobile roster. Remove locals that
+ * are clearly cloud-backed (rsvpCloud or stable pid) but no longer on the server. Keep walk-ins
+ * (random TMxx1234-style ids, rsvpCloud false).
+ */
+function pruneStaleRsvpsFromLocalState(remotePids) {
+  const set = remotePids instanceof Set ? remotePids : new Set(remotePids || []);
+  let marked = false;
+  state.players.forEach((p, i) => {
+    const pid = p && p.pid ? String(p.pid).trim() : '';
+    if (!pid || set.has(pid)) return;
+    if (p.rsvpCloud || looksLikeStableRsvpPid(pid)) marked = true;
+  });
+  if (!marked) return false;
+  state.players.forEach((p, i) => {
+    const pid = p && p.pid ? String(p.pid).trim() : '';
+    if (!pid || set.has(pid)) return;
+    if (p.rsvpCloud || looksLikeStableRsvpPid(pid)) rosterExpandedKeys.delete(playerKeyFor(p, i));
+  });
+  state.players = state.players.filter((p) => {
+    const pid = p && p.pid ? String(p.pid).trim() : '';
+    if (!pid) return true;
+    if (set.has(pid)) return true;
+    return !(p.rsvpCloud || looksLikeStableRsvpPid(pid));
+  });
+  return true;
+}
 
 function mergePlayerFromRsvp(incoming) {
   if (!incoming || !incoming.pid) return false;
@@ -728,6 +766,7 @@ function mergePlayerFromRsvp(incoming) {
       checkedIn: !!incoming.checkedIn,
       notes: incoming.notes || '',
       memberCard: incoming.memberCard || '',
+      rsvpCloud: true,
     });
     return true;
   }
@@ -743,7 +782,7 @@ function mergePlayerFromRsvp(incoming) {
   const newPid = incoming.pid || cur.pid;
   if (cur.name === newName && cur.email === newEmail && cur.phone === newPhone &&
       cur.skill === newSkill && cur.session === newSession && cur.waiver === newWaiver &&
-      cur.memberCard === newMemberCard && cur.tier === newTier && cur.pid === newPid) {
+      cur.memberCard === newMemberCard && cur.tier === newTier && cur.pid === newPid && cur.rsvpCloud) {
     return false;
   }
   state.players[idx] = {
@@ -751,6 +790,7 @@ function mergePlayerFromRsvp(incoming) {
     name: newName, email: newEmail, phone: newPhone, skill: newSkill,
     session: newSession, waiver: newWaiver, memberCard: newMemberCard,
     tier: newTier, pid: newPid,
+    rsvpCloud: true,
   };
   return true;
 }
@@ -1300,7 +1340,7 @@ function closeModal(){document.getElementById('add-modal').classList.remove('ope
 function savePlayer(){
   const f=document.getElementById('m-first').value.trim();
   if(!f){alert('First name required.');return;}
-  const entry={name:(f+' '+document.getElementById('m-last').value.trim()).trim(),email:document.getElementById('m-email').value.trim(),phone:document.getElementById('m-phone').value.trim(),skill:document.getElementById('m-skill').value,tier:document.getElementById('m-tier').value,session:document.getElementById('m-session').value,pid:document.getElementById('m-pid').value||genId(f,document.getElementById('m-session').value),waiver:document.getElementById('m-waiver').checked,paid:document.getElementById('m-paid').checked,notes:document.getElementById('m-notes').value.trim(),checkedIn:editIdx!==null?state.players[editIdx].checkedIn:false,waiverDone:editIdx!==null?state.players[editIdx].waiverDone:false,memberCard:editIdx!==null?(state.players[editIdx].memberCard||''):''};
+  const entry={name:(f+' '+document.getElementById('m-last').value.trim()).trim(),email:document.getElementById('m-email').value.trim(),phone:document.getElementById('m-phone').value.trim(),skill:document.getElementById('m-skill').value,tier:document.getElementById('m-tier').value,session:document.getElementById('m-session').value,pid:document.getElementById('m-pid').value||genId(f,document.getElementById('m-session').value),waiver:document.getElementById('m-waiver').checked,paid:document.getElementById('m-paid').checked,notes:document.getElementById('m-notes').value.trim(),checkedIn:editIdx!==null?state.players[editIdx].checkedIn:false,waiverDone:editIdx!==null?state.players[editIdx].waiverDone:false,memberCard:editIdx!==null?(state.players[editIdx].memberCard||''):'',rsvpCloud:editIdx!==null?!!state.players[editIdx].rsvpCloud:false};
   if(editIdx!==null){
     state.players[editIdx]=entry;
   } else {

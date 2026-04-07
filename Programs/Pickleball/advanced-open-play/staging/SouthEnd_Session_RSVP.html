@@ -27,6 +27,21 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 .hdr-title{font-family:'Oswald',sans-serif;font-size:24px;color:#fff;letter-spacing:1px;text-transform:uppercase;line-height:1;}
 .hdr-title span{color:var(--neon);}
 .hdr-sub{font-size:9px;color:rgba(255,255,255,.65);margin-top:3px;}
+.se-site-nav{
+  display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;
+  padding:10px 28px 12px;background:rgba(5,12,28,.85);
+  border-bottom:1px solid rgba(0,255,136,.22);
+}
+.se-site-nav-link{
+  font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.55);text-decoration:none;padding:8px 14px;border-radius:6px;
+  border:1px solid transparent;transition:color .15s,border-color .15s,background .15s;
+}
+.se-site-nav-link:hover{color:var(--neon);background:rgba(0,255,136,.08);}
+.se-site-nav-link--active{
+  color:var(--ink);background:var(--neon);border-color:rgba(0,255,136,.45);
+  box-shadow:0 0 20px rgba(0,255,136,.25);
+}
 
 /* HIDDEN COUPON ZONE — top right corner trigger, invisible to casual viewers */
 
@@ -434,6 +449,11 @@ button.account-strip-link:hover{text-decoration:underline;}
     <div class="hdr-sub">Tuesday &amp; Thursday Sessions &nbsp;·&nbsp; Competitive Open Play</div>
   </div>
 </div>
+<nav class="se-site-nav" aria-label="Open Play sections">
+  <a class="se-site-nav-link" href="SouthEnd_OpenPlay_Account.html">Hub</a>
+  <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Session_RSVP.html" aria-current="page">RSVP</a>
+  <a class="se-site-nav-link" href="SouthEnd_Message_Board.html">Board</a>
+</nav>
 
 <div class="coupon-panel" id="coupon-panel">
   <div class="coupon-box">
@@ -710,7 +730,7 @@ button.account-strip-link:hover{text-decoration:underline;}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="js/openplay-firebase-config.js"></script>
 <script src="js/south-end-openplay-sync.js"></script>
-<script src="js/openplay-profile-panel.js?v=20260406"></script>
+<script src="js/openplay-profile-panel.js?v=20260407"></script>
 <script src="js/openplay-rsvp-helpers.js"></script>
 <script src="js/openplay-waiver-modals.js"></script>
 <script>

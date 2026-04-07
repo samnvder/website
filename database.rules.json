@@ -27,6 +27,13 @@
         "$eventId": {
           ".write": "auth != null && ((root.child('openplay_se/admin_uids/' + auth.uid).val() === true) || (!data.exists() && newData.exists() && newData.child('actorUid').val() === auth.uid && newData.child('targetUid').val() === auth.uid))"
         }
+      },
+      "board_messages": {
+        ".indexOn": ["ts", "uid"],
+        ".read": "auth != null",
+        "$msgId": {
+          ".write": "auth != null && ((!data.exists() && newData.exists() && newData.child('uid').val() === auth.uid && newData.child('isStaffAdmin').val() == (root.child('openplay_se/admin_uids/' + auth.uid).val() == true)) || (data.exists() && data.child('uid').val() === auth.uid && !newData.exists()))"
+        }
       }
     }
   }
