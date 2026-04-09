@@ -1,32 +1,31 @@
 <!--
-  HOMEPAGE YOUTH CAMP BANNER (Spring + Summer combined)
+  HOMEPAGE YOUTH CAMP BANNER (Summer)
   Standalone, copy/paste ready. Thrive-safe.
-  Title: "Youth Sports Camp Registrations Open!"
 -->
 <style>
-/* Spring Camp Promo - Thrive-Safe */
-.spring-camp-promo,
-.spring-camp-promo *,
-.spring-camp-promo *::before,
-.spring-camp-promo *::after {
+/* Youth Summer Camp Promo - Thrive-Safe */
+.youth-camp-promo,
+.youth-camp-promo *,
+.youth-camp-promo *::before,
+.youth-camp-promo *::after {
   box-sizing: border-box !important;
 }
 
-.spring-camp-promo {
+.youth-camp-promo {
   padding: 60px 20px !important;
   background: linear-gradient(135deg, #f8f2e1 0%, #f0e9d8 100%) !important;
   font-family: 'Plus Jakarta Sans', sans-serif !important;
   width: 100% !important;
 }
 
-.spring-camp-promo .promo-container {
+.youth-camp-promo .promo-container {
   max-width: 1500px !important;
   margin: 0 auto !important;
   padding: 0 20px !important;
   width: 100% !important;
 }
 
-.spring-camp-promo .promo-card {
+.youth-camp-promo .promo-card {
   display: grid !important;
   grid-template-columns: 1fr !important;
   grid-template-rows: auto auto !important;
@@ -40,7 +39,7 @@
 }
 
 /* Images - one clean row across top */
-.spring-camp-promo .promo-images {
+.youth-camp-promo .promo-images {
   display: grid !important;
   grid-template-columns: 1fr 1fr 1fr !important;
   gap: 10px !important;
@@ -49,18 +48,18 @@
   padding: 24px 24px 0 !important;
 }
 
-.spring-camp-promo .promo-img {
+.youth-camp-promo .promo-img {
   border-radius: 14px !important;
   overflow: hidden !important;
   position: relative !important;
   box-shadow: 0 4px 15px rgba(11, 70, 140, 0.1) !important;
 }
 
-.spring-camp-promo .promo-img.featured {
+.youth-camp-promo .promo-img.featured {
   grid-row: span 1 !important;
 }
 
-.spring-camp-promo .promo-img img {
+.youth-camp-promo .promo-img img {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover !important;
@@ -70,21 +69,21 @@
   transition: transform 0.4s ease !important;
 }
 
-.spring-camp-promo .promo-img:first-child img {
+.youth-camp-promo .promo-img:first-child img {
   object-position: 25% center !important;
 }
 
-.spring-camp-promo .promo-img:hover img {
+.youth-camp-promo .promo-img:hover img {
   transform: scale(1.05) !important;
 }
 
-/* Title + subtitle - full width above split */
-.spring-camp-promo .promo-header {
+/* Title + subtitle */
+.youth-camp-promo .promo-header {
   padding: 28px 24px 20px !important;
   text-align: center !important;
 }
 
-.spring-camp-promo .promo-content {
+.youth-camp-promo .promo-content {
   display: flex !important;
   flex-direction: column !important;
   gap: 12px !important;
@@ -92,34 +91,19 @@
   align-items: center !important;
 }
 
-/* Split: Left = Spring, Right = Summer */
-.spring-camp-promo .promo-split {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 0 !important;
-  padding: 0 24px 32px !important;
-  min-width: 0 !important;
-}
-
-.spring-camp-promo .promo-half {
+/* Summer block - single column */
+.youth-camp-promo .promo-summer {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: flex-start !important;
   gap: 16px !important;
-  padding: 24px 20px !important;
+  padding: 0 24px 32px !important;
   text-align: center !important;
+  min-width: 0 !important;
 }
 
-.spring-camp-promo .promo-half-spring {
-  border-right: 2px solid rgba(11, 70, 140, 0.15) !important;
-}
-
-.spring-camp-promo .promo-half-summer {
-  border-left: none !important;
-}
-
-.spring-camp-promo .promo-half-title {
+.youth-camp-promo .promo-half-title {
   font-family: 'Montserrat', sans-serif !important;
   font-size: 1.15rem !important;
   font-weight: 800 !important;
@@ -127,7 +111,7 @@
   margin: 0 !important;
 }
 
-.spring-camp-promo .promo-half-dates {
+.youth-camp-promo .promo-half-dates {
   display: flex !important;
   flex-wrap: wrap !important;
   gap: 10px !important;
@@ -135,7 +119,7 @@
   margin: 0 !important;
 }
 
-.spring-camp-promo .promo-half-buttons {
+.youth-camp-promo .promo-half-buttons {
   display: flex !important;
   flex-direction: column !important;
   gap: 12px !important;
@@ -143,7 +127,7 @@
   margin-top: auto !important;
 }
 
-.spring-camp-promo .promo-label {
+.youth-camp-promo .promo-label {
   display: inline-flex !important;
   align-items: center !important;
   gap: 12px !important;
@@ -156,8 +140,8 @@
   padding: 0 !important;
 }
 
-.spring-camp-promo .promo-label::before,
-.spring-camp-promo .promo-label::after {
+.youth-camp-promo .promo-label::before,
+.youth-camp-promo .promo-label::after {
   content: '' !important;
   width: 35px !important;
   height: 2px !important;
@@ -166,7 +150,7 @@
   display: inline-block !important;
 }
 
-.spring-camp-promo .promo-title {
+.youth-camp-promo .promo-title {
   font-family: 'Montserrat', sans-serif !important;
   font-size: 2.4rem !important;
   font-weight: 800 !important;
@@ -177,7 +161,7 @@
   padding: 0 !important;
 }
 
-.spring-camp-promo .promo-subtitle {
+.youth-camp-promo .promo-subtitle {
   font-family: 'Plus Jakarta Sans', sans-serif !important;
   font-size: 1.05rem !important;
   color: #3d5a5e !important;
@@ -188,7 +172,7 @@
   padding: 0 !important;
 }
 
-.spring-camp-promo .date-pill {
+.youth-camp-promo .date-pill {
   display: inline-flex !important;
   align-items: center !important;
   gap: 8px !important;
@@ -202,20 +186,20 @@
   margin: 0 !important;
 }
 
-.spring-camp-promo .date-pill .date-range {
+.youth-camp-promo .date-pill .date-range {
   white-space: nowrap !important;
 }
 
-.spring-camp-promo .date-pill .date-icon {
+.youth-camp-promo .date-pill .date-icon {
   font-size: 1rem !important;
 }
 
-.spring-camp-promo .promo-more {
+.youth-camp-promo .promo-more {
   text-align: center !important;
   padding: 16px 24px 24px !important;
 }
 
-.spring-camp-promo a.promo-cta {
+.youth-camp-promo a.promo-cta {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -230,19 +214,19 @@
   text-decoration: none !important;
   box-shadow: 0 6px 25px rgba(11, 70, 140, 0.4), 0 3px 10px rgba(0, 0, 0, 0.15) !important;
   transition: all 0.3s ease !important;
-  animation: scpCtaPulse 2.5s ease-in-out infinite !important;
+  animation: ycpCtaPulse 2.5s ease-in-out infinite !important;
   margin: 0 !important;
   border: none !important;
 }
 
-.spring-camp-promo a.promo-cta:hover {
+.youth-camp-promo a.promo-cta:hover {
   transform: translateY(-3px) scale(1.03) !important;
   box-shadow: 0 10px 35px rgba(11, 70, 140, 0.5), 0 5px 15px rgba(0, 0, 0, 0.2) !important;
   animation: none !important;
   color: #ffffff !important;
 }
 
-.spring-camp-promo a.promo-cta-secondary {
+.youth-camp-promo a.promo-cta-secondary {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -260,91 +244,77 @@
   margin: 0 !important;
 }
 
-.spring-camp-promo a.promo-cta-secondary:hover {
+.youth-camp-promo a.promo-cta-secondary:hover {
   background: #0b468c !important;
   color: #f8f2e1 !important;
   transform: translateY(-2px) !important;
 }
 
-.spring-camp-promo a svg {
+.youth-camp-promo a svg {
   flex-shrink: 0 !important;
   width: 18px !important;
   height: 18px !important;
 }
 
-@keyframes scpCtaPulse {
+@keyframes ycpCtaPulse {
   0%, 100% { box-shadow: 0 6px 25px rgba(11, 70, 140, 0.4), 0 3px 10px rgba(0, 0, 0, 0.15); }
   50% { box-shadow: 0 8px 30px rgba(11, 70, 140, 0.5), 0 4px 12px rgba(0, 0, 0, 0.18); }
 }
 
 /* TABLET */
 @media (max-width: 900px) {
-  .spring-camp-promo .promo-images {
+  .youth-camp-promo .promo-images {
     height: 180px !important;
     padding: 20px 20px 0 !important;
   }
   
-  .spring-camp-promo .promo-title {
+  .youth-camp-promo .promo-title {
     font-size: 2rem !important;
   }
   
-  .spring-camp-promo .promo-split {
-    grid-template-columns: 1fr !important;
+  .youth-camp-promo .promo-summer {
     padding: 0 20px 24px !important;
-  }
-  
-  .spring-camp-promo .promo-half-spring {
-    border-right: none !important;
-    border-bottom: 2px solid rgba(11, 70, 140, 0.15) !important;
-  }
-  
-  .spring-camp-promo .promo-half {
-    padding: 20px 16px !important;
   }
 }
 
 @media (max-width: 500px) {
-  .spring-camp-promo {
+  .youth-camp-promo {
     padding: 40px 15px !important;
   }
   
-  .spring-camp-promo .promo-images {
+  .youth-camp-promo .promo-images {
     height: 140px !important;
     gap: 6px !important;
     padding: 16px 16px 0 !important;
   }
   
-  .spring-camp-promo .promo-header {
+  .youth-camp-promo .promo-header {
     padding: 20px 16px 16px !important;
   }
   
-  .spring-camp-promo .promo-title {
+  .youth-camp-promo .promo-title {
     font-size: 1.4rem !important;
   }
   
-  .spring-camp-promo .promo-subtitle {
+  .youth-camp-promo .promo-subtitle {
     font-size: 0.9rem !important;
   }
   
-  .spring-camp-promo .promo-split {
+  .youth-camp-promo .promo-summer {
     padding: 0 16px 20px !important;
   }
   
-  .spring-camp-promo .promo-half {
-    padding: 16px 12px !important;
-  }
-  
-  .spring-camp-promo .promo-half-title {
+  .youth-camp-promo .promo-half-title {
     font-size: 1rem !important;
   }
   
-  .spring-camp-promo .date-pill {
+  .youth-camp-promo .date-pill {
     padding: 10px 14px !important;
     font-size: 0.8rem !important;
   }
   
-  .spring-camp-promo a.promo-cta,
-  .spring-camp-promo a.promo-cta-secondary {
+  .youth-camp-promo a.promo-cta,
+  .youth-camp-promo a.promo-cta-secondary {
     width: 100% !important;
     max-width: 280px !important;
     padding: 14px 24px !important;
@@ -353,7 +323,7 @@
 }
 </style>
 
-<section class="spring-camp-promo">
+<section class="youth-camp-promo">
   <div class="promo-container">
     <div class="promo-card">
       
@@ -374,37 +344,22 @@
       <div class="promo-header">
         <div class="promo-content">
           <span class="promo-label">Junior Sports Camp</span>
-          <h2 class="promo-title">Youth Sports Camp Registrations Open!</h2>
-          <p class="promo-subtitle">Secure your child's spot for spring break or summer. Ages 5–13 enjoy tennis, swimming, arts &amp; crafts, and daily outdoor activities.</p>
+          <h2 class="promo-title">Summer Camp Registration Open!</h2>
+          <p class="promo-subtitle">Secure your child's spot for summer. Ages 5–13 enjoy tennis, swimming, arts &amp; crafts, and daily outdoor activities.</p>
         </div>
       </div>
       
-      <!-- Left = Spring | Right = Summer -->
-      <div class="promo-split">
-        <div class="promo-half promo-half-spring">
-          <h3 class="promo-half-title">🌸 Spring Camp</h3>
-          <div class="promo-half-dates">
-            <span class="date-pill"><span class="date-icon">📅</span> <span class="date-range">Week 1: 3/30 – 4/3</span></span>
-            <span class="date-pill"><span class="date-icon">📅</span> <span class="date-range">Week 2: 4/6 – 4/10</span></span>
-          </div>
-          <div class="promo-half-buttons">
-            <a href="https://pci.jotform.com/form/243515204283147" target="_blank" class="promo-cta" draggable="false">
-              <span>Register for Spring Camp</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
+      <!-- Summer only -->
+      <div class="promo-summer">
+        <h3 class="promo-half-title">☀️ Summer Camp</h3>
+        <div class="promo-half-dates">
+          <span class="date-pill"><span class="date-icon">📅</span> <span class="date-range">Weekly Signups 6/8 – 8/21</span></span>
         </div>
-        <div class="promo-half promo-half-summer">
-          <h3 class="promo-half-title">☀️ Summer Camp</h3>
-          <div class="promo-half-dates">
-            <span class="date-pill"><span class="date-icon">📅</span> <span class="date-range">Weekly Signups 6/8 – 8/21</span></span>
-          </div>
-          <div class="promo-half-buttons">
-            <a href="https://pci.jotform.com/form/250416539351152" target="_blank" class="promo-cta" draggable="false">
-              <span>Register for Summer Camp</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-          </div>
+        <div class="promo-half-buttons">
+          <a href="https://pci.jotform.com/form/250416539351152" target="_blank" class="promo-cta" draggable="false">
+            <span>Register for Summer Camp</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          </a>
         </div>
       </div>
       

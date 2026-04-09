@@ -654,7 +654,7 @@ CSS (add to page CSS or use global.css):
 
 Pages with CSS in the Pages directory:
 1. Pages/pools/Pools CSS.css
-2. Pages/youth-programs/Youth CSS.css
+2. Pages/youth-programs/youth-programs.css
 3. Pages/Events (Category)/events/Events CSS.css
 4. Pages/fitness/Fitness CSS.css
 5. Pages/services/services CSS.css

@@ -692,10 +692,19 @@ img {
   }
 }
 
-/* ========================= ENROLLMENT BANNER (SPRING & SUMMER SPLIT) ========================= */
+/* ========================= ENROLLMENT BANNER (SUMMER) ========================= */
 .enrollment-banner {
   margin-bottom: 40px;
   position: relative;
+}
+
+/* Single summer column (no spring split) */
+.enrollment-banner-split.enrollment-banner--summer-only {
+  justify-content: center;
+}
+
+.enrollment-banner-split.enrollment-banner--summer-only .enrollment-half {
+  max-width: 420px;
 }
 
 /* Playful sport icons - subtle float animation */
@@ -1088,6 +1097,25 @@ img {
 
 .feature-icon {
   font-size: 1.1rem;
+}
+
+.feature-icon img.emoji,
+.title-emoji img.emoji,
+.label-emoji img.emoji {
+  width: 1.25em;
+  height: 1.25em;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.hours-icon img.emoji {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.detail-icon img.emoji {
+  width: 1.35rem;
+  height: 1.35rem;
 }
 
 /* ========================= CAMP HOURS CARD ========================= */
