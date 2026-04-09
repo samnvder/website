@@ -9,20 +9,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const originalPriceDisplay = document.getElementById("originalPrice");
     const discountedPriceDisplay = document.getElementById("discountedPrice");
     const limitedTimeText = document.getElementById("limitedTimeText");
-
-    // Pricing data
+      // Pricing data
     const pricing = {
-        single: [235, 215, 195],
-        couple: [370, 350, 335],
+        single: [220, 205, 190],
+        couple: [350, 335, 315],
         family: {
-            1: [440, 425, 395],
-            2: [440, 425, 395],
-            3: [440, 425, 395],
-            4: [440, 425, 395],
-            5: [440, 425, 395],
-            6: [440, 425, 395]
+            1: [435, 405, 375],
+            2: [435, 405, 375],
+            3: [435, 405, 375],
+            4: [435, 405, 375],
+            5: [435, 405, 375],
+            6: [435, 405, 375]
         }
     };
+
 
     const minimumAmounts = {
         single: "$20",
@@ -36,10 +36,11 @@ document.addEventListener("DOMContentLoaded", function () {
         family: [600, 550, 500]
     };
 
-    const discounts = {
-        single: 100,
-        couple: 100,
-        family: 150
+    // New: Discount percentages instead of fixed dollar amounts
+    const discountRates = {
+        single: 0.5,  // 25%
+        couple: 0.5,  // 20%
+        family: 0.5   // 30%
     };
 
     function updatePrice() {
@@ -76,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (allFieldsFilled) {
                 const averageAge = childrenAges.reduce((a, b) => a + b, 0) / childrenAges.length;
                 if (averageAge <= 6 && numChildren <= 2) {
-                    additionalCharge -= numChildren === 1 ? 30 : 20;
+                    additionalCharge -= numChildren === 1 ? 25 : 15;
                 }
 
                 for (let i = 3; i <= numChildren; i++) {
@@ -99,8 +100,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const type = membershipType.value;
         const tier = parseInt(tierSelect.value, 10);
         const originalPrice = enrollmentFees[type][tier - 1];
-        const discount = discounts[type];
-        const discountedPrice = originalPrice - discount;
+        const discountRate = discountRates[type];
+        const discountedPrice = Math.round(originalPrice * (1 - discountRate));
 
         originalPriceDisplay.textContent = `$${originalPrice}`;
         discountedPriceDisplay.textContent = `$${discountedPrice}`;
@@ -110,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateMinimumAmount() {
         const type = membershipType.value;
         const minimumAmount = minimumAmounts[type];
-        minimumAmountDisplay.textContent = `Monthly Food & Beverage Assessment: ${minimumAmount}`;
+        minimumAmountDisplay.textContent = `Monthly Food & Beverage Minimum: ${minimumAmount}`;
     }
 
     function updateChildrenAges() {
@@ -167,7 +168,6 @@ document.addEventListener("DOMContentLoaded", function () {
     updateEnrollmentFee();
     updateMinimumAmount();
 
-    // Function to validate email format using regex
     function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("purchaseButton").addEventListener("click", function () {
         const name = document.getElementById("name").value.trim();
         const email = document.getElementById("email").value.trim();
-        const phone = document.getElementById("phone").value.trim(); // New phone field
+        const phone = document.getElementById("phone").value.trim();
 
         if (!name) {
             alert("Please enter your full name.");
@@ -221,12 +221,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const enrollmentFee = discountedPriceDisplay.textContent.replace('$', '').trim();
         const monthlyDue = priceDisplay.textContent.replace('Monthly Due: $', '').trim();
-        const foodBeverageMinimum = minimumAmountDisplay.textContent.replace('Monthly Food & Beverage Assessment: $', '').trim();
+        const foodBeverageMinimum = minimumAmountDisplay.textContent.replace('Monthly Food & Beverage Minimum: $', '').trim();
 
         const data = {
             Name: name,
             "Email address": email,
-            Phone: phone, // Include phone in the data
+            Phone: phone,
             membershipType: membershipTypeValue,
             tier,
             numberOfChildren: numberOfChildrenValue,
@@ -250,7 +250,6 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 alert('Thank you! A membership form has been sent to the email address you provided!');
 
-                // Notify admin of membership click
                 fetch('https://still-cliffs-89444-6c029a7a2024.herokuapp.com/notify-admin', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

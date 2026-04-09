@@ -1,0 +1,49 @@
+===== Membership Builder — Pricing audit =====
+Generated (UTC): 2026-04-09T08:44:03.320Z
+Generated (America/Los_Angeles): Thursday, April 9, 2026 at 1:44:03 AM PDT (America/Los_Angeles)
+Unix time (ms): 1775724243320
+Source file: C:\Users\Sam Work\Documents\Local Projects\online-sales-agent\Website\Website\Pages\Memberships (Category)\memberships\membership builder JS.js
+Source size (bytes): 9639
+SHA-256 (source): 593cfbb4470393a5c852b2b9d1c7b2a56e0fe11569712b3132e37ac96e5206b3
+Pricing digest (SHA-256, canonical JSON): 992e197243788c6fbae25ab2b72abb2220c4a29ab2f59f7d248fe846b01a6374
+Generator: Node v24.13.1 | win32 | nvde
+Git: master @ 02123af (working tree dirty)
+Commit: 02123af6b8e9c312853b248efa92016bd9df2326
+
+--- Monthly dues (base) ---
+Single — Tier 1: $235, Tier 2: $215, Tier 3: $195
+Couple — Tier 1: $370, Tier 2: $350, Tier 3: $335
+Family (monthly base by tier; same tiers as Single/Couple):
+All child counts (1–6): Tier 1 $440, Tier 2 $425, Tier 3 $395
+
+--- Food & beverage assessment (display minimums) ---
+Single: $20
+Couple: $40
+Family: $60
+
+--- Enrollment fees (before / after promo discount) ---
+single: Tier 1 $400 → $300 | Tier 2 $350 → $250 | Tier 3 $300 → $200 (discount $100)
+couple: Tier 1 $500 → $400 | Tier 2 $450 → $350 | Tier 3 $400 → $300 (discount $100)
+family: Tier 1 $600 → $450 | Tier 2 $550 → $400 | Tier 3 $500 → $350 (discount $150)
+
+--- Family monthly add-ons (logic in membership builder JS.js) ---
+Base = family base for selected tier and child count (see tables).
+If any child age is empty or invalid: monthly due = base only (no add-ons).
+When all ages are filled, add-ons apply:
+  • Age > 17: +$90 for 1st child; 2nd+ use 100 − (childIndex − 1) × 10 (2nd: +$80, 3rd: +$70, …).
+  • Age 14–17: +$15 each.
+  • If average age of all children ≤ 6 and at most 2 children: −$30 (one child) or −$20 (two children).
+  • For 3rd+ child: if that child’s age > 4, +$20 each.
+Final monthly due = base + additional charges (after the adjustments above).
+
+End of audit (detail sections).
+
+----- Audit record (closing) -----
+Generated (UTC): 2026-04-09T08:44:03.320Z
+Generated (America/Los_Angeles): Thursday, April 9, 2026 at 1:44:03 AM PDT (America/Los_Angeles)
+Unix time (ms): 1775724243320
+Source: C:\Users\Sam Work\Documents\Local Projects\online-sales-agent\Website\Website\Pages\Memberships (Category)\memberships\membership builder JS.js
+Source size (bytes): 9639
+SHA-256 (source): 593cfbb4470393a5c852b2b9d1c7b2a56e0fe11569712b3132e37ac96e5206b3
+Pricing digest (SHA-256): 992e197243788c6fbae25ab2b72abb2220c4a29ab2f59f7d248fe846b01a6374
+End of audit — same run as header; do not append by hand.

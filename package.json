@@ -24,7 +24,9 @@
     "build:tennis-carousel": "node scripts/build/build-carousel.js scripts/build/carousel-configs/tennis.json",
     "scaffold:carousel": "node scripts/scaffold/new-carousel.js",
     "resolve-project-mode": "node scripts/resolve-project-mode.js",
-    "summarize": "node Programs/Pickleball/advanced-open-play/scripts/openplay-summarize.js"
+    "summarize": "node Programs/Pickleball/advanced-open-play/scripts/openplay-summarize.js",
+    "guard:membership-pricing": "node scripts/audit/membership-pricing-guard.js",
+    "audit:membership-pricing": "node scripts/audit/membership-pricing-guard.js && node scripts/audit/membership-pricing-audit-pdf.js"
   },
   "keywords": [
     "south-end-club",
@@ -36,6 +38,7 @@
   "devDependencies": {
     "live-server": "^1.2.2",
     "marked": "^17.0.6",
+    "pdfkit": "^0.18.0",
     "puppeteer-core": "^24.40.0",
     "serve": "^14.2.1"
   }

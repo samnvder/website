@@ -1,0 +1,32 @@
+Membership Builder: snapshot vs repo
+====================================
+
+Snapshot file: Old/Membership Builder snapshot.html (exact paste archive)
+
+Compared to: Memberships Page HTML.html — the embedded block from the comment
+"<!-- Membership Builder Styles - Royal Blue/Beige Theme -->" through the
+closing </script> of the age-field MutationObserver (same fragment as snapshot).
+
+DIFFERENCES (snapshot vs that embedded block)
+---------------------------------------------
+
+None for builder copy: both use "Monthly Food & Beverage Assessment" and
+membership builder JS.js uses the same wording on update.
+
+IDENTICAL
+---------
+- All CSS in the snapshot matches the embedded style block.
+- Markup (ids, structure, tier options, hidden fields, button) matches.
+- The inline <script> for enforceNumbersOnly / MutationObserver matches.
+
+NOT IN SNAPSHOT (repo page continues after the builder)
+---------------------------------------------------------
+Memberships Page HTML.html also includes, after this fragment:
+- Thrive/wrapper markup around the custom HTML block
+- Extra <style> + <script> for #membershipBuilder pulse highlight and
+  .pricing-backdrop tier deep-linking (tier cards → builder select)
+- Shortcodes [wpcode id="7186"], [wpcode id="7315"], FAQ and other sections
+
+NOT IN EITHER HTML FILE
+-----------------------
+- Pricing logic lives in: membership builder JS.js (loaded separately, e.g. WPCode).

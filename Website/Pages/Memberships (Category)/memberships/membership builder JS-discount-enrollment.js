@@ -36,10 +36,11 @@ document.addEventListener("DOMContentLoaded", function () {
         family: [600, 550, 500]
     };
 
-    const discounts = {
-        single: 100,
-        couple: 100,
-        family: 150
+    // Discount percentages applied to enrollment fees
+    const discountRates = {
+        single: 0.5,
+        couple: 0.5,
+        family: 0.5
     };
 
     function updatePrice() {
@@ -99,8 +100,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const type = membershipType.value;
         const tier = parseInt(tierSelect.value, 10);
         const originalPrice = enrollmentFees[type][tier - 1];
-        const discount = discounts[type];
-        const discountedPrice = originalPrice - discount;
+        const discountRate = discountRates[type];
+        const discountedPrice = Math.round(originalPrice * (1 - discountRate));
 
         originalPriceDisplay.textContent = `$${originalPrice}`;
         discountedPriceDisplay.textContent = `$${discountedPrice}`;
@@ -167,7 +168,6 @@ document.addEventListener("DOMContentLoaded", function () {
     updateEnrollmentFee();
     updateMinimumAmount();
 
-    // Function to validate email format using regex
     function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("purchaseButton").addEventListener("click", function () {
         const name = document.getElementById("name").value.trim();
         const email = document.getElementById("email").value.trim();
-        const phone = document.getElementById("phone").value.trim(); // New phone field
+        const phone = document.getElementById("phone").value.trim();
 
         if (!name) {
             alert("Please enter your full name.");
@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const data = {
             Name: name,
             "Email address": email,
-            Phone: phone, // Include phone in the data
+            Phone: phone,
             membershipType: membershipTypeValue,
             tier,
             numberOfChildren: numberOfChildrenValue,
@@ -250,7 +250,6 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 alert('Thank you! A membership form has been sent to the email address you provided!');
 
-                // Notify admin of membership click
                 fetch('https://still-cliffs-89444-6c029a7a2024.herokuapp.com/notify-admin', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
