@@ -1,0 +1,123 @@
+---
+description: Deterministic project + mode switching — scope via registry script, then switch.
+globs: []
+alwaysApply: false
+---
+
+# Environment mode switching (deterministic)
+
+**Triggers:** `@command-environment-mode`, `switch environment mode`, `which mode am I in`, `set active tree`, `openplay use staging`, `openplay use live`
+
+---
+
+## 0. Determinism contract
+
+This rule enforces **script-first resolution** so the agent cannot guess which project or mode applies.
+
+---
+
+## 1. Resolve project (REQUIRED before any switch)
+
+Run from **Website/** repo root:
+
+```powershell
+npm run resolve-project-mode -- "<path>"
+```
+
+- `<path>` = file or folder the user mentioned, or omit to use cwd.
+- Script prints JSON with `project`, `activeMode`, `switchCommands`, `syncFromLiveCommand`.
+- **Exit 1** = path doesn't match a registered project or is ambiguous → **stop and ask user** which project.
+
+**Agent rule:** Do NOT run any switch command until this script exits **0** and you have read its JSON output.
+
+---
+
+## 2. Confirm scope with user (one sentence)
+
+After the script succeeds, state:
+
+> Project: **{name}** · Current mode: **{activeMode}** · Valid modes: {modes list}.
+
+If the user's intent doesn't match the resolved project → clarify before proceeding.
+
+---
+
+## 3. Switch mode
+
+Use the **exact command** from the script's `switchCommands` object:
+
+```powershell
+# Example for openplay → staging
+npm run openplay:use-staging
+```
+
+Run from **Website/** (repo root). Do NOT invent commands.
+
+---
+
+## 4. Re-read and confirm
+
+After switching, run `npm run resolve-project-mode -- "<path>"` again (or read the mode file directly) to confirm the new `activeMode`. Report to user:
+
+> Mode is now **{activeMode}**. Edit source in `{project root}/{activeMode}/`. Refresh local preview: `npm run local-test:sync`.
+
+---
+
+## 5. Sync from live (optional)
+
+If the user wants **staging + local mirrors to match live code** while keeping per-folder Firebase config:
+
+1. Confirm project supports it (`syncFromLiveCommand` in JSON).
+2. Run that command (e.g., `npm run openplay:sync-from-live`).
+3. Warn if script logs missing prior Firebase config — user should paste test/staging keys.
+
+---
+
+## 6. Anti-patterns (hard stops)
+
+| Condition | Action |
+|-----------|--------|
+| `resolve-project-mode` exits **1** | **Stop.** Ask user to clarify project. |
+| User says "switch to staging" but resolved project has no `staging` in `modes` | **Stop.** List valid modes; ask which. |
+| Agent about to run a switch command not in `switchCommands` | **Stop.** Use only registered commands. |
+| Mode file path doesn't exist | **Stop.** Project may need bootstrap; tell user. |
+
+---
+
+## 7. Adding a new project
+
+Edit `scripts/resolve-project-mode.js` → `PROJECT_REGISTRY`:
+
+```js
+{
+  key: 'newapp',
+  name: 'Human-Readable Name',
+  pathPrefix: 'Path/To/NewApp',
+  modeFile: 'Path/To/NewApp/newapp-mode.json',
+  modeField: 'activeEnv',
+  modes: ['dev', 'staging', 'prod'],
+  switchCommands: {
+    dev: 'npm run newapp:use-dev',
+    staging: 'npm run newapp:use-staging',
+    prod: 'npm run newapp:use-prod',
+  },
+  syncFromLiveCommand: 'npm run newapp:sync-from-prod',
+}
+```
+
+Then add matching npm scripts in `package.json`.
+
+---
+
+## 8. Reference: Open Play
+
+| Field | Value |
+|-------|-------|
+| `key` | `openplay` |
+| `pathPrefix` | `Programs/Pickleball/advanced-open-play` |
+| `modeFile` | `Programs/Pickleball/advanced-open-play/openplay-mode.json` |
+| `modeField` | `activeTree` |
+| `modes` | `staging`, `live` |
+| `switchCommands.staging` | `npm run openplay:use-staging` |
+| `switchCommands.live` | `npm run openplay:use-live` |
+| `syncFromLiveCommand` | `npm run openplay:sync-from-live` |

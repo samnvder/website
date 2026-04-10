@@ -27,7 +27,7 @@ const URL_MAPPINGS = {
     '/pools/': '/Pages/pools/Pools HTML.html',
     '/wellness/': '/Pages/wellness/Wellness HTML.html',
     '/food-beverage/': '/Pages/food-beverage/Food & Beverage HTML.html',
-    '/youth-programs/': '/Pages/youth-programs/Youth HTML.html',
+    '/youth-programs/': '/Pages/youth-programs/youth-programs.html',
     '/services/': '/Pages/services/services HTML.html',
     '/events/': '/Pages/Events (Category)/events/Events HTML.html',
     '/lounge-rentals/': '/Pages/Events (Category)/lounge-rentals/Lounge Rental HTML.html',

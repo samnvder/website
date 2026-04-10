@@ -1,0 +1,40 @@
+{
+  "rules": {
+    "openplay_se": {
+      "rsvps": {
+        ".indexOn": ["firebaseUid", "email"],
+        ".read": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (query.orderByChild === 'firebaseUid' && query.equalTo === auth.uid) || (auth.token.email_verified === true && auth.token.email != null && query.orderByChild === 'email' && query.equalTo === auth.token.email))",
+        "$pid": {
+          ".read": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || !data.exists() || data.child('firebaseUid').val() === auth.uid || (auth.token.email_verified === true && auth.token.email != null && data.child('email').val() === auth.token.email))",
+          ".write": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (data.exists() && !newData.exists() && (data.child('firebaseUid').val() === auth.uid || (auth.token.email_verified === true && auth.token.email != null && data.child('email').val() === auth.token.email))) || ((!data.exists() || data.child('firebaseUid').val() === auth.uid) && newData.exists() && newData.child('firebaseUid').val() === auth.uid && newData.child('pid').val() === $pid))"
+        }
+      },
+      "admin_uids": {
+        "$uid": {
+          ".read": "auth != null && (auth.uid === $uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
+          ".write": false
+        }
+      },
+      "user_profiles": {
+        "$uid": {
+          ".read": "auth != null && $uid === auth.uid",
+          ".write": "auth != null && $uid === auth.uid"
+        }
+      },
+      "activity": {
+        ".indexOn": ["ts", "type", "targetUid", "targetEmail", "nameKey"],
+        ".read": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
+        "$eventId": {
+          ".write": "auth != null && ((root.child('openplay_se/admin_uids/' + auth.uid).val() === true) || (!data.exists() && newData.exists() && newData.child('actorUid').val() === auth.uid && newData.child('targetUid').val() === auth.uid))"
+        }
+      },
+      "board_messages": {
+        ".indexOn": ["ts", "uid"],
+        ".read": "auth != null",
+        "$msgId": {
+          ".write": "auth != null && ((!data.exists() && newData.exists() && newData.child('uid').val() === auth.uid && newData.child('isStaffAdmin').val() == (root.child('openplay_se/admin_uids/' + auth.uid).val() == true)) || (data.exists() && data.child('uid').val() === auth.uid && !newData.exists()))"
+        }
+      }
+    }
+  }
+}

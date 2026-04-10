@@ -1,0 +1,60 @@
+---
+description: Pickleball Advanced Open Play local mirror — advanced-open-play/testing. Invoke with command-local-test.
+globs: []
+alwaysApply: false
+---
+
+# command-local-test — Quick local QA (Pickleball Advanced Open Play)
+
+> **Invoke:** Type `command-local-test`, `@command-local-test`, or "run local test" for mirrored Open Play pages.
+
+---
+
+## Action
+
+1. From the **Website** folder (`package.json` root), run:
+   ```powershell
+   npm run local-test
+   ```
+   This runs `Programs/Pickleball/advanced-open-play/testing/scripts/local-test.js` (copies the active tree from `Programs/Pickleball/advanced-open-play/{staging|live}/` into **both** `local-page/` at repo root and `Programs/Pickleball/advanced-open-play/testing/local-page/`, writes hub `index.html` in each) then starts **live-server** on port **3456** and opens `/local-page/index.html`.
+
+2. **Copy only** (no browser):
+   ```powershell
+   npm run local-test:sync
+   ```
+
+---
+
+## What gets mirrored
+
+Configured in `Programs/Pickleball/advanced-open-play/testing/scripts/local-test.js` (`FILES` array). Includes RSVP, check-in, and shared `js/` under the active tree.
+
+---
+
+## Output
+
+| Path | Purpose |
+|------|---------|
+| `local-page/index.html` | Hub (short URL — same content as below) |
+| `local-page/...` | Mirror — **not** for deploy |
+| `Programs/Pickleball/advanced-open-play/testing/local-page/...` | Canonical mirror — **not** for deploy |
+
+Both mirror folders are gitignored — regenerate with `npm run local-test:sync` anytime.
+
+---
+
+## URL (after `npm run local-test`)
+
+Both mirrors are identical. Short path (default browser open):
+
+`http://127.0.0.1:3456/local-page/index.html`
+
+Canonical path:
+
+`http://127.0.0.1:3456/Programs/Pickleball/advanced-open-play/testing/local-page/index.html`
+
+---
+
+## Staging vs live (Open Play)
+
+Default dev edits go to **`Programs/Pickleball/advanced-open-play/staging/`**. **`npm run local-test`** mirrors whichever tree **`openplay-mode.json`** selects (`activeTree`: `staging` or `live`). Firebase Hosting always deploys **`advanced-open-play/live/`** — guarded by **`openplay-deploy.js`**. See **`openplay-mode.mdc`** and **`Programs/Pickleball/README.md`**.

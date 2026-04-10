@@ -1,6 +1,9 @@
 node_modules
+local-page/
+Programs/Pickleball/advanced-open-play/testing/local-page/
 .env
 *.env
 config.env
 .DS_Store
 supabase/.temp/
+.firebase/

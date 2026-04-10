@@ -1,0 +1,403 @@
+<!-- Membership Builder Styles - Royal Blue/Beige Theme -->
+<style>
+  /* MEMBERSHIP BUILDER - Matching Theme */
+  .membership-builder.container,
+  #membershipBuilder.container {
+    max-width: 900px !important;
+    margin: 0 auto 50px !important;
+    padding: 45px 40px !important;
+    background: rgba(255, 255, 255, 0.85) !important;
+    border-radius: 32px !important;
+    border: 2px solid #0b468c !important;
+    box-shadow: 0 20px 60px rgba(11, 70, 140, 0.15) !important;
+    position: relative !important;
+  }
+
+  .membership-builder.container::before,
+  #membershipBuilder.container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #0b468c, #204147, #0b468c);
+    border-radius: 32px 32px 0 0;
+  }
+
+  #pageTitle {
+    font-size: clamp(26px, 4vw, 36px) !important;
+    font-weight: 800 !important;
+    letter-spacing: 1px !important;
+    text-align: center !important;
+    margin-bottom: 45px !important;
+    color: #204147 !important;
+  }
+
+  .input-wrapper { margin-bottom: 25px !important; }
+  .input-wrapper label {
+    display: block !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #0b468c !important;
+    margin-bottom: 8px !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+  }
+
+  .styled-select, #membershipType, #numberOfChildren, #tier {
+    width: 100% !important;
+    padding: 14px 18px !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    color: #204147 !important;
+    background: #ffffff !important;
+    border: 2px solid rgba(11, 70, 140, 0.2) !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    appearance: none !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230b468c' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 14px center !important;
+    background-size: 18px !important;
+  }
+
+  .styled-select option, #membershipType option, #numberOfChildren option, #tier option {
+    background: #ffffff !important;
+    color: #204147 !important;
+  }
+
+  .styled-select:hover, #membershipType:hover, #numberOfChildren:hover, #tier:hover,
+  .styled-select:focus, #membershipType:focus, #numberOfChildren:focus, #tier:focus {
+    border-color: #0b468c !important;
+    box-shadow: 0 0 15px rgba(11, 70, 140, 0.1) !important;
+    outline: none !important;
+  }
+
+  .styled-input, .personal-input, #name, #email, #phone {
+    width: 100% !important;
+    padding: 14px 18px !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    color: #204147 !important;
+    background: #ffffff !important;
+    border: 2px solid rgba(11, 70, 140, 0.2) !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .styled-input::placeholder, #name::placeholder, #email::placeholder, #phone::placeholder {
+    color: rgba(32, 65, 71, 0.5) !important;
+  }
+
+  .styled-input:hover, #name:hover, #email:hover, #phone:hover,
+  .styled-input:focus, #name:focus, #email:focus, #phone:focus {
+    border-color: #0b468c !important;
+    box-shadow: 0 0 15px rgba(11, 70, 140, 0.1) !important;
+    outline: none !important;
+  }
+
+  #familyOptions { margin-bottom: 25px !important; }
+
+  .age-inputs-container, #childrenAgesContainer {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+    gap: 30px !important;
+    margin: 25px 0 !important;
+  }
+
+  /* Child age input wrapper styling */
+  #childrenAgesContainer .input-wrapper,
+  .age-inputs-container .input-wrapper {
+    margin-bottom: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  #childrenAgesContainer label,
+  .age-inputs-container label {
+    margin-bottom: 0 !important;
+    display: block !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #0b468c !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+  }
+
+  #childrenAgesContainer input,
+  .age-inputs-container input {
+    margin-top: 0 !important;
+    width: 100% !important;
+    padding: 12px 14px !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 14px !important;
+    color: #204147 !important;
+    background: #ffffff !important;
+    border: 2px solid rgba(11, 70, 140, 0.2) !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+  }
+
+  #childrenAgesContainer input:focus,
+  .age-inputs-container input:focus {
+    border-color: #0b468c !important;
+    box-shadow: 0 0 15px rgba(11, 70, 140, 0.1) !important;
+    outline: none !important;
+  }
+
+  .content-box {
+    background: #f0e9d8 !important;
+    border: 2px solid #0b468c !important;
+    border-radius: 20px !important;
+    padding: 30px !important;
+    margin: 35px 0 !important;
+    text-align: center !important;
+    position: relative !important;
+  }
+
+  .content-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #0b468c, #204147, #0b468c);
+    border-radius: 20px 20px 0 0;
+  }
+
+  .enrollment-fee-info {
+    font-size: 17px !important;
+    font-weight: 600 !important;
+    color: #204147 !important;
+    margin-bottom: 10px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .strikethrough, #originalPrice {
+    text-decoration: line-through !important;
+    color: rgba(32, 65, 71, 0.5) !important;
+  }
+
+  #discountedPrice {
+    color: #059669 !important;
+    font-weight: 800 !important;
+    font-size: 22px !important;
+  }
+
+  .limited-time, #limitedTimeText {
+    color: #0b468c !important;
+    font-style: italic !important;
+    font-size: 14px !important;
+  }
+
+  .price-info, #priceDisplay, #minimumAmount {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #204147 !important;
+    margin-bottom: 10px !important;
+  }
+
+  .bold-text, #priceDisplay {
+    font-weight: 800 !important;
+    font-size: 22px !important;
+    color: #0b468c !important;
+  }
+
+  #commitmentMessage {
+    font-size: 13px !important;
+    color: #3d5a5e !important;
+    font-style: italic !important;
+    margin-top: 15px !important;
+    line-height: 1.6 !important;
+  }
+
+  .personal-info { margin: 35px 0 !important; }
+
+  .membership-btn, #purchaseButton {
+    width: 100% !important;
+    padding: 18px 36px !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    color: #ffffff !important;
+    background: #0b468c !important;
+    border: none !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 8px 25px rgba(11, 70, 140, 0.3) !important;
+    margin-top: 25px !important;
+  }
+
+  .membership-btn:hover, #purchaseButton:hover {
+    transform: translateY(-4px) !important;
+    background: #204147 !important;
+    box-shadow: 0 12px 35px rgba(32, 65, 71, 0.35) !important;
+  }
+
+  @media (max-width: 768px) {
+    .membership-builder.container, #membershipBuilder.container {
+      padding: 35px 25px !important;
+      margin: 30px auto !important;
+      border-radius: 20px !important;
+    }
+    #pageTitle { font-size: 24px !important; margin-bottom: 35px !important; }
+    .styled-select, .styled-input, #membershipType, #numberOfChildren, #tier, #name, #email, #phone {
+      padding: 12px 14px !important;
+      font-size: 14px !important;
+    }
+    .content-box { padding: 22px !important; margin: 28px 0 !important; }
+    .bold-text, #priceDisplay { font-size: 20px !important; }
+    #discountedPrice { font-size: 18px !important; }
+    .membership-btn, #purchaseButton { padding: 16px 28px !important; font-size: 15px !important; }
+  }
+
+  @media (max-width: 480px) {
+    .membership-builder.container, #membershipBuilder.container { padding: 25px 18px !important; }
+    #pageTitle { font-size: 22px !important; }
+    .content-box { padding: 18px !important; }
+  }
+
+  @media (max-width: 360px) {
+    .age-inputs-container, #childrenAgesContainer { grid-template-columns: 1fr !important; }
+  }
+</style>
+
+<div id="membershipBuilder" class="membership-builder container">
+    <h1 id="pageTitle">Build Your Membership</h1>
+    
+    <!-- Membership Type Selection -->
+    <div class="input-wrapper">
+        <label for="membershipType">Membership Type:</label>
+        <select id="membershipType" class="styled-select">
+            <option value="single">Single</option>
+            <option value="couple">Couple</option>
+            <option value="family">Family</option>
+        </select>
+    </div>
+    
+    <!-- Number of Children Selection (for Family only) -->
+    <div id="familyOptions" style="display:none;">
+        <div class="input-wrapper">
+            <label for="numberOfChildren">Number of Children:</label>
+            <select id="numberOfChildren" class="styled-select">
+                <option value="1">1</option>
+                <option value="2" selected="">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+        </div>
+        <!-- Children's Ages (appear dynamically based on the number of children) -->
+        <div id="childrenAgesContainer" class="age-inputs-container"></div>
+    </div>
+    
+    <!-- Tier Selection -->
+    <div class="input-wrapper">
+        <label for="tier">Tier:</label>
+        <select id="tier" class="styled-select">
+            <option value="3">Tier 3 - Health &amp; Fitness</option>
+            <option value="2">Tier 2 - Racquet</option>
+            <option value="1">Tier 1 - Full Club</option>
+        </select>
+    </div>
+    
+    <!-- Pricing Info -->
+    <div class="content-box">
+        <p class="enrollment-fee-info">
+            <span>One-Time Enrollment Fee:</span>
+            <span id="originalPrice" class="strikethrough">$0</span>
+        </p>
+        <p class="enrollment-fee-info">
+            <span id="discountedPrice">$0</span>
+            <span id="limitedTimeText" class="limited-time">for a limited time</span>
+        </p>
+        <p id="priceDisplay" class="price-info bold-text">Monthly Due: $0</p>
+        <p id="minimumAmount" class="price-info">Monthly Food &amp; Beverage Assessment: $20</p>
+        <p id="commitmentMessage">
+            All memberships are a one-year commitment where once the initial year ends, you are month to month thereafter.
+        </p>
+    </div>
+    
+    <!-- Personal Info Section for Name, Email, and Phone -->
+    <div class="personal-info">
+        <div class="input-wrapper">
+            <label for="name">Full Name:</label>
+            <input type="text" id="name" class="styled-input personal-input" placeholder="Enter your full name" required="">
+        </div>
+        
+        <div class="input-wrapper">
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" class="styled-input personal-input" placeholder="Enter your email" required="">
+        </div>
+        
+        <div class="input-wrapper">
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" class="styled-input personal-input" placeholder="Enter your phone number" required="">
+        </div>
+    </div>
+    
+    <!-- Hidden Input Fields to Capture Dynamic Values -->
+    <input type="hidden" id="enrollmentFee" name="enrollmentFee" value="300">
+    <input type="hidden" id="monthlyDue" name="monthlyDue" value="170">
+    <input type="hidden" id="foodBeverageMinimum" name="foodBeverageMinimum" value="20">
+    
+    <!-- Buy Membership Button -->
+    <button type="button" id="purchaseButton" class="membership-btn">Buy Membership</button>
+</div>
+
+<script>
+// NUMBER-ONLY VALIDATION FOR AGE FIELDS
+function enforceNumbersOnly(inputElement) {
+    inputElement.addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+    
+    inputElement.addEventListener('keypress', function(e) {
+        if (e.which < 48 || e.which > 57) {
+            e.preventDefault();
+        }
+    });
+    
+    inputElement.addEventListener('paste', function(e) {
+        e.preventDefault();
+        const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+        const numericOnly = pastedText.replace(/[^0-9]/g, '');
+        this.value = numericOnly;
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            mutation.addedNodes.forEach(function(node) {
+                if (node.nodeType === 1) {
+                    const inputs = node.querySelectorAll('input[type="text"].styled-input, input[type="number"].styled-input');
+                    inputs.forEach(function(input) {
+                        if (input.closest('#childrenAgesContainer')) {
+                            enforceNumbersOnly(input);
+                        }
+                    });
+                }
+            });
+        });
+    });
+    
+    const container = document.getElementById('childrenAgesContainer');
+    if (container) {
+        observer.observe(container, {
+            childList: true,
+            subtree: true
+        });
+    }
+});
+</script>

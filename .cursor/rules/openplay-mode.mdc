@@ -1,0 +1,63 @@
+---
+description: Staging vs live deployment pattern (Open Play implementation) with mode file, deploy guards, and local-test source.
+globs:
+  - Programs/Pickleball/**
+alwaysApply: false
+---
+
+# Staging vs production tree pattern (Open Play implementation)
+
+Use this as a reusable pattern for future app modules that need safe promotion from a staging tree to a production/live deploy tree. Open Play paths and command names below are the current concrete implementation.
+
+## Source of truth
+
+| Folder | Role |
+|--------|------|
+| **`Programs/Pickleball/advanced-open-play/staging/`** | Default **edit target** while building — does **not** deploy by itself. |
+| **`Programs/Pickleball/advanced-open-play/live/`** | **Firebase Hosting** deploy root (`firebase.json` `hosting.public`). |
+
+## Mode file
+
+**`Programs/Pickleball/advanced-open-play/openplay-mode.json`** (committed):
+
+- **`activeTree`**: `"staging"` \| `"live"` — which folder **`npm run local-test`** mirrors from.
+- **`allowProductionHostingDeploy`**: `true` \| `false` — must be `true` to run **`npm run deploy:openplay`** (unless `OPENPLAY_CONFIRM_PRODUCTION=1`).
+
+Default in repo: **`staging`** + **`allowProductionHostingDeploy: false`**.
+
+## Reuse guidance for future apps
+
+- Keep the same two-tree model: editable `staging/` and deployable `live/`.
+- Keep a committed mode file with an active tree switch and a production deploy guard flag.
+- Require explicit confirmation env vars for promotion/deploy actions.
+- Keep local preview tooling pointed at the currently active tree.
+- If a future app uses different file names/commands, follow the same guardrail behavior with app-specific names.
+
+## Commands (from `Website/`)
+
+| Command | Action |
+|---------|--------|
+| `npm run openplay:use-staging` | Set `activeTree` → `staging` (local-test uses `staging/`). |
+| `npm run openplay:use-live` | Set `activeTree` → `live` (local-test uses `live/`). |
+| `npm run openplay:bootstrap-staging` | Replace `staging/` with a full copy of `live/` (init or reset), including Firebase config. |
+| `npm run openplay:sync-from-live` | Copy `live/` → `staging/` + local `local-page/` mirrors **preserving** each folder’s Firebase config files. See **`command-openplay-sync-from-live.mdc`**. |
+| `npm run openplay:promote` | Copy `staging/` → `live/` with **`OPENPLAY_CONFIRM_PROMOTE=1`** (overwrites `live/`). |
+| `npm run local-test` / `local-test:sync` | Mirror **active** tree → gitignored `local-page/`. |
+| `npm run deploy:openplay` / `deploy:openplay:all` | Run guarded Firebase deploy (hosting + optional rules). |
+
+## Deploy guard
+
+`deploy:openplay` **blocks** unless:
+
+1. `activeTree` is **`live`** (so what you ship matches the folder Firebase deploys), **and**
+2. `allowProductionHostingDeploy` is **`true`**, **or** `OPENPLAY_CONFIRM_PRODUCTION=1` is set for a one-shot deploy.
+
+## CI
+
+`.github/workflows/deploy-openplay-firebase-hosting.yml` runs on **`workflow_dispatch`** or on **`push`** only if repo variable **`OPENPLAY_CI_AUTO_DEPLOY`** is **`true`**. It uses the same guarded deploy script (no silent production pushes by default).
+
+## Typical workflow
+
+1. Edit **`advanced-open-play/staging/`** (or `openplay:bootstrap-staging` from `live`).
+2. **`npm run local-test`** — mirrors `staging/` to `local-page/`.
+3. When ready: **`OPENPLAY_CONFIRM_PROMOTE=1 npm run openplay:promote`** (or set env in Windows), then set **`openplay-mode.json`** to **`activeTree: "live"`** and **`allowProductionHostingDeploy: true`**, then **`npm run deploy:openplay`**.

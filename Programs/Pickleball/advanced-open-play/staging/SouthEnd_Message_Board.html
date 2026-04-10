@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="js/openplay-testing-env.js"></script>
+<title>Message Board — South End Open Play</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0a1628;--navy-lt:#152342;
+  --neon:#00ff88;--neon-dim:rgba(0,255,136,.1);--neon-glow:rgba(0,255,136,.28);
+  --cyan:#22d3ee;--magenta:#e879f9;
+  --ink:#050a12;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:var(--ink);color:#fff;min-height:100vh;
+  background-image:
+    radial-gradient(ellipse 100% 60% at 50% -15%,rgba(34,211,238,.14),transparent 55%),
+    radial-gradient(ellipse 80% 50% at 100% 50%,rgba(232,121,249,.06),transparent 45%),
+    linear-gradient(180deg,#050a14 0%,var(--navy) 35%,#0a1628 100%);
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  opacity:.35;
+  background-image:
+    linear-gradient(rgba(0,255,200,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,200,.04) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.header{background:var(--navy-lt);padding:18px 28px 14px;border-bottom:3px solid var(--neon);position:relative;}
+.hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--neon);margin-bottom:3px;}
+.hdr-title{font-family:'Oswald',sans-serif;font-size:22px;color:#fff;letter-spacing:2px;text-transform:uppercase;line-height:1;}
+.hdr-title span{color:var(--cyan);text-shadow:0 0 24px rgba(34,211,238,.5);}
+.hdr-sub{font-size:9px;color:rgba(255,255,255,.62);margin-top:4px;letter-spacing:.08em;}
+.se-site-nav{
+  display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;
+  padding:10px 28px 12px;background:rgba(5,12,28,.88);
+  border-bottom:1px solid rgba(0,255,136,.22);position:relative;
+}
+.se-site-nav-link{
+  font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.55);text-decoration:none;padding:8px 14px;border-radius:6px;
+  border:1px solid transparent;transition:color .15s,border-color .15s,background .15s,box-shadow .15s;
+}
+.se-site-nav-link:hover{color:var(--neon);background:rgba(0,255,136,.08);}
+.se-site-nav-link--active{
+  color:var(--ink);background:linear-gradient(135deg,var(--neon),#34d399);
+  border-color:rgba(0,255,136,.5);box-shadow:0 0 22px var(--neon-glow);
+}
+.body-wrap{max-width:640px;margin:0 auto;padding:24px 20px 100px;position:relative;}
+.board-holo{
+  font-size:10px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;
+  color:rgba(34,211,238,.85);margin-bottom:14px;display:flex;align-items:center;gap:10px;
+}
+.board-holo::before,.board-holo::after{
+  content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(34,211,238,.45),transparent);
+}
+.board-lead{font-size:13px;color:rgba(255,255,255,.68);line-height:1.5;margin-bottom:20px;}
+.board-feed{display:flex;flex-direction:column;gap:12px;}
+.board-card{
+  position:relative;background:rgba(10,22,42,.72);
+  border:1px solid rgba(0,255,200,.18);border-radius:10px;padding:14px 16px;
+  box-shadow:0 4px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.04);
+  backdrop-filter:blur(8px);transition:border-color .2s,box-shadow .2s;
+}
+.board-card:hover{border-color:rgba(0,255,200,.35);box-shadow:0 0 28px rgba(0,255,200,.08);}
+.board-card-pulse{
+  position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:2px;
+  background:linear-gradient(180deg,var(--cyan),var(--neon));opacity:.75;
+}
+.board-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:8px;}
+.board-author{
+  font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:.04em;color:#fff;
+  background:none;border:none;padding:0;cursor:pointer;text-align:left;
+  color:var(--neon);text-decoration:underline;text-underline-offset:3px;
+  display:inline-flex;align-items:center;gap:6px;max-width:100%;
+}
+.board-author:hover{color:var(--cyan);}
+.board-admin-star{
+  flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;
+  width:1.15em;height:1.15em;font-size:13px;line-height:1;color:#fbbf24;
+  text-shadow:0 0 10px rgba(251,191,36,.65);text-decoration:none;filter:drop-shadow(0 0 4px rgba(251,191,36,.4));
+}
+.board-skill{font-size:10px;color:rgba(232,121,249,.95);letter-spacing:.08em;text-transform:uppercase;}
+.board-time{font-size:10px;color:rgba(255,255,255,.4);margin-left:auto;}
+.board-text{font-size:14px;line-height:1.5;color:rgba(255,255,255,.9);word-break:break-word;}
+.board-del{
+  margin-top:10px;font-size:10px;color:rgba(255,100,100,.85);background:none;border:none;
+  cursor:pointer;text-transform:uppercase;letter-spacing:.1em;padding:4px 0;
+}
+.board-del:hover{color:#ff6b6b;}
+.board-empty{
+  text-align:center;padding:36px 20px;color:rgba(255,255,255,.45);font-size:13px;
+  border:1px dashed rgba(0,255,200,.2);border-radius:10px;
+}
+.board-compose-wrap{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  padding:12px 16px 18px;background:linear-gradient(180deg,transparent,rgba(5,10,20,.94) 30%);
+  border-top:1px solid rgba(0,255,200,.15);
+}
+.board-compose-inner{max-width:640px;margin:0 auto;display:flex;gap:10px;align-items:flex-end;}
+.board-compose-inner textarea{
+  flex:1;min-height:52px;max-height:120px;padding:12px 14px;border-radius:8px;
+  border:1px solid rgba(0,255,200,.3);background:rgba(8,18,36,.9);color:#fff;font-family:'Barlow',sans-serif;
+  font-size:14px;resize:vertical;outline:none;
+}
+.board-compose-inner textarea:focus{border-color:var(--neon);box-shadow:0 0 16px rgba(0,255,136,.12);}
+.board-send{
+  flex-shrink:0;padding:12px 18px;border:none;border-radius:8px;cursor:pointer;
+  font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.12em;text-transform:uppercase;
+  background:linear-gradient(135deg,var(--neon),#34d399);color:var(--ink);font-weight:700;
+}
+.board-send:disabled{opacity:.45;cursor:not-allowed;}
+.board-msg{font-size:12px;margin-top:8px;text-align:center;color:rgba(255,200,200,.85);}
+.board-gate{
+  position:fixed;inset:0;z-index:100;background:var(--ink);display:flex;align-items:center;justify-content:center;
+  padding:24px;text-align:center;
+}
+.board-gate.hidden{display:none!important;}
+.board-gate a{color:var(--cyan);}
+.board-gate-loading-title{font-family:'Oswald',sans-serif;font-size:18px;color:var(--neon);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px;}
+.board-gate-loading-sub{font-size:13px;color:rgba(255,255,255,.65);line-height:1.5;max-width:360px;margin:0 auto;}
+.profile-modal{
+  position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.82);display:none;
+  align-items:center;justify-content:center;padding:20px;
+}
+.profile-modal.open{display:flex;}
+.profile-modal-card{
+  max-width:400px;width:100%;background:#111e35;border:2px solid rgba(0,255,200,.35);
+  border-radius:12px;padding:20px;position:relative;box-shadow:0 0 40px rgba(0,255,200,.12);
+}
+.profile-modal-close{
+  position:absolute;right:12px;top:8px;background:none;border:none;color:rgba(255,255,255,.55);
+  font-size:24px;cursor:pointer;line-height:1;
+}
+.profile-modal-title{font-family:'Oswald',sans-serif;font-size:17px;color:var(--neon);text-transform:uppercase;margin-bottom:12px;}
+.profile-modal-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px;}
+.profile-modal-lbl{color:rgba(255,255,255,.5);font-size:10px;text-transform:uppercase;letter-spacing:.08em;}
+.profile-modal-val{color:#fff;text-align:right;word-break:break-word;}
+.profile-modal-val--name{display:inline-flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;}
+.profile-modal-note{font-size:11px;color:rgba(255,255,255,.55);margin-top:14px;line-height:1.45;}
+.profile-modal-note a{color:var(--cyan);}
+.hidden{display:none!important;}
+@media(max-width:520px){
+  .board-time{width:100%;margin-left:0;}
+  .board-compose-inner{flex-direction:column;align-items:stretch;}
+  .board-send{width:100%;}
+}
+</style>
+</head>
+<body>
+
+<div id="board-gate" class="board-gate">
+  <div id="board-gate-loading" aria-busy="true" aria-live="polite">
+    <p class="board-gate-loading-title">Checking sign-in…</p>
+    <p class="board-gate-loading-sub">Restoring your session. On a phone this can take a few seconds.</p>
+  </div>
+  <div id="board-gate-signin" class="hidden">
+    <p class="hdr-title" style="margin-bottom:10px;">SIGN IN <span>REQUIRED</span></p>
+    <p class="board-lead" id="board-gate-signin-lead" style="max-width:360px;margin:0 auto 16px;">The message board is for signed-in Open Play members only.</p>
+    <a class="se-site-nav-link se-site-nav-link--active" style="display:inline-block;" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Message_Board.html">Open Play account →</a>
+  </div>
+  <div id="board-gate-nofb" class="hidden">
+    <p class="hdr-title" style="margin-bottom:10px;">SETUP <span>NEEDED</span></p>
+    <p class="board-lead" style="max-width:360px;margin:0 auto 16px;">Add Firebase in <code style="font-size:11px;color:rgba(0,255,200,.85);">js/openplay-firebase-config.js</code> and reload.</p>
+    <a class="se-site-nav-link se-site-nav-link--active" style="display:inline-block;" href="SouthEnd_OpenPlay_Account.html">Open Play account →</a>
+  </div>
+</div>
+
+<div id="board-app" class="hidden">
+<div class="header">
+  <div>
+    <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+    <div class="hdr-title">OPEN <span>PLAY</span> · UPLINK</div>
+    <div class="hdr-sub">Community channel · Signed-in members</div>
+  </div>
+</div>
+<nav class="se-site-nav" aria-label="Open Play sections">
+  <a class="se-site-nav-link" href="SouthEnd_OpenPlay_Account.html">Hub</a>
+  <a class="se-site-nav-link" href="SouthEnd_Session_RSVP.html">RSVP</a>
+  <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Message_Board.html" aria-current="page">Board</a>
+</nav>
+
+<div class="body-wrap">
+  <div class="board-holo">Live feed</div>
+  <p class="board-lead">Share quick updates, carpool asks, or rally invites. Tap a name to open a profile card (display name and skill from when the message was sent).</p>
+  <div id="board-feed" class="board-feed"></div>
+  <p id="board-status" class="board-msg" role="status"></p>
+</div>
+
+<div class="board-compose-wrap">
+  <div class="board-compose-inner">
+    <textarea id="board-input" maxlength="500" placeholder="Transmit a message…" aria-label="Message text"></textarea>
+    <button type="button" class="board-send" id="board-send">Send</button>
+  </div>
+</div>
+</div>
+
+<div id="profile-modal" class="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title">
+  <div class="profile-modal-card">
+    <button type="button" class="profile-modal-close" id="profile-modal-close" aria-label="Close">&times;</button>
+    <div class="profile-modal-title" id="profile-modal-title">Player</div>
+    <div class="profile-modal-row"><span class="profile-modal-lbl">Display</span><span class="profile-modal-val profile-modal-val--name" id="pm-name-wrap"><span id="pm-name">—</span><span id="pm-admin-star" class="board-admin-star hidden" title="Open Play staff admin" role="img" aria-label="">★</span></span></div>
+    <div class="profile-modal-row"><span class="profile-modal-lbl">Skill</span><span class="profile-modal-val" id="pm-skill">—</span></div>
+    <p class="profile-modal-note hidden" id="pm-self">This is you. Edit your full profile on the <a href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Message_Board.html">account page</a>.</p>
+    <p class="profile-modal-note" id="pm-other">Names and skill levels are saved with each message. They are not live-linked to account edits.</p>
+  </div>
+</div>
+
+<script src="js/openplay-firebase-config.js"></script>
+<script src="js/south-end-openplay-sync.js"></script>
+<script src="js/openplay-profile-panel.js?v=20260407"></script>
+<script>
+(function () {
+  var SE = window.SEOpenPlay;
+  var gate = document.getElementById('board-gate');
+  var app = document.getElementById('board-app');
+  var feed = document.getElementById('board-feed');
+  var input = document.getElementById('board-input');
+  var sendBtn = document.getElementById('board-send');
+  var statusEl = document.getElementById('board-status');
+  var modal = document.getElementById('profile-modal');
+  var gateLoading = document.getElementById('board-gate-loading');
+  var gateSignin = document.getElementById('board-gate-signin');
+  var gateNofb = document.getElementById('board-gate-nofb');
+  var currentUid = null;
+
+  function showGateLoading() {
+    if (gateLoading) gateLoading.classList.remove('hidden');
+    if (gateSignin) gateSignin.classList.add('hidden');
+    if (gateNofb) gateNofb.classList.add('hidden');
+    if (gate) gate.classList.remove('hidden');
+  }
+
+  function showGateNeedSignIn(msg) {
+    if (gateLoading) {
+      gateLoading.classList.add('hidden');
+      gateLoading.setAttribute('aria-busy', 'false');
+    }
+    if (gateNofb) gateNofb.classList.add('hidden');
+    if (gateSignin) gateSignin.classList.remove('hidden');
+    var lead = document.getElementById('board-gate-signin-lead');
+    if (lead && msg) lead.textContent = msg;
+    if (gate) gate.classList.remove('hidden');
+  }
+
+  function showGateNoFirebase() {
+    if (gateLoading) {
+      gateLoading.classList.add('hidden');
+      gateLoading.setAttribute('aria-busy', 'false');
+    }
+    if (gateSignin) gateSignin.classList.add('hidden');
+    if (gateNofb) gateNofb.classList.remove('hidden');
+    if (gate) gate.classList.remove('hidden');
+  }
+
+  function escapeHtml(s) {
+    if (s == null || s === '') return '';
+    var d = document.createElement('div');
+    d.textContent = String(s);
+    return d.innerHTML;
+  }
+
+  function formatTime(ts) {
+    if (ts == null) return '—';
+    var n = typeof ts === 'number' ? ts : parseInt(ts, 10);
+    if (isNaN(n)) return '—';
+    try {
+      return new Date(n).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+    } catch (e) {
+      return '—';
+    }
+  }
+
+  function showModal(row) {
+    if (!row) return;
+    document.getElementById('pm-name').textContent = row.authorName || 'Member';
+    var pmStar = document.getElementById('pm-admin-star');
+    pmStar.classList.toggle('hidden', !row.isStaffAdmin);
+    pmStar.setAttribute('aria-label', row.isStaffAdmin ? 'Open Play staff admin' : '');
+    document.getElementById('pm-skill').textContent = row.skill || '—';
+    var selfNote = document.getElementById('pm-self');
+    var otherNote = document.getElementById('pm-other');
+    var isSelf = currentUid && String(row.uid) === String(currentUid);
+    selfNote.classList.toggle('hidden', !isSelf);
+    otherNote.classList.toggle('hidden', !!isSelf);
+    modal.classList.add('open');
+  }
+
+  function closeModal() {
+    modal.classList.remove('open');
+  }
+
+  document.getElementById('profile-modal-close').addEventListener('click', closeModal);
+  modal.addEventListener('click', function (e) {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  function setStatus(msg, isErr) {
+    if (!statusEl) return;
+    statusEl.textContent = msg || '';
+    statusEl.style.color = isErr ? 'rgba(255,160,160,.9)' : 'rgba(0,255,200,.75)';
+  }
+
+  function render(list) {
+    if (!feed) return;
+    feed.innerHTML = '';
+    if (!list || !list.length) {
+      var empty = document.createElement('div');
+      empty.className = 'board-empty';
+      empty.textContent = 'No messages yet. Send the first transmission below.';
+      feed.appendChild(empty);
+      return;
+    }
+    list.forEach(function (row) {
+      var card = document.createElement('article');
+      card.className = 'board-card';
+      card.appendChild(document.createElement('div')).className = 'board-card-pulse';
+
+      var meta = document.createElement('div');
+      meta.className = 'board-meta';
+
+      var authorBtn = document.createElement('button');
+      authorBtn.type = 'button';
+      authorBtn.className = 'board-author';
+      authorBtn.appendChild(document.createTextNode(row.authorName || 'Member'));
+      if (row.isStaffAdmin) {
+        var starEl = document.createElement('span');
+        starEl.className = 'board-admin-star';
+        starEl.setAttribute('aria-label', 'Open Play staff admin');
+        starEl.textContent = '★';
+        authorBtn.appendChild(starEl);
+      }
+      authorBtn.addEventListener('click', function () {
+        showModal(row);
+      });
+
+      var skill = document.createElement('span');
+      skill.className = 'board-skill';
+      skill.textContent = row.skill ? row.skill : '';
+
+      var time = document.createElement('span');
+      time.className = 'board-time';
+      time.textContent = formatTime(row.ts);
+
+      meta.appendChild(authorBtn);
+      if (row.skill) meta.appendChild(skill);
+      meta.appendChild(time);
+
+      var text = document.createElement('div');
+      text.className = 'board-text';
+      text.textContent = row.text || '';
+
+      card.appendChild(meta);
+      card.appendChild(text);
+
+      if (currentUid && String(row.uid) === String(currentUid)) {
+        var del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'board-del';
+        del.textContent = 'Delete my message';
+        del.addEventListener('click', function () {
+          if (!confirm('Remove this message?')) return;
+          SE.deleteBoardMessage(row.id).catch(function () {
+            setStatus('Could not delete. Try again.', true);
+          });
+        });
+        card.appendChild(del);
+      }
+
+      feed.appendChild(card);
+    });
+  }
+
+  function wireComposer() {
+    sendBtn.addEventListener('click', function () {
+      var t = (input.value || '').trim();
+      if (!t) return;
+      sendBtn.disabled = true;
+      setStatus('');
+      SE.pushBoardMessage(t)
+        .then(function () {
+          input.value = '';
+        })
+        .catch(function () {
+          setStatus('Could not send. Check connection and try again.', true);
+        })
+        .finally(function () {
+          sendBtn.disabled = false;
+        });
+    });
+  }
+
+  if (!SE || !SE.firebaseConfigured || !SE.firebaseConfigured()) {
+    showGateNoFirebase();
+    return;
+  }
+
+  showGateLoading();
+
+  SE.initFirebase()
+    .then(function () {
+      SE.onAuthStateChanged(function (user) {
+        SE.unsubscribeBoardMessages();
+        currentUid = user ? user.uid : null;
+        if (!user) {
+          app.classList.add('hidden');
+          showGateNeedSignIn(
+            'The message board is for signed-in Open Play members only. If you already signed in on this device, try Account below, then return here.'
+          );
+          return;
+        }
+        if (gateLoading) {
+          gateLoading.classList.add('hidden');
+          gateLoading.setAttribute('aria-busy', 'false');
+        }
+        if (gateSignin) gateSignin.classList.add('hidden');
+        if (gateNofb) gateNofb.classList.add('hidden');
+        gate.classList.add('hidden');
+        app.classList.remove('hidden');
+        SE.subscribeBoardMessages(function (list) {
+          render(list);
+        });
+      });
+    })
+    .catch(function () {
+      showGateNeedSignIn(
+        'Could not connect to Firebase. Check your connection and reload. If you use private browsing, try a normal browser tab so your sign-in can be saved.'
+      );
+    });
+
+  wireComposer();
+})();
+</script>
+</body>
+</html>

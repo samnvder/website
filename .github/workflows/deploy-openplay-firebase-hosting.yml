@@ -1,0 +1,34 @@
+# Deploy Advanced Open Play to Firebase Hosting — guarded (no accidental prod push).
+#
+# Default: manual only (workflow_dispatch). Optional auto-deploy on push if
+# repo variable OPENPLAY_CI_AUTO_DEPLOY == 'true'.
+name: Deploy Open Play — Firebase Hosting
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+    paths:
+      - 'Programs/Pickleball/advanced-open-play/live/**'
+      - 'Programs/Pickleball/advanced-open-play/openplay-mode.json'
+      - 'firebase.json'
+      - '.firebaserc'
+
+jobs:
+  hosting:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || vars.OPENPLAY_CI_AUTO_DEPLOY == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy Hosting (guarded — requires activeTree live + allowProductionHostingDeploy in openplay-mode.json)
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: node Programs/Pickleball/advanced-open-play/scripts/openplay-deploy.js --only hosting

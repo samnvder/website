@@ -2,6 +2,13 @@
 
 Running log of file and structure changes. Append-only; the past remains.
 
+## 2026-04-05 — Cursor rules: flat `.cursor/rules/`
+
+- **Moved:** All `*.mdc` files from `.cursor/rules/website-marketing/` and `.cursor/rules/general-formatting/` into `.cursor/rules/` (same names).
+- **Added:** `.cursor/rules/README.md` — grouped index (dev, website & marketing, general formatting).
+- **Updated:** `command-site.mdc`, `readme.md`, `WEBSITE-ONLY-PROJECT-EXPORT.md` — paths and references.
+- **Removed:** Empty `website-marketing/` and `general-formatting/` subfolders.
+
 ## 2026-03-16 — Defer removed; Task Queue UX; backtest + PDFs
 
 - **Backtest:** Central smoke 15/15 PASS (`Dev/central/tests/smoke/run-all-smoke.ps1`).
