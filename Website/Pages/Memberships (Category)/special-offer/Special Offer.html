@@ -1,532 +1,394 @@
-<div class="thrv_wrapper thrv_custom_html_shortcode" data-css="tve-u-19a941b2113" style=""><!-- ==============================
-     STATIC HOLIDAY BANNER (DARK MODE)
+<div class="thrv_wrapper thrv_custom_html_shortcode" data-css="tve-u-19a941b2113" style=""><!--
+  South End Club — Spring Promo site banner + floating countdown
+  Sync with: knowledge-base/pricing/current_promotion.txt (Spring Promo, VALID_THROUGH April 15th, 2026)
+
+  THRIVE ARCHITECT: If you only see the green bar + countdown, the theme/builder often sets
+  font-size:0 / line-height:0 on flex wrappers — inline spans collapse. This version uses
+  block-level rows + px font sizes + inline fallbacks. Paste as ONE "Custom HTML" block; avoid
+  splitting HTML/CSS across multiple Thrive elements.
+
+  Legal note (site/marketing): Promo applies to standard Single/Couple/Family per club policy — not summer, group/corporate, dual club.
+-->
+<!-- ==============================
+     STATIC SPRING PROMO BANNER
 ============================== -->
-<div class="promo-banner-holiday dark-mode">
-    <div class="promo-banner-holiday-inner">
-        <!-- Decorative elements -->
-        <span class="banner-holiday-sparkle sp1">✦</span>
-        <span class="banner-holiday-sparkle sp2">✦</span>
-        
-        <div class="promo-banner-holiday-title-wrap">
-            <span class="promo-banner-holiday-tag">HOLIDAY EXCLUSIVE</span>
-            <span class="promo-banner-holiday-offer">ENROLLMENT 50% OFF + 1ST MONTH FREE</span>
+<div class="promo-banner-spring">
+    <div class="promo-banner-spring-inner">
+        <span class="banner-spring-accent a1" aria-hidden="true">❧</span>
+        <span class="banner-spring-accent a2" aria-hidden="true">❧</span>
+
+        <!-- Block + inline fallbacks: Thrive flex parents often zero out nested span text -->
+        <div class="promo-banner-spring-title-wrap">
+            <div class="promo-banner-spring-tag" style="color:#c4a035;font-size:14px;font-weight:600;letter-spacing:2px;text-transform:uppercase;font-family:Montserrat,system-ui,sans-serif;">SPRING PROMO</div>
+            <div class="promo-banner-spring-offer" style="color:#ffffff;font-size:20px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;font-family:'Playfair Display',Georgia,serif;line-height:1.25;">50% OFF ALL ENROLLMENT FEES</div>
         </div>
 
-        <div class="promo-banner-holiday-countdown">
-            <span id="banner-holiday-days">00</span>d
-            <span id="banner-holiday-hours">00</span>h
-            <span id="banner-holiday-minutes">00</span>m
-            <span id="banner-holiday-seconds">00</span>s
+        <p class="promo-banner-spring-sub" style="color:rgba(255,255,255,0.85);font-size:13px;line-height:1.45;margin:0;max-width:520px;font-family:Montserrat,system-ui,sans-serif;">Ends April 15 at midnight · Plus 8 complimentary guest passes</p>
+
+        <div class="promo-banner-spring-countdown" aria-live="polite">
+            <span id="banner-spring-days">00</span>d
+            <span id="banner-spring-hours">00</span>h
+            <span id="banner-spring-minutes">00</span>m
+            <span id="banner-spring-seconds">00</span>s
         </div>
     </div>
 </div>
 
 <!-- ==============================
-     FLOATING TIMER BUTTON (HOLIDAY DARK MODE)
+     FLOATING TIMER BUTTON (SPRING)
 ============================== -->
-<a href="#pageTitle" class="timer-button-holiday dark-mode-button-holiday">
-    <div class="timer-button-holiday-content">
-        <!-- Snow particles -->
-        <div class="snow-container">
-            <div class="snowflake-btn">❄</div>
-            <div class="snowflake-btn">❄</div>
-            <div class="snowflake-btn">❄</div>
-            <div class="snowflake-btn">❄</div>
-            <div class="snowflake-btn">❄</div>
-            <div class="snowflake-btn">❄</div>
-            <div class="snowflake-btn">❄</div>
-            <div class="snowflake-btn">❄</div>
-        </div>
-        <div class="pulse-ring-holiday"></div>
-        <div class="button-text-holiday">
-            <span class="offer-text-holiday">🎄 HOLIDAY OFFER 🎅</span>
-            <div class="countdown-holiday">
-                <span id="holiday-days">00</span>d 
-                <span id="holiday-hours">00</span>h 
-                <span id="holiday-minutes">00</span>m 
-                <span id="holiday-seconds">00</span>s
+<a href="https://southendclub.com/special-offer/" class="timer-button-spring" draggable="false">
+    <div class="timer-button-spring-content">
+        <div class="pulse-ring-spring" aria-hidden="true"></div>
+        <div class="button-text-spring">
+            <span class="offer-text-spring" style="color:#c4a035;font-size:11px;font-weight:700;letter-spacing:1px;font-family:Montserrat,system-ui,sans-serif;">SPRING OFFER</span>
+            <div class="countdown-spring">
+                <span id="spring-days">00</span>d
+                <span id="spring-hours">00</span>h
+                <span id="spring-minutes">00</span>m
+                <span id="spring-seconds">00</span>s
             </div>
         </div>
     </div>
 </a>
 
 <style>
-/* ============================================
-   HOLIDAY DARK MODE COLORS
-============================================ */
-:root {
-    --holiday-dark: #1a1f2e;
-    --holiday-darker: #0f1219;
-    --holiday-gold1: #c9a227;
-    --holiday-gold2: #f4e4a6;
-    --holiday-red: #c41e3a;
-    --holiday-green: #2d5a3d;
-    --holiday-gold-glow: rgba(201, 162, 39, 0.45);
-}
+/* Literal colors only (no :root) — Thrive/iframes often break CSS variables on :root */
 
-/* ============================================
-   STATIC HOLIDAY BANNER — DARK MODE
-============================================ */
-.promo-banner-holiday.dark-mode {
+.promo-banner-spring {
     width: 100% !important;
-    background: linear-gradient(135deg, var(--holiday-dark) 0%, #2a3441 100%) !important;
+    background: linear-gradient(135deg, #14221a 0%, #1e3328 100%) !important;
     padding: 22px 0 !important;
-    border-bottom: 1px solid rgba(201, 162, 39, 0.15) !important;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55),
-                0 0 35px var(--holiday-gold-glow) !important;
+    border-bottom: 1px solid rgba(124, 182, 154, 0.2) !important;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), 0 0 28px rgba(196, 160, 53, 0.4) !important;
     position: relative !important;
     z-index: 998 !important;
     overflow: hidden !important;
+    font-size: 16px !important;
+    line-height: normal !important;
 }
 
-/* Top accent border */
-.promo-banner-holiday.dark-mode::before {
+.promo-banner-spring::before {
     content: '' !important;
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
     right: 0 !important;
     height: 3px !important;
-    background: linear-gradient(90deg, var(--holiday-red), var(--holiday-gold1), var(--holiday-green), var(--holiday-gold1), var(--holiday-red)) !important;
+    background: linear-gradient(90deg, #7cb69a, #c4a035, #7cb69a) !important;
 }
 
-.promo-banner-holiday-inner {
+.promo-banner-spring-inner {
     max-width: 1200px !important;
     margin: 0 auto !important;
     text-align: center !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    gap: 10px !important;
+    gap: 8px !important;
     position: relative !important;
     padding: 0 15px !important;
+    font-size: 16px !important;
+    line-height: normal !important;
 }
 
-.banner-holiday-sparkle {
+.banner-spring-accent {
     position: absolute !important;
-    color: var(--holiday-gold1) !important;
-    font-size: 0.9em !important;
-    animation: bannerSparkleAnim 2.5s ease-in-out infinite !important;
+    color: #7cb69a !important;
+    font-size: 1rem !important;
+    opacity: 0.45 !important;
+    animation: springAccent 3s ease-in-out infinite !important;
     pointer-events: none !important;
 }
 
-.banner-holiday-sparkle.sp1 {
-    top: 0 !important;
-    left: 15% !important;
-    animation-delay: 0s !important;
+.banner-spring-accent.a1 { top: 4px !important; left: 12% !important; }
+.banner-spring-accent.a2 { top: 8px !important; right: 12% !important; animation-delay: 1.4s !important; }
+
+@keyframes springAccent {
+    0%, 100% { opacity: 0.25; transform: scale(1) rotate(0deg); }
+    50% { opacity: 0.7; transform: scale(1.15) rotate(8deg); }
 }
 
-.banner-holiday-sparkle.sp2 {
-    top: 5px !important;
-    right: 15% !important;
-    animation-delay: 1.2s !important;
-}
-
-@keyframes bannerSparkleAnim {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.3); }
-}
-
-/* Title wrapper - stacks on mobile */
-.promo-banner-holiday-title-wrap {
+.promo-banner-spring-title-wrap {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 10px !important;
     flex-wrap: wrap !important;
-    text-align: center !important;
+    position: relative !important;
+    z-index: 2 !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    font-size: 16px !important;
+    line-height: normal !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
-.promo-banner-holiday-tag {
-    font-family: 'Montserrat', sans-serif !important;
-    font-size: 0.85rem !important;
+.promo-banner-spring-tag {
+    display: block !important;
+    font-family: Montserrat, system-ui, sans-serif !important;
+    font-size: 14px !important;
     font-weight: 600 !important;
-    color: var(--holiday-gold1) !important;
+    color: #c4a035 !important;
     letter-spacing: 2px !important;
     text-transform: uppercase !important;
     margin: 0 !important;
-    padding: 0 !important;
+    line-height: 1.3 !important;
 }
 
-.promo-banner-holiday-tag::after {
+.promo-banner-spring-tag::after {
     content: '•' !important;
     margin-left: 10px !important;
-    color: var(--holiday-gold1) !important;
+    color: #c4a035 !important;
 }
 
-.promo-banner-holiday-offer {
-    font-family: 'Playfair Display', serif !important;
-    font-size: 1.3rem !important;
+.promo-banner-spring-offer {
+    display: block !important;
+    font-family: 'Playfair Display', Georgia, serif !important;
+    font-size: 20px !important;
     font-weight: 700 !important;
     color: #ffffff !important;
-    letter-spacing: 1px !important;
+    letter-spacing: 0.5px !important;
     text-transform: uppercase !important;
-    text-shadow: 0 0 14px var(--holiday-gold-glow) !important;
+    text-shadow: 0 0 12px rgba(196, 160, 53, 0.4) !important;
     margin: 0 !important;
-    padding: 0 !important;
+    line-height: 1.25 !important;
 }
 
-.promo-banner-holiday-countdown {
-    font-family: 'Montserrat', sans-serif !important;
-    font-size: 1.1rem !important;
+.promo-banner-spring-sub {
+    display: block !important;
+    font-family: Montserrat, system-ui, sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    margin: 0 !important;
+    max-width: 520px !important;
+    line-height: 1.45 !important;
+}
+
+.promo-banner-spring-countdown {
+    font-family: Montserrat, system-ui, sans-serif !important;
+    font-size: 17px !important;
     font-weight: 700 !important;
     color: #fff !important;
     padding: 10px 16px !important;
-    background: rgba(15, 18, 25, 0.6) !important;
+    background: rgba(10, 18, 14, 0.55) !important;
     border-radius: 14px !important;
     display: inline-block !important;
-    border: 1px solid rgba(201, 162, 39, 0.3) !important;
-    box-shadow: inset 0 0 12px rgba(0,0,0,0.45),
-                0 0 22px rgba(201, 162, 39, 0.25) !important;
-    margin: 0 !important;
+    border: 1px solid rgba(196, 160, 53, 0.28) !important;
+    box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.35), 0 0 18px rgba(196, 160, 53, 0.35) !important;
+    margin-top: 4px !important;
+    line-height: normal !important;
 }
 
-/* Mobile banner text */
 @media (max-width: 768px) {
-    .promo-banner-holiday-title-wrap {
-        flex-direction: column !important;
-        gap: 6px !important;
-    }
-    
-    .promo-banner-holiday-tag {
-        font-size: 0.75rem !important;
-        letter-spacing: 1.5px !important;
-    }
-    
-    .promo-banner-holiday-tag::after {
-        display: none !important;
-    }
-    
-    .promo-banner-holiday-offer {
-        font-size: 1.1rem !important;
-        line-height: 1.3 !important;
-    }
-    
-    .promo-banner-holiday-countdown { 
-        font-size: 0.95rem !important; 
-    }
-    
-    .banner-holiday-sparkle { 
-        display: none !important; 
-    }
+    .promo-banner-spring-title-wrap { flex-direction: column !important; gap: 8px !important; min-height: auto !important; }
+    .promo-banner-spring-tag { font-size: 12px !important; letter-spacing: 1.5px !important; }
+    .promo-banner-spring-tag::after { display: none !important; }
+    .promo-banner-spring-offer { font-size: 17px !important; line-height: 1.3 !important; }
+    .promo-banner-spring-countdown { font-size: 15px !important; }
+    .banner-spring-accent { display: none !important; }
+    .promo-banner-spring-sub { font-size: 12px !important; padding: 0 8px !important; }
 }
 
-/* Small mobile */
 @media (max-width: 400px) {
-    .promo-banner-holiday.dark-mode {
-        padding: 18px 0 !important;
-    }
-    
-    .promo-banner-holiday-tag {
-        font-size: 0.7rem !important;
-    }
-    
-    .promo-banner-holiday-offer {
-        font-size: 1rem !important;
-        padding: 0 10px !important;
-    }
-    
-    .promo-banner-holiday-countdown { 
-        font-size: 0.9rem !important;
-        padding: 8px 14px !important;
-    }
+    .promo-banner-spring { padding: 18px 0 !important; }
+    .promo-banner-spring-offer { font-size: 16px !important; }
 }
 
-/* ============================================
-   FLOATING BUTTON — HOLIDAY DARK MODE + SNOW
-============================================ */
-.timer-button-holiday.dark-mode-button-holiday {
+/* Floating button */
+.timer-button-spring {
     position: fixed !important;
     top: 20px !important;
     left: 20px !important;
     z-index: 9999 !important;
     opacity: 1 !important;
-    transition: opacity .35s ease, transform .35s ease !important;
+    transition: opacity 0.35s ease, transform 0.35s ease !important;
     transform: translateX(-20px) !important;
     text-decoration: none !important;
 }
 
-.timer-button-holiday.visible-holiday {
+.timer-button-spring.visible-spring {
     transform: translateX(0) !important;
     opacity: 1 !important;
 }
 
-.timer-button-holiday.hidden-holiday {
+.timer-button-spring.hidden-spring {
     opacity: 0 !important;
     pointer-events: none !important;
 }
 
-/* Main pill */
-.timer-button-holiday-content {
-    background: linear-gradient(135deg, var(--holiday-dark) 0%, #2a3441 100%) !important;
+.timer-button-spring-content {
+    background: linear-gradient(135deg, #14221a 0%, #1e3328 100%) !important;
     padding: 10px 16px !important;
     border-radius: 26px !important;
-    border: 1px solid rgba(201, 162, 39, 0.35) !important;
-    box-shadow:
-        0 4px 18px rgba(0,0,0,0.45),
-        0 0 20px var(--holiday-gold-glow) !important;
+    border: 1px solid rgba(196, 160, 53, 0.32) !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45), 0 0 20px rgba(196, 160, 53, 0.4) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     transition: 0.25s ease !important;
     position: relative !important;
     overflow: hidden !important;
+    font-size: 14px !important;
+    line-height: normal !important;
 }
 
-.timer-button-holiday:hover .timer-button-holiday-content {
+.timer-button-spring:hover .timer-button-spring-content {
     transform: translateY(-2px) !important;
-    box-shadow:
-        0 8px 25px rgba(0,0,0,0.6),
-        0 0 30px var(--holiday-gold-glow) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.55), 0 0 28px rgba(196, 160, 53, 0.4) !important;
 }
 
-/* ============================================
-   SNOW ANIMATION
-============================================ */
-.snow-container {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    overflow: hidden !important;
-    pointer-events: none !important;
-    border-radius: 26px !important;
-}
-
-.snowflake-btn {
-    position: absolute !important;
-    color: rgba(255, 255, 255, 0.6) !important;
-    font-size: 8px !important;
-    animation: snowFall linear infinite !important;
-    opacity: 0 !important;
-}
-
-.snowflake-btn:nth-child(1) {
-    left: 10% !important;
-    animation-duration: 3s !important;
-    animation-delay: 0s !important;
-    font-size: 6px !important;
-}
-
-.snowflake-btn:nth-child(2) {
-    left: 25% !important;
-    animation-duration: 3.5s !important;
-    animation-delay: 0.5s !important;
-    font-size: 8px !important;
-}
-
-.snowflake-btn:nth-child(3) {
-    left: 40% !important;
-    animation-duration: 2.8s !important;
-    animation-delay: 1s !important;
-    font-size: 5px !important;
-}
-
-.snowflake-btn:nth-child(4) {
-    left: 55% !important;
-    animation-duration: 3.2s !important;
-    animation-delay: 1.5s !important;
-    font-size: 7px !important;
-}
-
-.snowflake-btn:nth-child(5) {
-    left: 70% !important;
-    animation-duration: 2.9s !important;
-    animation-delay: 0.3s !important;
-    font-size: 6px !important;
-}
-
-.snowflake-btn:nth-child(6) {
-    left: 85% !important;
-    animation-duration: 3.3s !important;
-    animation-delay: 0.8s !important;
-    font-size: 8px !important;
-}
-
-.snowflake-btn:nth-child(7) {
-    left: 15% !important;
-    animation-duration: 3.6s !important;
-    animation-delay: 2s !important;
-    font-size: 5px !important;
-}
-
-.snowflake-btn:nth-child(8) {
-    left: 60% !important;
-    animation-duration: 2.7s !important;
-    animation-delay: 2.3s !important;
-    font-size: 7px !important;
-}
-
-@keyframes snowFall {
-    0% {
-        top: -10px !important;
-        opacity: 0 !important;
-        transform: translateX(0) rotate(0deg) !important;
-    }
-    10% {
-        opacity: 0.7 !important;
-    }
-    90% {
-        opacity: 0.5 !important;
-    }
-    100% {
-        top: 100% !important;
-        opacity: 0 !important;
-        transform: translateX(10px) rotate(360deg) !important;
-    }
-}
-
-/* Text stack */
-.button-text-holiday {
+.button-text-spring {
     text-align: center !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 4px !important;
-    justify-content: center !important;
     position: relative !important;
     z-index: 2 !important;
+    font-size: 14px !important;
+    line-height: normal !important;
 }
 
-.offer-text-holiday {
-    font-family: 'Montserrat', sans-serif !important;
-    font-size: 0.58em !important;
-    color: var(--holiday-gold1) !important;
+.offer-text-spring {
+    font-family: Montserrat, system-ui, sans-serif !important;
+    font-size: 11px !important;
+    color: #c4a035 !important;
     letter-spacing: 1px !important;
     font-weight: 700 !important;
-    text-shadow: 0 0 8px var(--holiday-gold-glow) !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    text-shadow: 0 0 8px rgba(196, 160, 53, 0.4) !important;
+    display: block !important;
 }
 
-.countdown-holiday {
-    font-family: 'Montserrat', sans-serif !important;
-    font-size: 0.68em !important;
+.countdown-spring {
+    font-family: Montserrat, system-ui, sans-serif !important;
+    font-size: 13px !important;
     font-weight: 700 !important;
     color: #ffffff !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    line-height: normal !important;
 }
 
-/* Pulse ring */
-.pulse-ring-holiday {
+.pulse-ring-spring {
     position: absolute !important;
     width: 100% !important;
     height: 100% !important;
-    border: 2px solid rgba(201, 162, 39, 0.4) !important;
+    border: 2px solid rgba(196, 160, 53, 0.35) !important;
     border-radius: 26px !important;
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
-    animation: pulseHoliday 2.2s ease-out infinite !important;
+    animation: pulseSpring 2.2s ease-out infinite !important;
     opacity: 0 !important;
 }
 
-@keyframes pulseHoliday {
-    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+@keyframes pulseSpring {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.65; }
     100% { transform: translate(-50%, -50%) scale(1.32); opacity: 0; }
 }
 
-/* ============================================
-   TABLET
-============================================ */
 @media (max-width: 1024px) and (min-width: 769px) {
-    .timer-button-holiday.dark-mode-button-holiday {
-        top: 145px !important;
-        left: 20px !important;
-    }
-
-    .timer-button-holiday-content {
-        padding: 7px 12px !important;
-        border-radius: 20px !important;
-    }
-
-    .button-text-holiday { gap: 2px !important; }
-    .offer-text-holiday { font-size: 0.52em !important; }
-    .countdown-holiday { font-size: 0.60em !important; }
-    .pulse-ring-holiday { border-radius: 20px !important; }
-    .snow-container { border-radius: 20px !important; }
+    .timer-button-spring { top: 145px !important; left: 20px !important; }
+    .timer-button-spring-content { padding: 7px 12px !important; border-radius: 20px !important; }
+    .pulse-ring-spring { border-radius: 20px !important; }
+    .offer-text-spring { font-size: 10px !important; }
+    .countdown-spring { font-size: 12px !important; }
 }
 
-/* ============================================
-   MOBILE
-============================================ */
 @media (max-width: 768px) {
-    .timer-button-holiday.dark-mode-button-holiday {
-        top: 70px !important;
-        left: 12px !important;
-    }
-
-    .timer-button-holiday-content {
-        padding: 5px 10px !important;
-        border-radius: 18px !important;
-    }
-
-    .button-text-holiday { gap: 1px !important; }
-    .offer-text-holiday { font-size: 0.48em !important; }
-    .countdown-holiday { font-size: 0.58em !important; }
-    .pulse-ring-holiday { border-radius: 18px !important; }
-    .snow-container { border-radius: 18px !important; }
-    
-    /* Reduce snow on mobile for performance */
-    .snowflake-btn:nth-child(n+5) { display: none !important; }
+    .timer-button-spring { top: 70px !important; left: 12px !important; }
+    .timer-button-spring-content { padding: 5px 10px !important; border-radius: 18px !important; }
+    .pulse-ring-spring { border-radius: 18px !important; }
+    .offer-text-spring { font-size: 9px !important; }
+    .countdown-spring { font-size: 11px !important; }
 }
 </style>
 
-
 <script>
-// Holiday countdown end date
-var holidayPromoEndDate = "January 1, 2026 23:59:59";
-var holidayEndDate = new Date(holidayPromoEndDate).getTime();
+(function () {
+    var springPromoEndDate = 'April 15, 2026 23:59:59';
+    var springEndMs = new Date(springPromoEndDate).getTime();
 
-var holidayCountdown = setInterval(function () {
-    var now = new Date().getTime();
-    var t = holidayEndDate - now;
-    if (t < 0) return;
-
-    var d = Math.floor(t / 86400000),
-        h = Math.floor((t % 86400000) / 3600000),
-        m = Math.floor((t % 3600000) / 60000),
-        s = Math.floor((t % 60000) / 1000);
-
-    // Floating button
-    document.getElementById("holiday-days").innerText = d.toString().padStart(2,'0');
-    document.getElementById("holiday-hours").innerText = h.toString().padStart(2,'0');
-    document.getElementById("holiday-minutes").innerText = m.toString().padStart(2,'0');
-    document.getElementById("holiday-seconds").innerText = s.toString().padStart(2,'0');
-
-    // Banner countdown
-    document.getElementById("banner-holiday-days").innerText = d.toString().padStart(2,'0');
-    document.getElementById("banner-holiday-hours").innerText = h.toString().padStart(2,'0');
-    document.getElementById("banner-holiday-minutes").innerText = m.toString().padStart(2,'0');
-    document.getElementById("banner-holiday-seconds").innerText = s.toString().padStart(2,'0');
-
-}, 1000);
-
-
-/* ============================
-   HIDE BUTTON WHEN BANNER IS VISIBLE
-============================ */
-function checkHolidayBannerVisibility() {
-    const banner = document.querySelector('.promo-banner-holiday');
-    const button = document.querySelector('.timer-button-holiday');
-    if (!banner || !button) return;
-    
-    const rect = banner.getBoundingClientRect();
-
-    if (rect.bottom > 0 && rect.top < window.innerHeight) {
-        button.classList.remove("visible-holiday");
-        button.classList.add("hidden-holiday");
-    } else {
-        button.classList.remove("hidden-holiday");
-        button.classList.add("visible-holiday");
+    function pad(n) {
+        return String(n).padStart(2, '0');
     }
-}
 
-window.addEventListener('scroll', checkHolidayBannerVisibility);
-window.addEventListener('load', checkHolidayBannerVisibility);
-</script></div><div class="thrv_wrapper thrv-page-section tve-height-update tcb-video-background-parent" style="" data-css="tve-u-19a93c84fc8">
+    function tick() {
+        var now = Date.now();
+        var t = springEndMs - now;
+
+        var els = {
+            d: [
+                document.getElementById('spring-days'),
+                document.getElementById('banner-spring-days'),
+            ],
+            h: [
+                document.getElementById('spring-hours'),
+                document.getElementById('banner-spring-hours'),
+            ],
+            m: [
+                document.getElementById('spring-minutes'),
+                document.getElementById('banner-spring-minutes'),
+            ],
+            s: [
+                document.getElementById('spring-seconds'),
+                document.getElementById('banner-spring-seconds'),
+            ],
+        };
+
+        if (t <= 0) {
+            clearInterval(springCountdownInterval);
+            for (var k in els) {
+                els[k].forEach(function (el) {
+                    if (el) el.innerText = '00';
+                });
+            }
+            return;
+        }
+
+        var d = Math.floor(t / 86400000);
+        var h = Math.floor((t % 86400000) / 3600000);
+        var m = Math.floor((t % 3600000) / 60000);
+        var s = Math.floor((t % 60000) / 1000);
+
+        els.d.forEach(function (el) {
+            if (el) el.innerText = pad(d);
+        });
+        els.h.forEach(function (el) {
+            if (el) el.innerText = pad(h);
+        });
+        els.m.forEach(function (el) {
+            if (el) el.innerText = pad(m);
+        });
+        els.s.forEach(function (el) {
+            if (el) el.innerText = pad(s);
+        });
+    }
+
+    var springCountdownInterval = setInterval(tick, 1000);
+    tick();
+
+    function checkSpringBannerVisibility() {
+        var banner = document.querySelector('.promo-banner-spring');
+        var button = document.querySelector('.timer-button-spring');
+        if (!banner || !button) return;
+
+        var rect = banner.getBoundingClientRect();
+        if (rect.bottom > 0 && rect.top < window.innerHeight) {
+            button.classList.remove('visible-spring');
+            button.classList.add('hidden-spring');
+        } else {
+            button.classList.remove('hidden-spring');
+            button.classList.add('visible-spring');
+        }
+    }
+
+    window.addEventListener('scroll', checkSpringBannerVisibility);
+    window.addEventListener('load', checkSpringBannerVisibility);
+})();
+</script>
+</div></script></div><div class="thrv_wrapper thrv-page-section tve-height-update tcb-video-background-parent" style="" data-css="tve-u-19a93c84fc8">
 	<div class="tve-page-section-out tcb-responsive-video tcb-video-background-el" data-css="tve-u-691b9059363901"><video playsinline="" autoplay="" muted="" loop="" class="tcb-bg-video" data-title="Digital SIgn" data-id="7440"><source src="https://southendclub.com/wp-content/uploads/2024/11/Digital-SIgn.mp4" type="video/mp4"></video></div>
 	<div class="tve-page-section-in tve_empty_dropzone" data-css="tve-u-691b9059363911" style=""></div>
 </div><div class="thrv_wrapper thrv-page-section tve-height-update">
