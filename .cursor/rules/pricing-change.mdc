@@ -1,0 +1,75 @@
+---
+description: Canonical pricing change command with preflight gates and staged verification.
+globs: []
+alwaysApply: false
+---
+
+# @pricing-change
+
+Use `@pricing-change` to safely apply pricing/rule updates from one canonical JSON source while limiting edits to pricing files only.
+
+## Triggers
+
+- `@pricing-change`
+- `pricing-change`
+- "apply pricing change"
+- "run pricing change command"
+
+## Single-command invocation
+
+Run the full gated workflow with one command:
+
+```powershell
+npm run pricing-change
+```
+
+With custom source JSON:
+
+```powershell
+npm run pricing-change -- --input "<absolute-or-repo-relative-json-path>"
+```
+
+The wrapper script (`scripts/audit/membership-pricing-change.js`) executes gates 1-5 sequentially and fails fast on any non-zero exit. It does **not** deploy.
+
+## Canonical source and targets
+
+**Input source (single source of truth):**
+- `scripts/audit/membership-pricing-source.json`
+- optional override via `--input "<path-to-json>"`
+
+**Only files allowed to change:**
+- `Website/Pages/Memberships (Category)/memberships/membership builder JS.js`
+- `Website/Pages/Memberships (Category)/memberships/membership builder JS-discount-enrollment.js`
+- `scripts/audit/membership-pricing-source.json`
+- `scripts/audit/membership-pricing-alterations.md`
+
+**Canonical path registry:** `scripts/audit/membership-pricing-paths.js` — all scripts import paths from here; do not hardcode alternate paths.
+
+## Safety gates (executed in order by wrapper)
+
+1. **Dry-run gate** — validate input and preview which files would change without writing.
+2. **Apply gate** — write changes; timestamped backups created automatically in `scripts/audit/pricing-backups/`.
+3. **Guard gate** — structural validation of live JS pricing data (`npm run guard:membership-pricing`).
+4. **Audit gate** — regenerate PDF/log audit artifacts (`npm run audit:membership-pricing`).
+5. **Diff gate** — scoped `git diff` over the four pricing-target files only; non-pricing files must not appear.
+
+## Deploy gate (manual — not in wrapper)
+
+- Do **not** deploy automatically.
+- Deploy/push only after explicit user confirmation.
+
+## Individual gate commands (for manual use)
+
+```powershell
+npm run pricing:apply -- --dry-run
+npm run pricing:apply
+npm run guard:membership-pricing
+npm run audit:membership-pricing
+git diff -- "Website/Pages/Memberships (Category)/memberships/membership builder JS.js" "Website/Pages/Memberships (Category)/memberships/membership builder JS-discount-enrollment.js" "scripts/audit/membership-pricing-source.json" "scripts/audit/membership-pricing-alterations.md"
+```
+
+## Rules
+
+- Mixed discount modes are invalid (all amount-based or all rate-based).
+- `enrollment_fee.final` must match computed values from `original` and discount model.
+- Pathing is canonical and shared through `scripts/audit/membership-pricing-paths.js`; do not hardcode alternate paths.

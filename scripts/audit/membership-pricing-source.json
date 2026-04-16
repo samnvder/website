@@ -1,0 +1,117 @@
+{
+  "_comment": "Canonical membership pricing source for scripts/audit/membership-pricing-apply.js",
+  "tiers": [
+    1,
+    2,
+    3
+  ],
+  "membership_types": {
+    "single": {
+      "monthly_dues": {
+        "1": 220,
+        "2": 205,
+        "3": 190
+      },
+      "enrollment_fee": {
+        "original": {
+          "1": 400,
+          "2": 350,
+          "3": 300
+        },
+        "discount": 100,
+        "final": {
+          "1": 300,
+          "2": 250,
+          "3": 200
+        }
+      },
+      "monthly_food_and_beverage_minimum": 20
+    },
+    "couple": {
+      "monthly_dues": {
+        "1": 350,
+        "2": 335,
+        "3": 315
+      },
+      "enrollment_fee": {
+        "original": {
+          "1": 500,
+          "2": 450,
+          "3": 400
+        },
+        "discount": 100,
+        "final": {
+          "1": 400,
+          "2": 350,
+          "3": 300
+        }
+      },
+      "monthly_food_and_beverage_minimum": 40
+    },
+    "family": {
+      "base_monthly_dues_by_children": {
+        "1": {
+          "1": 435,
+          "2": 405,
+          "3": 375
+        },
+        "2": {
+          "1": 435,
+          "2": 405,
+          "3": 375
+        },
+        "3": {
+          "1": 435,
+          "2": 405,
+          "3": 375
+        },
+        "4": {
+          "1": 435,
+          "2": 405,
+          "3": 375
+        },
+        "5": {
+          "1": 435,
+          "2": 405,
+          "3": 375
+        },
+        "6": {
+          "1": 435,
+          "2": 405,
+          "3": 375
+        }
+      },
+      "enrollment_fee": {
+        "original": {
+          "1": 600,
+          "2": 550,
+          "3": 500
+        },
+        "discount": 150,
+        "final": {
+          "1": 450,
+          "2": 400,
+          "3": 350
+        }
+      },
+      "monthly_food_and_beverage_minimum": 60
+    }
+  },
+  "family_pricing_adjustments": {
+    "age_over_17": {
+      "first_child": 90,
+      "additional_children_start": 100,
+      "step_down_per_child": 10
+    },
+    "age_14_to_17": 15,
+    "young_children_average_discount": {
+      "max_average_age": 6,
+      "max_children": 2,
+      "discounts": {
+        "1": 25,
+        "2": 15
+      }
+    },
+    "third_child_over_age_4_surcharge": 20
+  }
+}

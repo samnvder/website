@@ -12,6 +12,7 @@ All rule files live **here** — `.cursor/rules/*.mdc` — so they are easy to f
 | `local-test.mdc` | `npm run local-test` — mirror active tree into root `local-page/` + `testing/local-page/`, serve port **3456** |
 | `environment-mode-switching.mdc` | **`@command-environment-mode`** — deterministic project + mode switching via `resolve-project-mode.js` registry |
 | `command-openplay-sync-from-live.mdc` | **`@command-openplay-sync-from-live`** — align `staging/` + `local-page/` mirrors with `live/` while preserving per-folder Firebase config |
+| `pricing-change.mdc` | **`@pricing-change`** — gated canonical pricing change flow (dry-run, backup, validate, audit, review, then deploy confirmation) |
 | `staging-live-deployment-pattern.mdc` | Open Play staging vs `live/` trees, mode file, deploy guards |
 | `openplay-mode.mdc` | Same pattern, scoped to `Programs/Pickleball/**` |
 

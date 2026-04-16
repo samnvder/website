@@ -26,7 +26,9 @@
     "resolve-project-mode": "node scripts/resolve-project-mode.js",
     "summarize": "node Programs/Pickleball/advanced-open-play/scripts/openplay-summarize.js",
     "guard:membership-pricing": "node scripts/audit/membership-pricing-guard.js",
-    "audit:membership-pricing": "node scripts/audit/membership-pricing-guard.js && node scripts/audit/membership-pricing-audit-pdf.js"
+    "audit:membership-pricing": "node scripts/audit/membership-pricing-guard.js && node scripts/audit/membership-pricing-audit-pdf.js",
+    "pricing:apply": "node scripts/audit/membership-pricing-apply.js",
+    "pricing-change": "node scripts/audit/membership-pricing-change.js"
   },
   "keywords": [
     "south-end-club",

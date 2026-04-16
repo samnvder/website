@@ -7,14 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 const crypto = require('crypto');
-
-const SOURCE_REL = path.join(
-  'Website',
-  'Pages',
-  'Memberships (Category)',
-  'memberships',
-  'membership builder JS.js'
-);
+const { SOURCE_REL } = require('./membership-pricing-paths.js');
 
 function extractConstObjectLiteral(source, name) {
   const needle = `const ${name}`;
@@ -61,9 +54,23 @@ function loadMembershipBuilderPricing(repoRoot) {
   const pricing = evalObjectLiteral(extractConstObjectLiteral(raw, 'pricing'));
   const minimumAmounts = evalObjectLiteral(extractConstObjectLiteral(raw, 'minimumAmounts'));
   const enrollmentFees = evalObjectLiteral(extractConstObjectLiteral(raw, 'enrollmentFees'));
-  const discounts = evalObjectLiteral(extractConstObjectLiteral(raw, 'discounts'));
+  let discountsMode = 'amount';
+  let discountValues = null;
+  try {
+    discountValues = evalObjectLiteral(extractConstObjectLiteral(raw, 'discounts'));
+    discountsMode = 'amount';
+  } catch {
+    discountValues = evalObjectLiteral(extractConstObjectLiteral(raw, 'discountRates'));
+    discountsMode = 'rate';
+  }
 
-  const data = { pricing, minimumAmounts, enrollmentFees, discounts };
+  const data = {
+    pricing,
+    minimumAmounts,
+    enrollmentFees,
+    discounts: discountValues,
+    discountsMode,
+  };
   return { sourcePath, raw, sourceBytes, sha256, data };
 }
 
@@ -95,6 +102,7 @@ function computePricingDigest(data) {
       single: data.enrollmentFees.single,
     },
     discounts: {
+      mode: data.discountsMode || 'amount',
       couple: data.discounts.couple,
       family: data.discounts.family,
       single: data.discounts.single,
@@ -154,8 +162,15 @@ function validateMembershipPricing(data) {
 
   ['single', 'couple', 'family'].forEach((t) => {
     const d = data.discounts[t];
-    if (typeof d !== 'number' || !Number.isFinite(d) || d < 0 || !Number.isInteger(d)) {
-      errors.push(`discounts.${t}: expected non-negative integer.`);
+    if (typeof d !== 'number' || !Number.isFinite(d) || d < 0) {
+      errors.push(`discounts.${t}: expected non-negative number.`);
+      return;
+    }
+    if ((data.discountsMode || 'amount') === 'amount' && !Number.isInteger(d)) {
+      errors.push(`discounts.${t}: expected non-negative integer for fixed amount mode.`);
+    }
+    if ((data.discountsMode || 'amount') === 'rate' && d > 1) {
+      errors.push(`discounts.${t}: expected value between 0 and 1 for rate mode.`);
     }
   });
 
@@ -164,8 +179,14 @@ function validateMembershipPricing(data) {
     const d = data.discounts[t];
     if (!orig || d === undefined) return;
     for (let i = 0; i < 3; i += 1) {
-      if (orig[i] - d < 0) {
-        errors.push(`${t} tier ${i + 1}: enrollment fee minus discount cannot be negative.`);
+      const final =
+        (data.discountsMode || 'amount') === 'rate'
+          ? Math.round(orig[i] * (1 - d))
+          : orig[i] - d;
+      if (final < 0) {
+        errors.push(
+          `${t} tier ${i + 1}: enrollment fee after discount cannot be negative.`
+        );
       }
     }
   });

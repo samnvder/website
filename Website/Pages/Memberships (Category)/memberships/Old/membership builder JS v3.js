@@ -12,15 +12,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Pricing data
     const pricing = {
-        single: [220, 205, 190],
-        couple: [350, 335, 315],
+        single: [235, 215, 195],
+        couple: [370, 350, 335],
         family: {
-            1: [435, 405, 375],
-            2: [435, 405, 375],
-            3: [435, 405, 375],
-            4: [435, 405, 375],
-            5: [435, 405, 375],
-            6: [435, 405, 375]
+            1: [440, 425, 395],
+            2: [440, 425, 395],
+            3: [440, 425, 395],
+            4: [440, 425, 395],
+            5: [440, 425, 395],
+            6: [440, 425, 395]
         }
     };
 
@@ -76,10 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (allFieldsFilled) {
                 const averageAge = childrenAges.reduce((a, b) => a + b, 0) / childrenAges.length;
                 if (averageAge <= 6 && numChildren <= 2) {
-                    const youngChildDiscounts = { 1: 25, 2: 15 };
-                    if (youngChildDiscounts[numChildren]) {
-                        additionalCharge -= youngChildDiscounts[numChildren];
-                    }
+                    additionalCharge -= numChildren === 1 ? 30 : 20;
                 }
 
                 for (let i = 3; i <= numChildren; i++) {
@@ -170,6 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
     updateEnrollmentFee();
     updateMinimumAmount();
 
+    // Function to validate email format using regex
     function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
@@ -178,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("purchaseButton").addEventListener("click", function () {
         const name = document.getElementById("name").value.trim();
         const email = document.getElementById("email").value.trim();
-        const phone = document.getElementById("phone").value.trim();
+        const phone = document.getElementById("phone").value.trim(); // New phone field
 
         if (!name) {
             alert("Please enter your full name.");
@@ -228,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const data = {
             Name: name,
             "Email address": email,
-            Phone: phone,
+            Phone: phone, // Include phone in the data
             membershipType: membershipTypeValue,
             tier,
             numberOfChildren: numberOfChildrenValue,
@@ -252,6 +250,7 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 alert('Thank you! A membership form has been sent to the email address you provided!');
 
+                // Notify admin of membership click
                 fetch('https://still-cliffs-89444-6c029a7a2024.herokuapp.com/notify-admin', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

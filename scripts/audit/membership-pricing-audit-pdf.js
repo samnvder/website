@@ -137,7 +137,13 @@ function buildClosingBlock(meta) {
   return lines.join('\n');
 }
 
-function buildDetailText({ pricing, minimumAmounts, enrollmentFees, discounts }) {
+function buildDetailText({
+  pricing,
+  minimumAmounts,
+  enrollmentFees,
+  discounts,
+  discountsMode,
+}) {
   const lines = [];
   lines.push('--- Monthly dues (base) ---');
   lines.push(
@@ -158,10 +164,17 @@ function buildDetailText({ pricing, minimumAmounts, enrollmentFees, discounts })
   ['single', 'couple', 'family'].forEach((t) => {
     const orig = enrollmentFees[t];
     const d = discounts[t];
+    const finalByTier = orig.map((v) =>
+      (discountsMode || 'amount') === 'rate' ? Math.round(v * (1 - d)) : v - d
+    );
+    const discountLabel =
+      (discountsMode || 'amount') === 'rate'
+        ? `discount ${(d * 100).toFixed(2).replace(/\.00$/, '')}%`
+        : `discount $${d}`;
     lines.push(
-      `${t}: Tier 1 ${formatMoney(orig[0])} → ${formatMoney(orig[0] - d)} | Tier 2 ${formatMoney(orig[1])} → ${formatMoney(
-        orig[1] - d
-      )} | Tier 3 ${formatMoney(orig[2])} → ${formatMoney(orig[2] - d)} (discount $${d})`
+      `${t}: Tier 1 ${formatMoney(orig[0])} → ${formatMoney(finalByTier[0])} | Tier 2 ${formatMoney(orig[1])} → ${formatMoney(
+        finalByTier[1]
+      )} | Tier 3 ${formatMoney(orig[2])} → ${formatMoney(finalByTier[2])} (${discountLabel})`
     );
   });
   lines.push('');
