@@ -734,6 +734,51 @@
     });
   }
 
+  // Auto-posts a "signed up for …" entry to the board when an RSVP is confirmed.
+  // Same schema as pushBoardMessage; adds kind:'rsvp_log' so the board UI can
+  // style it differently from user-authored chat.
+  function pushBoardRsvpLog(sessionLabels) {
+    var u = getCurrentUser();
+    if (!u) return Promise.reject(new Error('Sign in required'));
+    var labels = [];
+    if (Array.isArray(sessionLabels)) {
+      sessionLabels.forEach(function (s) {
+        var t = String(s == null ? '' : s).trim();
+        if (t) labels.push(t);
+      });
+    }
+    if (!labels.length) return Promise.resolve(null);
+    var text;
+    if (labels.length === 1) {
+      text = '🎾 Signed up for ' + labels[0];
+    } else {
+      text = '🎾 Signed up for ' + labels.length + ' sessions: ' + labels.join('; ');
+    }
+    if (text.length > 500) text = text.substring(0, 497) + '…';
+    return initFirebase().then(function () {
+      if (!firebaseDb || !global.firebase) return Promise.reject(new Error('Not ready'));
+      return loadUserProfile(u.uid).then(function (p) {
+        var prof = p || {};
+        var first = String(prof.firstName || '').trim();
+        var last = String(prof.lastName || '').trim();
+        var name = (first + ' ' + last).trim() || String(u.email || 'Member');
+        var skill = String(prof.skill || '').trim();
+        return loadAdminUidFlag(u.uid).then(function (isAdmin) {
+          var ref = firebaseDb.ref(BOARD_MESSAGES_PATH).push();
+          return ref.set({
+            uid: u.uid,
+            authorName: name,
+            skill: skill,
+            text: text,
+            kind: 'rsvp_log',
+            isStaffAdmin: !!isAdmin,
+            ts: global.firebase.database.ServerValue.TIMESTAMP,
+          });
+        });
+      });
+    });
+  }
+
   function deleteBoardMessage(messageId) {
     var u = getCurrentUser();
     if (!u) return Promise.reject(new Error('Sign in required'));
@@ -816,6 +861,7 @@
     subscribeBoardMessages: subscribeBoardMessages,
     unsubscribeBoardMessages: unsubscribeBoardMessages,
     pushBoardMessage: pushBoardMessage,
+    pushBoardRsvpLog: pushBoardRsvpLog,
     deleteBoardMessage: deleteBoardMessage,
   };
 })(typeof window !== 'undefined' ? window : this);

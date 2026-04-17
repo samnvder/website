@@ -126,7 +126,12 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   background:rgba(0,0,0,.18);box-shadow:none;
 }
 .session-card.session-card--registered:hover{border-color:rgba(255,255,255,.08);background:rgba(0,0,0,.18);}
-.sc-registered-label{
+.session-card.session-card--past{
+  opacity:.38;pointer-events:none;cursor:not-allowed;border-color:rgba(255,255,255,.08);
+  background:rgba(0,0,0,.18);box-shadow:none;filter:grayscale(1);
+}
+.session-card.session-card--past:hover{border-color:rgba(255,255,255,.08);background:rgba(0,0,0,.18);}
+.sc-registered-label,.sc-past-label{
   margin-top:8px;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
   color:rgba(255,255,255,.42);
 }
@@ -285,6 +290,44 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   display:inline-block;margin-top:10px;padding:9px 20px;
   background:var(--neon);color:var(--ink);font-family:'Oswald',sans-serif;
   font-size:15px;letter-spacing:.5px;border-radius:4px;text-decoration:none;font-weight:700;
+}
+/* Hero payment block on the confirmation page */
+.success-pay-hero{
+  background:linear-gradient(180deg, rgba(147,51,234,.18), rgba(147,51,234,.08));
+  border:2px solid rgba(147,51,234,.55);
+  border-radius:12px;
+  padding:22px 20px 20px;
+  max-width:460px;
+  margin:4px auto 24px;
+  box-shadow:0 0 28px rgba(147,51,234,.18), 0 6px 18px rgba(0,0,0,.35);
+  text-align:center;
+}
+.success-pay-hero .sp-title{
+  font-size:12px;letter-spacing:3px;color:var(--neon);margin-bottom:10px;
+}
+.success-pay-hero .sp-sub{
+  font-family:'Oswald',sans-serif;
+  font-size:34px;letter-spacing:1px;color:#fff;line-height:1;
+  margin:4px 0 14px;
+}
+.success-pay-hero .sp-btn-hero{
+  display:block;width:100%;margin-top:4px;padding:16px 20px;
+  font-size:18px;letter-spacing:1px;border-radius:8px;
+  box-shadow:0 0 18px rgba(var(--neon-rgb, 57,255,20),.25);
+  transition:transform .08s ease, box-shadow .2s ease;
+}
+.success-pay-hero .sp-btn-hero:hover,
+.success-pay-hero .sp-btn-hero:focus{
+  transform:translateY(-1px);
+  box-shadow:0 0 26px rgba(var(--neon-rgb, 57,255,20),.45);
+}
+.success-pay-hero .sp-hint{
+  font-size:12px;color:rgba(255,255,255,.7);margin-top:10px;
+}
+@media(max-width:740px){
+  .success-pay-hero{padding:20px 16px 18px;}
+  .success-pay-hero .sp-sub{font-size:30px;}
+  .success-pay-hero .sp-btn-hero{font-size:17px;padding:15px 18px;}
 }
 .show-qr-note{font-size:11px;color:var(--neon);margin-top:22px;font-weight:600;padding:0 12px;line-height:1.5;}
 .hidden{display:none!important;}
@@ -547,11 +590,10 @@ button.account-strip-link:hover{text-decoration:underline;}
     </div>
 
     <div class="sec-head"><div class="sec-num">2</div><div class="sec-label">Choose Your Session</div></div>
-    <p class="session-help">Select <strong>one or more</strong> sessions. Tap a card to toggle. Use quick add to grab every Tuesday morning, every evening slot, a full week, or all dates at once.</p>
+    <p class="session-help">Select <strong>one or more</strong> sessions. Tap a card to toggle. Use quick add to grab every Tuesday, every Thursday, a full week, or all dates at once.</p>
     <div class="session-quick">
-      <button type="button" class="sq-chip" onclick="selectQuick('tue-am')">All Tue AM</button>
-      <button type="button" class="sq-chip" onclick="selectQuick('tue-pm')">All Tue PM</button>
-      <button type="button" class="sq-chip" onclick="selectQuick('thu-pm')">All Thu PM</button>
+      <button type="button" class="sq-chip" onclick="selectQuick('tue-pm')">All Tue</button>
+      <button type="button" class="sq-chip" onclick="selectQuick('thu-pm')">All Thu</button>
       <button type="button" class="sq-chip" onclick="selectQuick('week1')">This Week (Apr 8–10)</button>
       <button type="button" class="sq-chip" onclick="selectQuick('week2')">Next Week (Apr 15–17)</button>
       <button type="button" class="sq-chip" onclick="selectQuick('all')">All sessions</button>
@@ -567,8 +609,9 @@ button.account-strip-link:hover{text-decoration:underline;}
 
     <div class="pay-box" id="pay-box">
       <div class="pay-title">Payment</div>
-      <div class="pay-num">Zelle: 310-251-3804</div>
+      <div class="pay-num">PayPal</div>
       <div class="pay-sub">Total Due: $0</div>
+      <div class="pay-note" style="grid-column:1/-1;font-size:11px;color:rgba(255,255,255,.5);margin-top:4px;">You'll get the PayPal link on the next screen after you reserve.</div>
     </div>
 
     <div class="waiver-block" id="waiver-block">
@@ -694,6 +737,13 @@ button.account-strip-link:hover{text-decoration:underline;}
     <span style="color:var(--neon);">Screenshot your QR code(s) — your check-in ticket(s).</span>
   </div>
 
+  <div class="success-pay success-pay-hero" id="success-pay-box">
+    <div class="sp-title">💜 Pay with PayPal</div>
+    <div class="sp-sub" id="success-pay-amount">Total Due: $0</div>
+    <a id="success-pay-btn" href="https://www.paypal.com/qrcodes/managed/e99aaef1-4565-4c15-aba7-c7853b9c4aca" class="zelle-btn sp-btn-hero" target="_blank" rel="noopener">Open PayPal →</a>
+    <div class="sp-hint" id="success-pay-hint" style="font-size:11px;color:rgba(255,255,255,.6);margin-top:6px;">Enter this amount manually in PayPal</div>
+  </div>
+
   <div class="id-badge" id="player-id-badge"></div>
   <div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:16px;" id="player-id-sub">Your Player ID</div>
 
@@ -705,13 +755,6 @@ button.account-strip-link:hover{text-decoration:underline;}
   <div class="success-account-cta">
     <a class="success-account-cta-link" id="success-view-rsvps-link" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Session_RSVP.html">View or cancel RSVPs →</a>
     <div class="success-account-cta-sub">Opens your Open Play account — calendar, cancellations, and profile.</div>
-  </div>
-
-  <div class="success-pay" id="success-pay-box">
-    <div class="sp-title">💜 Pay via Zelle</div>
-    <div class="sp-num">310-251-3804</div>
-    <div class="sp-sub">Total Due: $0</div>
-    <a href="https://enroll.zellepay.com/qr-codes?data=ewogICJuYW1lIjogIkJSQU5ET04gSE9PS0VSIFRFTU5JUyBMTEMiLAogICJ0b2tlbiI6ICIzMTAtMjUxLTM4MDQiLAogICJhY3Rpb24iOiAicGF5bWVudCIKfQ==" class="zelle-btn" target="_blank">Open Zelle →</a>
   </div>
 
   <div class="show-qr-note">📱 Show QR code + Player ID to staff at the door</div>
@@ -739,7 +782,6 @@ button.account-strip-link:hover{text-decoration:underline;}
 // ── SCHEDULE CONFIGURATION (edit slots here if times change) ──
 var SCHEDULE_CONFIG = {
   slots: [
-    { day: 2, label: 'Tuesday Morning',  abbr: 'TUES.', time: '8:00 AM – 12:00 PM', tag: 'MORNING',  emoji: '☀', tagColor: 'rgba(0,255,136,.6)', timeColor: 'var(--neon)' },
     { day: 2, label: 'Tuesday Evening',  abbr: 'TUES.', time: '6:00 – 9:00 PM',     tag: 'EVENING',  emoji: '🌙', tagColor: 'rgba(168,85,247,.6)', timeColor: 'var(--electric)' },
     { day: 4, label: 'Thursday Evening', abbr: 'THURS.', time: '6:00 – 9:00 PM',    tag: 'EVENING',  emoji: '🌙', tagColor: 'rgba(168,85,247,.6)', timeColor: 'var(--electric)' },
   ],
@@ -773,6 +815,7 @@ function computeSessionWeeks(config) {
   
   var rollPast = now.dow > maxDay || (now.dow === maxDay && now.hour >= config.lastSessionEndHour);
   
+  var todayStart = new Date(now.year, now.month - 1, now.day).getTime();
   var anchor = new Date(now.year, now.month - 1, now.day);
   var currentDow = anchor.getDay();
   
@@ -816,6 +859,7 @@ function computeSessionWeeks(config) {
         tagColor: slot.tagColor,
         timeColor: slot.timeColor,
         date: sessionDate,
+        isPast: sessionDate.getTime() < todayStart,
       });
     });
     
@@ -852,16 +896,24 @@ function renderSessionCards(weeks) {
     week.sessions.forEach(function (sess) {
       var fullLabel = sess.fullLabel;
       var escapedLabel = fullLabel.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-      
-      html += '<div class="session-card" role="checkbox" tabindex="0" aria-checked="false" data-session="' + escapedLabel + '" ';
-      html += 'onclick="toggleSession(this,\'' + escapedLabel.replace(/'/g, "\\'") + '\')" ';
-      html += 'onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();toggleSession(this,\'' + escapedLabel.replace(/'/g, "\\'") + '\');}">';
-      html += '<input type="checkbox" name="session" value="' + escapedLabel + '">';
+      var pastClass = sess.isPast ? ' session-card--past' : '';
+      var pastAttrs = sess.isPast ? ' aria-disabled="true" data-past="1"' : '';
+      var tabIndex = sess.isPast ? '-1' : '0';
+      var clickAttr = sess.isPast
+        ? ''
+        : ' onclick="toggleSession(this,\'' + escapedLabel.replace(/'/g, "\\'") + '\')"'
+          + ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();toggleSession(this,\'' + escapedLabel.replace(/'/g, "\\'") + '\');}"';
+
+      html += '<div class="session-card' + pastClass + '" role="checkbox" tabindex="' + tabIndex + '" aria-checked="false" data-session="' + escapedLabel + '"' + pastAttrs + clickAttr + '>';
+      html += '<input type="checkbox" name="session" value="' + escapedLabel + '"' + (sess.isPast ? ' disabled' : '') + '>';
       html += '<div class="sc-tag" style="color:' + sess.tagColor + '">' + sess.emoji + ' ' + sess.tag + '</div>';
       html += '<div class="sc-day">' + sess.abbr + '</div>';
       html += '<div class="sc-date">' + sess.monthDay + '</div>';
       html += '<div class="sc-time" style="color:' + sess.timeColor + ';">' + sess.time + '</div>';
       html += '<div class="sc-check"></div>';
+      if (sess.isPast) {
+        html += '<div class="sc-past-label">Past — cannot reserve</div>';
+      }
       html += '</div>';
     });
     
@@ -884,7 +936,25 @@ let ADMIN_PIN = (typeof SEOpenPlay !== 'undefined' ? SEOpenPlay.getPin() : local
 
 let selectedSessions = new Set();
 let appliedCode = null;
-const NON_MEMBER_SESSION_RATE = 20;
+const NON_MEMBER_SESSION_RATE = 15;
+const DISCOUNT_SESSION_RATE = 10;
+// Prefilled PayPal NCP links, keyed by total dollars. Missing amounts fall back
+// to PAYPAL_FALLBACK_URL (manual-entry QR link).
+const PAYPAL_LINKS = {
+  15: 'https://www.paypal.com/ncp/payment/UFXTWG4JHK38S',
+  30: 'https://www.paypal.com/ncp/payment/MZTNTLDBBQ7MA',
+  45: 'https://www.paypal.com/ncp/payment/UJL6S2MJLPERL',
+  60: 'https://www.paypal.com/ncp/payment/K8ZQAYY8BVGYA',
+};
+const PAYPAL_FALLBACK_URL = 'https://www.paypal.com/qrcodes/managed/e99aaef1-4565-4c15-aba7-c7853b9c4aca';
+function paypalUrlFor(total) {
+  var amt = Math.max(0, Number(total) || 0);
+  return PAYPAL_LINKS[amt] || PAYPAL_FALLBACK_URL;
+}
+function paypalIsPrefilled(total) {
+  var amt = Math.max(0, Number(total) || 0);
+  return Object.prototype.hasOwnProperty.call(PAYPAL_LINKS, amt);
+}
 /** Rows from Firebase for the signed-in user (see subscribeMyRsvps). */
 var myRsvpRows = [];
 /** True once the first subscribeMyRsvps callback fires (even if list is empty). */
@@ -939,14 +1009,14 @@ function getCheckoutPricing(memberVal, sessionCount) {
   }
 
   if (appliedCode && appliedCode.type === 'half') {
-    var halfTotal = Math.round(baseTotal / 2);
+    var discountedTotal = DISCOUNT_SESSION_RATE * count;
     return {
       count: count,
       baseTotal: baseTotal,
-      total: halfTotal,
+      total: discountedTotal,
       memberIncluded: false,
-      summary: 'Total Due: ' + formatUsd(halfTotal),
-      chargeField: formatUsd(halfTotal),
+      summary: 'Total Due: ' + formatUsd(discountedTotal),
+      chargeField: formatUsd(discountedTotal),
     };
   }
 
@@ -985,7 +1055,7 @@ function updatePaymentDisplay() {
 
   payBox.style.opacity = '1';
   payBox.style.pointerEvents = '';
-  payNum.textContent = 'Zelle: 310-251-3804';
+  payNum.textContent = 'PayPal';
   paySub.textContent = pricing.summary;
 }
 
@@ -1197,8 +1267,13 @@ function paintRegisteredSessions() {
       }
     } else {
       card.classList.remove('session-card--registered');
-      card.removeAttribute('aria-disabled');
-      card.tabIndex = 0;
+      if (card.classList.contains('session-card--past')) {
+        card.setAttribute('aria-disabled', 'true');
+        card.tabIndex = -1;
+      } else {
+        card.removeAttribute('aria-disabled');
+        card.tabIndex = 0;
+      }
       if (regEl) regEl.remove();
     }
   });
@@ -1355,7 +1430,6 @@ var SESSION_GROUPS = {}; // Built dynamically from computed schedule
 
 function buildSessionGroups(weeks) {
   var groups = {
-    'tue-am': [],
     'tue-pm': [],
     'thu-pm': [],
     'week1': [],
@@ -1371,7 +1445,6 @@ function buildSessionGroups(weeks) {
       if (weekIdx === 0) groups.week1.push(label);
       if (weekIdx === 1) groups.week2.push(label);
       
-      if (/Tuesday Morning/i.test(label)) groups['tue-am'].push(label);
       if (/Tuesday Evening/i.test(label)) groups['tue-pm'].push(label);
       if (/Thursday Evening/i.test(label)) groups['thu-pm'].push(label);
     });
@@ -1436,6 +1509,7 @@ function updateSessionSummary() {
 }
 function toggleSession(card, val) {
   if (card && card.classList.contains('session-card--registered')) return;
+  if (card && card.classList.contains('session-card--past')) return;
   if (selectedSessions.has(val)) {
     selectedSessions.delete(val);
     setCardVisual(card, false);
@@ -1459,8 +1533,10 @@ function selectQuick(mode) {
   clearSessionSelection();
   list.forEach(function (val) {
     if (isSessionRegisteredForMe(val)) return;
+    var card = findSessionCard(val);
+    if (card && card.classList.contains('session-card--past')) return;
     selectedSessions.add(val);
-    setCardVisual(findSessionCard(val), true);
+    setCardVisual(card, true);
   });
   updateSessionSummary();
   document.getElementById('err-session').classList.remove('show');
@@ -1721,6 +1797,13 @@ function submitRSVP() {
         return;
       }
       showSuccessMulti(name, email, phone, skill, okRes, isNew, tierHint, memberCard, codeInfo, sessions.length);
+      try {
+        if (typeof SEOpenPlay !== 'undefined' && SEOpenPlay.pushBoardRsvpLog) {
+          SEOpenPlay.pushBoardRsvpLog(
+            okRes.map(function (r) { return r.session; })
+          ).catch(function () {});
+        }
+      } catch (e) {}
       return;
     }
     const selectedSession = sessions[idx];
@@ -1951,6 +2034,25 @@ function submitRSVP() {
     if (successPay) {
       var successPaySub = successPay.querySelector('.sp-sub');
       if (successPaySub) successPaySub.textContent = pricingForSuccess.summary;
+      var successPayBtn = document.getElementById('success-pay-btn');
+      var successPrefilled = paypalIsPrefilled(pricingForSuccess.total);
+      if (successPayBtn) {
+        successPayBtn.setAttribute('href', paypalUrlFor(pricingForSuccess.total));
+        if (pricingForSuccess.total > 0) {
+          successPayBtn.textContent = 'Open PayPal (' + formatUsd(pricingForSuccess.total) + ') →';
+        } else {
+          successPayBtn.textContent = 'Open PayPal →';
+        }
+      }
+      var successPayHint = document.getElementById('success-pay-hint');
+      if (successPayHint) {
+        if (pricingForSuccess.total > 0 && !successPrefilled) {
+          successPayHint.style.display = '';
+          successPayHint.textContent = 'Enter this amount manually in PayPal';
+        } else {
+          successPayHint.style.display = 'none';
+        }
+      }
     }
 
     if (appliedCode && appliedCode.type === 'free') {

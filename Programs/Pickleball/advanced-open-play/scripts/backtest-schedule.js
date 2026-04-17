@@ -8,7 +8,6 @@
 
 const SCHEDULE_CONFIG = {
   slots: [
-    { day: 2, label: 'Tuesday Morning',  abbr: 'TUES.', time: '8:00 AM – 12:00 PM', tag: 'MORNING',  emoji: '☀', tagColor: 'rgba(0,255,136,.6)', timeColor: 'var(--neon)' },
     { day: 2, label: 'Tuesday Evening',  abbr: 'TUES.', time: '6:00 – 9:00 PM',     tag: 'EVENING',  emoji: '🌙', tagColor: 'rgba(168,85,247,.6)', timeColor: 'var(--electric)' },
     { day: 4, label: 'Thursday Evening', abbr: 'THURS.', time: '6:00 – 9:00 PM',    tag: 'EVENING',  emoji: '🌙', tagColor: 'rgba(168,85,247,.6)', timeColor: 'var(--electric)' },
   ],
@@ -114,12 +113,12 @@ function getDayName(dow) {
 // Test scenarios
 // April 2026 calendar: Apr 7=Tue, Apr 9=Thu, Apr 14=Tue, Apr 16=Thu
 const testCases = [
-  // Week 1: Apr 7-9 (Tue 7 AM & PM, Thu 9 PM)
-  // Week 2: Apr 14-16 (Tue 14 AM & PM, Thu 16 PM)
+  // Week 1: Apr 7-9 (Tue 7 PM, Thu 9 PM)
+  // Week 2: Apr 14-16 (Tue 14 PM, Thu 16 PM)
   
   { name: 'Monday April 6 morning (before week starts)', date: new Date(2026, 3, 6, 10, 0), expectWeek1Start: new Date(2026, 3, 7), expectRoll: false },
-  { name: 'Tuesday April 7, 7 AM (before morning session)', date: new Date(2026, 3, 7, 7, 0), expectWeek1Start: new Date(2026, 3, 7), expectRoll: false },
-  { name: 'Tuesday April 7, 11 AM (during morning session)', date: new Date(2026, 3, 7, 11, 0), expectWeek1Start: new Date(2026, 3, 7), expectRoll: false },
+  { name: 'Tuesday April 7, 10 AM (before evening session)', date: new Date(2026, 3, 7, 10, 0), expectWeek1Start: new Date(2026, 3, 7), expectRoll: false },
+  { name: 'Tuesday April 7, 5 PM (just before evening session)', date: new Date(2026, 3, 7, 17, 0), expectWeek1Start: new Date(2026, 3, 7), expectRoll: false },
   { name: 'Tuesday April 7, 7 PM (during evening session)', date: new Date(2026, 3, 7, 19, 0), expectWeek1Start: new Date(2026, 3, 7), expectRoll: false },
   { name: 'Wednesday April 8 afternoon', date: new Date(2026, 3, 8, 15, 0), expectWeek1Start: new Date(2026, 3, 7), expectRoll: false },
   { name: 'Thursday April 9, 8 PM (during evening session)', date: new Date(2026, 3, 9, 20, 0), expectWeek1Start: new Date(2026, 3, 7), expectRoll: false },
@@ -139,7 +138,7 @@ const testCases = [
 console.log('═══════════════════════════════════════════════════════════════');
 console.log('BACKTEST: Dynamic Rolling Session Schedule');
 console.log('═══════════════════════════════════════════════════════════════\n');
-console.log('Schedule: Tuesday (Morning & Evening), Thursday (Evening)');
+console.log('Schedule: Tuesday (Evening), Thursday (Evening)');
 console.log('Roll trigger: After Thursday 9 PM PT (hour >= 21)\n');
 
 let passed = 0;
@@ -162,9 +161,9 @@ testCases.forEach((testCase, idx) => {
   const week2Sessions = weeks[1].sessions;
   
   // Check first Tuesday session of week 1
-  const firstTuesday = week1Sessions.find(s => s.fullLabel.includes('Tuesday Morning'));
+  const firstTuesday = week1Sessions.find(s => s.fullLabel.includes('Tuesday Evening'));
   if (!firstTuesday) {
-    console.log(`❌ FAIL: No Tuesday Morning session in week 1`);
+    console.log(`❌ FAIL: No Tuesday Evening session in week 1`);
     failed++;
     return;
   }

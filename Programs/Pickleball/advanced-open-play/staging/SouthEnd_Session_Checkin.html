@@ -376,7 +376,6 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
         <div class="setting-lbl">Session Times</div>
         <div class="setting-desc">Reference only — actual session times are set on the RSVP form.</div>
         <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:2;">
-          Tuesday Morning &nbsp;·&nbsp; 8:00 AM – 12:00 PM<br>
           Tuesday Evening &nbsp;·&nbsp; 6:00 – 9:00 PM<br>
           Thursday Evening &nbsp;·&nbsp; 6:00 – 9:00 PM
         </div>
@@ -479,16 +478,14 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
           <option value="ua">Unassigned</option>
           <option value="free">Free</option>
           <option value="disc">Discounted ($10)</option>
-          <option value="full">Full Price ($20)</option>
+          <option value="full">Full Price ($15)</option>
         </select>
       </div>
     </div>
     <div class="mrow">
       <div><label>Session</label>
         <select id="m-session">
-          <option value="Tuesday Morning Apr 8">Tue Morning Apr 8</option>
           <option value="Tuesday Evening Apr 8">Tue Evening Apr 8</option>
-          <option value="Tuesday Morning Apr 15">Tue Morning Apr 15</option>
           <option value="Tuesday Evening Apr 15">Tue Evening Apr 15</option>
           <option value="Thursday Evening Apr 10">Thu Evening Apr 10</option>
           <option value="Thursday Evening Apr 17">Thu Evening Apr 17</option>
@@ -512,9 +509,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
     <div class="modal-title">Set Session</div>
     <div class="mrow-1"><label>Day</label>
       <select id="sm-day">
-        <option value="Tuesday Morning Apr 8">☀ Tue Morning Apr 8 · 8am–12pm</option>
         <option value="Tuesday Evening Apr 8">🌙 Tue Evening Apr 8 · 6–9pm</option>
-        <option value="Tuesday Morning Apr 15">☀ Tue Morning Apr 15 · 8am–12pm</option>
         <option value="Tuesday Evening Apr 15">🌙 Tue Evening Apr 15 · 6–9pm</option>
         <option value="Thursday Evening Apr 10">🌙 Thu Evening Apr 10 · 6–9pm</option>
         <option value="Thursday Evening Apr 17">🌙 Thu Evening Apr 17 · 6–9pm</option>
@@ -551,7 +546,7 @@ let ADMIN_PIN = SEOpenPlay.getPin();
 /** Expanded roster row keys (pid, or `__idx_${i}` when pid empty). */
 const rosterExpandedKeys = new Set();
 const TIER_DOT = {free:'td-free',disc:'td-disc',full:'td-full',ua:'td-ua'};
-const TIER_TXT = {free:'FREE',disc:'$10',full:'$20',ua:'—'};
+const TIER_TXT = {free:'FREE',disc:'$10',full:'$15',ua:'—'};
 const TIER_CLS = {free:'bt-free',disc:'bt-disc',full:'bt-full',ua:''};
 
 function escapeHtml(s) {
@@ -1288,7 +1283,7 @@ function renderRoster() {
             <option value="ua" ${!p.tier||p.tier==='ua'?'selected':''}>Unassigned</option>
             <option value="free" ${p.tier==='free'?'selected':''}>Free</option>
             <option value="disc" ${p.tier==='disc'?'selected':''}>$10</option>
-            <option value="full" ${p.tier==='full'?'selected':''}>$20</option>
+            <option value="full" ${p.tier==='full'?'selected':''}>$15</option>
           </select>
           <button class="paid-btn ${p.paid?'paid':'unpaid'}" onclick="togglePaid(${p._i})">${p.paid?'✓ Paid':'Mark Paid'}</button>
           <button class="ci-btn ${p.checkedIn?'ci-in':'ci-pending'}" onclick="toggleCI(${p._i})">${p.checkedIn?'✓ In':'Check In'}</button>
@@ -1489,7 +1484,7 @@ function changePin(){
 
 function sendDailyList() {
   if (!state.players.length) { alert('No players to send.'); return; }
-  const tl = {free:'Free',disc:'Discounted $10',full:'Full $20',ua:'Unassigned'};
+  const tl = {free:'Free',disc:'Discounted $10',full:'Full $15',ua:'Unassigned'};
   const date = state.date || new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   const session = state.session || 'Session';
   let body = 'SOUTH END OPEN PLAY — ' + session + ' (' + date + ')\n';
@@ -1514,7 +1509,7 @@ function sendDailyList() {
 
 function exportCSV(){if(!state.players.length){alert('No players.');return;}
   const h=['ID','Name','Email','Phone','Skill','Tier','Paid','Waiver Needed','Checked In','Session','Notes'];
-  const tl={free:'Free',disc:'Discounted $10',full:'Full $20',ua:'Unassigned'};
+  const tl={free:'Free',disc:'Discounted $10',full:'Full $15',ua:'Unassigned'};
   const sorted=[...state.players].sort(compareRosterPlayers);
   const rows=[h,...sorted.map(p=>[p.pid||'',p.name,p.email||'',p.phone||'',p.skill||'',tl[p.tier]||'',p.paid?'Yes':'No',p.waiver&&!p.waiverDone?'Yes':'No',p.checkedIn?'Yes':'No',p.session||'',p.notes||''])];
   const csv=rows.map(r=>r.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');
