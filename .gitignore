@@ -7,3 +7,4 @@ config.env
 .DS_Store
 supabase/.temp/
 .firebase/
+scripts/audit/pricing-backups/
