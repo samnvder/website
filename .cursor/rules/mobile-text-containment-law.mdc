@@ -1,0 +1,38 @@
+---
+description: Deterministic mobile text containment for cards, pills, and schedules
+globs: "**/*.{html,css,jsx,tsx}"
+alwaysApply: false
+---
+
+# Mobile Text Containment Law
+
+**Principle:** On mobile, text must never bleed outside its container. Wrapping behavior must be deterministic.
+
+## Required Container Rules
+
+- For content wrappers (cards, pills, schedule blocks): `width: 100%`, `max-width: 100%`, `box-sizing: border-box`
+- If rounded or framed container: add `overflow: hidden` to prevent right-edge bleed
+- Do not use `display: inline-block` for long or dynamic text containers
+
+## Required Text Rules
+
+- For paragraphs, list items, schedule labels/values inside cards:
+  - `max-width: 100%`
+  - `overflow-wrap: anywhere`
+  - `word-break: normal`
+- Prefer:
+  - `text-wrap: pretty` for body text
+  - `text-wrap: balance` for short labels/headings
+
+## Mobile Enforcement
+
+- At `max-width: 768px`, reassert containment for inner components:
+  - Pill blocks, schedule rows, list wrappers all keep `width/max-width: 100%`
+  - Reduce horizontal padding if needed before shrinking type
+
+## Anti-Patterns (Forbidden)
+
+- `inline-block` list wrappers in narrow card layouts
+- Missing `max-width: 100%` on nested text blocks
+- Long labels without `overflow-wrap: anywhere`
+- Layout relying on "it usually wraps" instead of explicit wrap rules

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instructor pill layout test</title>
+  <!-- Hostile rules first (simulates theme), then production Pools CSS (includes layout lock at EOF) -->
+  <link rel="stylesheet" href="thrive-hostile-simulator.css">
+  <link rel="stylesheet" href="../Pools%20CSS.css">
+  <style>
+    /* After Pools CSS: stress narrow column + single-column grid */
+    :root {
+      --white: #fff;
+      --text-primary: #1a1a1a;
+      --text-secondary: #444;
+      --accent-blue: #0b468c;
+      --bg-secondary: #f4f6f8;
+      --radius-lg: 20px;
+      --shadow-medium: 0 8px 24px rgba(11, 70, 140, 0.12);
+    }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #e8ecf1; }
+    .test-harness { max-width: 380px; margin: 24px auto; padding: 0 12px; }
+    @media (min-width: 900px) {
+      .test-harness { max-width: 1180px; }
+    }
+    .test-label { font-size: 12px; color: #333; margin-bottom: 8px; }
+    .container { max-width: 100%; margin: 0 auto; }
+    .section { padding: 20px 0; }
+    #swim-instructors .instructors-grid { display: block !important; }
+  </style>
+</head>
+<body>
+  <div class="test-harness">
+    <p class="test-label">Narrow 380px column — pill must still fill width and keep minimum padding.</p>
+    <div class="container">
+      <section class="section instructors-section" id="swim-instructors">
+        <div class="instructors-grid">
+          <div class="instructor-card">
+            <div class="instructor-image instructor-image-placeholder" style="height:120px;">
+              <span class="instructor-initials" style="font-size:2rem;">VK</span>
+            </div>
+            <div class="instructor-info">
+              <div class="thrv_wrapper thrv_text_element"><h3 class="">Vianne Kelly</h3></div>
+              <div class="instructor-contact">
+                <div class="contact-item"><span>(323) 510-1595</span></div>
+              </div>
+              <div class="thrv_wrapper thrv_text_element">
+                <div class="instructor-pill">
+                  <p class="instructor-pill-text">Use the levels below to register for the right group. Example: a swimmer who can float but not freestyle belongs in Level 2. If you are unsure, choose the lower level.</p>
+                  <ul class="instructor-pill-levels">
+                    <li><strong>Level 2</strong> – Streamline kick front and back, kickboard kick, beginning Freestyle (15 yds), surface dive to 4'.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="instructor-card" style="margin-top:24px;">
+            <div class="instructor-image instructor-image-placeholder" style="height:120px;">
+              <span class="instructor-initials" style="font-size:2rem;">MM</span>
+            </div>
+            <div class="instructor-info">
+              <div class="thrv_wrapper thrv_text_element"><h3 class="">Maria Miakisheva</h3></div>
+              <div class="instructor-contact">
+                <div class="contact-item"><span>+1 (757) 264-0383</span></div>
+              </div>
+              <div class="instructor-pill">
+                <p class="instructor-pill-text">CPR-certified swim instructor with a personal training background.</p>
+                <p class="instructor-schedule-label">Schedule</p>
+                <div class="instructor-availability-schedule">
+                  <div class="availability-row">
+                    <p class="availability-days">Tuesday &amp; Thursday</p>
+                    <p class="availability-time">Afternoons</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

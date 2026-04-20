@@ -1,0 +1,83 @@
+---
+description: "FINAL — Similar contained layouts vs Thrive (pills, callouts, info panels, lists-in-cards, locks) — canonical until revised"
+globs: "**/*.{html,css}"
+alwaysApply: false
+---
+
+# FINAL — Similar contained layouts (Thrive / WordPress, mobile → desktop)
+
+**Status:** Canonical for **the same class of UI**: Thrive-wrapped **contained blocks** where **text must fit**—info **pills**, tinted **callouts**, **note panels**, **schedule strips** inside cards, nested **highlight boxes**, etc. Not limited to one page or one BEM name. Pair with **`mobile-text-containment-law.mdc`** (wrapping and overflow).
+
+**Reference implementation:** Pools swim instructors (**`.instructor-pill`**, **`.instructor-info`**, **`.instructor-pill-levels`**, **`.availability-row`**, **`#swim-instructors`** EOF lock in **`Website/Pages/pools/Pools CSS.css`**). Reuse the **same techniques** for any similar block on any route.
+
+---
+
+## What counts as a “similar” contained block
+
+- A **bounded panel** (often rounded, bordered, or tinted) whose job is **readable copy**: paragraphs, **lists**, **stacked rows** (e.g. day + time), links/CTAs.
+- Same rules apply whether the root class is **`.instructor-pill`**, **`.note-pill`**, **`.content-callout`**, **`.info-panel`**, etc.
+
+---
+
+## Text inside the block (all breakpoints)
+
+- **Container root:** `box-sizing: border-box`, `width: 100%`, `max-width: 100%`, `min-width: 0`, adequate **horizontal padding** (`clamp` or `max(px, rem)` so copy never hugs the curved or clipped edge).
+- **Flex context:** If the block sits in a flex column parent that should span the card/column, parent needs **`align-items: stretch`**, **`min-width: 0`**, and wrappers around the block need **`width/max-width: 100%`** so the block is not shrink-wrapped to “content width.”
+- **All text-bearing descendants:** `max-width: 100%`, `min-width: 0`, `white-space: normal`, `overflow-wrap: anywhere` (and **`word-break: break-word`** where lines are long or technical).
+- **Rounded / clipped panels:** Prefer **`overflow-x: clip`** (or **`overflow: hidden`** on the root) so nothing paints past the radius.
+- **Do not** rely on `display: inline-block` for the main list or body wrapper when width must track the column.
+
+---
+
+## Lists inside the block (any page)
+
+- **`ul` / `ol`:** `display: block` (use **`!important`** if TCB forces `inline-block`), **`width: 100%`**, **`min-width: 0`**, meaningful **`padding-right`** (tiny right padding lets long lines hug the edge). Add **`overflow-x: clip`** on the list if needed.
+- **`li`:** `padding-right` inset, **`overflow-x: clip`**, **`overflow-wrap: anywhere`**, **`word-break: break-word`** for long lines.
+- **`li strong` / emphasis:** same wrap stack + **`max-width: 100%`** so bold runs do not act like unbreakable bars.
+- **Thrive inner nodes:** **`span`**, **`.tcb-plain-text`**, **`p`** may get **`white-space: nowrap`** or zero padding—override with **`white-space: normal !important`** and explicit horizontal padding where theme zeros **`p`**.
+
+---
+
+## Inner row blocks (schedules, two-line facts)
+
+- Rows should be **column flex**, **`align-items: stretch`**, **`min-width: 0`**, generous **horizontal padding** on the row and, if needed, on inner **`p`** so copy is not flush to the row edge.
+- Inner **`p`**: higher-specificity selectors if theme resets **`padding`**.
+
+---
+
+## Thrive / Architect wrappers
+
+- Expect **`.thrv_wrapper`**, **`.thrv_text_element`**, **`.tcb-plain-text`** around or inside the contained block.
+- Wrappers that **contain** the block often get **`max-width: 50–60%`**, **`margin: 0 auto`**, or **`inline-block`** → the block looks narrow with empty space beside it. Fix with **specificity + `!important` only where needed**: **`width: 100%`**, **`max-width: none`** on wrappers that **`:has(.your-root-class)`**, and full width on nested **`.thrv_* .your-root-class`** paths.
+
+---
+
+## “Layout lock” pattern (any section)
+
+- For each Thrive-heavy **section**, prefer a **stable anchor**: **`id` on `<section>`** or **`[data-layout-lock="…"]`** (rename attribute to taste).
+- Put a **short, high-specificity block at the very end** of that page’s CSS (or global custom CSS **after** all Thrive rules) that reasserts: parent flex stretch, wrapper widths, container **`max-width: none`** where percentage caps break layout, minimum paddings, and list/row rules scoped to **`#your-id`** or your **`data-*`** scope.
+- If a plugin injects CSS **after** yours, **paste the same lock block again** at the bottom of Custom CSS.
+
+**Pools example:** `section#swim-instructors.instructors-section` + **`.instructor-pill`** (see EOF of **`Pools CSS.css`**).
+
+---
+
+## Multi-column layouts (when these blocks sit in a grid)
+
+- Avoid **many ultra-narrow columns** in the band where the grid is still multi-column; prefer **fewer, wider columns** so text has room (Pools uses a **2-col** band then **3-col** from a higher breakpoint—tune per design).
+- Avoid a blanket **`@media (max-width: 1024px) { grid-template-columns: 1fr }`** on that grid **unless** you intend a single column; it can wipe intentional 2-column layouts.
+
+---
+
+## Deterministic testing (optional)
+
+- **Pools harness:** `npm run test:pools-instructors` — **`Website/Pages/pools/testing/`**. Use as a **template** for other similar pages: same checks (**block vs parent content width**, **padding floors**, **`scrollWidth` vs `clientWidth`** on lines and list items).
+
+---
+
+## When editing any similar layout
+
+1. Define or keep a **section anchor** (`id` / `data-*`) if you use an EOF lock.
+2. Apply **text + list + row** rules on the **container root class**, not only one-off overrides.
+3. Keep the **lock last** in the stylesheet Thrive competes with (or last in Custom CSS).
+4. Re-read **`mobile-text-containment-law.mdc`** for baseline containment.

@@ -947,9 +947,31 @@ body {
 
 .instructors-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 50px;
   margin-top: 60px;
+}
+
+/* Wide screens: three equal columns so each card (and pill) gets more horizontal room */
+/* Avoid three ultra-narrow cards in the tablet / small-laptop band */
+@media (min-width: 681px) and (max-width: 1199px) {
+  .instructors-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(28px, 3vw, 42px);
+  }
+}
+
+@media (min-width: 1200px) {
+  .instructors-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(36px, 3.5vw, 52px);
+  }
+}
+
+@media (min-width: 1440px) {
+  .instructors-grid {
+    gap: 56px;
+  }
 }
 
 .instructor-card {
@@ -960,6 +982,10 @@ body {
   transition: var(--transition-smooth);
   border: 2px solid rgba(255, 255, 255, 0.8);
   position: relative;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .instructor-card::before {
@@ -988,6 +1014,7 @@ body {
 
 .instructor-image {
   height: 280px;
+  flex-shrink: 0;
   overflow: hidden;
   position: relative;
   background: var(--bg-secondary);
@@ -1023,8 +1050,62 @@ body {
   transform: scale(1.12);
 }
 
+.instructor-image-placeholder {
+  background: linear-gradient(135deg, rgba(11, 70, 140, 0.14), rgba(32, 65, 71, 0.2));
+}
+
+.instructor-initials {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(2.5rem, 5vw, 3.25rem);
+  font-weight: 800;
+  color: var(--accent-blue);
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 8px rgba(11, 70, 140, 0.2);
+}
+
 .instructor-info {
   padding: 35px;
+  min-width: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Thrive often wraps blocks in text elements with max-width / inline sizing — keep card body full-bleed */
+.instructor-card .instructor-info > .thrv_wrapper,
+.instructor-card .instructor-info > .thrv_text_element {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: block;
+  box-sizing: border-box;
+}
+
+.instructor-card .instructor-info .instructor-pill,
+.instructor-card .instructor-info .thrv_wrapper:has(.instructor-pill),
+.instructor-card .instructor-info .thrv_text_element:has(.instructor-pill) {
+  align-self: stretch;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-left: 0;
+  margin-right: 0;
+  box-sizing: border-box;
+}
+
+/* Pill nested inside Thrive wrappers (pasted Architect structure) */
+.instructor-card .instructor-info .thrv_wrapper .instructor-pill,
+.instructor-card .instructor-info .thrv_text_element .instructor-pill {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
 }
 
 .instructor-info h3 {
@@ -1040,6 +1121,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-width: 0;
+  align-self: stretch;
 }
 
 .contact-item {
@@ -1049,6 +1132,7 @@ body {
   font-size: 1rem;
   color: var(--text-secondary);
   font-weight: 500;
+  min-width: 0;
 }
 
 .contact-item svg {
@@ -1064,6 +1148,10 @@ body {
   text-decoration: none;
   font-weight: 700;
   transition: var(--transition-fast);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 .contact-item a:hover {
@@ -1112,16 +1200,53 @@ body {
 /* Instructor pill - swim lesson info inside Vianne card (STYLE-GUIDE typography, centered) */
 .instructor-pill {
   margin-top: 24px;
-  padding: clamp(1rem, 3vw, 1.5rem) clamp(2rem, 5vw, 2.5rem);
+  /* Extra horizontal padding so copy clears the pill edge on narrow columns */
+  padding: clamp(1rem, 2.5vw, 1.35rem) clamp(1.15rem, 4.5vw, 2rem);
   background: rgba(11, 70, 140, 0.08);
   border: 2px solid rgba(11, 70, 140, 0.15);
-  border-radius: 100px;
+  border-radius: 24px;
   box-shadow: 0 2px 8px rgba(11, 70, 140, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  width: 100%;
   max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   text-align: center;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
+  /* Clip any residual paint overflow; wrapping rules below keep copy inside the pill */
+  overflow: hidden;
+}
+
+/* Single source of truth: text inside instructor pills wraps to container */
+.instructor-pill,
+.instructor-pill .thrv_wrapper,
+.instructor-pill .thrv_text_element,
+.instructor-pill .tcb-plain-text {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.instructor-pill p,
+.instructor-pill ul,
+.instructor-pill li,
+.instructor-pill a {
+  max-width: 100%;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+  word-break: normal;
+  box-sizing: border-box;
+}
+
+/* Stretch direct children to pill width so flex descendants get a bounded containing width */
+.instructor-pill > * {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .instructor-pill-text {
@@ -1131,29 +1256,76 @@ body {
   color: var(--text-primary) !important;
   margin-bottom: 12px !important;
   font-weight: 550 !important;
+  text-wrap: pretty;
 }
 
 .instructor-pill-text:last-of-type {
   margin-bottom: 16px !important;
 }
 
-.instructor-pill-levels {
+.instructor-pill ul.instructor-pill-levels,
+.instructor-pill .instructor-pill-levels {
   list-style: none;
-  margin: 0 0 16px 0;
-  padding: 0;
-  display: inline-block;
+  margin: 0 auto 16px;
+  /* Right inset was ~0.35rem — long level lines touched the pill edge; keep clear of rounded border */
+  padding: 0 clamp(10px, 2.8vw, 20px) 0 0;
+  /* Thrive/TCB often sets lists to inline-block; that prevents width:100% shrink-to-fit in narrow cards */
+  display: block !important;
   text-align: left;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+  word-break: normal;
+  box-sizing: border-box;
+  overflow-x: clip;
 }
 
-.instructor-pill-levels li {
+/* Thrive often wraps the list; keep wrapper on the pill width and out of inline-block shrink-to-fit */
+.instructor-pill .thrv_text_element:has(.instructor-pill-levels),
+.instructor-pill .thrv_wrapper:has(.instructor-pill-levels) {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: block;
+  box-sizing: border-box;
+}
+
+.instructor-pill-levels li,
+.instructor-pill .instructor-pill-levels li {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: clamp(0.9rem, 1.5vw, 1rem);
   line-height: 1.65;
   color: var(--text-primary);
   margin-bottom: 8px;
   padding-left: 1.25rem;
+  padding-right: clamp(6px, 1.8vw, 14px);
   position: relative;
   font-weight: 550;
+  text-wrap: pretty;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+  /* Long skill lines (e.g. yards, stroke names): allow breaks so copy cannot project past the pill */
+  word-break: break-word;
+  white-space: normal;
+  box-sizing: border-box;
+  overflow-x: clip;
+}
+
+/* Thrive often wraps list line copy in spans / .tcb-plain-text with nowrap or inline sizing */
+.instructor-pill .instructor-pill-levels li span,
+.instructor-pill .instructor-pill-levels li .tcb-plain-text,
+.instructor-pill .instructor-pill-levels li p {
+  max-width: 100%;
+  min-width: 0;
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  box-sizing: border-box;
 }
 
 .instructor-pill-levels li::before {
@@ -1171,6 +1343,113 @@ body {
   color: var(--accent-blue);
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.instructor-availability-list {
+  margin-bottom: 8px;
+}
+
+.instructor-availability-schedule {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  box-sizing: border-box;
+  align-self: stretch;
+}
+
+.instructor-schedule-label {
+  margin: 0 0 12px !important;
+  font-family: 'Montserrat', sans-serif !important;
+  font-size: clamp(0.95rem, 1.5vw, 1.05rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-blue) !important;
+  text-align: center;
+  width: 100%;
+  max-width: 100%;
+}
+
+.availability-row {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px clamp(18px, 4vw, 28px);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(11, 70, 140, 0.16);
+  box-shadow: 0 2px 8px rgba(11, 70, 140, 0.08);
+  overflow: hidden;
+  min-width: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+}
+
+/* Thrive may inject wrappers inside schedule rows */
+.instructor-pill .availability-row > .thrv_wrapper,
+.instructor-pill .availability-row > .thrv_text_element,
+.instructor-pill .instructor-availability-schedule .availability-row .thrv_wrapper,
+.instructor-pill .instructor-availability-schedule .availability-row .thrv_text_element,
+.instructor-pill .instructor-availability-schedule .availability-row .tcb-plain-text {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-left: 0;
+  margin-right: 0;
+  box-sizing: border-box;
+}
+
+.availability-days,
+.availability-time {
+  margin: 0;
+  text-align: center;
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+  word-break: normal;
+  /* Inset inside white row (adds to .availability-row padding) */
+  padding-left: clamp(4px, 1.2vw, 10px);
+  padding-right: clamp(4px, 1.2vw, 10px);
+  box-sizing: border-box;
+}
+
+.availability-days {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(0.95rem, 1.5vw, 1.05rem);
+  font-weight: 700;
+  color: var(--accent-blue);
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+}
+
+.availability-time {
+  margin-top: 4px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  font-weight: 550;
+  color: var(--text-primary);
+  text-wrap: pretty;
+}
+
+/* Beat Thrive/Theme paragraph resets on schedule lines without !important */
+.instructor-pill .instructor-availability-schedule .availability-row p.availability-days,
+.instructor-pill .instructor-availability-schedule .availability-row p.availability-time,
+.instructor-pill .availability-row p.availability-days,
+.instructor-pill .availability-row p.availability-time {
+  padding-left: clamp(4px, 1.2vw, 10px);
+  padding-right: clamp(4px, 1.2vw, 10px);
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .instructor-pill-cta {
@@ -1485,10 +1764,6 @@ body {
   .section {
     padding: 80px 0;
   }
-  
-  .instructors-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 768px) {
@@ -1644,15 +1919,34 @@ body {
   }
   
   .instructor-pill {
-    padding: 1rem 1.5rem;
+    padding: 1rem clamp(0.95rem, 4.5vw, 1.35rem);
+    border-radius: 20px;
   }
-  
+
   .instructor-pill-text,
   .instructor-pill-levels li {
     font-size: clamp(0.85rem, 2.5vw, 0.95rem) !important;
     font-weight: 550 !important;
     color: var(--text-primary) !important;
   }
+
+  .instructor-pill-levels li {
+    padding-left: 1rem;
+  }
+
+  .instructor-pill ul.instructor-pill-levels,
+  .instructor-pill .instructor-pill-levels,
+  .instructor-availability-schedule,
+  .availability-row {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .availability-row {
+    padding: 12px clamp(14px, 4vw, 22px);
+  }
+
   
   .contact-item {
     font-size: 0.9rem;
@@ -1748,6 +2042,32 @@ body {
   .instructor-info {
     padding: 20px;
   }
+
+  .instructor-contact {
+    gap: 10px;
+  }
+
+  .contact-item {
+    font-size: 0.85rem;
+    gap: 8px;
+  }
+
+  .instructor-pill {
+    padding: 0.75rem clamp(0.7rem, 5vw, 1.1rem);
+    border-radius: 16px;
+  }
+
+  .instructor-pill-text,
+  .instructor-pill-levels li,
+  .availability-days,
+  .availability-time {
+    font-size: 0.9rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .availability-row {
+    padding: 11px clamp(12px, 5vw, 18px);
+  }
   
   .instructor-image {
     height: 220px;
@@ -1761,5 +2081,169 @@ body {
     padding: 12px 20px !important;
     letter-spacing: 0.03em !important;
     max-width: 90% !important;
+  }
+}
+
+/* =========================================================
+   SWIM INSTRUCTORS — LAYOUT LOCK (#swim-instructors)
+   Must stay LAST in this file. Uses section id + long chain so
+   Thrive Architect / theme rules with !important still lose.
+   If a plugin injects CSS after this file, paste the same block
+   again at the very end of Custom CSS (after all Thrive blocks).
+========================================================= */
+
+html body section#swim-instructors.instructors-section .instructor-card .instructor-info {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+html body section#swim-instructors.instructors-section .instructor-card .instructor-info .thrv_wrapper,
+html body section#swim-instructors.instructors-section .instructor-card .instructor-info .thrv_text_element {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  flex: 0 1 auto !important;
+  align-self: stretch !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Kill percentage max-width only on wrappers that contain the pill (Thrive “content width” caps) */
+html body section#swim-instructors.instructors-section .instructor-card .instructor-info .thrv_wrapper:has(.instructor-pill),
+html body section#swim-instructors.instructors-section .instructor-card .instructor-info .thrv_text_element:has(.instructor-pill) {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+html body section#swim-instructors.instructors-section .instructor-card .instructor-contact {
+  width: 100% !important;
+  max-width: 100% !important;
+  align-self: stretch !important;
+  box-sizing: border-box !important;
+}
+
+html body section#swim-instructors.instructors-section .instructor-card .instructor-info > * {
+  align-self: stretch !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+html body section#swim-instructors.instructors-section .instructor-card .instructor-info .instructor-pill,
+html body section#swim-instructors.instructors-section .instructor-card .thrv_text_element .instructor-pill,
+html body section#swim-instructors.instructors-section .instructor-card .thrv_wrapper .instructor-pill {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  align-self: stretch !important;
+  box-sizing: border-box !important;
+  padding-top: max(1rem, 16px) !important;
+  padding-bottom: max(1rem, 16px) !important;
+  padding-left: max(1.25rem, 20px) !important;
+  padding-right: max(1.25rem, 20px) !important;
+}
+
+html body section#swim-instructors.instructors-section .instructor-pill .availability-row {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+  padding-left: max(1.25rem, 22px) !important;
+  padding-right: max(1.25rem, 22px) !important;
+}
+
+html body section#swim-instructors.instructors-section .instructor-pill .availability-days,
+html body section#swim-instructors.instructors-section .instructor-pill .availability-time,
+html body section#swim-instructors.instructors-section .instructor-pill .availability-row p.availability-days,
+html body section#swim-instructors.instructors-section .instructor-pill .availability-row p.availability-time {
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: max(0.5rem, 10px) !important;
+  padding-right: max(0.5rem, 10px) !important;
+}
+
+html body section#swim-instructors.instructors-section .instructor-pill ul.instructor-pill-levels,
+html body section#swim-instructors.instructors-section .instructor-pill .instructor-pill-levels {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  padding-left: 0 !important;
+  padding-right: max(1rem, 16px) !important;
+  overflow-x: clip !important;
+}
+
+html body section#swim-instructors.instructors-section .instructor-pill .instructor-pill-levels li {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  padding-right: max(0.5rem, 12px) !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  white-space: normal !important;
+  overflow-x: clip !important;
+}
+
+html body section#swim-instructors.instructors-section .instructor-pill .instructor-pill-levels li strong {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  white-space: normal !important;
+  box-sizing: border-box !important;
+}
+
+html body section#swim-instructors.instructors-section .instructor-pill .instructor-pill-levels li span,
+html body section#swim-instructors.instructors-section .instructor-pill .instructor-pill-levels li .tcb-plain-text,
+html body section#swim-instructors.instructors-section .instructor-pill .instructor-pill-levels li p {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 768px) {
+  html body section#swim-instructors.instructors-section .instructor-card .instructor-info .instructor-pill,
+  html body section#swim-instructors.instructors-section .instructor-card .thrv_text_element .instructor-pill,
+  html body section#swim-instructors.instructors-section .instructor-card .thrv_wrapper .instructor-pill {
+    padding-left: max(1rem, 18px) !important;
+    padding-right: max(1rem, 18px) !important;
+  }
+
+  html body section#swim-instructors.instructors-section .instructor-pill .availability-row {
+    padding-left: max(1rem, 18px) !important;
+    padding-right: max(1rem, 18px) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  html body section#swim-instructors.instructors-section .instructor-card .instructor-info .instructor-pill,
+  html body section#swim-instructors.instructors-section .instructor-card .thrv_text_element .instructor-pill,
+  html body section#swim-instructors.instructors-section .instructor-card .thrv_wrapper .instructor-pill {
+    padding-left: max(0.875rem, 16px) !important;
+    padding-right: max(0.875rem, 16px) !important;
+  }
+
+  html body section#swim-instructors.instructors-section .instructor-pill .availability-row {
+    padding-left: max(0.875rem, 16px) !important;
+    padding-right: max(0.875rem, 16px) !important;
   }
 }

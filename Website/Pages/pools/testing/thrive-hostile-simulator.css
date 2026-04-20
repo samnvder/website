@@ -1,0 +1,38 @@
+/* Simulates late-loaded Thrive / theme rules that previously broke instructor layout.
+   Loaded BEFORE Pools CSS.css in the layout test so the real stylesheet + lock must win. */
+
+#swim-instructors .thrv_text_element p,
+#swim-instructors .thrv_wrapper p {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+#swim-instructors .instructor-pill {
+  max-width: 58% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding: 3px 5px !important;
+  box-sizing: content-box !important;
+}
+
+#swim-instructors .availability-row {
+  padding: 2px 4px !important;
+  box-sizing: content-box !important;
+}
+
+#swim-instructors .availability-days,
+#swim-instructors .availability-time {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+#swim-instructors ul.instructor-pill-levels {
+  display: inline-block !important;
+  max-width: 90% !important;
+  padding-right: 0 !important;
+}
+
+#swim-instructors .instructor-pill-levels li {
+  white-space: nowrap !important;
+  word-break: normal !important;
+}
