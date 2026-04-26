@@ -41,7 +41,7 @@ This folder holds **living documentation** for RSVP account features, cloud sync
 | **Authentication** | Accounts: sign-up/sign-in on Account page, then RSVP; session persists in the browser | `uid` from Firebase Auth |
 | **User profiles** | Saved name, phone, skill, membership, member card, hear, notes, waiver flags + schema version + timestamps | `openplay_se/user_profiles/{uid}` |
 
-**Config file (ship with site):** `Programs/Pickleball/advanced-open-play/live/js/openplay-firebase-config.js`
+**Config file (ship with site):** `Programs/Pickleball/live/js/openplay-firebase-config.js`
 `databaseURL` comes from the Realtime Database console page. See comments in that file.
 
 **Rules (source of truth in repo):** `database.rules.json` at **Website root**. Deploy with `npm run firebase:deploy-rules`. Key security features:
@@ -77,14 +77,14 @@ See [MANAGING-ACCOUNTS.md](./MANAGING-ACCOUNTS.md) for console-based user/profil
 
 | File | Role |
 |------|------|
-| `advanced-open-play/live/SouthEnd_Session_RSVP.html` | RSVP UI, waivers, duplicate prevention, manage RSVPs modal, profile when signed in, FormSubmit |
-| `advanced-open-play/live/SouthEnd_OpenPlay_Account.html` | Sign-in / sign-up / password reset / profile editor / calendar hub with RSVP management |
-| `advanced-open-play/live/SouthEnd_Session_Checkin.html` | Check-in roster; drains queue; subscribes to RTDB RSVPs; QR scan; brackets; bulk actions |
-| `advanced-open-play/live/js/openplay-firebase-config.js` | Firebase web config (API key, Auth domain, RTDB URL, staff emails) |
-| `advanced-open-play/live/js/south-end-openplay-sync.js` | PIN, queue, Firebase init, Auth, profiles, RTDB sync, `stableRsvpPlayerId`, `subscribeMyRsvps` (dual uid+email), `deleteMyRsvp` |
-| `advanced-open-play/live/js/openplay-profile-panel.js` | Signed-in profile icon + modal (read-only; extend `PROFILE_FIELD_DEFS` with new RTDB fields) |
-| `advanced-open-play/live/js/openplay-rsvp-helpers.js` | Member card validation, session time helpers |
-| `advanced-open-play/live/js/openplay-waiver-modals.js` | Waiver modal rendering and scroll-to-agree logic |
+| `Programs/Pickleball/live/SouthEnd_Session_RSVP.html` | RSVP UI, waivers, duplicate prevention, manage RSVPs modal, profile when signed in, FormSubmit |
+| `Programs/Pickleball/live/SouthEnd_OpenPlay_Account.html` | Sign-in / sign-up / password reset / profile editor / calendar hub with RSVP management |
+| `Programs/Pickleball/live/SouthEnd_Session_Checkin.html` | Check-in roster; drains queue; subscribes to RTDB RSVPs; QR scan; brackets; bulk actions |
+| `Programs/Pickleball/live/js/openplay-firebase-config.js` | Firebase web config (API key, Auth domain, RTDB URL, staff emails) |
+| `Programs/Pickleball/live/js/south-end-openplay-sync.js` | PIN, queue, Firebase init, Auth, profiles, RTDB sync, `stableRsvpPlayerId`, `subscribeMyRsvps` (dual uid+email), `deleteMyRsvp` |
+| `Programs/Pickleball/live/js/openplay-profile-panel.js` | Signed-in profile icon + modal (read-only; extend `PROFILE_FIELD_DEFS` with new RTDB fields) |
+| `Programs/Pickleball/live/js/openplay-rsvp-helpers.js` | Member card validation, session time helpers |
+| `Programs/Pickleball/live/js/openplay-waiver-modals.js` | Waiver modal rendering and scroll-to-agree logic |
 | **`database.rules.json`** (repo root) | RTDB security rules — deploy with `npm run firebase:deploy-rules` |
 | **`firebase.json`**, **`.firebaserc`** (repo root) | Firebase CLI deploy targets |
 

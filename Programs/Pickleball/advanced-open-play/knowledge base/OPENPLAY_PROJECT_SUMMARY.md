@@ -9,7 +9,7 @@ This is the operational knowledge base for links, services, and servers used to 
 ## Core Paths
 
 - Project root: `Programs/Pickleball/advanced-open-play/`
-- Deploy source (Firebase Hosting public): `Programs/Pickleball/advanced-open-play/live`
+- Deploy source (Firebase Hosting public): `Programs/Pickleball/live`
 - Firebase rules file: `database.rules.json`
 - Runtime mode file: `Programs/Pickleball/advanced-open-play/openplay-mode.json`
 

@@ -61,9 +61,17 @@ function mkdirp(d) {
 function transformLeagueHtmlForCentralHost(s) {
   let out = String(s)
     .replace(/"\.\.\/advanced-open-play\/live\/SouthEnd_Pickleball_Hub\.html"/g, '"/main"')
+    .replace(/"\.\.\/advanced-open-play\/staging\/SouthEnd_Pickleball_Hub\.html"/g, '"/main"')
+    .replace(/"\.\.\/live\/SouthEnd_Pickleball_Hub\.html"/g, '"/main"')
     .replace(/"\.\.\/advanced-open-play\/live\/SouthEnd_OpenPlay_Account\.html\?return=/g, '"/advanced-open-play?return=')
+    .replace(/"\.\.\/advanced-open-play\/staging\/SouthEnd_OpenPlay_Account\.html\?return=/g, '"/advanced-open-play?return=')
+    .replace(/"\.\.\/live\/SouthEnd_OpenPlay_Account\.html\?return=/g, '"/advanced-open-play?return=')
     .replace(/"\.\.\/advanced-open-play\/live\/js\/pickleball-invite-share\.js"/g, '"/js/pickleball-invite-share.js"')
-    .replace(/\.\.\/advanced-open-play\/live\/SouthEnd_OpenPlay_Account\.html\?return=/g, '/advanced-open-play?return=');
+    .replace(/"\.\.\/advanced-open-play\/staging\/js\/pickleball-invite-share\.js"/g, '"/js/pickleball-invite-share.js"')
+    .replace(/"\.\.\/live\/js\/pickleball-invite-share\.js"/g, '"/js/pickleball-invite-share.js"')
+    .replace(/\.\.\/advanced-open-play\/live\/SouthEnd_OpenPlay_Account\.html\?return=/g, '/advanced-open-play?return=')
+    .replace(/\.\.\/advanced-open-play\/staging\/SouthEnd_OpenPlay_Account\.html\?return=/g, '/advanced-open-play?return=')
+    .replace(/\.\.\/live\/SouthEnd_OpenPlay_Account\.html\?return=/g, '/advanced-open-play?return=');
   if (!/<base\s/i.test(out)) {
     out = out.replace(/<head>/i, '<head>\n    <base href="/league-play/" />');
   }
@@ -72,7 +80,7 @@ function transformLeagueHtmlForCentralHost(s) {
 
 function copyLeagueStaticToLive() {
   const srcRoot = path.join(PROGRAM_ROOT, '..', 'league-play');
-  const destRoot = path.join(PROGRAM_ROOT, 'live', 'league-play');
+  const destRoot = path.join(PROGRAM_ROOT, '..', 'live', 'league-play');
   if (!fs.existsSync(srcRoot)) {
     console.warn('[roll-live] League Play source not found; skipping /league-play mirror:', srcRoot);
     return;

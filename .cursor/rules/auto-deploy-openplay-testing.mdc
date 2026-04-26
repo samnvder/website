@@ -8,13 +8,13 @@ alwaysApply: true
 
 ## Scope
 
-Applies whenever **`Programs/Pickleball/advanced-open-play/live/`** (deployed HTML/JS) or **`Programs/Pickleball/advanced-open-play/testing/`** (unit tests, `local-test.js`, mirrors) is edited.
+Applies whenever **`Programs/Pickleball/live/`** (deployed HTML/JS) or **`Programs/Pickleball/advanced-open-play/testing/`** (unit tests, `local-test.js`, mirrors) is edited.
 
 ## Agent must run (from `Website/` = repo root)
 
-1. **`npm run local-test:sync`** — refresh `Programs/Pickleball/advanced-open-play/testing/local-page/` so local QA matches `live/`.
+1. **`npm run local-test:sync`** — refresh `Programs/Pickleball/advanced-open-play/testing/local-page/` so local QA matches the tree in **`openplay-mode.json`** (`staging/` or **`Programs/Pickleball/live/`**).
 2. **`npm test`** — must pass before deploy.
-3. **`npm run deploy:openplay`** — push **`Programs/Pickleball/advanced-open-play/live`** to **Firebase Hosting** (`firebase.json` → `hosting.public`). This updates the **hosted URL** (e.g. `*.web.app` / custom domain for project `pickleball-advanced-open-play`).
+3. **`npm run deploy:openplay`** — push **`Programs/Pickleball/live`** to **Firebase Hosting** (`firebase.json` → `hosting.public`). This updates the **hosted URL** (e.g. `*.web.app` / custom domain for project `pickleball-advanced-open-play`).
 
 If deploy fails (auth): run **`firebase login`** once locally, or configure CI secret **`FIREBASE_TOKEN`** from **`firebase login:ci`**.
 

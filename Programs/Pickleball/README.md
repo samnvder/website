@@ -44,7 +44,7 @@ Program-specific scripts live in `package.json` at the **Website** root:
 |---------|-------------|
 | `npm test` | Unit tests (RSVP helpers + Firebase rules + roll-live helpers) |
 | `npm run roll-live -- --yes` | Promote staging → live, deploy hosting, reset mode (add `--all` for rules, `--dry-run` for Firebase dry run) |
-| `npm run deploy:openplay` | Deploy `live/` to Firebase Hosting |
+| `npm run deploy:openplay` | Deploy `Programs/Pickleball/live/` to Firebase Hosting |
 | `npm run deploy:openplay:all` | Deploy Hosting + database rules |
 | `npm run firebase:deploy-rules` | Database rules only |
 | `npm run local-test` | Mirror active Open Play tree → `advanced-open-play/testing/local-page/` + live-server on 3456 |

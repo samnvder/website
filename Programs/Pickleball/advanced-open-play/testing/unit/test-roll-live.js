@@ -78,4 +78,29 @@ describe('transformLeagueHtmlForCentralHost', () => {
     assert.match(out, /"\/advanced-open-play\?return=" \+ target/);
     assert.doesNotMatch(out, /\.\.\/advanced-open-play\/live/);
   });
+
+  it('rewrites sibling ../live/ League Play links for central host', () => {
+    const html = [
+      '<a href="../live/SouthEnd_Pickleball_Hub.html">Hub</a>',
+      '<a href="../live/SouthEnd_OpenPlay_Account.html?return=../../league-play/SouthEnd_League_Play_Hub.html">Profile</a>',
+      '<script src="../live/js/pickleball-invite-share.js"></script>',
+      '"../live/SouthEnd_OpenPlay_Account.html?return=" + target',
+    ].join('\n');
+    const out = transformLeagueHtmlForCentralHost(html);
+    assert.match(out, /href="\/main"/);
+    assert.match(out, /href="\/advanced-open-play\?return=/);
+    assert.match(out, /src="\/js\/pickleball-invite-share\.js"/);
+    assert.match(out, /"\/advanced-open-play\?return=" \+ target/);
+    assert.doesNotMatch(out, /\.\.\/live\//);
+  });
+
+  it('rewrites staging League Play links (source tree) for central host', () => {
+    const html = [
+      '<a href="../advanced-open-play/staging/SouthEnd_Pickleball_Hub.html">Hub</a>',
+      '<script src="../advanced-open-play/staging/js/pickleball-invite-share.js"></script>',
+    ].join('\n');
+    const out = transformLeagueHtmlForCentralHost(html);
+    assert.match(out, /href="\/main"/);
+    assert.match(out, /src="\/js\/pickleball-invite-share\.js"/);
+  });
 });

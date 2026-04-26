@@ -52,6 +52,28 @@
   }
 
   function liveHref(href) {
+    var path = String((global.location && global.location.pathname) || '').replace(/\\/g, '/');
+    var key = String(href || '').replace(/\.html(?:\?.*)?$/i, '');
+    if (path.indexOf('/testing/local-page/league-play/') !== -1) {
+      var localLeagueRoutes = {
+        SouthEnd_Admin_Hub: '../SouthEnd_Admin_Hub.html',
+        SouthEnd_Admin_Activity: '../SouthEnd_Admin_Activity.html',
+        SouthEnd_Admin_Module_Access: '../SouthEnd_Admin_Module_Access.html',
+        SouthEnd_OpenPlay_Account: '../SouthEnd_OpenPlay_Account.html',
+        SouthEnd_Pickleball_Hub: '../SouthEnd_Pickleball_Hub.html',
+      };
+      return localLeagueRoutes[key] || String(href || '');
+    }
+    if (path.indexOf('/testing/local-page/') !== -1) {
+      var localRoutes = {
+        SouthEnd_Admin_Hub: 'SouthEnd_Admin_Hub.html',
+        SouthEnd_Admin_Activity: 'SouthEnd_Admin_Activity.html',
+        SouthEnd_Admin_Module_Access: 'SouthEnd_Admin_Module_Access.html',
+        SouthEnd_OpenPlay_Account: 'SouthEnd_OpenPlay_Account.html',
+        SouthEnd_Pickleball_Hub: 'SouthEnd_Pickleball_Hub.html',
+      };
+      return localRoutes[key] || String(href || '');
+    }
     var routes = {
       SouthEnd_Admin_Hub: '/admin',
       SouthEnd_Admin_Activity: '/admin/activity',
@@ -59,7 +81,6 @@
       SouthEnd_OpenPlay_Account: '/account',
       SouthEnd_Pickleball_Hub: '/hub',
     };
-    var key = String(href || '').replace(/\.html(?:\?.*)?$/i, '');
     return routes[key] || '/' + String(href || '').replace(/^\/+/, '');
   }
 

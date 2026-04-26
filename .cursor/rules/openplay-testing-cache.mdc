@@ -1,7 +1,7 @@
 ---
 description: Why static HTML/JS can look "stuck" after edits, and Open Play testing-mode cache gating (se_test, mirrors, SE_OPENPLAY_TESTING).
 globs:
-  - Programs/Pickleball/advanced-open-play/live/**
+  - Programs/Pickleball/live/**
   - Programs/Pickleball/advanced-open-play/testing/**
 alwaysApply: false
 ---
@@ -21,7 +21,7 @@ So: **changing only inline HTML** while **`js/foo.js` URL is unchanged** can lea
 
 ## Gating — when testing mode is ON
 
-`Programs/Pickleball/advanced-open-play/live/js/openplay-testing-env.js` runs **first** (in `<head>` on RSVP and check-in). It activates when **any** of these is true:
+`Programs/Pickleball/live/js/openplay-testing-env.js` runs **first** (in `<head>` on RSVP and check-in). It activates when **any** of these is true:
 
 | Condition | Meaning |
 |-----------|---------|
@@ -41,14 +41,14 @@ When active:
 
 **Workflow that reliably shows edits on first load after sync:**
 
-1. Edit **`Programs/Pickleball/advanced-open-play/live/`** for production truth (or **`staging/`** then promote).
+1. Edit **`Programs/Pickleball/live/`** for production truth (or **`staging/`** then promote).
 2. Run **`npm run local-test:sync`** (or **`npm run local-test`**).
 3. Open the mirror hub or RSVP under **`/Programs/Pickleball/advanced-open-play/testing/local-page/`** — testing mode is **on** by path; **`se_test=1`** optional.
 4. For non-mirror URLs (e.g. odd local paths), add **`?se_test=1`** once so the **document** gets the **`se_cb`** redirect if needed.
 
 ## Production
 
-Deploy **`Programs/Pickleball/advanced-open-play/live/`** only. Do **not** deploy mirror folders. Production pages do **not** hit mirror paths; omit **`se_test=1`** so no redirect and no extra meta (unless you intentionally test on a staging host with `?se_test=1`).
+Deploy **`Programs/Pickleball/live/`** only. Do **not** deploy mirror folders. Production pages do **not** hit mirror paths; omit **`se_test=1`** so no redirect and no extra meta (unless you intentionally test on a staging host with `?se_test=1`).
 
 ## Related
 

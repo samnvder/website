@@ -7,7 +7,7 @@ Repo root `firebase.json` sets:
 ```json
 "hosting": {
   "site": "southend-pickleball-central",
-  "public": "Programs/Pickleball/advanced-open-play/live"
+  "public": "Programs/Pickleball/live"
 }
 ```
 
@@ -56,7 +56,7 @@ Workflow: [`.github/workflows/deploy-openplay-firebase-hosting.yml`](../../../..
 
 1. **Repository secret:** `FIREBASE_TOKEN` — create with `firebase login:ci` (Firebase CLI), then add the token under GitHub **Settings → Secrets and variables → Actions**.
 2. **Repository variable:** `OPENPLAY_CI_AUTO_DEPLOY` = `true` — under **Settings → Secrets and variables → Actions → Variables**. If unset or not `true`, the workflow only runs on **manual** dispatch.
-3. Push to **`main`** or **`master`** with changes under `Programs/Pickleball/advanced-open-play/live/**` (or edits to `firebase.json`, `.firebaserc`, `openplay-mode.json`, or the workflow file) to trigger a deploy.
+3. Push to **`main`** or **`master`** with changes under `Programs/Pickleball/live/**` (or edits to `firebase.json`, `.firebaserc`, `openplay-mode.json`, or the workflow file) to trigger a deploy.
 
 `openplay-deploy.js` still requires `openplay-mode.json` to allow production hosting (`activeTree: "live"` and `allowProductionHostingDeploy: true`, or use `OPENPLAY_CONFIRM_PRODUCTION=1` locally).
 

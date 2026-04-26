@@ -1,15 +1,26 @@
-/* South End League Play — matches Advanced Open Play / Pickleball Hub (navy, neon, Barlow, Oswald) */
+/* South End League Play — season theme (aligned with SouthEnd_Registration_Form.html: green/gold, DM Sans, Bebas Neue) */
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
+
 :root {
-  --navy: #0a1628;
-  --navy-lt: #152342;
-  --purple-lt: #9333ea;
-  --electric: #a855f7;
-  --neon: #00ff88;
-  --neon-glow: rgba(0, 255, 136, 0.25);
-  --neon-dim: rgba(0, 255, 136, 0.1);
-  --ink: #0a0a1a;
-  --muted: rgba(255, 255, 255, 0.38);
-  --rule: rgba(255, 255, 255, 0.07);
+  --green: #1a6b3a;
+  --green-lt: #2d9458;
+  --green-dk: #0f3f22;
+  --gold: #e8a020;
+  --gold-hover: #d4911a;
+  --gold-lt: #ffd166;
+  --cream: #fafaf5;
+  --ink: #111810;
+  --muted: #5a6357;
+  --rule: #dde5d9;
+  --red: #c0392b;
+  /* Map legacy token names used throughout this file */
+  --navy: var(--green-dk);
+  --navy-lt: #153828;
+  --purple-lt: var(--gold);
+  --electric: var(--green);
+  --neon: var(--gold);
+  --neon-glow: rgba(232, 160, 32, 0.28);
+  --neon-dim: rgba(232, 160, 32, 0.14);
 }
 *,
 *::before,
@@ -19,19 +30,25 @@
   padding: 0;
 }
 .league-page {
-  font-family: "Barlow", sans-serif;
+  font-family: "DM Sans", sans-serif;
   line-height: 1.5;
-  color: #fff;
-  background: var(--navy);
+  background: var(--green-dk);
   min-height: 100vh;
   overflow-x: hidden;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 40px,
+    rgba(255, 255, 255, 0.018) 40px,
+    rgba(255, 255, 255, 0.018) 41px
+  );
 }
 .league-page a {
-  color: var(--electric);
+  color: var(--green);
   transition: color 0.12s;
 }
 .league-page a:hover {
-  color: #c084fc;
+  color: var(--green-dk);
 }
 .league-skip {
   position: absolute;
@@ -42,21 +59,40 @@
   top: 8px;
   z-index: 2;
   padding: 8px 16px;
-  background: var(--navy-lt);
-  color: var(--neon);
-  border: 1px solid rgba(0, 255, 136, 0.35);
-  border-radius: 4px;
+  background: #fff;
+  color: var(--green);
+  border: 2px solid var(--gold);
+  border-radius: 6px;
 }
-/* —— header + subnav: same as SouthEnd_OpenPlay_Account / SouthEnd_Pickleball_Hub —— */
+/* —— header + subnav: club season theme —— */
 .header {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px 24px;
-  background: var(--navy-lt);
-  padding: 24px 32px 16px;
-  border-bottom: 3px solid var(--neon);
+  background: var(--green-dk);
+  padding: 22px 28px 16px;
+  border-bottom: 3px solid var(--gold);
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 20px,
+    rgba(255, 255, 255, 0.025) 20px,
+    rgba(255, 255, 255, 0.025) 21px
+  );
+  pointer-events: none;
+}
+.header > * {
+  position: relative;
+  z-index: 1;
 }
 /* Dashboard-style profile pill (all league pages) */
 .league-header-profile {
@@ -67,23 +103,23 @@
   flex-shrink: 0;
   margin-top: 2px;
   padding: 8px 16px;
-  font-family: "Oswald", sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   text-decoration: none;
-  color: #e8f4ff;
-  border: 1px solid #4caf50;
-  border-radius: 10px;
-  background: rgba(5, 15, 32, 0.75);
-  box-shadow: 0 0 0 1px rgba(0, 255, 136, 0.06) inset;
+  color: rgba(255, 255, 255, 0.92);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0 1px rgba(232, 160, 32, 0.12) inset;
   transition: color 0.15s, background 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 .league-header-profile:hover {
   color: #fff;
-  background: rgba(0, 255, 136, 0.1);
-  border-color: var(--neon);
+  background: rgba(232, 160, 32, 0.15);
+  border-color: var(--gold);
   box-shadow: 0 0 16px var(--neon-dim);
 }
 .league-header-admin {
@@ -93,17 +129,17 @@
   flex-shrink: 0;
   margin-top: 2px;
   padding: 8px 14px;
-  font-family: "Oswald", sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   text-decoration: none;
   color: var(--ink);
-  border: 1px solid rgba(0, 255, 136, 0.45);
-  border-radius: 10px;
-  background: var(--neon);
-  box-shadow: 0 0 18px var(--neon-glow);
+  border: 1.5px solid var(--gold);
+  border-radius: 8px;
+  background: var(--gold);
+  box-shadow: 0 4px 18px var(--neon-glow);
 }
 @media (max-width: 680px) {
   .league-header-admin:not(.hidden) {
@@ -115,8 +151,8 @@
 }
 .league-header-profile--here {
   color: #fff;
-  background: rgba(0, 255, 136, 0.12);
-  border-color: var(--neon);
+  background: rgba(232, 160, 32, 0.18);
+  border-color: var(--gold-lt);
   box-shadow: 0 0 18px var(--neon-glow);
 }
 .league-header-profile__icon {
@@ -136,28 +172,40 @@
   stroke: currentColor;
 }
 .hdr-eyebrow {
-  font-size: 8px;
+  font-size: 8.5px;
   font-weight: 700;
-  letter-spacing: 3px;
+  letter-spacing: 3.5px;
   text-transform: uppercase;
-  color: var(--neon);
-  margin-bottom: 3px;
+  color: var(--gold);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hdr-eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 1px;
 }
 .hdr-title {
-  font-family: "Oswald", sans-serif;
-  font-size: 24px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(26px, 4.5vw, 36px);
   color: #fff;
   letter-spacing: 1px;
-  text-transform: uppercase;
-  line-height: 1;
+  text-transform: none;
+  line-height: 0.95;
 }
 .hdr-title span {
-  color: var(--neon);
+  color: var(--gold);
 }
 .hdr-sub {
-  font-size: 9px;
-  color: rgba(255, 255, 255, 0.65);
-  margin-top: 3px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 5px;
+  font-weight: 500;
   max-width: 40rem;
   line-height: 1.45;
 }
@@ -166,36 +214,43 @@
   flex-wrap: wrap;
   gap: 6px 10px;
   align-items: center;
-  padding: 8px 32px 16px;
-  background: rgba(5, 12, 28, 0.85);
-  border-bottom: 1px solid rgba(0, 255, 136, 0.22);
+  padding: 10px 28px 12px;
+  background: #fff;
+  border-bottom: 1px solid var(--rule);
 }
 .se-site-nav-link {
-  font-family: "Oswald", sans-serif;
-  font-size: 11px;
-  letter-spacing: 0.14em;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--muted);
   text-decoration: none;
   padding: 8px 14px;
   border-radius: 6px;
-  border: 1px solid transparent;
+  border: 1.5px solid var(--rule);
+  background: #fff;
   transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
 .se-site-nav-link:hover {
-  color: var(--neon);
-  background: rgba(0, 255, 136, 0.08);
+  color: var(--green);
+  border-color: var(--green-lt);
+  background: rgba(26, 107, 58, 0.06);
 }
 .se-site-nav-link--active {
   color: var(--ink);
-  background: var(--neon);
-  border-color: rgba(0, 255, 136, 0.45);
-  box-shadow: 0 0 20px var(--neon-glow);
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 4px 16px rgba(232, 160, 32, 0.25);
 }
 .se-site-nav-link--admin {
   margin-left: auto;
-  color: var(--neon);
-  border-color: rgba(0, 255, 136, 0.22);
+  color: var(--green-dk);
+  border-color: var(--green-lt);
+  background: rgba(45, 148, 88, 0.12);
+}
+.se-site-nav-link--admin:hover {
+  background: rgba(45, 148, 88, 0.2);
 }
 .se-site-nav-link--admin.hidden {
   display: none !important;
@@ -203,7 +258,14 @@
 .league-wrap {
   max-width: 760px;
   margin: 0 auto;
-  padding: 32px 24px 64px;
+  padding: 28px 24px 64px;
+  background: var(--cream);
+  color: var(--ink);
+  border-left: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
 }
 .league-wrap--narrow {
   max-width: 520px;
@@ -213,42 +275,45 @@
 }
 .page-lead {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--muted);
   line-height: 1.55;
   margin-bottom: 24px;
 }
 .league-hero-card {
-  background: linear-gradient(135deg, rgba(0, 255, 136, 0.16), rgba(168, 85, 247, 0.1));
-  border: 1.5px solid rgba(0, 255, 136, 0.28);
-  border-radius: 14px;
+  background: #fff;
+  border: 2px solid var(--rule);
+  border-left: 4px solid var(--gold);
+  border-radius: 8px;
   padding: 24px;
   margin-bottom: 24px;
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
 }
 .league-hero-card--clean {
-  background: rgba(0, 255, 136, 0.07);
-  border-color: rgba(0, 255, 136, 0.22);
-  box-shadow: none;
+  background: #fff;
+  border-color: var(--rule);
+  border-left: 4px solid var(--green);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
 }
 .league-kicker,
 .league-module-card__eyebrow {
-  font-family: "Oswald", sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--neon);
+  color: var(--green);
 }
 .league-hero-card h1 {
-  font-family: "Oswald", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   font-size: clamp(28px, 5vw, 44px);
   line-height: 1.08;
   margin: 8px 0 16px;
   max-width: 42rem;
   text-wrap: balance;
+  color: var(--ink);
 }
 .league-hero-card p {
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--muted);
   font-size: clamp(15px, 2vw, 17px);
   line-height: 1.6;
   max-width: 40rem;
@@ -268,10 +333,10 @@
   justify-content: space-between;
   margin-top: 24px;
   padding: 16px;
-  border: 1px solid rgba(0, 255, 136, 0.18);
-  border-radius: 10px;
-  background: rgba(0, 0, 0, 0.16);
-  color: rgba(255, 255, 255, 0.78);
+  border: 1.5px solid var(--rule);
+  border-radius: 8px;
+  background: var(--cream);
+  color: var(--muted);
 }
 .league-module-grid {
   display: grid;
@@ -298,23 +363,23 @@
   gap: 8px;
   min-height: 168px;
   padding: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.045);
-  color: rgba(255, 255, 255, 0.78);
+  border: 2px solid var(--rule);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--muted);
   text-decoration: none;
 }
 .league-module-card:hover {
-  color: rgba(255, 255, 255, 0.9);
-  border-color: rgba(0, 255, 136, 0.34);
-  background: rgba(0, 255, 136, 0.08);
+  color: var(--ink);
+  border-color: var(--green-lt);
+  box-shadow: 0 0 0 3px rgba(26, 107, 58, 0.08);
 }
 .league-module-card strong {
-  font-family: "Oswald", sans-serif;
-  font-size: 20px;
-  letter-spacing: 0.04em;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #fff;
+  color: var(--ink);
 }
 .league-module-card span:last-child {
   font-size: 14px;
@@ -323,24 +388,25 @@
 .league-module-card__action {
   align-self: flex-start;
   margin-top: auto;
-  font-family: "Oswald", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink);
-  background: var(--neon);
+  background: var(--gold);
   text-decoration: none;
-  padding: 8px 16px;
-  border-radius: 5px;
+  padding: 10px 18px;
+  border-radius: 6px;
 }
 .league-module-card__action:hover {
   color: var(--ink);
-  filter: brightness(1.05);
+  background: var(--gold-hover);
+  filter: none;
 }
 .league-module-card--primary {
-  border-color: rgba(0, 255, 136, 0.38);
-  background: rgba(0, 255, 136, 0.1);
+  border-color: rgba(26, 107, 58, 0.35);
+  background: var(--cream);
 }
 .league-module-card--disabled {
   opacity: 0.62;
@@ -349,7 +415,7 @@
   gap: 16px;
 }
 .league-team-details h3 {
-  font-family: "Oswald", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   font-size: clamp(24px, 4vw, 34px);
   line-height: 1.1;
   margin-top: 4px;
@@ -365,53 +431,56 @@
   width: 100%;
   min-height: 44px;
   padding: 12px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1.5px solid var(--rule);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.88);
-  font-family: "Barlow", sans-serif;
+  background: #fff;
+  color: var(--ink);
+  font-family: "DM Sans", sans-serif;
   text-align: left;
   cursor: pointer;
 }
 .league-profile-chip:hover,
 .league-profile-chip:focus-visible {
-  border-color: rgba(0, 255, 136, 0.4);
-  color: #fff;
+  border-color: var(--green-lt);
+  color: var(--green-dk);
 }
 .league-profile-preview {
   display: grid;
   gap: 6px;
   min-height: 96px;
   padding: 16px;
-  border: 1px solid rgba(0, 255, 136, 0.18);
-  border-radius: 10px;
-  background: rgba(0, 0, 0, 0.14);
-  color: rgba(255, 255, 255, 0.74);
+  border: 1.5px solid var(--rule);
+  border-left: 3px solid var(--gold);
+  border-radius: 8px;
+  background: var(--cream);
+  color: var(--muted);
 }
 .league-profile-preview strong {
-  color: #fff;
+  color: var(--ink);
 }
-/* —— content cards: open-play auth-panel / profile panel pattern —— */
+/* —— content cards —— */
 .league-card {
-  background: rgba(0, 255, 136, 0.06);
-  border: 1.5px solid rgba(0, 255, 136, 0.2);
-  border-radius: 10px;
-  padding: 32px;
+  background: #fff;
+  border: 1.5px solid var(--rule);
+  border-left: 3px solid var(--green);
+  border-radius: 8px;
+  padding: 28px 32px;
   margin-bottom: 24px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
 }
 .league-card h2 {
-  font-family: "Oswald", sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #fff;
+  color: var(--ink);
   margin: 0 0 16px 0;
   line-height: 1.2;
 }
 .league-card h2 + p,
 .league-card p {
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--muted);
   font-size: 14px;
   line-height: 1.55;
   margin: 0 0 16px 0;
@@ -422,44 +491,44 @@
 .league-card ul,
 .league-card ol {
   margin: 8px 0 16px 24px;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--muted);
   font-size: 14px;
 }
 .league-card li {
   margin-bottom: 8px;
 }
 .league-card strong {
-  color: rgba(255, 255, 255, 0.95);
+  color: var(--ink);
 }
 .league-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 16px;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--muted);
   font-size: 14px;
 }
 .league-table th,
 .league-table td {
   padding: 12px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--rule);
   text-align: left;
   vertical-align: top;
 }
 .league-table th {
-  font-family: "Oswald", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   font-size: 11px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--neon);
+  color: var(--green);
 }
-/* Form fields — match .field in OpenPlay Account */
+/* Form fields */
 label {
   display: block;
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--muted);
   margin: 16px 0 8px;
 }
 input[type="text"],
@@ -470,19 +539,19 @@ input[type="search"] {
   max-width: 38rem;
   min-height: 44px;
   padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  background: #fff;
+  border: 1.5px solid var(--rule);
   border-radius: 5px;
-  font-family: "Barlow", sans-serif;
+  font-family: "DM Sans", sans-serif;
   font-size: 13px;
-  color: #fff;
+  color: var(--ink);
   outline: none;
 }
 input::placeholder {
-  color: var(--muted);
+  color: rgba(90, 99, 87, 0.65);
 }
 input:focus {
-  border-color: var(--neon);
+  border-color: var(--green);
 }
 input:disabled {
   opacity: 0.55;
@@ -491,12 +560,12 @@ input:disabled {
 input[type="checkbox"] {
   width: auto;
   max-width: none;
-  accent-color: var(--neon);
+  accent-color: var(--green);
   margin-right: 8px;
   vertical-align: middle;
 }
 input[type="radio"] {
-  accent-color: var(--neon);
+  accent-color: var(--green);
 }
 label.league-check {
   display: flex;
@@ -507,19 +576,19 @@ label.league-check {
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0;
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--ink);
   cursor: pointer;
   margin: 0;
   max-width: 38rem;
   padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.045);
+  border: 1.5px solid var(--rule);
+  border-radius: 8px;
+  background: var(--cream);
   line-height: 1.45;
 }
 label.league-check:has(input:checked) {
-  border-color: rgba(0, 255, 136, 0.45);
-  background: rgba(0, 255, 136, 0.09);
+  border-color: rgba(26, 107, 58, 0.45);
+  background: rgba(26, 107, 58, 0.08);
 }
 label.league-check input {
   margin: 4px 0 0 0;
@@ -536,23 +605,24 @@ label.league-check span {
 .btn {
   display: inline-block;
   min-height: 44px;
-  padding: 10px 16px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 5px;
-  font-family: "Oswald", sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  border-radius: 6px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
   cursor: pointer;
-  text-transform: none;
+  text-transform: uppercase;
   text-decoration: none;
   margin: 16px 8px 0 0;
-  background: var(--neon);
+  background: var(--gold);
   color: var(--ink);
   transition: filter 0.12s, background 0.12s;
 }
 .btn:hover {
-  filter: brightness(1.05);
+  background: var(--gold-hover);
+  filter: none;
 }
 .btn:disabled {
   opacity: 0.45;
@@ -572,41 +642,43 @@ label.league-check span {
 }
 .league-payment-amount {
   margin-top: 16px;
-  color: rgba(255, 255, 255, 0.88);
-  font-family: "Oswald", sans-serif;
-  font-size: 18px;
-  font-weight: 700;
+  color: var(--ink);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
 }
 .league-payment-hero {
   max-width: 520px;
   margin: 0 auto 24px;
   padding: 28px 24px;
   text-align: center;
-  border: 2px solid rgba(168, 85, 247, 0.55);
-  border-radius: 14px;
-  background: linear-gradient(180deg, rgba(147, 51, 234, 0.18), rgba(147, 51, 234, 0.08));
-  box-shadow: 0 0 28px rgba(147, 51, 234, 0.18), 0 6px 18px rgba(0, 0, 0, 0.35);
+  border: 2px solid var(--rule);
+  border-top: 4px solid var(--gold);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
 }
 .league-payment-hero__title {
-  font-family: "Oswald", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
+  font-weight: 400;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--neon);
+  color: var(--green);
   margin-bottom: 10px;
 }
 .league-payment-hero__amount {
-  font-family: "Oswald", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   font-size: clamp(32px, 7vw, 44px);
   line-height: 1;
   letter-spacing: 0.03em;
-  color: #fff;
+  color: var(--ink);
   margin: 8px 0 16px;
 }
 .league-payment-hero__copy,
 .league-payment-hero__hint {
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--muted);
   font-size: 13px;
   line-height: 1.5;
 }
@@ -616,28 +688,32 @@ label.league-check span {
   margin: 18px 0 10px;
   padding: 16px 20px;
   border-radius: 8px;
-  background: var(--neon);
+  background: var(--gold);
   color: var(--ink);
-  font-family: "Oswald", sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
   text-decoration: none;
-  box-shadow: 0 0 18px rgba(0, 255, 136, 0.25);
-  transition: transform 0.08s ease, box-shadow 0.2s ease;
+  text-transform: uppercase;
+  box-shadow: 0 6px 22px rgba(232, 160, 32, 0.35);
+  transition: transform 0.08s ease, box-shadow 0.2s ease, background 0.15s;
 }
 .league-payment-hero__btn:hover,
 .league-payment-hero__btn:focus {
   color: var(--ink);
+  background: var(--gold-hover);
   transform: translateY(-1px);
-  box-shadow: 0 0 26px rgba(0, 255, 136, 0.45);
+  box-shadow: 0 8px 28px rgba(232, 160, 32, 0.45);
 }
 .btn--secondary {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.85);
+  background: var(--cream);
+  color: var(--ink);
+  border: 1.5px solid var(--rule);
 }
 .btn--secondary:hover {
-  background: rgba(255, 255, 255, 0.14);
+  background: #fff;
+  border-color: var(--green-lt);
   filter: none;
 }
 .btn--danger {
@@ -657,11 +733,11 @@ label.league-check span {
 }
 .league-info-strip span,
 .league-solo-note {
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1.5px solid var(--rule);
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.14);
+  background: var(--cream);
   padding: 16px;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--muted);
   font-size: 13px;
 }
 .league-choice-group {
@@ -671,12 +747,12 @@ label.league-check span {
   margin: 24px 0 0;
 }
 .league-choice-group legend {
-  font-family: "Oswald", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-weight: 400;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--ink);
   margin-bottom: 8px;
 }
 .league-choice {
@@ -687,18 +763,18 @@ label.league-check span {
   min-height: 72px;
   margin: 0;
   padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.045);
-  color: rgba(255, 255, 255, 0.82);
+  border: 1.5px solid var(--rule);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
   cursor: pointer;
   font-size: 14px;
   letter-spacing: 0;
   text-transform: none;
 }
 .league-choice:has(input:checked) {
-  border-color: rgba(0, 255, 136, 0.45);
-  background: rgba(0, 255, 136, 0.09);
+  border-color: rgba(26, 107, 58, 0.45);
+  background: rgba(26, 107, 58, 0.06);
 }
 .league-choice input {
   margin-top: 3px;
@@ -709,7 +785,7 @@ label.league-check span {
   gap: 8px;
 }
 .league-choice small {
-  color: rgba(255, 255, 255, 0.58);
+  color: var(--muted);
   font-size: 13px;
   line-height: 1.4;
   text-transform: none;
@@ -720,7 +796,7 @@ label.league-check span {
   max-width: 38rem;
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--rule);
 }
 .league-agreement-block legend {
   margin-bottom: 8px;
@@ -745,12 +821,12 @@ label.league-check span {
   min-width: 0;
 }
 .league-division-column__title {
-  font-family: "Oswald", sans-serif;
+  font-family: "Bebas Neue", sans-serif;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-weight: 400;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--neon);
+  color: var(--green);
 }
 .league-division-column__choices {
   display: grid;
@@ -765,17 +841,17 @@ label.league-check span {
   gap: 4px;
 }
 .league-choice--division small {
-  color: rgba(0, 255, 136, 0.75);
+  color: var(--green);
   font-size: 12px;
 }
 .league-division-schedule-hint {
   margin-top: 16px;
   padding: 14px 16px;
   max-width: 42rem;
-  border-radius: 10px;
-  border: 1px solid rgba(0, 255, 136, 0.28);
-  background: rgba(0, 255, 136, 0.08);
-  color: rgba(255, 255, 255, 0.88);
+  border-radius: 8px;
+  border: 1.5px solid rgba(26, 107, 58, 0.25);
+  background: var(--cream);
+  color: var(--muted);
   font-size: 14px;
   line-height: 1.45;
   min-height: 3rem;
@@ -788,7 +864,7 @@ label.league-check span {
   margin: 8px 0 0;
 }
 .help {
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
   margin: 8px 0 16px;
@@ -801,18 +877,18 @@ label.league-check span {
   max-width: 38rem;
   margin: 24px 0 16px;
   padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.045);
-  color: rgba(255, 255, 255, 0.84);
+  border: 1.5px solid var(--rule);
+  border-radius: 8px;
+  background: var(--cream);
+  color: var(--ink);
   cursor: pointer;
   text-transform: none;
   letter-spacing: 0;
   font-size: 14px;
 }
 .league-fee-toggle:has(input:checked) {
-  border-color: rgba(0, 255, 136, 0.45);
-  background: rgba(0, 255, 136, 0.09);
+  border-color: rgba(26, 107, 58, 0.45);
+  background: rgba(26, 107, 58, 0.08);
 }
 .league-fee-toggle input {
   margin: 3px 0 0;
@@ -823,7 +899,7 @@ label.league-check span {
   gap: 8px;
 }
 .league-fee-toggle small {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--muted);
   font-size: 13px;
   line-height: 1.4;
 }
@@ -834,33 +910,33 @@ label.league-check span {
   max-width: 38rem;
   margin-top: 24px;
   padding: 16px;
-  border: 1px solid rgba(0, 255, 136, 0.24);
-  border-radius: 10px;
-  background: rgba(0, 255, 136, 0.08);
-  color: rgba(255, 255, 255, 0.84);
+  border: 1.5px solid rgba(26, 107, 58, 0.22);
+  border-radius: 8px;
+  background: var(--cream);
+  color: var(--ink);
 }
 .league-fee-summary span {
-  color: rgba(255, 255, 255, 0.68);
+  color: var(--muted);
   font-size: 14px;
 }
 .league-divider {
   max-width: 38rem;
   margin: 32px 0 16px;
   padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  font-family: "Oswald", sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  border-top: 1px solid var(--rule);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--ink);
 }
 code {
-  font-family: "Oswald", sans-serif, ui-monospace, monospace;
+  font-family: ui-monospace, monospace;
   font-size: 0.88em;
-  color: rgba(0, 255, 136, 0.88);
+  color: var(--green);
   letter-spacing: 0.3px;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(26, 107, 58, 0.08);
   padding: 0.12em 0.4em;
   border-radius: 4px;
 }
@@ -869,15 +945,15 @@ code {
   list-style: none;
   padding: 0;
   margin: 8px 0;
-  border: 1px solid var(--rule);
+  border: 1.5px solid var(--rule);
   border-radius: 8px;
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.12);
+  background: #fff;
 }
 .league-lookup__item {
   padding: 16px;
   border-bottom: 1px solid var(--rule);
-  color: rgba(255, 255, 255, 0.86);
+  color: var(--ink);
   font-size: 14px;
 }
 .league-lookup__item:last-child {
@@ -898,15 +974,16 @@ code {
   display: flex;
 }
 .modal__inner {
-  background: var(--navy-lt);
-  border: 1px solid rgba(0, 255, 136, 0.22);
+  background: #fff;
+  border: 1.5px solid var(--rule);
+  border-top: 3px solid var(--gold);
   max-width: 32rem;
   max-height: 80vh;
   overflow: auto;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 24px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.45);
-  color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+  color: var(--ink);
 }
 .modal__head {
   display: flex;
@@ -916,17 +993,17 @@ code {
   margin-bottom: 16px;
 }
 .modal__head h2 {
-  font-family: "Oswald", sans-serif;
-  font-size: 15px;
-  letter-spacing: 0.05em;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #fff;
+  color: var(--ink);
   margin: 0;
   line-height: 1.3;
 }
 .modal__inner ol,
 .modal__inner p {
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--muted);
   font-size: 14px;
   margin: 8px 0;
   padding-left: 0;
@@ -934,7 +1011,7 @@ code {
 }
 .modal__close {
   background: transparent;
-  border: 1px solid var(--rule);
+  border: 1.5px solid var(--rule);
   border-radius: 4px;
   color: var(--muted);
   font-size: 1.4rem;
@@ -944,8 +1021,8 @@ code {
   flex-shrink: 0;
 }
 .modal__close:hover {
-  border-color: var(--neon);
-  color: var(--neon);
+  border-color: var(--green);
+  color: var(--green);
 }
 .hidden {
   display: none !important;

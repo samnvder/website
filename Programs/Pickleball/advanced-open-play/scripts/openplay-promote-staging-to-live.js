@@ -6,9 +6,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const PICKLEBALL = path.join(__dirname, '..');
-const LIVE = path.join(PICKLEBALL, 'live');
-const STAGING = path.join(PICKLEBALL, 'staging');
+const OPENPLAY_ROOT = path.join(__dirname, '..');
+const PICKLEBALL_PROGRAM_ROOT = path.join(OPENPLAY_ROOT, '..');
+const LIVE = path.join(PICKLEBALL_PROGRAM_ROOT, 'live');
+const STAGING = path.join(OPENPLAY_ROOT, 'staging');
 
 function mkdirp(d) {
   fs.mkdirSync(d, { recursive: true });
@@ -29,7 +30,7 @@ function copyRecursive(src, dest) {
 
 if (process.env.OPENPLAY_CONFIRM_PROMOTE !== '1') {
   console.error('');
-  console.error('[openplay-promote] BLOCKED: This overwrites Programs/Pickleball/advanced-open-play/live from staging.');
+  console.error('[openplay-promote] BLOCKED: This overwrites Programs/Pickleball/live from staging.');
   console.error('Run: set OPENPLAY_CONFIRM_PROMOTE=1 (Windows) or export OPENPLAY_CONFIRM_PROMOTE=1 (Unix)');
   console.error('Then: npm run openplay:promote');
   console.error('');

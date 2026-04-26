@@ -7,6 +7,8 @@ const path = require('path');
 
 /** This program’s root: Programs/Pickleball/advanced-open-play/ */
 const PROGRAM_ROOT = path.join(__dirname, '..');
+/** Programs/Pickleball/ (sibling of advanced-open-play; production live/ lives here) */
+const PICKLEBALL_PROGRAM_ROOT = path.join(PROGRAM_ROOT, '..');
 /** Override for unit tests: path to a temp mode JSON (absolute or relative to cwd). */
 const MODE_FILE = process.env.OPENPLAY_MODE_FILE
   ? path.resolve(process.env.OPENPLAY_MODE_FILE)
@@ -43,12 +45,15 @@ function getActiveTreeName() {
 /** Absolute path to active HTML/JS source (staging or live). */
 function getActiveSourceDir() {
   const name = getActiveTreeName();
-  return path.join(PROGRAM_ROOT, name);
+  if (name === 'live') {
+    return path.join(PICKLEBALL_PROGRAM_ROOT, 'live');
+  }
+  return path.join(PROGRAM_ROOT, 'staging');
 }
 
-/** Absolute path to production deploy tree (always live/). */
+/** Absolute path to production deploy tree (Programs/Pickleball/live/). */
 function getProductionSourceDir() {
-  return path.join(PROGRAM_ROOT, 'live');
+  return path.join(PICKLEBALL_PROGRAM_ROOT, 'live');
 }
 
 function modeFilePath() {
@@ -83,6 +88,7 @@ module.exports = {
   getProductionSourceDir,
   modeFilePath,
   PROGRAM_ROOT,
+  PICKLEBALL_PROGRAM_ROOT,
   /** @deprecated use PROGRAM_ROOT */
   PICKLEBALL_ROOT: PROGRAM_ROOT,
   DEFAULTS,

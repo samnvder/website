@@ -14,7 +14,7 @@ Use this as a reusable pattern for future app modules that need safe promotion f
 | Folder | Role |
 |--------|------|
 | **`Programs/Pickleball/advanced-open-play/staging/`** | Default **edit target** while building - does **not** deploy by itself. |
-| **`Programs/Pickleball/advanced-open-play/live/`** | **Firebase Hosting** deploy root (`firebase.json` `hosting.public`). |
+| **`Programs/Pickleball/live/`** | **Firebase Hosting** deploy root (`firebase.json` `hosting.public`). |
 
 ## Mode file
 

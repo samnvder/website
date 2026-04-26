@@ -2,7 +2,7 @@
 /**
  * Firebase deploy wrapper — blocks production hosting until mode + confirmation allow it.
  *
- * Production hosting always deploys firebase.json → Programs/Pickleball/advanced-open-play/live.
+ * Production hosting always deploys firebase.json → Programs/Pickleball/live.
  * If activeTree is "staging", your latest edits are NOT in live/ — promote first.
  *
  * Unblock hosting deploy:
@@ -47,7 +47,7 @@ function fail(msg) {
 if (isHosting) {
   if (tree !== 'live') {
     fail(
-      'Hosting deploy uses Programs/Pickleball/advanced-open-play/live (see firebase.json), but openplay-mode.json has activeTree "' +
+      'Hosting deploy uses Programs/Pickleball/live (see firebase.json), but openplay-mode.json has activeTree "' +
         tree +
         '". Run npm run openplay:promote to copy staging → live, set activeTree to "live", then deploy.'
     );

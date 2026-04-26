@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 /**
- * Copy advanced-open-play/live → staging (first-time or full reset).
+ * Copy Programs/Pickleball/live → staging (first-time or full reset).
  * Overwrites Firebase config too. To refresh staging from live but **keep** staging
  * `js/openplay-firebase-config.js` (+ `.example.js`), use `npm run openplay:sync-from-live`.
  */
 const fs = require('fs');
 const path = require('path');
 
-const PICKLEBALL = path.join(__dirname, '..');
-const LIVE = path.join(PICKLEBALL, 'live');
-const STAGING = path.join(PICKLEBALL, 'staging');
+const OPENPLAY_ROOT = path.join(__dirname, '..');
+const PICKLEBALL_PROGRAM_ROOT = path.join(OPENPLAY_ROOT, '..');
+const LIVE = path.join(PICKLEBALL_PROGRAM_ROOT, 'live');
+const STAGING = path.join(OPENPLAY_ROOT, 'staging');
 
 function mkdirp(d) {
   fs.mkdirSync(d, { recursive: true });

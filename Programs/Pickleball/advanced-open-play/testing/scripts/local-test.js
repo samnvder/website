@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Mirrors Programs/Pickleball/advanced-open-play/{staging|live} (see openplay-mode.json) into the canonical testing mirror for local QA.
+ * Mirrors staging (under advanced-open-play/) or production live (Programs/Pickleball/live/) per openplay-mode.json into the testing mirror for local QA.
  */
 const fs = require('fs');
 const path = require('path');
@@ -22,7 +22,8 @@ if (!fs.existsSync(SOURCE)) {
   console.error('Run: npm run openplay:bootstrap-staging');
   process.exit(1);
 }
-console.log('[local-test] mirroring from:', 'Programs/Pickleball/advanced-open-play/' + TREE_LABEL + '/');
+const SOURCE_LABEL = path.relative(path.join(ROOT, 'Programs', 'Pickleball'), SOURCE).replace(/\\/g, '/');
+console.log('[local-test] mirroring from:', 'Programs/Pickleball/' + SOURCE_LABEL + '/');
 
 /** Canonical mirror. Keep Pickleball test files under Programs/Pickleball. */
 const OUT_DIRS = [
@@ -43,7 +44,17 @@ const FILES = [
   'SouthEnd_Admin_Module_Access.html',
   'SouthEnd_Admin_User_Management.html',
   'pickleball-hub-nav.js',
+  'league-play/SouthEnd_League_Account.html',
+  'league-play/SouthEnd_League_Invites.html',
+  'league-play/SouthEnd_League_Overview.html',
+  'league-play/SouthEnd_League_Payment.html',
+  'league-play/SouthEnd_League_Play_Hub.html',
+  'league-play/SouthEnd_League_Teams.html',
+  'league-play/css/south-end-league.css',
+  'league-play/js/league-firebase-config.js',
+  'league-play/js/league-team-builder.js',
   'league-play/js/pickleball-hub-nav.js',
+  'league-play/js/south-end-league-sync.js',
   'js/south-end-openplay-sync.js',
   'js/pickleball-invite-share.js',
   'js/openplay-profile-panel.js',
@@ -70,6 +81,22 @@ function bustHtmlJsRefs(html, token) {
   });
 }
 
+function localizeLeagueHtml(html) {
+  return String(html)
+    .replace(/\s*<base\s+href="\/league-play\/"\s*\/>\s*/i, '\n')
+    .replace(/(<script\s+src=")\/js\/([^"]+)(")/g, '$1../js/$2$3')
+    .replace(/\.\.\/advanced-open-play\/(?:staging|live)\/SouthEnd_OpenPlay_Account\.html/g, '../SouthEnd_OpenPlay_Account.html')
+    .replace(/\.\.\/advanced-open-play\/(?:staging|live)\/SouthEnd_Pickleball_Hub\.html/g, '../SouthEnd_Pickleball_Hub.html')
+    .replace(/\.\.\/advanced-open-play\/(?:staging|live)\/SouthEnd_Admin_Hub\.html/g, '../SouthEnd_Admin_Hub.html')
+    .replace(/\.\.\/live\/SouthEnd_OpenPlay_Account\.html/g, '../SouthEnd_OpenPlay_Account.html')
+    .replace(/\.\.\/live\/SouthEnd_Pickleball_Hub\.html/g, '../SouthEnd_Pickleball_Hub.html')
+    .replace(/\.\.\/live\/SouthEnd_Admin_Hub\.html/g, '../SouthEnd_Admin_Hub.html')
+    .replace(/(<a[^>]+\bhref=")\/hub(")/g, '$1../SouthEnd_Pickleball_Hub.html$2')
+    .replace(/(<a[^>]+\bhref=")\/account([^"]*)(")/g, '$1../SouthEnd_OpenPlay_Account.html$2$3')
+    .replace(/(["'])\/account\?return=/g, '$1../SouthEnd_OpenPlay_Account.html?return=')
+    .replace(/(["'])\/admin(["'])/g, '$1../SouthEnd_Admin_Hub.html$2');
+}
+
 function copyInto(OUT, rel) {
   const src = path.join(SOURCE, rel);
   const dest = path.join(OUT, rel);
@@ -80,6 +107,9 @@ function copyInto(OUT, rel) {
   mkdirp(path.dirname(dest));
   if (rel.endsWith('.html')) {
     let body = fs.readFileSync(src, 'utf8');
+    if (rel.startsWith('league-play/')) {
+      body = localizeLeagueHtml(body);
+    }
     body = bustHtmlJsRefs(body, syncedAt);
     fs.writeFileSync(dest, body, 'utf8');
   } else {
@@ -128,7 +158,7 @@ const hub = `<!DOCTYPE html>
 </head>
 <body>
   <h1>South End Pickleball Hub <span>local</span></h1>
-  <p class="meta">Synced ${syncedAt} · source: Programs/Pickleball/advanced-open-play/${TREE_LABEL}/ (see openplay-mode.json)</p>
+  <p class="meta">Synced ${syncedAt} · source: Programs/Pickleball/${SOURCE_LABEL}/ (see openplay-mode.json)</p>
   <ul>
     <li><a href="SouthEnd_Pickleball_Hub.html">Hub <small>Parent menu for pickleball modules</small></a></li>
     <li><a href="SouthEnd_OpenPlay_Account.html">Advanced Open Play <small>Module home, schedule, RSVP, and profile</small></a></li>
@@ -143,7 +173,7 @@ const hub = `<!DOCTYPE html>
     <li><a href="SouthEnd_Admin_Module_Access.html">Module access <small>Submodule grants (staff)</small></a></li>
     <li><a href="SouthEnd_Admin_User_Management.html">User management <small>Edit non-admin profiles (staff)</small></a></li>
   </ul>
-  <p class="hint">Run <code>npm run local-test</code> from the Website folder to refresh. Mirror is gitignored and stays under <code>Programs/Pickleball/advanced-open-play/testing/local-page/</code>. Active tree: <strong>${TREE_LABEL}</strong> — switch with <code>npm run openplay:use-staging</code> / <code>npm run openplay:use-live</code>. Production deploy uses <code>live/</code> only (see <code>openplay-mode.json</code> + deploy guard).</p>
+  <p class="hint">Run <code>npm run local-test</code> from the Website folder to refresh. Mirror is gitignored and stays under <code>Programs/Pickleball/advanced-open-play/testing/local-page/</code>. Active tree: <strong>${TREE_LABEL}</strong> — switch with <code>npm run openplay:use-staging</code> / <code>npm run openplay:use-live</code>. Production deploy uses <code>Programs/Pickleball/live/</code> (see <code>openplay-mode.json</code> + deploy guard).</p>
 </body>
 </html>
 `;

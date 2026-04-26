@@ -12,6 +12,7 @@ const puppeteer = require('puppeteer-core');
 
 const ROOT = path.join(__dirname, '..', '..', '..', '..');
 const OPENPLAY_ROOT = path.join(ROOT, 'Programs', 'Pickleball', 'advanced-open-play');
+const PICKLEBALL_LIVE_ROOT = path.join(ROOT, 'Programs', 'Pickleball', 'live');
 const KB_DIR = path.join(OPENPLAY_ROOT, 'knowledge base');
 const MD_PATH = path.join(KB_DIR, 'OPENPLAY_PROJECT_SUMMARY.md');
 const PDF_PATH = path.join(KB_DIR, 'OPENPLAY_PROJECT_SUMMARY.pdf');
@@ -42,12 +43,12 @@ function collectDiscoveredUrls(openplayRoot) {
   const sourceFiles = [
     path.join(openplayRoot, 'README.md'),
     path.join(openplayRoot, 'firebase-hosting', 'README.md'),
-    path.join(openplayRoot, 'live', 'SouthEnd_OpenPlay_Account.html'),
-    path.join(openplayRoot, 'live', 'SouthEnd_Session_RSVP.html'),
-    path.join(openplayRoot, 'live', 'SouthEnd_Session_Checkin.html'),
-    path.join(openplayRoot, 'live', 'SouthEnd_Admin_Activity.html'),
-    path.join(openplayRoot, 'live', 'js', 'south-end-openplay-sync.js'),
-    path.join(openplayRoot, 'live', 'js', 'openplay-firebase-config.js'),
+    path.join(PICKLEBALL_LIVE_ROOT, 'SouthEnd_OpenPlay_Account.html'),
+    path.join(PICKLEBALL_LIVE_ROOT, 'SouthEnd_Session_RSVP.html'),
+    path.join(PICKLEBALL_LIVE_ROOT, 'SouthEnd_Session_Checkin.html'),
+    path.join(PICKLEBALL_LIVE_ROOT, 'SouthEnd_Admin_Activity.html'),
+    path.join(PICKLEBALL_LIVE_ROOT, 'js', 'south-end-openplay-sync.js'),
+    path.join(PICKLEBALL_LIVE_ROOT, 'js', 'openplay-firebase-config.js'),
     path.join(openplayRoot, 'testing', 'scripts', 'local-test.js'),
   ];
   const urls = new Set();
@@ -148,7 +149,10 @@ function buildMarkdown(context) {
     databasePaths,
   } = context;
 
-  const deployRoot = (firebaseJson.hosting && firebaseJson.hosting.public) || 'Programs/Pickleball/advanced-open-play/live';
+  const hosting = firebaseJson.hosting;
+  const deployRoot =
+    (Array.isArray(hosting) ? hosting[0] && hosting[0].public : hosting && hosting.public) ||
+    'Programs/Pickleball/live';
   const databaseRulesFile = (firebaseJson.database && firebaseJson.database.rules) || 'database.rules.json';
   const allowProdDeploy = openplayMode.allowProductionHostingDeploy === true ? 'true' : 'false';
   const activeTree = openplayMode.activeTree || 'unknown';
@@ -185,7 +189,7 @@ This is the operational knowledge base for links, services, and servers used to 
 
 | Service | Purpose | Endpoint / Reference |
 |---|---|---|
-| Firebase Hosting | Serves production static app from \`live/\` | https://pickleball-advanced-open-play.web.app |
+| Firebase Hosting | Serves production static app from \`Programs/Pickleball/live/\` | https://pickleball-advanced-open-play.web.app |
 | Firebase Authentication | Account sign-up/sign-in/password reset | authDomain: \`${authDomain}\` |
 | Firebase Realtime Database | RSVP, profiles, admin UIDs, activity feed | databaseURL: \`${databaseUrl}\` |
 | Firebase Web SDK (compat v10.7.1) | Client SDK loaded at runtime | https://www.gstatic.com/firebasejs/10.7.1/ |
@@ -220,12 +224,12 @@ ${scripts.map((s) => `- \`npm run ${s.name}\` -> \`${s.cmd}\``).join('\n')}
 
 ## Key Project Surfaces to Maintain
 
-- \`live/\` -> production source of truth for Hosting deploy output.
-- \`staging/\` -> development tree for iterative edits before promotion.
+- \`Programs/Pickleball/live/\` -> production source of truth for Hosting deploy output.
+- \`advanced-open-play/staging/\` -> development tree for iterative edits before promotion.
 - \`scripts/openplay-deploy.js\` -> deploy guard enforcing active tree and production deploy lock.
 - \`testing/scripts/local-test.js\` -> mirrors active tree into local test hubs.
-- \`live/js/openplay-firebase-config.js\` -> Firebase project wiring used by runtime.
-- \`live/js/south-end-openplay-sync.js\` -> auth/database sync and shared client logic.
+- \`Programs/Pickleball/live/js/openplay-firebase-config.js\` -> Firebase project wiring used by runtime.
+- \`Programs/Pickleball/live/js/south-end-openplay-sync.js\` -> auth/database sync and shared client logic.
 - \`database.rules.json\` -> Realtime Database read/write rules.
 
 ## Additional Discovered URLs (from source scan)
@@ -300,7 +304,7 @@ async function main() {
   const firebaseJson = readJson(path.join(ROOT, 'firebase.json'));
   const openplayMode = readJson(path.join(OPENPLAY_ROOT, 'openplay-mode.json'));
   const databaseRules = readJson(path.join(ROOT, 'database.rules.json'));
-  const firebaseConfigPath = path.join(OPENPLAY_ROOT, 'live', 'js', 'openplay-firebase-config.js');
+  const firebaseConfigPath = path.join(PICKLEBALL_LIVE_ROOT, 'js', 'openplay-firebase-config.js');
   const firebaseConfig = parseFirebaseConfigFromBrowserFile(firebaseConfigPath);
 
   const markdown = buildMarkdown({

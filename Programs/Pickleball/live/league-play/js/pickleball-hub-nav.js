@@ -1,5 +1,5 @@
 /**
- * Canonical Pickleball hub primary nav (League Play, Hub, Advanced Open Play, Message Board).
+ * Canonical Pickleball hub primary nav (Hub, League Play, Advanced Open Play, Message Board).
  * Deployed with Firebase Hosting public root (live/). Pages mount via <nav data-se-hub-nav>.
  */
 (function () {
@@ -28,6 +28,7 @@
     var prev = parts[idx - 1] || '';
     if (prev === 'staging') return 'openplay-league-staging';
     if (prev === 'live') return 'openplay-league-live';
+    if (prev === 'local-page') return 'openplay-league-local';
     if (isHostedOpenPlaySite() && idx === 0) return 'hosted-league';
     return 'central-league';
   }
@@ -57,6 +58,14 @@
         league: 'SouthEnd_League_Play_Hub.html',
       };
     }
+    if (ctx === 'openplay-league-local') {
+      return {
+        hub: '../SouthEnd_Pickleball_Hub.html',
+        openplay: '../SouthEnd_OpenPlay_Account.html',
+        board: '../SouthEnd_Message_Board.html',
+        league: 'SouthEnd_League_Play_Hub.html',
+      };
+    }
     if (ctx === 'openplay-league-live') {
       var st = '../advanced-open-play/staging/';
       return {
@@ -79,7 +88,7 @@
       hub: 'SouthEnd_Pickleball_Hub.html',
       openplay: 'SouthEnd_OpenPlay_Account.html',
       board: 'SouthEnd_Message_Board.html',
-      league: '../../league-play/SouthEnd_League_Play_Hub.html',
+      league: 'league-play/SouthEnd_League_Play_Hub.html',
     };
   }
 
@@ -119,6 +128,7 @@
   function link(href, label, activeKey, key) {
     var isActive = activeKey === key;
     var cls = 'se-site-nav-link' + (isActive ? ' se-site-nav-link--active' : '');
+    if (key === 'hub') cls += ' se-site-nav-link--hub';
     var attrs = 'class="' + cls + '" href="' + esc(href) + '"';
     if (isActive) attrs += ' aria-current="page"';
     return '<a ' + attrs + '>' + esc(label) + '</a>';
@@ -127,8 +137,8 @@
   function buildCore(ctx, active) {
     var p = pathsFor(ctx);
     var order = [
-      ['league', p.league, 'League Play'],
       ['hub', p.hub, 'Hub'],
+      ['league', p.league, 'League Play'],
       ['openplay', p.openplay, 'Advanced Open Play'],
       ['board', p.board, 'Message Board'],
     ];
@@ -140,6 +150,12 @@
   }
 
   function run() {
+    if (!document.getElementById('se-hub-nav-hub-styles')) {
+      var s = document.createElement('style');
+      s.id = 'se-hub-nav-hub-styles';
+      s.textContent = '.se-site-nav-link--hub{font-weight:600;}';
+      document.head.appendChild(s);
+    }
     document.querySelectorAll('nav[data-se-hub-nav]').forEach(function (nav) {
       var ctxAttr = nav.getAttribute('data-se-hub-ctx');
       var ctx = ctxAttr || detectContext();

@@ -51,4 +51,4 @@ Canonical path:
 
 ## Staging vs live (Open Play)
 
-Default dev edits go to **`Programs/Pickleball/advanced-open-play/staging/`**. **`npm run local-test`** mirrors whichever tree **`openplay-mode.json`** selects (`activeTree`: `staging` or `live`). Firebase Hosting always deploys **`advanced-open-play/live/`** — guarded by **`openplay-deploy.js`**. See **`openplay-mode.mdc`** and **`Programs/Pickleball/README.md`**.
+Default dev edits go to **`Programs/Pickleball/advanced-open-play/staging/`**. **`npm run local-test`** mirrors whichever tree **`openplay-mode.json`** selects (`activeTree`: `staging` or `live`). Firebase Hosting always deploys **`Programs/Pickleball/live/`** — guarded by **`openplay-deploy.js`**. See **`openplay-mode.mdc`** and **`Programs/Pickleball/README.md`**.

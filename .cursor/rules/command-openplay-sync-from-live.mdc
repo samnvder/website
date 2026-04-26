@@ -12,7 +12,7 @@ alwaysApply: false
 
 ## Purpose
 
-When **`live/`** (production source) is ahead of **`staging/`** and local test mirrors, align **app code** so all three match, **without** overwriting environment-specific Firebase credentials:
+When **`Programs/Pickleball/live/`** (production source) is ahead of **`staging/`** and local test mirrors, align **app code** so all three match, **without** overwriting environment-specific Firebase credentials:
 
 - **`staging/`** keeps its existing `js/openplay-firebase-config.js` and `js/openplay-firebase-config.example.js` (if present before the run).
 - **`Programs/Pickleball/advanced-open-play/testing/local-page/`** keeps preserved Firebase files so test/staging Firebase projects stay separate from production.

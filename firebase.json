@@ -5,7 +5,7 @@
   "hosting": [
     {
       "site": "southend-pickleball-central",
-      "public": "Programs/Pickleball/advanced-open-play/live",
+      "public": "Programs/Pickleball/live",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "redirects": [
         { "source": "/advanced-open-play/staging/SouthEnd_Pickleball_Hub.html", "destination": "/hub", "type": 302 },
