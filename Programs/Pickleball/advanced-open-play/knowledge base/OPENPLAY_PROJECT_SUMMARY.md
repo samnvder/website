@@ -55,13 +55,13 @@ This is the operational knowledge base for links, services, and servers used to 
 
 | Server | How to Run | URL |
 |---|---|---|
-| Local Open Play QA hub | `npm run local-test` | http://127.0.0.1:3456/local-page/index.html |
+| Local Open Play QA hub | `npm run local-test` | http://127.0.0.1:3456/Programs/Pickleball/advanced-open-play/testing/local-page/index.html |
 | Local website dev server | `npm run start` or `npm run dev` | http://127.0.0.1:3000/ |
 | Static local server | `npm run serve` | http://127.0.0.1:3000/ |
 
 ## Build / Deploy / Workflow Commands
 
-- `npm run local-test` -> `node Programs/Pickleball/advanced-open-play/testing/scripts/local-test.js && npx live-server --port=3456 --open=/local-page/index.html`
+- `npm run local-test` -> `node Programs/Pickleball/advanced-open-play/testing/scripts/local-test.js && npx live-server --port=3456 --open=/Programs/Pickleball/advanced-open-play/testing/local-page/index.html`
 - `npm run local-test:sync` -> `node Programs/Pickleball/advanced-open-play/testing/scripts/local-test.js`
 - `npm run deploy:openplay` -> `node Programs/Pickleball/advanced-open-play/scripts/openplay-deploy.js --only hosting`
 - `npm run deploy:openplay:all` -> `node Programs/Pickleball/advanced-open-play/scripts/openplay-deploy.js --only hosting,database`
@@ -88,7 +88,7 @@ This is the operational knowledge base for links, services, and servers used to 
 
 ## Additional Discovered URLs (from source scan)
 
-- http://127.0.0.1:3456/local-page/index.html
+- http://127.0.0.1:3456/Programs/Pickleball/advanced-open-play/testing/local-page/index.html
 - https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js
 - https://enroll.zellepay.com/qr-codes?data=ewogICJuYW1lIjogIkJSQU5ET04gSE9PS0VSIFRFTU5JUyBMTEMiLAogICJ0b2tlbiI6ICIzMTAtMjUxLTM4MDQiLAogICJhY3Rpb24iOiAicGF5bWVudCIKfQ==
 - https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap

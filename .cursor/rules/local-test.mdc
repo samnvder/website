@@ -16,7 +16,7 @@ alwaysApply: false
    ```powershell
    npm run local-test
    ```
-   This runs `Programs/Pickleball/advanced-open-play/testing/scripts/local-test.js` (copies the active tree from `Programs/Pickleball/advanced-open-play/{staging|live}/` into **both** `local-page/` at repo root and `Programs/Pickleball/advanced-open-play/testing/local-page/`, writes hub `index.html` in each) then starts **live-server** on port **3456** and opens `/local-page/index.html`.
+   This runs `Programs/Pickleball/advanced-open-play/testing/scripts/local-test.js` (copies the active tree from `Programs/Pickleball/advanced-open-play/{staging|live}/` into `Programs/Pickleball/advanced-open-play/testing/local-page/` and writes hub `index.html`) then starts **live-server** on port **3456** and opens `/Programs/Pickleball/advanced-open-play/testing/local-page/index.html`.
 
 2. **Copy only** (no browser):
    ```powershell
@@ -35,8 +35,6 @@ Configured in `Programs/Pickleball/advanced-open-play/testing/scripts/local-test
 
 | Path | Purpose |
 |------|---------|
-| `local-page/index.html` | Hub (short URL — same content as below) |
-| `local-page/...` | Mirror — **not** for deploy |
 | `Programs/Pickleball/advanced-open-play/testing/local-page/...` | Canonical mirror — **not** for deploy |
 
 Both mirror folders are gitignored — regenerate with `npm run local-test:sync` anytime.
@@ -44,10 +42,6 @@ Both mirror folders are gitignored — regenerate with `npm run local-test:sync`
 ---
 
 ## URL (after `npm run local-test`)
-
-Both mirrors are identical. Short path (default browser open):
-
-`http://127.0.0.1:3456/local-page/index.html`
 
 Canonical path:
 

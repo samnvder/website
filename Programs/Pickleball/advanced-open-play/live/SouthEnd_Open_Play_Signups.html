@@ -1,0 +1,584 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="js/openplay-testing-env.js"></script>
+<title>Open Play Signups - South End</title>
+<link rel="icon" type="image/jpeg" href="favicon.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0a1628;--navy-lt:#152342;--navy-glass:rgba(21,35,66,.72);--electric:#a855f7;--neon:#00ff88;--ink:#0a0a1a;
+  --gold:#fbbf24;--muted:rgba(255,255,255,.55);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:radial-gradient(1200px 600px at 10% -10%,rgba(168,85,247,.12),transparent),var(--navy);color:#fff;min-height:100vh;}
+.header{background:var(--navy-lt);padding:18px 28px 14px;border-bottom:3px solid var(--neon);position:relative;}
+.hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--neon);margin-bottom:3px;}
+.hdr-title{font-family:'Oswald',sans-serif;font-size:24px;color:#fff;letter-spacing:1px;text-transform:uppercase;line-height:1;}
+.hdr-title span{color:var(--neon);}
+.hdr-sub{font-size:9px;color:rgba(255,255,255,.65);margin-top:3px;max-width:52ch;line-height:1.45;}
+.se-site-nav{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:10px 28px 12px;background:rgba(5,12,28,.85);border-bottom:1px solid rgba(0,255,136,.22);}
+.se-site-nav-link{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55);text-decoration:none;padding:8px 14px;border-radius:6px;border:1px solid transparent;transition:color .15s,border-color .15s,background .15s;}
+.se-site-nav-link:hover{color:var(--neon);background:rgba(0,255,136,.08);}
+.se-site-nav-link--active{color:var(--ink);background:var(--neon);border-color:rgba(0,255,136,.45);box-shadow:0 0 20px rgba(0,255,136,.25);}
+.sub-nav{display:flex;flex-wrap:wrap;gap:8px;padding:12px 28px;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(0,255,136,.12);}
+.sub-nav a{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);text-decoration:none;padding:6px 12px;border-radius:6px;}
+.sub-nav a:hover{color:var(--neon);}
+.sub-nav a.active{color:var(--ink);background:rgba(0,255,136,.85);}
+.body-wrap{max-width:1100px;margin:0 auto;padding:22px 20px 48px;}
+.top-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+.status{font-size:12px;color:rgba(255,255,255,.82);}
+.status strong{color:#fff;}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.search-input{padding:9px 12px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-family:'Barlow',sans-serif;font-size:13px;outline:none;min-width:240px;}
+.search-input:focus{border-color:var(--neon);}
+.btn{padding:9px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.22);background:transparent;color:rgba(255,255,255,.85);cursor:pointer;font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;}
+.btn:hover{border-color:var(--neon);color:var(--neon);}
+
+.summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+@media(max-width:760px){.summary-strip{grid-template-columns:repeat(2,1fr);}}
+.stat-card{background:var(--navy-glass);border:1px solid rgba(0,255,136,.2);border-radius:12px;padding:14px 16px;backdrop-filter:blur(8px);}
+.stat-k{font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);}
+.stat-v{font-family:'Oswald',sans-serif;font-size:26px;color:#fff;line-height:1.1;margin-top:4px;}
+.stat-v.neon{color:var(--neon);}
+.stat-v.gold{color:var(--gold);}
+
+.session-section{background:rgba(0,255,136,.04);border:1.5px solid rgba(0,255,136,.16);border-radius:14px;margin-bottom:14px;overflow:hidden;}
+.sess-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;cursor:pointer;background:rgba(10,22,40,.55);border-bottom:1px solid rgba(0,255,136,.12);}
+.sess-head:hover{background:rgba(10,22,40,.75);}
+.sess-title{font-family:'Oswald',sans-serif;font-size:17px;color:#fff;letter-spacing:.5px;}
+.sess-title .when{color:var(--neon);}
+.sess-meta{display:flex;align-items:center;gap:10px;}
+.sess-count{font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;color:var(--neon);background:rgba(0,255,136,.12);padding:4px 10px;border-radius:999px;letter-spacing:.5px;}
+.chev{font-size:10px;color:rgba(255,255,255,.55);transition:transform .15s;}
+.session-section.collapsed .chev{transform:rotate(-90deg);}
+.session-section.collapsed .table-wrap{display:none;}
+.session-section.collapsed .empty-session-body{display:none;}
+.table-wrap{overflow:auto;}
+table{width:100%;border-collapse:collapse;min-width:640px;}
+th,td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.07);text-align:left;vertical-align:top;}
+th{background:rgba(10,22,40,.85);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--neon);}
+td{font-size:13px;color:rgba(255,255,255,.92);line-height:1.4;}
+tbody tr:hover td{background:rgba(255,255,255,.04);}
+.skill-pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;background:rgba(168,85,247,.18);color:#d8b4fe;}
+.contact{font-size:11px;color:rgba(255,255,255,.65);}
+.contact a{color:rgba(0,255,136,.85);text-decoration:none;}
+.contact a:hover{text-decoration:underline;}
+.empty{padding:40px;text-align:center;color:rgba(255,255,255,.5);}
+.empty-session-body{padding:18px;display:grid;gap:12px;justify-items:start;}
+.zero-bubble{display:inline-flex;align-items:center;justify-content:center;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.76);}
+.invite-panel{width:100%;padding:14px;border-radius:10px;border:1px solid rgba(0,255,136,.16);background:rgba(0,0,0,.16);}
+.invite-panel.hidden{display:none;}
+.invite-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+.invite-panel-title{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#fff;}
+.invite-player-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;max-height:260px;overflow:auto;margin-top:10px;}
+.invite-player{display:flex;gap:9px;align-items:flex-start;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.045);font-size:12px;color:rgba(255,255,255,.82);}
+.invite-player input{margin-top:2px;accent-color:var(--neon);}
+.invite-player strong{display:block;color:#fff;font-size:12px;}
+.invite-player span{display:block;color:rgba(255,255,255,.55);word-break:break-all;}
+.invite-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px;}
+.invite-note{font-size:11px;color:rgba(255,255,255,.48);line-height:1.4;}
+.past{opacity:.55;}
+.past .sess-title .when{color:var(--muted);}
+.subtle-nav-link{font-size:11px;color:rgba(255,255,255,.5);text-decoration:none;}
+.subtle-nav-link:hover{color:var(--electric);text-decoration:underline;}
+.message-board-fab{
+  position:fixed;right:18px;bottom:18px;z-index:90;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.22);
+  background:linear-gradient(135deg,var(--neon,#00ff88),#34d399);color:var(--ink,#050a12);
+  font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;
+  box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 26px rgba(0,255,136,.25);transition:transform .15s,filter .15s,box-shadow .15s;
+}
+.message-board-fab:hover{filter:brightness(1.06);transform:translateY(-1px);box-shadow:0 12px 32px rgba(0,0,0,.4),0 0 30px rgba(0,255,136,.32);}
+.message-board-fab:focus-visible{outline:2px solid #fff;outline-offset:3px;}
+@media(max-width:520px){.message-board-fab{right:14px;bottom:14px;padding:12px 14px;font-size:12px;}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+  <div class="hdr-title">Open Play <span>Signups</span></div>
+  <div class="hdr-sub">Admin view of who's registered for upcoming sessions, grouped by date. Live from Realtime Database.</div>
+</div>
+<nav class="se-site-nav" aria-label="Pickleball hub sections">
+  <a class="se-site-nav-link" href="SouthEnd_Pickleball_Hub.html">Hub</a>
+  <a class="se-site-nav-link" href="SouthEnd_OpenPlay_Account.html">Advanced Open Play</a>
+  <a class="se-site-nav-link" href="SouthEnd_Message_Board.html">Message Board</a>
+  <a class="se-site-nav-link" href="../../league-play/SouthEnd_League_Play_Hub.html">League Play</a>
+  <a class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
+  <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_Advanced_Open_Play.html" aria-current="page">Open Play admin</a>
+</nav>
+<div class="sub-nav" aria-label="Advanced Open Play admin sections">
+  <a href="SouthEnd_Open_Play_Signups.html" class="active">Signups</a>
+  <a href="SouthEnd_Session_Checkin.html">Check-ins</a>
+  <a href="SouthEnd_Admin_Activity.html">Activity</a>
+</div>
+
+<div class="body-wrap">
+  <div class="top-row">
+    <div class="status" id="auth-status">Checking staff access...</div>
+    <div class="controls">
+      <input id="search" class="search-input" type="search" placeholder="Filter by name, email, phone..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="signups-q">
+      <button id="btn-toggle-past" class="btn" type="button">Show past</button>
+      <button id="btn-expand" class="btn" type="button">Collapse all</button>
+      <a class="subtle-nav-link" href="SouthEnd_Session_Checkin.html">Check-in -></a>
+    </div>
+  </div>
+
+  <div class="summary-strip" aria-label="Signup summary">
+    <div class="stat-card"><div class="stat-k">Upcoming sessions</div><div class="stat-v neon" id="st-sessions">0</div></div>
+    <div class="stat-card"><div class="stat-k">Total signups (upcoming)</div><div class="stat-v" id="st-total">0</div></div>
+    <div class="stat-card"><div class="stat-k">Unique players</div><div class="stat-v gold" id="st-players">0</div></div>
+    <div class="stat-card"><div class="stat-k">Next session</div><div class="stat-v" id="st-next" style="font-size:18px;">-</div></div>
+  </div>
+
+  <div id="sections-host"><div class="empty">Loading signups...</div></div>
+</div>
+
+<footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
+<script src="js/openplay-firebase-config.js"></script>
+<script src="js/south-end-openplay-sync.js"></script>
+<script src="js/pickleball-invite-share.js?v=20260425"></script>
+<script src="js/openplay-profile-panel.js?v=20260426-routing2"></script>
+<script>
+var rawRsvps = [];
+var showPast = false;
+var allCollapsed = false;
+var collapsedKeys = {};
+var authDone = false;
+var invitePlayers = [];
+
+var SESSION_MONTHS = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
+var SESSION_SLOT_ORDER = { 'tuesday morning':0, 'tuesday evening':1, 'thursday evening':2 };
+var SLOT_TIME = { 'tuesday morning':'9-11am', 'tuesday evening':'6-9pm', 'thursday evening':'6-9pm' };
+var SCHEDULE_CONFIG = {
+  slots: [
+    { day: 2, label: 'Tuesday Evening', time: '6:00 - 9:00 PM' },
+    { day: 4, label: 'Thursday Evening', time: '6:00 - 9:00 PM' },
+  ],
+  weeksToShow: 2,
+  lastSessionEndHour: 21,
+};
+
+function esc(v){var d=document.createElement('div');d.textContent=v==null?'':String(v);return d.innerHTML;}
+function norm(s){return String(s==null?'':s).trim().toLowerCase();}
+
+function parseSessionLabel(sessionStr){
+  if(!sessionStr) return null;
+  var m = String(sessionStr).match(/^(Tuesday Morning|Tuesday Evening|Thursday Evening)\s+(\w+)\s+(\d+)/i);
+  if(!m) return null;
+  var slotKey = m[1].toLowerCase();
+  var mon = SESSION_MONTHS[m[2].toLowerCase()];
+  if(mon === undefined) return null;
+  var day = parseInt(m[3],10);
+  var nowY = new Date().getFullYear();
+  var ts = new Date(nowY, mon, day).getTime();
+  // If label parses to a date >6 months in the past, assume next year (rollover).
+  if(ts < Date.now() - 1000*60*60*24*180) ts = new Date(nowY+1, mon, day).getTime();
+  return { slotKey:slotKey, ts:ts, slotOrder:SESSION_SLOT_ORDER[slotKey] || 9, time:SLOT_TIME[slotKey] || '' };
+}
+
+function fmtDateLong(ts){
+  if(!ts) return '';
+  return new Date(ts).toLocaleDateString('en-US',{ weekday:'long', month:'short', day:'numeric' });
+}
+
+function setStatus(html){var el=document.getElementById('auth-status'); if(el) el.innerHTML = html;}
+
+function pacificNow(){
+  var parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Los_Angeles',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    hour12: false,
+  }).formatToParts(new Date());
+  var year = parseInt(parts.find(function(p){ return p.type === 'year'; }).value, 10);
+  var month = parseInt(parts.find(function(p){ return p.type === 'month'; }).value, 10);
+  var day = parseInt(parts.find(function(p){ return p.type === 'day'; }).value, 10);
+  var hour = parseInt(parts.find(function(p){ return p.type === 'hour'; }).value, 10);
+  return { year:year, month:month, day:day, hour:hour, dow:new Date(year, month - 1, day).getDay() };
+}
+
+function computeAvailableSessions(){
+  var now = pacificNow();
+  var slots = SCHEDULE_CONFIG.slots || [];
+  if(!slots.length) return [];
+  var minDay = Math.min.apply(null, slots.map(function(s){ return s.day; }));
+  var maxDay = Math.max.apply(null, slots.map(function(s){ return s.day; }));
+  var anchor = new Date(now.year, now.month - 1, now.day);
+  var currentDow = anchor.getDay();
+  var rollPast = currentDow > maxDay || (currentDow === maxDay && now.hour >= SCHEDULE_CONFIG.lastSessionEndHour);
+  if(rollPast){
+    var daysToAdd = (minDay - currentDow + 7) % 7;
+    if(daysToAdd === 0) daysToAdd = 7;
+    anchor.setDate(anchor.getDate() + daysToAdd);
+  }else if(currentDow < minDay){
+    anchor.setDate(anchor.getDate() + (minDay - currentDow));
+  }else{
+    anchor.setDate(anchor.getDate() - (currentDow - minDay));
+  }
+  var sessions = [];
+  for(var w = 0; w < SCHEDULE_CONFIG.weeksToShow; w++){
+    slots.forEach(function(slot){
+      var d = new Date(anchor.getTime());
+      d.setDate(d.getDate() + (w * 7) + ((slot.day - minDay + 7) % 7));
+      var monthName = d.toLocaleDateString('en-US', { month:'short' });
+      sessions.push({
+        session: slot.label + ' ' + monthName + ' ' + d.getDate(),
+        meta: { slotKey:norm(slot.label), ts:d.getTime(), slotOrder:SESSION_SLOT_ORDER[norm(slot.label)] || 9, time:slot.time },
+        players: [],
+        skeleton: true,
+      });
+    });
+  }
+  return sessions.sort(function(a,b){ return a.meta.ts - b.meta.ts || a.meta.slotOrder - b.meta.slotOrder; });
+}
+
+function groupBySession(rows){
+  var map = {};
+  rows.forEach(function(r){
+    var key = String(r.session || '(unscheduled)');
+    if(!map[key]) map[key] = { session:key, meta:parseSessionLabel(key), players:[] };
+    map[key].players.push(r);
+  });
+  Object.keys(map).forEach(function(k){
+    map[k].players.sort(function(a,b){
+      var an = norm((a.name || '').split(' ').slice(-1)[0] + ' ' + a.name);
+      var bn = norm((b.name || '').split(' ').slice(-1)[0] + ' ' + b.name);
+      return an < bn ? -1 : an > bn ? 1 : 0;
+    });
+  });
+  return Object.keys(map).map(function(k){return map[k];});
+}
+
+function uniquePlayerCount(rows){
+  var s = {};
+  rows.forEach(function(r){
+    var k = String(r.firebaseUid || r.email || r.pid || (r.name||'')).toLowerCase();
+    if(k) s[k] = true;
+  });
+  return Object.keys(s).length;
+}
+
+function profileEmail(p){
+  return String((p && (p.email || p.authEmail || p.userEmail || p.emailAddress || p.contactEmail)) || '').trim();
+}
+
+function profileName(p){
+  p = p || {};
+  return String((p.firstName || '') + ' ' + (p.lastName || '')).trim() || p.displayName || p.name || 'Player';
+}
+
+function mergeInvitePlayersFromRsvps(){
+  var byEmail = {};
+  invitePlayers.forEach(function(p){
+    if(p.email) byEmail[p.email.toLowerCase()] = p;
+  });
+  rawRsvps.forEach(function(r){
+    var email = String(r.email || '').trim();
+    if(!email || byEmail[email.toLowerCase()]) return;
+    byEmail[email.toLowerCase()] = { name:r.name || 'Player', email:email };
+  });
+  invitePlayers = Object.keys(byEmail).map(function(k){ return byEmail[k]; }).sort(function(a,b){
+    return norm(a.name) < norm(b.name) ? -1 : norm(a.name) > norm(b.name) ? 1 : 0;
+  });
+}
+
+function loadInvitePlayers(){
+  var db = SEOpenPlay.getFirebaseDb && SEOpenPlay.getFirebaseDb();
+  if(!db) return Promise.resolve();
+  return db.ref('openplay_se/user_profiles').once('value').then(function(snap){
+    var raw = snap.val() || {};
+    invitePlayers = Object.keys(raw).map(function(uid){
+      var p = raw[uid] || {};
+      return { uid:uid, name:profileName(p), email:profileEmail(p) };
+    }).filter(function(p){ return !!p.email; }).sort(function(a,b){
+      return norm(a.name) < norm(b.name) ? -1 : norm(a.name) > norm(b.name) ? 1 : 0;
+    });
+  }).catch(function(){
+    invitePlayers = [];
+  });
+}
+
+function inviteSubject(session){
+  return 'South End pickleball invite - ' + session;
+}
+
+var LIVE_RSVP_URL = 'https://southend-pickleball-central.web.app/rsvp';
+
+function inviteRsvpUrl(session){
+  var url = new URL(LIVE_RSVP_URL);
+  url.searchParams.set('session', session);
+  return url.href;
+}
+
+function inviteBody(session){
+  return 'Hi,\n\nWe have open spots for ' + session + ' at South End.\n\nReserve your spot here:\n' + inviteRsvpUrl(session) + '\n\nThanks,\nSouth End Pickleball';
+}
+
+function buildInviteMailto(session, emails){
+  var selected = (emails || []).filter(Boolean);
+  var params = [];
+  if(selected.length) params.push('bcc=' + encodeURIComponent(selected.join(', ')));
+  params.push('subject=' + encodeURIComponent(inviteSubject(session)));
+  params.push('body=' + encodeURIComponent(inviteBody(session)));
+  return 'mailto:pickleball@southendclub.com?' + params.join('&');
+}
+
+function selectedInviteEmails(section){
+  return Array.prototype.map.call(section.querySelectorAll('.invite-player-check:checked'), function(input){
+    return input.value;
+  });
+}
+
+function renderInvitePlayerList(session){
+  if(!invitePlayers.length){
+    return '<p class="invite-note">No player emails are available yet. Ask players to save a profile first, or use existing signup rows once they appear.</p>';
+  }
+  return '<div class="invite-player-list">' + invitePlayers.map(function(p){
+    return '<label class="invite-player">' +
+      '<input class="invite-player-check" type="checkbox" value="' + esc(p.email) + '">' +
+      '<span><strong>' + esc(p.name || 'Player') + '</strong><span>' + esc(p.email) + '</span></span>' +
+    '</label>';
+  }).join('') + '</div>';
+}
+
+function renderInvitePanel(session){
+  return '<div class="invite-panel hidden" data-invite-panel>' +
+    '<div class="invite-panel-head">' +
+      '<div class="invite-panel-title">Select players to invite</div>' +
+      '<div class="invite-note">Selected emails are added as BCC.</div>' +
+    '</div>' +
+    renderInvitePlayerList(session) +
+    '<div class="invite-actions">' +
+      '<button class="btn" type="button" data-invite-selected>Invite selected</button>' +
+      '<button class="btn" type="button" data-invite-select-all>Select all</button>' +
+      '<button class="btn" type="button" data-invite-clear>Clear</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function wireInvitePanels(host){
+  Array.prototype.forEach.call(host.querySelectorAll('[data-invite-toggle]'), function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var sec = btn.closest('.session-section');
+      var panel = sec && sec.querySelector('[data-invite-panel]');
+      if(panel) panel.classList.toggle('hidden');
+    });
+  });
+  Array.prototype.forEach.call(host.querySelectorAll('[data-invite-selected]'), function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var sec = btn.closest('.session-section');
+      var emails = selectedInviteEmails(sec);
+      if(!emails.length){ alert('Select at least one player to invite.'); return; }
+      window.location.href = buildInviteMailto(sec.getAttribute('data-key'), emails);
+    });
+  });
+  Array.prototype.forEach.call(host.querySelectorAll('[data-invite-select-all]'), function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var sec = btn.closest('.session-section');
+      Array.prototype.forEach.call(sec.querySelectorAll('.invite-player-check'), function(input){ input.checked = true; });
+    });
+  });
+  Array.prototype.forEach.call(host.querySelectorAll('[data-invite-clear]'), function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var sec = btn.closest('.session-section');
+      Array.prototype.forEach.call(sec.querySelectorAll('.invite-player-check'), function(input){ input.checked = false; });
+    });
+  });
+}
+
+function render(){
+  var q = norm(document.getElementById('search').value);
+  var todayStart = new Date(); todayStart.setHours(0,0,0,0);
+  var rows = rawRsvps.slice();
+  if(q){
+    rows = rows.filter(function(r){
+      var blob = norm([r.name, r.email, r.phone, r.session, r.skill].join(' '));
+      return blob.indexOf(q) !== -1;
+    });
+  }
+  var groups = groupBySession(rows);
+  groups.sort(function(a,b){
+    var at = (a.meta && a.meta.ts) || 0;
+    var bt = (b.meta && b.meta.ts) || 0;
+    if(at !== bt) return at - bt;
+    var ao = (a.meta && a.meta.slotOrder) || 99;
+    var bo = (b.meta && b.meta.slotOrder) || 99;
+    return ao - bo;
+  });
+
+  var visible = groups.filter(function(g){
+    if(!g.meta) return showPast || true; // unscheduled rows always show
+    return showPast ? true : g.meta.ts >= todayStart.getTime();
+  });
+  if(!q && !showPast){
+    var bySession = {};
+    visible.forEach(function(g){ bySession[g.session] = g; });
+    computeAvailableSessions().forEach(function(skel){
+      if(!bySession[skel.session]){
+        bySession[skel.session] = skel;
+        visible.push(skel);
+      }
+    });
+    visible.sort(function(a,b){
+      var at = (a.meta && a.meta.ts) || 0;
+      var bt = (b.meta && b.meta.ts) || 0;
+      if(at !== bt) return at - bt;
+      var ao = (a.meta && a.meta.slotOrder) || 99;
+      var bo = (b.meta && b.meta.slotOrder) || 99;
+      return ao - bo;
+    });
+  }
+
+  // Stats over visible upcoming sessions (excludes past unless showPast).
+  var statGroups = (!q && !showPast) ? visible : groups;
+  var upcomingGroups = statGroups.filter(function(g){ return g.meta && g.meta.ts >= todayStart.getTime(); });
+  var upcomingRows = upcomingGroups.reduce(function(acc,g){return acc.concat(g.players);}, []);
+  document.getElementById('st-sessions').textContent = String(upcomingGroups.length);
+  document.getElementById('st-total').textContent = String(upcomingRows.length);
+  document.getElementById('st-players').textContent = String(uniquePlayerCount(upcomingRows));
+  document.getElementById('st-next').textContent = upcomingGroups.length ? (fmtDateLong(upcomingGroups[0].meta.ts) + ' - ' + upcomingGroups[0].players.length + ' in') : '-';
+
+  var host = document.getElementById('sections-host');
+  if(!visible.length){
+    host.innerHTML = '<div class="empty">' + (q ? 'No signups match your filter.' : (showPast ? 'No signups yet.' : 'No upcoming signups. Try "Show past".')) + '</div>';
+    return;
+  }
+
+  host.innerHTML = visible.map(function(g){
+    var isPast = g.meta && g.meta.ts < todayStart.getTime();
+    var collapsed = allCollapsed || collapsedKeys[g.session];
+    var titleHtml = g.meta
+      ? esc(g.session.split(/\s+/).slice(0,1)[0] + ' ' + (g.meta.slotKey.indexOf('morning')!==-1?'Morning':'Evening')) +
+        ' <span class="when">' + esc(fmtDateLong(g.meta.ts)) + '</span>' +
+        (g.meta.time ? ' <span class="contact">- ' + esc(g.meta.time) + '</span>' : '')
+      : esc(g.session);
+    var rowsHtml = g.players.map(function(p){
+      var skill = p.skill ? '<span class="skill-pill">' + esc(p.skill) + '</span>' : '<span class="contact">-</span>';
+      var contactBits = [];
+      if(p.email) contactBits.push('<a href="mailto:' + esc(p.email) + '">' + esc(p.email) + '</a>');
+      if(p.phone) contactBits.push('<a href="tel:' + esc(String(p.phone).replace(/[^0-9+]/g,'')) + '">' + esc(p.phone) + '</a>');
+      return '<tr>' +
+        '<td><strong>' + esc(p.name || '-') + '</strong></td>' +
+        '<td>' + skill + '</td>' +
+        '<td><span class="contact">' + (contactBits.join(' - ') || '-') + '</span></td>' +
+        '</tr>';
+    }).join('');
+    var bodyHtml = rowsHtml
+      ? '<div class="table-wrap"><table><thead><tr><th>Name</th><th>Skill</th><th>Contact</th></tr></thead><tbody>' + rowsHtml + '</tbody></table></div>'
+      : '<div class="empty-session-body"><span class="zero-bubble">Zero Signups</span><button class="btn" type="button" data-invite-toggle>Invite Players</button>' + renderInvitePanel(g.session) + '</div>';
+    return (
+      '<section class="session-section' + (isPast ? ' past' : '') + (collapsed ? ' collapsed' : '') + '" data-key="' + esc(g.session) + '">' +
+        '<header class="sess-head" data-toggle>' +
+          '<div class="sess-title">' + titleHtml + '</div>' +
+          '<div class="sess-meta">' +
+            '<span class="sess-count">' + (g.players.length ? g.players.length + ' signed up' : 'Zero Signups') + '</span>' +
+            '<span class="chev">v</span>' +
+          '</div>' +
+        '</header>' +
+        bodyHtml +
+      '</section>'
+    );
+  }).join('');
+
+  Array.prototype.forEach.call(host.querySelectorAll('[data-toggle]'), function(h){
+    h.addEventListener('click', function(){
+      var sec = h.closest('.session-section');
+      var key = sec.getAttribute('data-key');
+      sec.classList.toggle('collapsed');
+      collapsedKeys[key] = sec.classList.contains('collapsed');
+    });
+  });
+  wireInvitePanels(host);
+}
+
+function attachUi(){
+  document.getElementById('search').addEventListener('input', render);
+  document.getElementById('btn-toggle-past').addEventListener('click', function(){
+    showPast = !showPast;
+    this.textContent = showPast ? 'Hide past' : 'Show past';
+    render();
+  });
+  document.getElementById('btn-expand').addEventListener('click', function(){
+    allCollapsed = !allCollapsed;
+    this.textContent = allCollapsed ? 'Expand all' : 'Collapse all';
+    if(allCollapsed) collapsedKeys = {};
+    render();
+  });
+}
+
+function accountReturnHref(){
+  var page = 'SouthEnd_Open_Play_Signups.html';
+  try{
+    var seg = (window.location.pathname || '').split('/').filter(Boolean).pop();
+    if(seg && /\.html?$/i.test(seg)) page = seg;
+  }catch(e){}
+  return 'SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent(page);
+}
+
+function initAuthGate(){
+  if(typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()){
+    alert('Signups page requires Firebase auth configuration.');
+    window.location.replace(accountReturnHref());
+    return Promise.reject(new Error('Firebase not configured'));
+  }
+  return SEOpenPlay.initFirebase().then(function(){
+    return new Promise(function(resolve, reject){
+      var pending = false;
+      SEOpenPlay.onAuthStateChanged(function(user){
+        if(authDone) return;
+        if(!user){
+          authDone = true;
+          window.location.replace(accountReturnHref());
+          reject(new Error('Sign-in required'));
+          return;
+        }
+        if(pending) return;
+        pending = true;
+        SEOpenPlay.loadAdminUidFlag(user.uid).then(function(ok){
+          pending = false;
+          if(authDone) return;
+          if(!ok){
+            authDone = true;
+            alert('Signups access denied.\n\nSigned in as: ' + (user.email || '(no email)') + '\n\nSet openplay_se/admin_uids/' + user.uid + ' = true.');
+            window.location.replace(accountReturnHref());
+            reject(new Error('Admin required'));
+            return;
+          }
+          authDone = true;
+          resolve(user);
+        });
+      });
+    });
+  });
+}
+
+function subscribeAll(){
+  SEOpenPlay.subscribeRsvps(function(rows){
+    rawRsvps = (rows || []).filter(function(r){ return r && (r.name || r.email); });
+    mergeInvitePlayersFromRsvps();
+    render();
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  attachUi();
+  initAuthGate().then(function(user){
+    setStatus('Signed in as <strong>' + esc(user.email || user.uid) + '</strong>.');
+    loadInvitePlayers().then(subscribeAll);
+  }).catch(function(){});
+});
+</script>
+
+<a class="message-board-fab" href="SouthEnd_Message_Board.html" aria-label="Open Message Board">Message Board</a>
+</body>
+</html>

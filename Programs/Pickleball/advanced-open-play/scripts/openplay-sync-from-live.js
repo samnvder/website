@@ -17,6 +17,7 @@ const ROOT = path.join(PROGRAM_ROOT, '..', '..', '..');
 
 /** Keep in sync with testing/scripts/local-test.js FILES. */
 const FILES = [
+  'SouthEnd_Pickleball_Hub.html',
   'SouthEnd_Session_RSVP.html',
   'SouthEnd_OpenPlay_Account.html',
   'SouthEnd_Message_Board.html',
@@ -35,7 +36,6 @@ const PRESERVE_REL = ['js/openplay-firebase-config.js', 'js/openplay-firebase-co
 
 const OUT_DIRS = [
   path.join(PROGRAM_ROOT, 'testing', 'local-page'),
-  path.join(ROOT, 'local-page'),
 ];
 
 function mkdirp(d) {

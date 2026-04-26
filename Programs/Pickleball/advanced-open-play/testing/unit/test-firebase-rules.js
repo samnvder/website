@@ -50,7 +50,7 @@ describe('database.rules.json', () => {
     );
   });
 
-  it('requires advanced_open_play access for non-admin RSVP reads and writes', () => {
+  it('requires advanced_open_play access or 4.0+ skill for non-admin RSVP reads and writes', () => {
     const raw = fs.readFileSync(RULES_PATH, 'utf8');
     const data = JSON.parse(raw);
     const rsvps = data.rules.openplay_se.rsvps;
@@ -61,6 +61,16 @@ describe('database.rules.json', () => {
       'RSVP list reads must check Advanced Open Play module access'
     );
     assert.match(
+      rsvps['.read'],
+      /user_profiles\/' \+ auth\.uid \+ '\/skill/,
+      'RSVP list reads must also allow 4.0+ skill rating path'
+    );
+    assert.match(
+      rsvps['.read'],
+      /4\.0 Advanced/,
+      'RSVP list reads must include eligible rating token'
+    );
+    assert.match(
       rsvps.$pid['.read'],
       /module_access\/' \+ auth\.uid \+ '\/advanced_open_play\/enabled/,
       'single RSVP reads must check Advanced Open Play module access'
@@ -69,6 +79,11 @@ describe('database.rules.json', () => {
       rsvps.$pid['.write'],
       /module_access\/' \+ auth\.uid \+ '\/advanced_open_play\/enabled/,
       'RSVP writes must check Advanced Open Play module access'
+    );
+    assert.match(
+      rsvps.$pid['.write'],
+      /user_profiles\/' \+ auth\.uid \+ '\/skill/,
+      'RSVP writes must also allow 4.0+ skill path'
     );
     assert.match(
       rsvps.$pid['.write'],
@@ -154,7 +169,22 @@ describe('database.rules.json', () => {
       'cross-user profile reads (admin search) require admin status'
     );
     assert.match(profiles.$uid['.read'], /\$uid === auth\.uid|admin_uids/);
-    assert.match(profiles.$uid['.write'], /\$uid === auth\.uid/);
+    const w = profiles.$uid['.write'];
+    assert.match(
+      w,
+      /auth\.uid === \$uid/,
+      'users must be able to write their own profile'
+    );
+    assert.match(
+      w,
+      /admin_uids/,
+      'admins must be able to write other profiles'
+    );
+    assert.match(
+      w,
+      /admin_uids.*\$uid/,
+      'admin user-management writes must not target another admin uid'
+    );
   });
 
   it('declares indexes for every queried field in client code', () => {

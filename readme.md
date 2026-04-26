@@ -14,6 +14,8 @@ Standalone marketing site (HTML, CSS, vanilla JS). Exported from the WebsiteV1 m
 | `Programs/Pickleball/advanced-open-play/live/` | Advanced Open Play (RSVP, account, check-in) — Firebase Hosting deploy root |
 | `Programs/Pickleball/advanced-open-play/staging/` | Staging mirror (dev work before promoting to live) |
 | `Programs/Pickleball/advanced-open-play/testing/` | Unit tests + local-test mirror — `npm test` |
+| `Programs/Pickleball/league-play/` | League Play module source — account, team creation, invite inbox |
+| `Programs/Pickleball/docs/South-End-Pickleball-Platform-Statement.md` | South End Pickleball platform / module source of truth |
 | `Programs/Pickleball/account-creation/` | Firebase Auth/RTDB docs, changelog, managing accounts |
 | `scripts/` | Carousel build, convert, scaffold — [README](./scripts/README.md) |
 | `.cursor/rules/` | Cursor rules for this site |
@@ -34,7 +36,7 @@ From `Website/`:
 
 ```bash
 npm test                   # unit tests
-npm run local-test:sync    # mirror active tree → local-page/
+npm run local-test:sync    # mirror active tree → Programs/Pickleball/advanced-open-play/testing/local-page/
 npm run local-test         # mirror + live-server on port 3456
 ```
 

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>League — Invite inbox</title>
+    <link rel="icon" type="image/jpeg" href="../favicon.jpg">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/south-end-league.css" />
+  </head>
+  <body class="league-page">
+    <a class="league-skip" href="#main">Skip to content</a>
+    <div class="header" role="banner">
+      <div>
+        <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+        <div class="hdr-title">INVITE <span>INBOX</span></div>
+        <div class="hdr-sub">Pending team invites from captains. Accept or decline; you are not added automatically.</div>
+      </div>
+      <a
+        class="league-header-profile"
+        href="../advanced-open-play/staging/SouthEnd_OpenPlay_Account.html?return=SouthEnd_Pickleball_Hub.html"
+        aria-label="Open main Pickleball profile and account (same as Open Play)"
+      >
+        <svg class="league-header-profile__icon" viewBox="0 0 24 24" aria-hidden="true"
+          ><circle cx="12" cy="8" r="3.5" /><path d="M5.5 20.5v-1.2A5.2 5.2 0 0 1 10.7 14h2.6a5.2 5.2 0 0 1 5.2 5.2v1.2"
+        /></svg>
+        Profile
+      </a>
+    </div>
+    <nav class="se-site-nav" aria-label="League play">
+      <a class="se-site-nav-link" href="../advanced-open-play/staging/SouthEnd_Pickleball_Hub.html">Pickleball hub</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Play_Hub.html">League play</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Account.html">Account</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Teams.html">Register</a>
+      <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_League_Invites.html" aria-current="page">Invites</a>
+    </nav>
+    <main id="main" class="league-wrap" tabindex="-1">
+      <div id="banner" class="league-card" style="display: none" role="status"></div>
+      <div class="league-card" id="inbox" style="display: none">
+        <h2>Invites to you</h2>
+        <ul id="list" class="league-lookup" aria-live="polite"></ul>
+        <p id="empty" class="help" style="display: none">No pending invites.</p>
+      </div>
+    </main>
+    <footer
+      class="pickleball-share-footer"
+      data-pickleball-share
+      data-share-context="league"
+      aria-label="Invite friends to league play"
+    ></footer>
+    <script src="../advanced-open-play/staging/js/pickleball-invite-share.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="js/league-firebase-config.js"></script>
+    <script src="js/south-end-league-sync.js"></script>
+    <script>
+      (function () {
+        var L = window.LeagueSync;
+        if (!L.init(LEAGUE_FIREBASE_CONFIG) || !LEAGUE_FIREBASE_CONFIG || !LEAGUE_FIREBASE_CONFIG.apiKey) {
+          var b = document.getElementById("banner");
+          b.style.display = "block";
+          b.textContent = "Set js/league-firebase-config.js before using the inbox.";
+        }
+        var list = document.getElementById("list");
+        var empty = document.getElementById("empty");
+        var pendingInviteId = new URLSearchParams(window.location.search).get("invite");
+        function redirectToProfile() {
+          window.location.href =
+            "../advanced-open-play/staging/SouthEnd_OpenPlay_Account.html?return=" +
+            encodeURIComponent("SouthEnd_Pickleball_Hub.html");
+        }
+        function resolveTeamName(teamId) {
+          return L.getTeam(teamId)
+            .then(function (team) { return (team && team.name) || "a league team"; })
+            .catch(function () { return "a league team"; });
+        }
+        function resolveCaptainName(uid) {
+          return L.getDirectoryEntry(uid)
+            .then(function (entry) {
+              if (entry && entry.displayName) return entry.displayName;
+              return L.getUserProfile(uid).then(function (p) {
+                return L.buildDisplayName(p) || "a captain";
+              });
+            })
+            .catch(function () { return "a captain"; });
+        }
+        function renderInviteRow(r, u) {
+          var li = document.createElement("li");
+          li.className = "league-lookup__item";
+          li.style.display = "flex";
+          li.style.flexWrap = "wrap";
+          li.style.alignItems = "center";
+          li.style.gap = "8px";
+          var info = document.createElement("span");
+          info.textContent = "Loading invite details…";
+          li.appendChild(info);
+          Promise.all([
+            resolveTeamName(r.data.teamId),
+            resolveCaptainName(r.data.fromUid)
+          ]).then(function (results) {
+            info.innerHTML = "<strong>" + results[0] + "</strong> · invited by " + results[1];
+          });
+          var acc = document.createElement("button");
+          acc.className = "btn";
+          acc.type = "button";
+          acc.textContent = "Accept";
+          var dec = document.createElement("button");
+          dec.className = "btn btn--secondary";
+          dec.type = "button";
+          dec.textContent = "Decline";
+          acc.addEventListener("click", function () {
+            acc.disabled = true;
+            dec.disabled = true;
+            L.acceptOrDeclineInvite(r.id, u.uid, true)
+              .then(function () {
+                info.innerHTML += " — <strong>Accepted!</strong>";
+                acc.style.display = "none";
+                dec.style.display = "none";
+              })
+              .catch(function (e) {
+                acc.disabled = false;
+                dec.disabled = false;
+                info.textContent += " — " + ((e && e.message) || "Something went wrong.");
+              });
+          });
+          dec.addEventListener("click", function () {
+            acc.disabled = true;
+            dec.disabled = true;
+            L.acceptOrDeclineInvite(r.id, u.uid, false)
+              .then(function () {
+                info.innerHTML += " — <em>Declined</em>";
+                acc.style.display = "none";
+                dec.style.display = "none";
+              })
+              .catch(function (e) {
+                acc.disabled = false;
+                dec.disabled = false;
+                info.textContent += " — " + ((e && e.message) || "Something went wrong.");
+              });
+          });
+          li.appendChild(acc);
+          li.appendChild(dec);
+          list.appendChild(li);
+        }
+        function renderResolvedRow(r) {
+          var li = document.createElement("li");
+          li.className = "league-lookup__item";
+          li.style.opacity = "0.6";
+          var info = document.createElement("span");
+          var statusMap = {
+            canceled: "This invite was canceled by the captain.",
+            accepted: "You already accepted this invite.",
+            declined: "You declined this invite.",
+          };
+          info.textContent = statusMap[r.data.status] || "This invite is no longer available.";
+          li.appendChild(info);
+          if (r.data.teamId) {
+            resolveTeamName(r.data.teamId).then(function (name) {
+              info.textContent = name + " — " + info.textContent;
+            });
+          }
+          list.appendChild(li);
+        }
+
+        function loadInvites() {
+          var u = L.getCurrentUser();
+          if (!u) {
+            list.innerHTML = "";
+            return;
+          }
+          var source = pendingInviteId
+            ? L.getInvite(pendingInviteId).then(function (row) { return row ? [row] : []; })
+            : L.listInvitesToUser(u.uid);
+          source
+            .then(function (rows) {
+              list.innerHTML = "";
+              if (!rows || !rows.length) {
+                empty.style.display = "block";
+                empty.textContent = pendingInviteId
+                  ? "This invite was not found or you don't have access to it."
+                  : "No pending invites.";
+                return;
+              }
+              var pending = [];
+              var resolved = [];
+              rows.forEach(function (r) {
+                if (r.data && r.data.status === "pending") pending.push(r);
+                else resolved.push(r);
+              });
+              if (!pending.length && !resolved.length) {
+                empty.style.display = "block";
+                return;
+              }
+              empty.style.display = "none";
+              pending.forEach(function (r) { renderInviteRow(r, u); });
+              if (pendingInviteId && !pending.length && resolved.length) {
+                resolved.forEach(renderResolvedRow);
+              }
+            });
+        }
+        L.onAuth(function (u) {
+          if (!u) {
+            document.getElementById("inbox").style.display = "none";
+            redirectToProfile();
+            return;
+          }
+          document.getElementById("inbox").style.display = "block";
+          L.syncProfileToDirectory(u.uid);
+          loadInvites();
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="js/openplay-testing-env.js"></script>
-<title>Account — South End Open Play</title>
+<title>Account - South End Advanced Open Play</title>
+<link rel="icon" type="image/jpeg" href="favicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -64,7 +65,6 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 .auth-msg{font-size:11px;margin-top:8px;min-height:1.2em;}
 .auth-msg.err{color:#ff8888;}
 .auth-msg.ok{color:var(--neon);}
-.cta-block{margin-top:4px;padding-top:24px;border-top:1px solid rgba(255,255,255,.1);}
 .cta-primary{
   display:block;width:100%;padding:14px;background:var(--neon);color:var(--ink);font-family:'Oswald',sans-serif;
   font-size:18px;letter-spacing:.5px;text-transform:uppercase;border:none;border-radius:6px;cursor:pointer;font-weight:700;
@@ -98,7 +98,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 .account-summary-line strong{color:rgba(255,255,255,.95);}
 .account-summary-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
 .profile-lead{font-size:12px;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:20px;}
-/* Extra air in the “Your information” card only (not auth panel) */
+/* Extra air in the "Your information" card only (not auth panel) */
 .profile-data-panel .auth-title{margin-bottom:14px;}
 .profile-data-panel .row.row-1{grid-template-columns:1fr;}
 .profile-data-panel .row{
@@ -265,20 +265,54 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 .cal-ev-cancel:hover{filter:brightness(1.1);}
 .cal-open{
   margin-top:4px;
-  font-size:8px;
-  line-height:1.2;
+  font-size:10px;
+  line-height:1.25;
+  padding:5px 5px;
+  border-radius:4px;
+  border:1px solid rgba(0,255,136,.26);
+  background:rgba(0,255,136,.1);
   text-transform:uppercase;
-  letter-spacing:.05em;
-  color:rgba(0,255,136,.75);
+  letter-spacing:.04em;
+  color:rgba(225,255,240,.95);
+  font-weight:700;
 }
 .cal-unparsed{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1);}
 .cal-unparsed-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:8px;}
 .hub-actions{display:flex;flex-direction:column;gap:10px;margin-top:20px;}
 .hub-actions .cta-primary{margin-bottom:0;}
+.module-grid{display:grid;gap:12px;margin:16px 0 18px;}
+.module-card{
+  border:1.5px solid rgba(0,255,136,.22);border-radius:10px;padding:14px 14px 16px;
+  background:rgba(0,0,0,.18);
+}
+.module-card--locked{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.04);}
+.module-kicker{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:6px;}
+.module-card--locked .module-kicker{color:rgba(255,255,255,.45);}
+.module-title{font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:.04em;text-transform:uppercase;color:#fff;margin-bottom:5px;}
+.module-desc{font-size:12px;color:rgba(255,255,255,.66);line-height:1.45;margin-bottom:12px;}
+.module-card--locked .module-desc{color:rgba(255,255,255,.5);}
+.module-admin-panel{
+  margin-top:18px;padding:16px;border-radius:10px;border:1.5px solid rgba(168,85,247,.35);
+  background:rgba(168,85,247,.08);
+}
+.module-admin-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:end;}
+.module-admin-row .field{margin:0;}
+.module-admin-msg{font-size:11px;color:rgba(255,255,255,.68);line-height:1.45;margin-top:10px;min-height:1.4em;}
+@media(max-width:620px){.module-admin-row{grid-template-columns:1fr;}}
 @media(max-width:400px){
   .cal-day{min-height:100px;}
   .cal-ev{font-size:8px;}
 }
+.message-board-fab{
+  position:fixed;right:18px;bottom:18px;z-index:90;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.22);
+  background:linear-gradient(135deg,var(--neon,#00ff88),#34d399);color:var(--ink,#050a12);
+  font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;
+  box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 26px rgba(0,255,136,.25);transition:transform .15s,filter .15s,box-shadow .15s;
+}
+.message-board-fab:hover{filter:brightness(1.06);transform:translateY(-1px);box-shadow:0 12px 32px rgba(0,0,0,.4),0 0 30px rgba(0,255,136,.32);}
+.message-board-fab:focus-visible{outline:2px solid #fff;outline-offset:3px;}
+@media(max-width:520px){.message-board-fab{right:14px;bottom:14px;padding:12px 14px;font-size:12px;}}
 </style>
 </head>
 <body>
@@ -286,19 +320,20 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 <div class="header">
   <div>
     <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
-    <div class="hdr-title">OPEN PLAY <span>ACCOUNT</span></div>
-    <div class="hdr-sub">Sign in once on this device — your session stays signed in until you sign out.</div>
+    <div class="hdr-title">ADVANCED OPEN <span>PLAY</span></div>
+    <div class="hdr-sub">Module home, RSVP schedule, and account profile.</div>
   </div>
 </div>
-<nav class="se-site-nav" aria-label="Open Play sections">
-  <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_OpenPlay_Account.html" aria-current="page">Hub</a>
-  <a class="se-site-nav-link" href="SouthEnd_Session_RSVP.html">RSVP</a>
-  <a class="se-site-nav-link" href="SouthEnd_Message_Board.html">Board</a>
+<nav class="se-site-nav" aria-label="Pickleball hub sections">
+  <a class="se-site-nav-link" href="SouthEnd_Pickleball_Hub.html">Hub</a>
+  <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_OpenPlay_Account.html" aria-current="page">Advanced Open Play</a>
+  <a class="se-site-nav-link" href="SouthEnd_Message_Board.html">Message Board</a>
+  <a class="se-site-nav-link" href="../../league-play/SouthEnd_League_Play_Hub.html">League Play</a>
 </nav>
 
 <div class="body-wrap">
   <p class="page-lead">
-    <strong>Open Play RSVP</strong> requires a signed-in account. Sign in, complete <strong>Your information</strong> below (saved to your unique ID in Firebase), then continue to RSVP.
+    <strong>Advanced Open Play</strong> is a protected South End pickleball module. Sign in to view your approved access, schedule, and RSVP tools.
   </p>
 
   <div id="no-firebase-msg" class="no-firebase hidden">
@@ -329,22 +364,27 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   </div>
 
   <div class="profile-data-panel hidden" id="profile-data-panel">
-    <button type="button" class="auth-btn auth-btn-secondary hidden" id="acc-back-to-hub" style="width:100%;margin-bottom:14px;">← Back to my schedule</button>
+    <button type="button" class="auth-btn auth-btn-secondary hidden" id="acc-back-to-hub" style="width:100%;margin-bottom:14px;">Back to my schedule</button>
     <div class="auth-title">Your information</div>
     <p class="profile-lead">All fields below are required except where noted. Data is stored at <code style="font-size:10px;color:rgba(0,255,136,.7);">openplay_se/user_profiles/{your uid}</code>. Sign the liability and communications agreements below (same flow as RSVP). If you are a member, enter your access card # below so it can auto-fill for future RSVPs.</p>
     <div class="row row-2">
       <div class="field"><label>First name <span class="req">*</span></label><input type="text" id="acc-first" autocomplete="given-name" placeholder="First"><div class="err-msg" id="acc-err-first">Required.</div></div>
       <div class="field"><label>Last name <span class="req">*</span></label><input type="text" id="acc-last" autocomplete="family-name" placeholder="Last"><div class="err-msg" id="acc-err-last">Required.</div></div>
     </div>
-    <div class="field"><label>Email</label><div id="acc-email-display" class="acc-email-ro">—</div></div>
+    <div class="field"><label>Email</label><div id="acc-email-display" class="acc-email-ro">-</div></div>
     <div class="row row-2">
       <div class="field"><label>Phone <span class="req">*</span></label><input type="tel" id="acc-phone" autocomplete="tel" placeholder="(555) 555-5555"><div class="err-msg" id="acc-err-phone">Required.</div></div>
       <div class="field">
         <label>Skill level <span class="req">*</span></label>
         <select id="acc-skill">
           <option value="">Select level...</option>
-          <option value="Advanced 4.0+">Advanced 4.0+</option>
-          <option value="Open 5.0+">Open 5.0+</option>
+          <option value="2.0 Beginner">2.0 (Beginner)</option>
+          <option value="2.5 Upper Beginner">2.5 (Upper Beginner)</option>
+          <option value="3.0 Lower Intermediate">3.0 (Lower Intermediate)</option>
+          <option value="3.5 Intermediate">3.5 (Intermediate)</option>
+          <option value="4.0 Advanced">4.0 (Advanced)</option>
+          <option value="4.5 Upper Advanced">4.5 (Upper Advanced)</option>
+          <option value="5.0 Open">5.0 (Open)</option>
         </select>
         <div class="err-msg" id="acc-err-skill">Select a skill level.</div>
       </div>
@@ -353,8 +393,8 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
       <label>South End member? <span class="req">*</span></label>
       <select id="acc-member">
         <option value="">Select...</option>
-        <option value="yes">Yes — Member</option>
-        <option value="no">No — Guest</option>
+        <option value="yes">Yes - Member</option>
+        <option value="no">No - Guest</option>
       </select>
       <div class="err-msg" id="acc-err-member">Required.</div>
     </div>
@@ -413,30 +453,50 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 
   <div id="acc-toast" style="display:none;position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#1db954;color:#fff;padding:10px 24px;border-radius:8px;font-weight:600;z-index:9999;box-shadow:0 4px 14px rgba(0,0,0,.25);transition:opacity .3s;pointer-events:none;"></div>
   <div class="account-hub-panel hidden" id="account-hub-panel">
-    <div class="auth-title">Your schedule</div>
-    <p class="hub-lead" id="hub-user-line">Your upcoming open play reservations appear on the calendar. Cancel a spot below or book more.</p>
-    <div class="cal-nav">
-      <button type="button" id="cal-prev" aria-label="Previous month">‹</button>
-      <h2 id="cal-month-label"></h2>
-      <button type="button" id="cal-next" aria-label="Next month">›</button>
+    <div class="auth-title">Advanced Open Play home</div>
+    <p class="hub-lead" id="hub-user-line">Your Advanced Open Play schedule appears below.</p>
+    <div class="module-grid" aria-label="Available pickleball modules">
+      <div class="module-card module-card--locked hidden" id="module-card-advanced-open-play-locked">
+        <div class="module-kicker">Admin approval required</div>
+        <div class="module-title">Advanced Open Play</div>
+        <p class="module-desc">This module is not currently assigned to your account. Contact South End staff if you should have access.</p>
+      </div>
     </div>
-    <div class="cal-weekdays" aria-hidden="true">
-      <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+    <div id="advanced-openplay-schedule" class="hidden">
+      <div class="cal-nav">
+        <button type="button" id="cal-prev" aria-label="Previous month">&lt;</button>
+        <h2 id="cal-month-label"></h2>
+        <button type="button" id="cal-next" aria-label="Next month">&gt;</button>
+      </div>
+      <div class="cal-weekdays" aria-hidden="true">
+        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+      </div>
+      <div class="cal-grid" id="cal-grid" role="grid" aria-label="RSVP calendar"></div>
+      <div id="cal-unparsed" class="cal-unparsed hidden"></div>
     </div>
-    <div class="cal-grid" id="cal-grid" role="grid" aria-label="RSVP calendar"></div>
-    <div id="cal-unparsed" class="cal-unparsed hidden"></div>
     <div class="hub-actions">
-      <a class="cta-primary" id="hub-cta-rsvp" href="SouthEnd_Session_RSVP.html">Book sessions →</a>
-      <a class="cta-staff hidden" id="hub-cta-checkin" href="SouthEnd_Session_Checkin.html">Check-ins →</a>
-      <a class="cta-staff hidden" id="hub-cta-activity" href="SouthEnd_Admin_Activity.html">Admin activity →</a>
+      <a class="cta-primary" id="hub-cta-rsvp" href="SouthEnd_Session_RSVP.html">Book sessions</a>
+      <a class="cta-staff hidden" id="hub-cta-checkin" href="SouthEnd_Session_Checkin.html">Check-ins</a>
+      <a class="cta-staff hidden" id="hub-cta-activity" href="SouthEnd_Admin_Hub.html">Admin hub</a>
+    </div>
+    <div class="module-admin-panel hidden" id="module-admin-panel">
+      <div class="auth-title">Module access admin</div>
+      <p class="hub-lead">Assign Advanced Open Play access by UID, or by email after that user has saved their profile once.</p>
+      <div class="module-admin-row">
+        <div class="field">
+          <label>User email or UID</label>
+          <input type="text" id="module-admin-target" placeholder="email@example.com or Firebase UID" autocomplete="off">
+        </div>
+        <button type="button" class="auth-btn auth-btn-secondary" id="module-admin-resolve">Find</button>
+        <button type="button" class="auth-btn auth-btn-primary" id="module-admin-grant">Grant</button>
+      </div>
+      <div class="auth-actions" style="margin-top:10px;">
+        <button type="button" class="auth-btn auth-btn-secondary" id="module-admin-revoke">Revoke Advanced Open Play</button>
+      </div>
+      <div class="module-admin-msg" id="module-admin-msg" role="status"></div>
     </div>
   </div>
 
-  <div class="cta-block hidden" id="cta-wrap">
-    <a class="cta-primary" id="cta-rsvp" href="SouthEnd_Session_RSVP.html">Continue to RSVP →</a>
-    <a class="cta-staff hidden" id="cta-checkin" href="SouthEnd_Session_Checkin.html">Check-ins →</a>
-    <a class="cta-staff hidden" id="cta-activity" href="SouthEnd_Admin_Activity.html">Admin activity →</a>
-  </div>
 </div>
 
 <!-- Full-text waiver modals (same copy as RSVP) -->
@@ -444,7 +504,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   <div class="waiver-modal-box" role="document">
     <div class="waiver-modal-head">
       <h2 id="waiver-modal-liability-title">Liability waiver &amp; release</h2>
-      <button type="button" class="waiver-modal-close" id="waiver-modal-liability-close" aria-label="Close">×</button>
+      <button type="button" class="waiver-modal-close" id="waiver-modal-liability-close" aria-label="Close">x</button>
     </div>
     <div class="waiver-modal-scroll" id="waiver-scroll-liability" tabindex="0">
       <h3>Please read carefully</h3>
@@ -486,7 +546,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   <div class="waiver-modal-box" role="document">
     <div class="waiver-modal-head">
       <h2 id="waiver-modal-communication-title">Communications consent</h2>
-      <button type="button" class="waiver-modal-close" id="waiver-modal-communication-close" aria-label="Close">×</button>
+      <button type="button" class="waiver-modal-close" id="waiver-modal-communication-close" aria-label="Close">x</button>
     </div>
     <div class="waiver-modal-scroll" id="waiver-scroll-communication" tabindex="0">
       <h3>Please read carefully</h3>
@@ -511,11 +571,13 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   </div>
 </div>
 
+<footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
 <script src="js/openplay-firebase-config.js"></script>
 <script src="js/south-end-openplay-sync.js"></script>
 <script src="js/openplay-rsvp-helpers.js"></script>
 <script src="js/openplay-waiver-modals.js"></script>
-<script src="js/openplay-profile-panel.js?v=20260407"></script>
+<script src="js/pickleball-invite-share.js?v=20260425"></script>
+<script src="js/openplay-profile-panel.js?v=20260426-routing2"></script>
 <script>
 function getReturnRsvpHref() {
   try {
@@ -536,6 +598,41 @@ function getAccountReturnParamRaw() {
   }
 }
 
+function accountReturnIsLeagueModule(raw) {
+  return !!raw && (/^\.\.(?:\/|\\)league-play(?:\/|\\)/i.test(raw) || /^SouthEnd_League_\w+\.html$/i.test(raw));
+}
+
+function getCentralHubHref() {
+  return 'SouthEnd_Pickleball_Hub.html';
+}
+
+function getAccountReturnHref() {
+  var raw = getAccountReturnParamRaw();
+  if (!raw) return '';
+  if (/^SouthEnd_Pickleball_Hub\.html$/i.test(raw) || /^\/?(?:main|hub)$/i.test(raw)) return getCentralHubHref();
+  if (/^SouthEnd_Session_RSVP\.html$/i.test(raw)) return 'SouthEnd_Session_RSVP.html';
+  if (/^SouthEnd_Session_Checkin\.html$/i.test(raw)) return 'SouthEnd_Session_Checkin.html';
+  if (/^SouthEnd_Message_Board\.html$/i.test(raw)) return 'SouthEnd_Message_Board.html';
+  if (/^SouthEnd_Admin_(?:Hub|Advanced_Open_Play|Activity|Module_Access)\.html$/i.test(raw)) return raw;
+  if (accountReturnIsLeagueModule(raw)) return getCentralHubHref();
+  return '';
+}
+
+function accountShouldStayOnAccountPage() {
+  try {
+    var q = new URLSearchParams(window.location.search);
+    if (q.get('section') === 'admin') return true;
+  } catch (e) {}
+  return false;
+}
+
+function redirectAfterAccountReady() {
+  if (accountShouldStayOnAccountPage()) return;
+  var href = getAccountReturnHref() || getCentralHubHref();
+  if (!href || /SouthEnd_OpenPlay_Account\.html/i.test(href)) return;
+  window.location.replace(href);
+}
+
 /** True when ?return= points at check-in (Firebase filenames or WordPress slug). */
 function accountReturnIsCheckin(href) {
   if (!href) return false;
@@ -547,40 +644,41 @@ function accountReturnIsCheckin(href) {
 function accountReturnIsAdminActivity(href) {
   if (!href) return false;
   var h = String(href);
-  return /SouthEnd_Admin_Activity\.html|admin[_\s-]*activity/i.test(h);
+  return /SouthEnd_Admin_(?:Hub|Advanced_Open_Play|Activity)\.html|admin[_\s-]*(?:hub|advanced[_\s-]*open[_\s-]*play|activity)/i.test(h);
 }
 
 function syncAccountCtaRsvpHref() {
   var href = getReturnRsvpHref();
   var rawReturn = getAccountReturnParamRaw();
   var toAdminActivity = accountReturnIsAdminActivity(rawReturn);
-  var cta = document.getElementById('cta-rsvp');
-  if (cta) {
-    cta.href = href;
-    cta.textContent = 'Continue to RSVP →';
-  }
   var hubCta = document.getElementById('hub-cta-rsvp');
   if (hubCta) {
     hubCta.href = href;
-    hubCta.textContent = 'Book sessions →';
+    hubCta.textContent = 'Book sessions';
   }
+  var adminHref = /SouthEnd_Admin_Activity\.html|admin[_\s-]*activity/i.test(rawReturn)
+    ? 'SouthEnd_Admin_Activity.html'
+    : (/SouthEnd_Admin_Advanced_Open_Play\.html|admin[_\s-]*advanced[_\s-]*open[_\s-]*play/i.test(rawReturn)
+      ? 'SouthEnd_Admin_Advanced_Open_Play.html'
+      : 'SouthEnd_Admin_Hub.html');
   var hubActivity = document.getElementById('hub-cta-activity');
   if (hubActivity) {
-    hubActivity.href = 'SouthEnd_Admin_Activity.html';
-    hubActivity.textContent = toAdminActivity ? 'Back to admin activity →' : 'Admin activity →';
-  }
-  var ctaActivity = document.getElementById('cta-activity');
-  if (ctaActivity) {
-    ctaActivity.href = 'SouthEnd_Admin_Activity.html';
-    ctaActivity.textContent = toAdminActivity ? 'Back to admin activity →' : 'Admin activity →';
+    hubActivity.href = adminHref;
+    hubActivity.textContent = toAdminActivity ? 'Back to admin' : 'Admin hub';
   }
 }
 
 var authMode = 'signin';
-/** True when RTDB has a complete profile, or user just saved — edits clear until Save again. */
+/** True when RTDB has a complete profile, or user just saved - edits clear until Save again. */
 var accountProfileSynced = false;
 var accountViewMode = 'edit';
 var accountMyRsvpRows = [];
+var accountModuleAccess = {};
+var accountIsAdmin = false;
+/** Last loaded profile from RTDB (used for rating-based Advanced Open Play visibility). */
+var currentAccountProfile = null;
+var accountAdminTargetUid = '';
+var accountRedirectAfterAuthFlow = false;
 /** Month shown in the hub calendar (first day of that month). */
 var accountCalendarCursor = new Date(pacificNowDate().getFullYear(), pacificNowDate().getMonth(), 1);
 var SESSION_MONTHS_ACC = {
@@ -597,10 +695,9 @@ var SESSION_MONTHS_ACC = {
   nov: 10, november: 10,
   dec: 11, december: 11,
 };
-// ── SCHEDULE CONFIGURATION (same as RSVP page) ──
+// Schedule configuration (same as RSVP page)
 var SCHEDULE_CONFIG_ACC = {
   slots: [
-    { day: 2, label: 'Tuesday Morning' },
     { day: 2, label: 'Tuesday Evening' },
     { day: 4, label: 'Thursday Evening' },
   ],
@@ -870,17 +967,13 @@ function markAccountProfileDirty() {
 /** Admin-only actions use openplay_se/admin_uids/{uid} in RTDB. */
 function updateStaffCheckinButtons(user) {
   var hub = document.getElementById('hub-cta-checkin');
-  var cta = document.getElementById('cta-checkin');
   var hubActivity = document.getElementById('hub-cta-activity');
-  var ctaActivity = document.getElementById('cta-activity');
-  if (!hub && !cta && !hubActivity && !ctaActivity) return;
+  if (!hub && !hubActivity) return;
   function showCheckin(on) {
     if (hub) hub.classList.toggle('hidden', !on);
-    if (cta) cta.classList.toggle('hidden', !on);
   }
   function showActivity(on) {
     if (hubActivity) hubActivity.classList.toggle('hidden', !on);
-    if (ctaActivity) ctaActivity.classList.toggle('hidden', !on);
   }
   if (!user || typeof SEOpenPlay === 'undefined') {
     showCheckin(false);
@@ -897,10 +990,70 @@ function updateStaffCheckinButtons(user) {
   }
 }
 
+function accountHasAdvancedOpenPlay() {
+  var moduleId =
+    typeof SEOpenPlay !== 'undefined' && SEOpenPlay.MODULE_ADVANCED_OPEN_PLAY
+      ? SEOpenPlay.MODULE_ADVANCED_OPEN_PLAY
+      : 'advanced_open_play';
+  if (accountIsAdmin) return true;
+  if (accountModuleAccess && accountModuleAccess[moduleId] && accountModuleAccess[moduleId].enabled === true) {
+    return true;
+  }
+  return !!(
+    typeof SEOpenPlay !== 'undefined' &&
+    SEOpenPlay.isAdvancedOpenPlayEligibleProfile &&
+    SEOpenPlay.isAdvancedOpenPlayEligibleProfile(currentAccountProfile)
+  );
+}
+
+function updateHubModuleVisibility() {
+  var canOpenPlay = accountHasAdvancedOpenPlay();
+  var unlocked = document.getElementById('module-card-advanced-open-play');
+  var locked = document.getElementById('module-card-advanced-open-play-locked');
+  var schedule = document.getElementById('advanced-openplay-schedule');
+  var adminPanel = document.getElementById('module-admin-panel');
+  var rsvpCta = document.getElementById('hub-cta-rsvp');
+  var aopHideBoth = false;
+  if (!canOpenPlay && typeof SEOpenPlay !== 'undefined' && SEOpenPlay.isAdvancedOpenPlayEligibleSkill) {
+    var rSk = currentAccountProfile && currentAccountProfile.skill ? String(currentAccountProfile.skill).trim() : '';
+    if (rSk && !SEOpenPlay.isAdvancedOpenPlayEligibleSkill(rSk) && !accountIsAdmin) {
+      aopHideBoth = true;
+    }
+  }
+  if (aopHideBoth) {
+    if (unlocked) unlocked.classList.add('hidden');
+    if (locked) locked.classList.add('hidden');
+    if (schedule) schedule.classList.add('hidden');
+    if (rsvpCta) rsvpCta.classList.add('hidden');
+  } else {
+    if (unlocked) unlocked.classList.toggle('hidden', !canOpenPlay);
+    if (locked) locked.classList.toggle('hidden', canOpenPlay);
+    if (schedule) schedule.classList.toggle('hidden', !canOpenPlay);
+    if (rsvpCta) rsvpCta.classList.toggle('hidden', !canOpenPlay);
+  }
+  if (adminPanel) adminPanel.classList.toggle('hidden', !accountIsAdmin);
+  updateAccountCtaState();
+}
+
+function loadAccountAccessState(user) {
+  accountModuleAccess = {};
+  accountIsAdmin = false;
+  if (!user || typeof SEOpenPlay === 'undefined') {
+    updateHubModuleVisibility();
+    return Promise.resolve();
+  }
+  var adminPromise = SEOpenPlay.loadAdminUidFlag ? SEOpenPlay.loadAdminUidFlag(user.uid) : Promise.resolve(false);
+  var accessPromise = SEOpenPlay.loadModuleAccess ? SEOpenPlay.loadModuleAccess(user.uid) : Promise.resolve({});
+  return Promise.all([adminPromise, accessPromise]).then(function (res) {
+    accountIsAdmin = !!res[0];
+    accountModuleAccess = res[1] || {};
+    updateHubModuleVisibility();
+  });
+}
+
 function updateAccountCtaState() {
-  var cta = document.getElementById('cta-rsvp');
   var hubCta = document.getElementById('hub-cta-rsvp');
-  if (!cta && !hubCta) return;
+  if (!hubCta) return;
   syncAccountCtaRsvpHref();
   var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
   function setDisabled(el, on) {
@@ -909,21 +1062,30 @@ function updateAccountCtaState() {
     else el.classList.remove('cta-disabled');
   }
   if (!u) {
-    setDisabled(cta, true);
     setDisabled(hubCta, true);
     return;
   }
-  var block = !accProfileComplete() || !accountProfileSynced;
-  setDisabled(cta, block);
+  var block = !accountHasAdvancedOpenPlay() || !accProfileComplete() || !accountProfileSynced;
   setDisabled(hubCta, block);
 }
 
 function loadAccountFormFromProfile(p) {
   if (!p) return;
+  currentAccountProfile = p;
   if (p.firstName) document.getElementById('acc-first').value = p.firstName;
   if (p.lastName) document.getElementById('acc-last').value = p.lastName;
   if (p.phone) document.getElementById('acc-phone').value = p.phone;
-  if (p.skill) document.getElementById('acc-skill').value = p.skill;
+  if (p.skill) {
+    var accSk = document.getElementById('acc-skill');
+    accSk.value = p.skill;
+    if (accSk.value !== p.skill) {
+      var leg = document.createElement('option');
+      leg.value = p.skill;
+      leg.textContent = p.skill + ' (legacy)';
+      accSk.appendChild(leg);
+      accSk.value = p.skill;
+    }
+  }
   if (p.membership) {
     document.getElementById('acc-member').value = p.membership;
     accToggleMemberCard(p.membership, true);
@@ -946,12 +1108,10 @@ function setAccountViewMode(mode) {
   accountViewMode = mode === 'hub' ? 'hub' : 'edit';
   var profilePanel = document.getElementById('profile-data-panel');
   var hubPanel = document.getElementById('account-hub-panel');
-  var ctaWrap = document.getElementById('cta-wrap');
   var bodyWrap = document.querySelector('.body-wrap');
   if (accountViewMode === 'hub') {
     if (profilePanel) profilePanel.classList.add('hidden');
     if (hubPanel) hubPanel.classList.remove('hidden');
-    if (ctaWrap) ctaWrap.classList.add('hidden');
     if (bodyWrap) bodyWrap.classList.add('body-wrap--wide');
     var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
     if (u) {
@@ -964,7 +1124,6 @@ function setAccountViewMode(mode) {
   } else {
     if (hubPanel) hubPanel.classList.add('hidden');
     if (profilePanel) profilePanel.classList.remove('hidden');
-    if (ctaWrap) ctaWrap.classList.remove('hidden');
     if (bodyWrap) bodyWrap.classList.remove('body-wrap--wide');
   }
   var backHub = document.getElementById('acc-back-to-hub');
@@ -991,8 +1150,67 @@ function renderAccountHubUserLine(user, p) {
     'Signed in as <strong>' +
     escapeHtml(user.email || '') +
     '</strong>' +
-    (name ? ' · ' + escapeHtml(name) : '') +
-    '. Your upcoming open play reservations are on the calendar below.';
+    (name ? ' - ' + escapeHtml(name) : '') +
+    '. Your Advanced Open Play schedule appears below.';
+}
+
+function moduleAdminMsg(text, cls) {
+  var el = document.getElementById('module-admin-msg');
+  if (!el) return;
+  el.textContent = text || '';
+  el.style.color = cls === 'err' ? '#ff8888' : cls === 'ok' ? 'var(--neon)' : 'rgba(255,255,255,.68)';
+}
+
+function resolveModuleAdminTarget() {
+  var input = document.getElementById('module-admin-target');
+  var raw = input ? String(input.value || '').trim() : '';
+  accountAdminTargetUid = '';
+  if (!raw) {
+    moduleAdminMsg('Enter a user email or UID.', 'err');
+    return Promise.resolve('');
+  }
+  if (raw.indexOf('@') !== -1 && SEOpenPlay.loadUserProfileByEmail) {
+    moduleAdminMsg('Looking up profile by email...');
+    return SEOpenPlay.loadUserProfileByEmail(raw).then(function (profile) {
+      if (!profile || !profile.uid) {
+        moduleAdminMsg('No saved profile found for that email. Ask the user to sign in and save their profile, or use their Firebase UID.', 'err');
+        return '';
+      }
+      accountAdminTargetUid = profile.uid;
+      moduleAdminMsg('Found ' + raw + ' as UID ' + profile.uid + '.', 'ok');
+      return accountAdminTargetUid;
+    });
+  }
+  accountAdminTargetUid = raw;
+  moduleAdminMsg('Using UID ' + raw + '.', 'ok');
+  return Promise.resolve(accountAdminTargetUid);
+}
+
+function setAdvancedOpenPlayForTarget(enabled) {
+  if (!SEOpenPlay.setModuleAccess) {
+    moduleAdminMsg('Module access helper is unavailable.', 'err');
+    return;
+  }
+  resolveModuleAdminTarget().then(function (uid) {
+    if (!uid) return;
+    moduleAdminMsg((enabled ? 'Granting' : 'Revoking') + ' Advanced Open Play access...');
+    SEOpenPlay.setModuleAccess(uid, SEOpenPlay.MODULE_ADVANCED_OPEN_PLAY || 'advanced_open_play', enabled)
+      .then(function () {
+        moduleAdminMsg((enabled ? 'Granted' : 'Revoked') + ' Advanced Open Play access for ' + uid + '.', 'ok');
+      })
+      .catch(function (err) {
+        moduleAdminMsg((err && err.message) || 'Could not update module access.', 'err');
+      });
+  });
+}
+
+function wireModuleAdminPanel() {
+  var resolveBtn = document.getElementById('module-admin-resolve');
+  var grantBtn = document.getElementById('module-admin-grant');
+  var revokeBtn = document.getElementById('module-admin-revoke');
+  if (resolveBtn) resolveBtn.addEventListener('click', resolveModuleAdminTarget);
+  if (grantBtn) grantBtn.addEventListener('click', function () { setAdvancedOpenPlayForTarget(true); });
+  if (revokeBtn) revokeBtn.addEventListener('click', function () { setAdvancedOpenPlayForTarget(false); });
 }
 
 function pad2(n) {
@@ -1086,7 +1304,7 @@ function abbrevSessionLabel(full) {
   if (!full) return '';
   var m = String(full).match(/^((?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s+(?:Morning|Afternoon|Evening))\s+(.+)$/i);
   if (!m) return full;
-  return abbrevSlotName(m[1]) + ' · ' + m[2];
+  return abbrevSlotName(m[1]) + ' - ' + m[2];
 }
 
 function abbrevSessionLabelCalendar(full) {
@@ -1096,7 +1314,7 @@ function abbrevSessionLabelCalendar(full) {
   if (!m) return abbrevSessionLabel(full);
   var slot = abbrevSlotName(m[1]);
   var mon = d.toLocaleDateString('en-US', { month: 'short' });
-  return slot + ' · ' + mon + ' ' + d.getDate();
+  return slot + ' - ' + mon + ' ' + d.getDate();
 }
 
 function renderAccountRsvpCalendar() {
@@ -1178,11 +1396,13 @@ function renderAccountRsvpCalendar() {
     if (!isPast) {
       var openList = openByDay[dk] || [];
       var bookedMap = userBookedByDay[dk] || {};
-      var hasUnbookedSlot = openList.some(function (sessLabel) {
+      var openSlots = openList.filter(function (sessLabel) {
         return !bookedMap[normalizeSessionKey(sessLabel)];
       });
-      if (hasUnbookedSlot && rows.length === 0) {
-        html += '<div class="cal-open">Open Play available</div>';
+      if (openSlots.length) {
+        openSlots.forEach(function (sessLabel) {
+          html += '<div class="cal-open">' + escapeHtml(abbrevSessionLabelCalendar(sessLabel)) + '<br>Available</div>';
+        });
       }
     }
     html += '</div></div>';
@@ -1278,11 +1498,13 @@ function initAccountPage() {
       authShowMsg('Password must be at least 6 characters.', 'err');
       return;
     }
+    accountRedirectAfterAuthFlow = true;
     var p = authMode === 'signup' ? SEOpenPlay.signUpEmail(email, pw) : SEOpenPlay.signInEmail(email, pw);
     p.then(function () {
       authShowMsg(authMode === 'signup' ? 'Account created. You are signed in.' : 'Signed in.', 'ok');
       document.getElementById('auth-password').value = '';
     }).catch(function (err) {
+      accountRedirectAfterAuthFlow = false;
       authShowMsg((err && err.message) || 'Something went wrong.', 'err');
     });
   });
@@ -1322,6 +1544,7 @@ function initAccountPage() {
         setAccountViewMode('hub');
         showAccToast('Profile saved!');
         updateAccountCtaState();
+        if (accountRedirectAfterAuthFlow || getAccountReturnHref()) redirectAfterAccountReady();
       })
       .catch(function (err) {
         accShowProfileMsg((err && err.message) || 'Could not save.', 'err');
@@ -1333,6 +1556,11 @@ function initAccountPage() {
     el.addEventListener('click', function (e) {
       var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
       if (!u) return;
+      if (!accountHasAdvancedOpenPlay()) {
+        e.preventDefault();
+        accShowProfileMsg('Advanced Open Play requires a 4.0+ skill rating, staff-assigned access, or admin approval.', 'err');
+        return;
+      }
       if (!accProfileComplete()) {
         e.preventDefault();
         accShowProfileMsg('Fill all required fields.', 'err');
@@ -1344,8 +1572,8 @@ function initAccountPage() {
       }
     });
   }
-  wireRsvpCtaClick(document.getElementById('cta-rsvp'));
   wireRsvpCtaClick(document.getElementById('hub-cta-rsvp'));
+  wireModuleAdminPanel();
 
   var hubEdit = document.getElementById('hub-edit-profile');
   if (hubEdit) {
@@ -1421,26 +1649,43 @@ function initAccountPage() {
       if (statusLine) statusLine.innerHTML = 'Signed in as <strong>' + escapeHtml(user.email) + '</strong>.';
       var ae = document.getElementById('auth-email');
       if (ae) ae.value = user.email || '';
-      if (emailDisp) emailDisp.textContent = user.email || '—';
-      if (SEOpenPlay.subscribeMyRsvps) {
-        SEOpenPlay.subscribeMyRsvps(user.uid, function (list) {
-          accountMyRsvpRows = list || [];
-          renderAccountRsvpCalendar();
-        }, user.email || '');
-      }
-      SEOpenPlay.loadUserProfile(user.uid).then(function (p) {
-        loadAccountFormFromProfile(p);
-        accountProfileSynced = !!(p && SEOpenPlay.isProfileComplete(p));
-        if (p && accountProfileSynced) {
-          setAccountViewMode('hub');
+      if (emailDisp) emailDisp.textContent = user.email || '-';
+      loadAccountAccessState(user).then(function () {
+        if (accountHasAdvancedOpenPlay() && SEOpenPlay.subscribeMyRsvps) {
+          SEOpenPlay.subscribeMyRsvps(user.uid, function (list) {
+            accountMyRsvpRows = list || [];
+            renderAccountRsvpCalendar();
+          }, user.email || '');
         } else {
-          if (hubPanel) hubPanel.classList.add('hidden');
-          setAccountViewMode('edit');
+          accountMyRsvpRows = [];
+          renderAccountRsvpCalendar();
         }
-        updateAccountCtaState();
+        SEOpenPlay.loadUserProfile(user.uid).then(function (p) {
+          loadAccountFormFromProfile(p);
+          accountProfileSynced = !!(p && SEOpenPlay.isProfileComplete(p));
+          if (p && accountProfileSynced) {
+            setAccountViewMode('hub');
+            if (accountRedirectAfterAuthFlow) redirectAfterAccountReady();
+          } else {
+            if (hubPanel) hubPanel.classList.add('hidden');
+            setAccountViewMode('edit');
+          }
+          updateHubModuleVisibility();
+          updateAccountCtaState();
+          try {
+            var params = new URLSearchParams(window.location.search);
+            if (params.get('section') === 'admin' && accountIsAdmin) {
+              setAccountViewMode('hub');
+              var ap = document.getElementById('module-admin-panel');
+              if (ap) setTimeout(function () { ap.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200);
+            }
+          } catch (e) {}
+        });
       });
     } else {
       updateStaffCheckinButtons(null);
+      loadAccountAccessState(null);
+      currentAccountProfile = null;
       accountProfileSynced = false;
       if (SEOpenPlay.unsubscribeMyRsvps) SEOpenPlay.unsubscribeMyRsvps();
       accountMyRsvpRows = [];
@@ -1449,9 +1694,7 @@ function initAccountPage() {
       if (statusLine) statusLine.textContent = 'Create an account or sign in.';
       if (profilePanel) profilePanel.classList.add('hidden');
       if (hubPanel) hubPanel.classList.add('hidden');
-      var ctaWrapEl = document.getElementById('cta-wrap');
       var bodyWrapEl = document.querySelector('.body-wrap');
-      if (ctaWrapEl) ctaWrapEl.classList.add('hidden');
       if (bodyWrapEl) bodyWrapEl.classList.remove('body-wrap--wide');
       var backHubEl = document.getElementById('acc-back-to-hub');
       if (backHubEl) backHubEl.classList.add('hidden');
@@ -1462,5 +1705,7 @@ function initAccountPage() {
 
 document.addEventListener('DOMContentLoaded', initAccountPage);
 </script>
+
+<a class="message-board-fab" href="SouthEnd_Message_Board.html" aria-label="Open Message Board">Message Board</a>
 </body>
 </html>

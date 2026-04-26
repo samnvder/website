@@ -1,0 +1,18 @@
+---
+description: Pickleball schedules should not render date/day containers when there is no session
+globs: "Programs/Pickleball/**/*.html,Programs/Pickleball/**/*.js,Programs/Pickleball/**/*.md"
+alwaysApply: false
+---
+
+# Pickleball Schedule Empty Dates
+
+## Law
+
+Do not render schedule rows, cards, date containers, or day containers for dates/days that have no Pickleball session.
+
+## Required Pattern
+
+- Omit empty schedule dates entirely instead of showing `No session`, `Closed`, `-`, or an empty placeholder.
+- If a schedule is generated from data, filter out records without a real session before rendering UI.
+- This applies to player-facing pages, admin-facing schedule views, docs, and generated live/staging copies.
+- Empty state text like `No sessions selected` is allowed when it describes a user's current selection, not a calendar date/day.

@@ -1,0 +1,969 @@
+/* South End League Play — matches Advanced Open Play / Pickleball Hub (navy, neon, Barlow, Oswald) */
+:root {
+  --navy: #0a1628;
+  --navy-lt: #152342;
+  --purple-lt: #9333ea;
+  --electric: #a855f7;
+  --neon: #00ff88;
+  --neon-glow: rgba(0, 255, 136, 0.25);
+  --neon-dim: rgba(0, 255, 136, 0.1);
+  --ink: #0a0a1a;
+  --muted: rgba(255, 255, 255, 0.38);
+  --rule: rgba(255, 255, 255, 0.07);
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+.league-page {
+  font-family: "Barlow", sans-serif;
+  line-height: 1.5;
+  color: #fff;
+  background: var(--navy);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+.league-page a {
+  color: var(--electric);
+  transition: color 0.12s;
+}
+.league-page a:hover {
+  color: #c084fc;
+}
+.league-skip {
+  position: absolute;
+  left: -9999px;
+}
+.league-skip:focus {
+  left: 8px;
+  top: 8px;
+  z-index: 2;
+  padding: 8px 16px;
+  background: var(--navy-lt);
+  color: var(--neon);
+  border: 1px solid rgba(0, 255, 136, 0.35);
+  border-radius: 4px;
+}
+/* —— header + subnav: same as SouthEnd_OpenPlay_Account / SouthEnd_Pickleball_Hub —— */
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px 24px;
+  background: var(--navy-lt);
+  padding: 24px 32px 16px;
+  border-bottom: 3px solid var(--neon);
+}
+/* Dashboard-style profile pill (all league pages) */
+.league-header-profile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  padding: 8px 16px;
+  font-family: "Oswald", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #e8f4ff;
+  border: 1px solid #4caf50;
+  border-radius: 10px;
+  background: rgba(5, 15, 32, 0.75);
+  box-shadow: 0 0 0 1px rgba(0, 255, 136, 0.06) inset;
+  transition: color 0.15s, background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+.league-header-profile:hover {
+  color: #fff;
+  background: rgba(0, 255, 136, 0.1);
+  border-color: var(--neon);
+  box-shadow: 0 0 16px var(--neon-dim);
+}
+.league-header-admin {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  padding: 8px 14px;
+  font-family: "Oswald", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+  border: 1px solid rgba(0, 255, 136, 0.45);
+  border-radius: 10px;
+  background: var(--neon);
+  box-shadow: 0 0 18px var(--neon-glow);
+}
+@media (max-width: 680px) {
+  .league-header-admin:not(.hidden) {
+    display: inline-flex;
+  }
+  .se-site-nav-link--admin:not(.hidden) {
+    display: none;
+  }
+}
+.league-header-profile--here {
+  color: #fff;
+  background: rgba(0, 255, 136, 0.12);
+  border-color: var(--neon);
+  box-shadow: 0 0 18px var(--neon-glow);
+}
+.league-header-profile__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: inherit;
+}
+.league-header-profile__icon circle,
+.league-header-profile__icon path {
+  fill: none;
+  stroke: currentColor;
+}
+.hdr-eyebrow {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--neon);
+  margin-bottom: 3px;
+}
+.hdr-title {
+  font-family: "Oswald", sans-serif;
+  font-size: 24px;
+  color: #fff;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.hdr-title span {
+  color: var(--neon);
+}
+.hdr-sub {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.65);
+  margin-top: 3px;
+  max-width: 40rem;
+  line-height: 1.45;
+}
+.se-site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  align-items: center;
+  padding: 8px 32px 16px;
+  background: rgba(5, 12, 28, 0.85);
+  border-bottom: 1px solid rgba(0, 255, 136, 0.22);
+}
+.se-site-nav-link {
+  font-family: "Oswald", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.se-site-nav-link:hover {
+  color: var(--neon);
+  background: rgba(0, 255, 136, 0.08);
+}
+.se-site-nav-link--active {
+  color: var(--ink);
+  background: var(--neon);
+  border-color: rgba(0, 255, 136, 0.45);
+  box-shadow: 0 0 20px var(--neon-glow);
+}
+.se-site-nav-link--admin {
+  margin-left: auto;
+  color: var(--neon);
+  border-color: rgba(0, 255, 136, 0.22);
+}
+.se-site-nav-link--admin.hidden {
+  display: none !important;
+}
+.league-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+.league-wrap--narrow {
+  max-width: 520px;
+}
+.league-wrap--wide {
+  max-width: 960px;
+}
+.page-lead {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.55;
+  margin-bottom: 24px;
+}
+.league-hero-card {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.16), rgba(168, 85, 247, 0.1));
+  border: 1.5px solid rgba(0, 255, 136, 0.28);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+}
+.league-hero-card--clean {
+  background: rgba(0, 255, 136, 0.07);
+  border-color: rgba(0, 255, 136, 0.22);
+  box-shadow: none;
+}
+.league-kicker,
+.league-module-card__eyebrow {
+  font-family: "Oswald", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--neon);
+}
+.league-hero-card h1 {
+  font-family: "Oswald", sans-serif;
+  font-size: clamp(28px, 5vw, 44px);
+  line-height: 1.08;
+  margin: 8px 0 16px;
+  max-width: 42rem;
+  text-wrap: balance;
+}
+.league-hero-card p {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: clamp(15px, 2vw, 17px);
+  line-height: 1.6;
+  max-width: 40rem;
+  text-wrap: pretty;
+}
+.league-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.league-status-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid rgba(0, 255, 136, 0.18);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.16);
+  color: rgba(255, 255, 255, 0.78);
+}
+.league-module-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.league-dashboard-grid,
+.league-content-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.league-content-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.league-overview .league-content-grid {
+  align-items: start;
+}
+.league-module-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 168px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.045);
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+}
+.league-module-card:hover {
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 255, 136, 0.34);
+  background: rgba(0, 255, 136, 0.08);
+}
+.league-module-card strong {
+  font-family: "Oswald", sans-serif;
+  font-size: 20px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.league-module-card span:last-child {
+  font-size: 14px;
+  line-height: 1.5;
+}
+.league-module-card__action {
+  align-self: flex-start;
+  margin-top: auto;
+  font-family: "Oswald", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--neon);
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+}
+.league-module-card__action:hover {
+  color: var(--ink);
+  filter: brightness(1.05);
+}
+.league-module-card--primary {
+  border-color: rgba(0, 255, 136, 0.38);
+  background: rgba(0, 255, 136, 0.1);
+}
+.league-module-card--disabled {
+  opacity: 0.62;
+}
+.league-team-details {
+  gap: 16px;
+}
+.league-team-details h3 {
+  font-family: "Oswald", sans-serif;
+  font-size: clamp(24px, 4vw, 34px);
+  line-height: 1.1;
+  margin-top: 4px;
+}
+.league-profile-list {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.league-profile-chip {
+  width: 100%;
+  min-height: 44px;
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.88);
+  font-family: "Barlow", sans-serif;
+  text-align: left;
+  cursor: pointer;
+}
+.league-profile-chip:hover,
+.league-profile-chip:focus-visible {
+  border-color: rgba(0, 255, 136, 0.4);
+  color: #fff;
+}
+.league-profile-preview {
+  display: grid;
+  gap: 6px;
+  min-height: 96px;
+  padding: 16px;
+  border: 1px solid rgba(0, 255, 136, 0.18);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.14);
+  color: rgba(255, 255, 255, 0.74);
+}
+.league-profile-preview strong {
+  color: #fff;
+}
+/* —— content cards: open-play auth-panel / profile panel pattern —— */
+.league-card {
+  background: rgba(0, 255, 136, 0.06);
+  border: 1.5px solid rgba(0, 255, 136, 0.2);
+  border-radius: 10px;
+  padding: 32px;
+  margin-bottom: 24px;
+}
+.league-card h2 {
+  font-family: "Oswald", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0 0 16px 0;
+  line-height: 1.2;
+}
+.league-card h2 + p,
+.league-card p {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0 0 16px 0;
+}
+.league-card p:last-child {
+  margin-bottom: 0;
+}
+.league-card ul,
+.league-card ol {
+  margin: 8px 0 16px 24px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+}
+.league-card li {
+  margin-bottom: 8px;
+}
+.league-card strong {
+  color: rgba(255, 255, 255, 0.95);
+}
+.league-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+}
+.league-table th,
+.league-table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
+  vertical-align: top;
+}
+.league-table th {
+  font-family: "Oswald", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--neon);
+}
+/* Form fields — match .field in OpenPlay Account */
+label {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 16px 0 8px;
+}
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"] {
+  width: 100%;
+  max-width: 38rem;
+  min-height: 44px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  font-family: "Barlow", sans-serif;
+  font-size: 13px;
+  color: #fff;
+  outline: none;
+}
+input::placeholder {
+  color: var(--muted);
+}
+input:focus {
+  border-color: var(--neon);
+}
+input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+input[type="checkbox"] {
+  width: auto;
+  max-width: none;
+  accent-color: var(--neon);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+input[type="radio"] {
+  accent-color: var(--neon);
+}
+label.league-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  text-transform: none;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: rgba(255, 255, 255, 0.82);
+  cursor: pointer;
+  margin: 0;
+  max-width: 38rem;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.045);
+  line-height: 1.45;
+}
+label.league-check:has(input:checked) {
+  border-color: rgba(0, 255, 136, 0.45);
+  background: rgba(0, 255, 136, 0.09);
+}
+label.league-check input {
+  margin: 4px 0 0 0;
+  flex-shrink: 0;
+}
+label.league-check span {
+  display: block;
+  min-width: 0;
+  text-wrap: pretty;
+}
+.league-terms-version {
+  white-space: nowrap;
+}
+.btn {
+  display: inline-block;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 5px;
+  font-family: "Oswald", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  text-transform: none;
+  text-decoration: none;
+  margin: 16px 8px 0 0;
+  background: var(--neon);
+  color: var(--ink);
+  transition: filter 0.12s, background 0.12s;
+}
+.btn:hover {
+  filter: brightness(1.05);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: none;
+}
+.btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: none;
+}
+.league-payment-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.league-payment-amount {
+  margin-top: 16px;
+  color: rgba(255, 255, 255, 0.88);
+  font-family: "Oswald", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+}
+.league-payment-hero {
+  max-width: 520px;
+  margin: 0 auto 24px;
+  padding: 28px 24px;
+  text-align: center;
+  border: 2px solid rgba(168, 85, 247, 0.55);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(147, 51, 234, 0.18), rgba(147, 51, 234, 0.08));
+  box-shadow: 0 0 28px rgba(147, 51, 234, 0.18), 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+.league-payment-hero__title {
+  font-family: "Oswald", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--neon);
+  margin-bottom: 10px;
+}
+.league-payment-hero__amount {
+  font-family: "Oswald", sans-serif;
+  font-size: clamp(32px, 7vw, 44px);
+  line-height: 1;
+  letter-spacing: 0.03em;
+  color: #fff;
+  margin: 8px 0 16px;
+}
+.league-payment-hero__copy,
+.league-payment-hero__hint {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.league-payment-hero__btn {
+  display: block;
+  width: 100%;
+  margin: 18px 0 10px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  background: var(--neon);
+  color: var(--ink);
+  font-family: "Oswald", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  box-shadow: 0 0 18px rgba(0, 255, 136, 0.25);
+  transition: transform 0.08s ease, box-shadow 0.2s ease;
+}
+.league-payment-hero__btn:hover,
+.league-payment-hero__btn:focus {
+  color: var(--ink);
+  transform: translateY(-1px);
+  box-shadow: 0 0 26px rgba(0, 255, 136, 0.45);
+}
+.btn--secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.85);
+}
+.btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.14);
+  filter: none;
+}
+.btn--danger {
+  background: rgba(255, 80, 80, 0.16);
+  border: 1px solid rgba(255, 80, 80, 0.5);
+  color: #ff9a9a;
+}
+.btn--danger:hover {
+  background: rgba(255, 80, 80, 0.24);
+  filter: none;
+}
+.league-info-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+.league-info-strip span,
+.league-solo-note {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.14);
+  padding: 16px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13px;
+}
+.league-choice-group {
+  display: grid;
+  gap: 16px;
+  border: 0;
+  margin: 24px 0 0;
+}
+.league-choice-group legend {
+  font-family: "Oswald", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+  margin-bottom: 8px;
+}
+.league-choice {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  max-width: 38rem;
+  min-height: 72px;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.045);
+  color: rgba(255, 255, 255, 0.82);
+  cursor: pointer;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.league-choice:has(input:checked) {
+  border-color: rgba(0, 255, 136, 0.45);
+  background: rgba(0, 255, 136, 0.09);
+}
+.league-choice input {
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+.league-choice span {
+  display: grid;
+  gap: 8px;
+}
+.league-choice small {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 13px;
+  line-height: 1.4;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.league-agreement-block {
+  gap: 8px;
+  max-width: 38rem;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.league-agreement-block legend {
+  margin-bottom: 8px;
+}
+.league-form-actions {
+  margin-top: 16px;
+}
+.league-form-actions .btn {
+  margin-top: 0;
+}
+.league-division-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 100%;
+  margin-top: 8px;
+}
+.league-division-column {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+}
+.league-division-column__title {
+  font-family: "Oswald", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--neon);
+}
+.league-division-column__choices {
+  display: grid;
+  gap: 10px;
+}
+.league-choice--division {
+  min-height: auto;
+  max-width: none;
+  margin: 0;
+}
+.league-choice--division span {
+  gap: 4px;
+}
+.league-choice--division small {
+  color: rgba(0, 255, 136, 0.75);
+  font-size: 12px;
+}
+.league-division-schedule-hint {
+  margin-top: 16px;
+  padding: 14px 16px;
+  max-width: 42rem;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 255, 136, 0.28);
+  background: rgba(0, 255, 136, 0.08);
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 14px;
+  line-height: 1.45;
+  min-height: 3rem;
+}
+.league-solo-note {
+  max-width: 38rem;
+  margin-top: 16px;
+}
+.league-solo-note p {
+  margin: 8px 0 0;
+}
+.help {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 8px 0 16px;
+}
+.league-fee-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  max-width: 38rem;
+  margin: 24px 0 16px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.045);
+  color: rgba(255, 255, 255, 0.84);
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 14px;
+}
+.league-fee-toggle:has(input:checked) {
+  border-color: rgba(0, 255, 136, 0.45);
+  background: rgba(0, 255, 136, 0.09);
+}
+.league-fee-toggle input {
+  margin: 3px 0 0;
+  flex-shrink: 0;
+}
+.league-fee-toggle span {
+  display: grid;
+  gap: 8px;
+}
+.league-fee-toggle small {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.league-fee-summary {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  max-width: 38rem;
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid rgba(0, 255, 136, 0.24);
+  border-radius: 10px;
+  background: rgba(0, 255, 136, 0.08);
+  color: rgba(255, 255, 255, 0.84);
+}
+.league-fee-summary span {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 14px;
+}
+.league-divider {
+  max-width: 38rem;
+  margin: 32px 0 16px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: "Oswald", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
+}
+code {
+  font-family: "Oswald", sans-serif, ui-monospace, monospace;
+  font-size: 0.88em;
+  color: rgba(0, 255, 136, 0.88);
+  letter-spacing: 0.3px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+/* Lists / lookup */
+.league-lookup {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.12);
+}
+.league-lookup__item {
+  padding: 16px;
+  border-bottom: 1px solid var(--rule);
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 14px;
+}
+.league-lookup__item:last-child {
+  border-bottom: none;
+}
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal[aria-hidden="false"] {
+  display: flex;
+}
+.modal__inner {
+  background: var(--navy-lt);
+  border: 1px solid rgba(0, 255, 136, 0.22);
+  max-width: 32rem;
+  max-height: 80vh;
+  overflow: auto;
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.45);
+  color: rgba(255, 255, 255, 0.9);
+}
+.modal__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.modal__head h2 {
+  font-family: "Oswald", sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0;
+  line-height: 1.3;
+}
+.modal__inner ol,
+.modal__inner p {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 14px;
+  margin: 8px 0;
+  padding-left: 0;
+  list-style-position: inside;
+}
+.modal__close {
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  color: var(--muted);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 8px;
+  flex-shrink: 0;
+}
+.modal__close:hover {
+  border-color: var(--neon);
+  color: var(--neon);
+}
+.hidden {
+  display: none !important;
+}
+@media (max-width: 640px) {
+  .league-wrap {
+    padding: 24px 16px 48px;
+  }
+  .league-card {
+    padding: 24px 16px;
+  }
+  .league-module-grid,
+  .league-dashboard-grid,
+  .league-content-grid,
+  .league-division-grid {
+    grid-template-columns: 1fr;
+  }
+  .league-hero-card {
+    padding: 24px 16px;
+  }
+}

@@ -7,6 +7,7 @@
   var injected = false;
   var anchorEl = null;
   var btnEl = null;
+  var adminQuickEl = null;
   var menuEl = null;
   var statusEl = null;
   var modalEl = null;
@@ -14,6 +15,15 @@
   var currentUser = null;
   var currentProfile = null;
   var currentIsAdmin = false;
+  var ADMIN_ITEMS = [
+    { action: 'admin-hub', href: 'SouthEnd_Admin_Hub.html', label: 'Admin Hub' },
+    { action: 'league-admin', href: 'SouthEnd_Admin_League_Play.html', label: 'League Play' },
+    { action: 'user-mgmt', href: 'SouthEnd_Admin_User_Management.html', label: 'User management' },
+    { action: 'signups', href: 'SouthEnd_Open_Play_Signups.html', label: 'Signups' },
+    { action: 'checkin', href: 'SouthEnd_Session_Checkin.html', label: 'Check-ins' },
+    { action: 'activity', href: 'SouthEnd_Admin_Activity.html', label: 'Activity' },
+    { action: 'module-admin', href: 'SouthEnd_Admin_Module_Access.html', label: 'Module access' },
+  ];
 
   function escapeHtml(s) {
     if (s == null || s === '') return '';
@@ -31,10 +41,37 @@
     }
   }
 
-  function accountHrefForCurrentPage() {
-    var page = pageFileName();
-    if (!page || !/\.html?$/i.test(page)) page = 'SouthEnd_Session_RSVP.html';
-    return 'SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent(page);
+  function isAdminPage() {
+    return /^SouthEnd_(?:Admin_(?:Hub|Activity|Module_Access|League_Play|User_Management)|Open_Play_Signups)\.html$/i.test(pageFileName());
+  }
+
+  function adminItemsHtml() {
+    return ADMIN_ITEMS.map(function (item) {
+      return '<a class="' + NS + '-menu-item" data-action="' + item.action + '" href="' + liveHref(item.href) + '">' + item.label + '</a>';
+    }).join('');
+  }
+
+  function liveHref(href) {
+    var routes = {
+      SouthEnd_Admin_Hub: '/admin',
+      SouthEnd_Admin_Activity: '/admin/activity',
+      SouthEnd_Admin_Module_Access: '/admin/module-access',
+      SouthEnd_OpenPlay_Account: '/account',
+      SouthEnd_Pickleball_Hub: '/hub',
+    };
+    var key = String(href || '').replace(/\.html(?:\?.*)?$/i, '');
+    return routes[key] || '/' + String(href || '').replace(/^\/+/, '');
+  }
+
+  function normalizeLegacyLiveUrl(rawHref) {
+    if (!rawHref) return '';
+    var href = String(rawHref);
+    if (/advanced-open-play\/(?:staging|live)\/SouthEnd_Pickleball_Hub\.html/i.test(href)) return '/hub';
+    if (/advanced-open-play\/(?:staging|live)\/SouthEnd_OpenPlay_Account\.html/i.test(href)) {
+      var query = href.indexOf('?') >= 0 ? href.slice(href.indexOf('?')) : '';
+      return '/account' + query;
+    }
+    return '';
   }
 
   function ensureDom() {
@@ -46,11 +83,16 @@
     style.textContent =
       '.header{position:relative;z-index:10;}' +
       'nav.se-site-nav{position:relative;z-index:1;}' +
-      '.' + NS + '-anchor{display:none;z-index:500;}' +
+      '.' + NS + '-anchor{display:none;align-items:center;gap:8px;z-index:500;}' +
       '.header > .' + NS + '-anchor{' +
       'position:absolute;right:18px;top:12px;}' +
       '.topbar-right > .' + NS + '-anchor{' +
       'position:relative;}' +
+      '.' + NS + '-admin-quick{' +
+      'display:none;align-items:center;justify-content:center;min-height:34px;padding:6px 10px;border-radius:8px;' +
+      'background:#00ff88;border:1.5px solid rgba(0,255,136,.45);color:#0a1628;text-decoration:none;' +
+      'font-family:Oswald,sans-serif;font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;' +
+      'box-shadow:0 0 18px rgba(0,255,136,.22);}' +
       '.' + NS + '-btn{' +
       'display:flex;align-items:center;gap:8px;min-height:38px;padding:7px 12px;border-radius:8px;' +
       'background:rgba(255,255,255,.08);border:1.5px solid rgba(0,255,136,.32);color:#fff;cursor:pointer;' +
@@ -69,6 +111,14 @@
       'font-family:Barlow,sans-serif;font-size:12px;color:rgba(255,255,255,.88);cursor:pointer;text-decoration:none;}' +
       '.' + NS + '-menu-item:hover{background:rgba(0,255,136,.11);color:#00ff88;}' +
       '.' + NS + '-menu-item.staff{color:#d8b4fe;}' +
+      '.' + NS + '-admin-toggle{position:relative;}' +
+      '.' + NS + '-admin-toggle .chevron{display:inline-block;margin-left:auto;font-size:10px;transition:transform .2s ease;color:rgba(255,255,255,.45);}' +
+      '.' + NS + '-admin-toggle[aria-expanded="true"] .chevron{transform:rotate(180deg);}' +
+      '.' + NS + '-admin-sub{overflow:hidden;max-height:0;transition:max-height .25s ease;padding-left:10px;border-left:2px solid rgba(168,85,247,.3);}' +
+      '.' + NS + '-admin-sub.open{max-height:300px;}' +
+      '.' + NS + '-admin-sub .' + NS + '-menu-item{font-size:11px;padding:7px 10px;}' +
+      '.se-site-nav-link--admin{margin-left:auto;color:#00ff88;border-color:rgba(0,255,136,.22);}' +
+      '.se-site-nav-link--admin.hidden{display:none!important;}' +
       '.' + NS + '-modal{position:fixed;inset:0;z-index:850;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;padding:16px;}' +
       '.' + NS + '-modal.open{display:flex;}' +
       '.' + NS + '-card{max-width:420px;width:100%;max-height:85vh;overflow:auto;background:#111e35;border:2px solid rgba(0,255,136,.35);border-radius:12px;padding:18px;}' +
@@ -92,14 +142,17 @@
       '.' + NS + '-msg.ok{color:#00ff88;}' +
       '@media(max-width:680px){' +
       '.header > .' + NS + '-anchor{right:10px;top:8px;}' +
+      '.' + NS + '-admin-quick.is-visible{display:inline-flex;}' +
       '.' + NS + '-btn{min-height:34px;padding:6px 10px;font-size:12px;}' +
       '.' + NS + '-menu{width:240px;top:40px;}' +
+      '.se-site-nav-link--admin{display:none!important;}' +
       '}';
     document.head.appendChild(style);
 
     anchorEl = document.createElement('div');
     anchorEl.className = NS + '-anchor';
     anchorEl.innerHTML =
+      '<a class="' + NS + '-admin-quick" href="' + liveHref('SouthEnd_Admin_Hub.html') + '">Admin</a>' +
       '<button type="button" class="' + NS + '-btn" aria-expanded="false" aria-haspopup="menu">' +
       '<svg class="' + NS + '-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">' +
       '<path d="M12 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/>' +
@@ -109,16 +162,20 @@
       '</button>' +
       '<div class="' + NS + '-menu" role="menu">' +
       '<div class="' + NS + '-menu-head"><div class="' + NS + '-menu-status">Not signed in</div></div>' +
-      '<a class="' + NS + '-menu-item" data-action="account" href="SouthEnd_OpenPlay_Account.html">Central Hub</a>' +
+      '<a class="' + NS + '-menu-item" data-action="account" href="/hub">Pickleball Hub</a>' +
       '<button class="' + NS + '-menu-item" type="button" data-action="view">View profile</button>' +
-      '<a class="' + NS + '-menu-item staff hidden" data-action="checkin" href="SouthEnd_Session_Checkin.html">Check-ins</a>' +
-      '<a class="' + NS + '-menu-item staff hidden" data-action="activity" href="SouthEnd_Admin_Activity.html">User activity</a>' +
-      '<a class="' + NS + '-menu-item staff hidden" data-action="settings" href="SouthEnd_Session_Checkin.html?tab=settings">Staff settings</a>' +
+      '<button class="' + NS + '-menu-item staff hidden ' + NS + '-admin-toggle" type="button" data-action="admin-toggle" aria-expanded="false" style="display:flex;align-items:center;">' +
+      'Admin <span class="chevron">&#9662;</span></button>' +
+      '<div class="' + NS + '-admin-sub staff hidden">' +
+      adminItemsHtml() +
+      '</div>' +
+      '<div data-pickleball-share data-share-context="pickleball"></div>' +
       '<button class="' + NS + '-menu-item" type="button" data-action="signout">Sign out</button>' +
       '</div>';
     document.body.appendChild(anchorEl);
 
     btnEl = anchorEl.querySelector('.' + NS + '-btn');
+    adminQuickEl = anchorEl.querySelector('.' + NS + '-admin-quick');
     menuEl = anchorEl.querySelector('.' + NS + '-menu');
     statusEl = anchorEl.querySelector('.' + NS + '-menu-status');
 
@@ -142,12 +199,19 @@
       closeMenu();
       openProfileModal();
     });
+    anchorEl.querySelector('[data-action="admin-toggle"]').addEventListener('click', function (e) {
+      e.stopPropagation();
+      var sub = anchorEl.querySelector('.' + NS + '-admin-sub');
+      var expanded = this.getAttribute('aria-expanded') === 'true';
+      this.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      if (sub) sub.classList.toggle('open', !expanded);
+    });
     anchorEl.querySelector('[data-action="signout"]').addEventListener('click', function () {
       closeMenu();
       var SE = global.SEOpenPlay;
       if (!SE || !SE.signOutUser) return;
       SE.signOutUser().then(function () {
-        global.location.href = 'SouthEnd_OpenPlay_Account.html';
+        global.location.href = '/account';
       });
     });
 
@@ -157,6 +221,12 @@
     });
     document.addEventListener('click', function (e) {
       if (!anchorEl.contains(e.target)) closeMenu();
+      var link = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+      var fixedHref = link ? normalizeLegacyLiveUrl(link.getAttribute('href')) : '';
+      if (fixedHref) {
+        e.preventDefault();
+        global.location.href = fixedHref;
+      }
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
@@ -219,8 +289,13 @@
       '<div class="' + NS + '-field"><label>Phone</label><input class="' + NS + '-input" name="phone" value="' + escapeHtml(profileValue(p.phone)) + '" maxlength="40" required></div>' +
       '<div class="' + NS + '-field"><label>Skill</label><select class="' + NS + '-select" name="skill" required>' +
       optionHtml('', 'Select level...', p.skill) +
-      optionHtml('Advanced 4.0+', 'Advanced 4.0+', p.skill) +
-      optionHtml('Open 5.0+', 'Open 5.0+', p.skill) +
+      optionHtml('2.0 Beginner', '2.0 (Beginner)', p.skill) +
+      optionHtml('2.5 Upper Beginner', '2.5 (Upper Beginner)', p.skill) +
+      optionHtml('3.0 Lower Intermediate', '3.0 (Lower Intermediate)', p.skill) +
+      optionHtml('3.5 Intermediate', '3.5 (Intermediate)', p.skill) +
+      optionHtml('4.0 Advanced', '4.0 (Advanced)', p.skill) +
+      optionHtml('4.5 Upper Advanced', '4.5 (Upper Advanced)', p.skill) +
+      optionHtml('5.0 Open', '5.0 (Open)', p.skill) +
       '</select></div>' +
       '<div class="' + NS + '-field"><label>South End member?</label><select class="' + NS + '-select" name="membership" required>' +
       optionHtml('', 'Select...', p.membership) +
@@ -272,7 +347,7 @@
         return;
       }
       if (membership === 'yes' && !/^[23][0-9]{5}$/.test(memberCard)) {
-        setProfileModalMessage('Member card must be 6 digits and start with 2 or 3.', 'error');
+        setProfileModalMessage('Invalid Membership/Access Card #', 'error');
         return;
       }
       if (membership !== 'yes') memberCard = '';
@@ -306,7 +381,7 @@
         })
         .then(function () {
           refreshMenuStatus();
-          setProfileModalMessage('Profile saved. Changes apply across Open Play.', 'ok');
+          setProfileModalMessage('Saved successfully.', 'ok');
         })
         .catch(function () {
           setProfileModalMessage('Could not save profile. Please try again.', 'error');
@@ -328,6 +403,11 @@
 
   function mountAnchor() {
     if (!anchorEl) return;
+    var leagueProfile = document.querySelector('.league-header-profile');
+    if (leagueProfile && leagueProfile.parentNode) {
+      leagueProfile.parentNode.replaceChild(anchorEl, leagueProfile);
+      return;
+    }
     var topbarRight = document.querySelector('.topbar-right');
     if (topbarRight) {
       topbarRight.appendChild(anchorEl);
@@ -341,14 +421,64 @@
 
   function setVisible(on) {
     if (!anchorEl) return;
-    anchorEl.style.display = on ? 'block' : 'none';
+    anchorEl.style.display = on ? 'flex' : 'none';
+  }
+
+  function ensureAdminNavLink() {
+    var nav = document.querySelector('.se-site-nav');
+    if (!nav) return null;
+    Array.prototype.slice.call(nav.querySelectorAll('a.se-site-nav-link')).forEach(function (a) {
+      var href = a.getAttribute('href') || '';
+      if (/SouthEnd_(?:Admin_(?:Activity|Module_Access|League_Play|User_Management)|Open_Play_Signups)\.html/i.test(href)) {
+        a.classList.remove('se-site-nav-link--active');
+        a.removeAttribute('aria-current');
+        a.style.display = 'none';
+      }
+    });
+    var link = document.getElementById('league-admin-nav-link') || document.getElementById('admin-hub-nav-link');
+    if (!link) {
+      link = Array.prototype.slice.call(nav.querySelectorAll('a.se-site-nav-link')).filter(function (a) {
+        return /(?:SouthEnd_Admin_Hub\.html|\/admin(?:$|[?#]))/i.test(a.getAttribute('href') || '');
+      })[0] || null;
+    }
+    if (!link) {
+      link = document.createElement('a');
+      link.id = 'admin-hub-nav-link';
+      link.href = liveHref('SouthEnd_Admin_Hub.html');
+      link.textContent = 'Admin';
+      nav.appendChild(link);
+    }
+    link.classList.add('se-site-nav-link', 'se-site-nav-link--admin', 'hidden');
+    link.setAttribute('href', liveHref('SouthEnd_Admin_Hub.html'));
+    link.textContent = 'Admin';
+    nav.appendChild(link);
+    return link;
+  }
+
+  function setAdminNavVisible(on) {
+    var link = ensureAdminNavLink();
+    if (!link) return;
+    link.classList.toggle('hidden', !on);
+    link.classList.toggle('se-site-nav-link--active', !!on && isAdminPage());
+    if (on && isAdminPage()) {
+      link.setAttribute('aria-current', 'page');
+    } else {
+      link.removeAttribute('aria-current');
+    }
   }
 
   function setStaffMenuVisible(on) {
     if (!anchorEl) return;
+    if (adminQuickEl) adminQuickEl.classList.toggle('is-visible', !!on);
     anchorEl.querySelectorAll('.staff').forEach(function (el) {
       el.classList.toggle('hidden', !on);
     });
+    if (!on) {
+      var sub = anchorEl.querySelector('.' + NS + '-admin-sub');
+      var toggle = anchorEl.querySelector('[data-action="admin-toggle"]');
+      if (sub) sub.classList.remove('open');
+      if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    }
   }
 
   function refreshMenuStatus() {
@@ -364,7 +494,7 @@
   function refreshAccountLink() {
     if (!anchorEl) return;
     var accountLink = anchorEl.querySelector('[data-action="account"]');
-    if (accountLink) accountLink.setAttribute('href', accountHrefForCurrentPage());
+    if (accountLink) accountLink.setAttribute('href', liveHref('SouthEnd_Pickleball_Hub.html'));
   }
 
   function updateUserState(user) {
@@ -376,6 +506,7 @@
     refreshAccountLink();
     refreshMenuStatus();
     setStaffMenuVisible(false);
+    setAdminNavVisible(false);
     if (!currentUser || !SE) return;
     if (SE.loadUserProfile) {
       SE.loadUserProfile(currentUser.uid).then(function (p) {
@@ -387,6 +518,7 @@
       SE.loadAdminUidFlag(currentUser.uid).then(function (ok) {
         currentIsAdmin = !!ok;
         setStaffMenuVisible(currentIsAdmin);
+        setAdminNavVisible(currentIsAdmin);
       });
     }
   }
@@ -396,6 +528,10 @@
     if (!SE || !SE.firebaseConfigured || !SE.firebaseConfigured()) return;
     ensureDom();
     mountAnchor();
+    ensureAdminNavLink();
+    if (global.PickleballInviteShare && typeof global.PickleballInviteShare.refresh === 'function') {
+      global.PickleballInviteShare.refresh();
+    }
     SE.onAuthStateChanged(function (user) {
       updateUserState(user);
       if (!user) {

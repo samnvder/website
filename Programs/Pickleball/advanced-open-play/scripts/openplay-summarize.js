@@ -210,7 +210,7 @@ ${databasePaths.map((p) => `- \`${p}\``).join('\n')}
 
 | Server | How to Run | URL |
 |---|---|---|
-| Local Open Play QA hub | \`npm run local-test\` | http://127.0.0.1:3456/local-page/index.html |
+| Local Open Play QA hub | \`npm run local-test\` | http://127.0.0.1:3456/Programs/Pickleball/advanced-open-play/testing/local-page/index.html |
 | Local website dev server | \`npm run start\` or \`npm run dev\` | http://127.0.0.1:3000/ |
 | Static local server | \`npm run serve\` | http://127.0.0.1:3000/ |
 

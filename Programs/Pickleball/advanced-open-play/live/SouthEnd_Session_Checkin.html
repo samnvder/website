@@ -1,11 +1,12 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="js/openplay-testing-env.js"></script>
-<title>South End — Session Check-In</title>
+<title>South End - Session Check-In</title>
+<link rel="icon" type="image/jpeg" href="favicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -19,12 +20,37 @@
 html,body{height:100%;overflow:hidden;}
 body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:flex;flex-direction:column;}
 
-/* TOP BAR */
-.topbar{background:var(--navy-lt);border-bottom:2px solid var(--neon);padding:9px 18px;display:flex;align-items:center;gap:12px;flex-shrink:0;position:relative;}
-.topbar img{height:30px;filter:drop-shadow(0 0 6px var(--neon-glow));}
-.topbar-title{font-family:'Oswald',sans-serif;font-size:16px;color:#fff;letter-spacing:1px;text-transform:uppercase;}
-.topbar-title span{color:var(--neon);}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+/* TOP BAR + shared Pickleball header chrome */
+.header.checkin-header{
+  background:var(--navy-lt);border-bottom:2px solid var(--neon);padding:9px 18px;
+  display:flex;align-items:flex-start;gap:12px;flex-shrink:0;position:relative;
+}
+.header.checkin-header img{height:30px;filter:drop-shadow(0 0 6px var(--neon-glow));flex-shrink:0;margin-top:2px;}
+.header-titles{flex:1;min-width:0;}
+.header.checkin-header .hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--neon);margin-bottom:2px;}
+.header.checkin-header .hdr-title{font-family:'Oswald',sans-serif;font-size:16px;color:#fff;letter-spacing:1px;text-transform:uppercase;line-height:1;}
+.header.checkin-header .hdr-title span{color:var(--neon);}
+.header.checkin-header .hdr-sub{font-size:9px;color:rgba(255,255,255,.65);margin-top:3px;line-height:1.35;}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.se-site-nav{
+  display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;
+  padding:8px 18px 10px;background:rgba(5,12,28,.85);
+  border-bottom:1px solid rgba(0,255,136,.22);flex-shrink:0;
+}
+.se-site-nav-link{
+  font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.55);text-decoration:none;padding:8px 14px;border-radius:6px;
+  border:1px solid transparent;transition:color .15s,border-color .15s,background .15s;
+}
+.se-site-nav-link:hover{color:var(--neon);background:rgba(0,255,136,.08);}
+.se-site-nav-link--active{
+  color:var(--ink);background:var(--neon);border-color:rgba(0,255,136,.45);
+  box-shadow:0 0 20px rgba(0,255,136,.25);
+}
+.sub-nav{display:flex;flex-wrap:wrap;gap:8px;padding:10px 18px;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(0,255,136,.12);flex-shrink:0;}
+.sub-nav a{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);text-decoration:none;padding:6px 12px;border-radius:6px;}
+.sub-nav a:hover{color:var(--neon);}
+.sub-nav a.active{color:var(--ink);background:rgba(0,255,136,.85);}
 .session-badge{padding:3px 10px;border-radius:12px;font-size:9px;font-weight:700;letter-spacing:.5px;background:var(--neon-dim);border:1px solid rgba(0,255,136,.25);color:var(--neon);}
 .live-ct{font-family:'Oswald',sans-serif;font-size:17px;color:var(--neon);}
 .live-ct span{font-size:9px;color:var(--muted);font-family:'Barlow',sans-serif;}
@@ -256,19 +282,46 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
 /* EMPTY */
 .empty{text-align:center;padding:40px 20px;color:var(--muted);}
 .empty-icon{font-size:36px;margin-bottom:8px;}
+.message-board-fab{
+  position:fixed;right:18px;bottom:18px;z-index:90;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.22);
+  background:linear-gradient(135deg,var(--neon,#00ff88),#34d399);color:var(--ink,#050a12);
+  font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;
+  box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 26px rgba(0,255,136,.25);transition:transform .15s,filter .15s,box-shadow .15s;
+}
+.message-board-fab:hover{filter:brightness(1.06);transform:translateY(-1px);box-shadow:0 12px 32px rgba(0,0,0,.4),0 0 30px rgba(0,255,136,.32);}
+.message-board-fab:focus-visible{outline:2px solid #fff;outline-offset:3px;}
+@media(max-width:520px){.message-board-fab{right:14px;bottom:14px;padding:12px 14px;font-size:12px;}}
 </style>
 </head>
 <body>
 
-<div class="topbar">
+<div class="header checkin-header">
   <img src="data:image/png;base64,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" alt="South End">
-  <div class="topbar-title">OPEN <span>PLAY</span> · Check-In</div>
+  <div class="header-titles">
+    <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+    <div class="hdr-title">SESSION <span>CHECK-IN</span></div>
+    <div class="hdr-sub">Staff roster, scan, and session tools.</div>
+  </div>
   <div class="topbar-right">
     <span class="session-badge" id="session-badge">No Session</span>
     <div class="live-ct"><span id="ct-in">0</span> <span>in</span></div>
-    <button class="btn-sm btn-ghost-sm" onclick="switchTab('settings')">⚙</button>
+    <button class="btn-sm btn-ghost-sm" onclick="switchTab('settings')">Settings</button>
     <button class="btn-sm btn-ghost-sm" onclick="showSessionModal()">Session</button>
   </div>
+</div>
+<nav class="se-site-nav" aria-label="Pickleball hub sections">
+  <a class="se-site-nav-link" href="SouthEnd_Pickleball_Hub.html">Hub</a>
+  <a class="se-site-nav-link" href="SouthEnd_OpenPlay_Account.html">Advanced Open Play</a>
+  <a class="se-site-nav-link" href="SouthEnd_Message_Board.html">Message Board</a>
+  <a class="se-site-nav-link" href="../../league-play/SouthEnd_League_Play_Hub.html">League Play</a>
+  <a class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
+  <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_Advanced_Open_Play.html" aria-current="page">Open Play admin</a>
+</nav>
+<div class="sub-nav" aria-label="Advanced Open Play admin sections">
+  <a href="SouthEnd_Open_Play_Signups.html">Signups</a>
+  <a href="SouthEnd_Session_Checkin.html" class="active">Check-ins</a>
+  <a href="SouthEnd_Admin_Activity.html">Activity</a>
 </div>
 
 <div class="stats-bar">
@@ -285,10 +338,10 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
 </div>
 
 <div class="tab-nav">
-  <div class="tab active" onclick="switchTab('roster')">📋 Roster</div>
-  <div class="tab" onclick="switchTab('scan')">📷 Scan</div>
-  <div class="tab" onclick="switchTab('bracket')">⚡ Brackets</div>
-  <div class="tab" onclick="switchTab('settings')" id="tab-settings">⚙ Settings</div>
+  <div class="tab active" onclick="switchTab('roster')"> Roster</div>
+  <div class="tab" onclick="switchTab('scan')"> Scan</div>
+  <div class="tab" onclick="switchTab('bracket')"> Brackets</div>
+  <div class="tab" onclick="switchTab('settings')" id="tab-settings">Settings Settings</div>
 </div>
 
 <div class="panels">
@@ -296,7 +349,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
   
   <div class="panel active" id="panel-roster">
     <div class="toolbar">
-      <input class="search-box" type="text" id="roster-search" placeholder="Search name or ID..." oninput="renderRoster()">
+      <input class="search-box" type="search" id="roster-search" placeholder="Search name or ID..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="roster-search-q" oninput="renderRoster()">
       <label class="toolbar-check" title="Select all visible roster rows">
         <input type="checkbox" id="select-all-visible" onchange="toggleSelectAllVisible(this.checked)">
         <span>Select All</span>
@@ -306,11 +359,11 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
     </div>
     <div class="tier-chips">
       <span class="tc a-all" data-tier="all" onclick="filterTier('all')">All</span>
-      <span class="tc" data-tier="free" onclick="filterTier('free')">🟢 Free</span>
-      <span class="tc" data-tier="disc" onclick="filterTier('disc')">🟡 Disc</span>
-      <span class="tc" data-tier="full" onclick="filterTier('full')">💜 Full</span>
-      <span class="tc" data-tier="ua" onclick="filterTier('ua')">⚪ Unassigned</span>
-      <span class="tc" data-tier="waiver" onclick="filterTier('waiver')">📋 Waiver Needed</span>
+      <span class="tc" data-tier="free" onclick="filterTier('free')"> Free</span>
+      <span class="tc" data-tier="disc" onclick="filterTier('disc')"> Disc</span>
+      <span class="tc" data-tier="full" onclick="filterTier('full')"> Full</span>
+      <span class="tc" data-tier="ua" onclick="filterTier('ua')"> Unassigned</span>
+      <span class="tc" data-tier="waiver" onclick="filterTier('waiver')"> Waiver Needed</span>
     </div>
     <div class="player-list" id="player-list"></div>
   </div>
@@ -323,13 +376,13 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
         <div class="scan-overlay"><div class="scan-cross"></div></div>
       </div>
       <div class="scan-status" id="scan-status">Tap Start Scan to open camera</div>
-      <button class="btn btn-neon" id="scan-btn" onclick="toggleScan()" style="margin-top:12px;">📷 Start Scan</button>
+      <button class="btn btn-neon" id="scan-btn" onclick="toggleScan()" style="margin-top:12px;"> Start Scan</button>
       <div class="scan-result" id="scan-result">
         <div class="sr-id" id="sr-id"></div>
         <div class="sr-name" id="sr-name"></div>
         <div class="sr-detail" id="sr-detail"></div>
         <div class="scan-acts">
-          <button class="btn btn-neon" onclick="confirmCheckin()">✓ Check In</button>
+          <button class="btn btn-neon" onclick="confirmCheckin()">Yes Check In</button>
           <button class="btn btn-ghost" onclick="dismissScan()">Dismiss</button>
         </div>
       </div>
@@ -357,8 +410,8 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
 
       <div class="setting-row">
         <div class="setting-lbl">Coupon Codes</div>
-        <div class="setting-desc">Current codes active on the RSVP form. To add or remove codes, edit <code style="font-size:10px;color:rgba(0,255,136,.5);">Programs/Pickleball/advanced-open-play/live/SouthEnd_Session_RSVP.html</code> — search for <code style="font-size:10px;color:rgba(0,255,136,.5);">CODES</code> near the top of the script section.</div>
-        <div style="font-size:11px;color:rgba(0,255,136,.6);font-family:'Oswald',sans-serif;letter-spacing:1px;">GUEST2026 · FOUNDING50 · STAFF</div>
+        <div class="setting-desc">Current codes active on the RSVP form. To add or remove codes, edit <code style="font-size:10px;color:rgba(0,255,136,.5);">Programs/Pickleball/advanced-open-play/live/SouthEnd_Session_RSVP.html</code> - search for <code style="font-size:10px;color:rgba(0,255,136,.5);">CODES</code> near the top of the script section.</div>
+        <div style="font-size:11px;color:rgba(0,255,136,.6);font-family:'Oswald',sans-serif;letter-spacing:1px;">GUEST2026 - FOUNDING50 - STAFF</div>
       </div>
 
       <div class="setting-row">
@@ -374,17 +427,17 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
 
       <div class="setting-row">
         <div class="setting-lbl">Session Times</div>
-        <div class="setting-desc">Reference only — actual session times are set on the RSVP form.</div>
+        <div class="setting-desc">Reference only - actual session times are set on the RSVP form.</div>
         <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:2;">
-          Tuesday Morning &nbsp;·&nbsp; 8:00 AM – 12:00 PM<br>
-          Tuesday Evening &nbsp;·&nbsp; 6:00 – 9:00 PM<br>
-          Thursday Evening &nbsp;·&nbsp; 6:00 – 9:00 PM
+          Tuesday Morning &nbsp;-&nbsp; 8:00 AM - 12:00 PM<br>
+          Tuesday Evening &nbsp;-&nbsp; 6:00 - 9:00 PM<br>
+          Thursday Evening &nbsp;-&nbsp; 6:00 - 9:00 PM
         </div>
       </div>
 
       <div class="setting-row">
-        <div class="setting-lbl">RSVP → Check-In Sync</div>
-        <div class="setting-desc">Same-browser updates use a local queue + tabs. <strong>All devices:</strong> set <code style="font-size:10px;color:rgba(0,255,136,.5);">js/openplay-firebase-config.js</code> (Realtime Database). Status: <span id="fb-cloud-status" style="color:rgba(0,255,136,.85);">…</span></div>
+        <div class="setting-lbl">RSVP -> Check-In Sync</div>
+        <div class="setting-desc">Same-browser updates use a local queue + tabs. <strong>All devices:</strong> set <code style="font-size:10px;color:rgba(0,255,136,.5);">js/openplay-firebase-config.js</code> (Realtime Database). Status: <span id="fb-cloud-status" style="color:rgba(0,255,136,.85);">...</span></div>
         <div class="setting-desc" style="margin-top:6px;">PIN is shared with the RSVP page via <code style="font-size:10px;color:rgba(0,255,136,.5);">se_pin</code>.</div>
         <button type="button" class="btn btn-ghost" onclick="if(drainPendingRsvps()){save();renderAll();}else{alert('No pending RSVPs in queue.');}">Pull pending RSVPs now</button>
       </div>
@@ -469,9 +522,14 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
     <div class="mrow">
       <div><label>Skill Level</label>
         <select id="m-skill">
-          <option value="">—</option>
-          <option value="Advanced 4.0+">Advanced 4.0+</option>
-          <option value="Open 5.0+">Open 5.0+</option>
+          <option value="">-</option>
+          <option value="2.0 Beginner">2.0 (Beginner)</option>
+          <option value="2.5 Upper Beginner">2.5 (Upper Beginner)</option>
+          <option value="3.0 Lower Intermediate">3.0 (Lower Intermediate)</option>
+          <option value="3.5 Intermediate">3.5 (Intermediate)</option>
+          <option value="4.0 Advanced">4.0 (Advanced)</option>
+          <option value="4.5 Upper Advanced">4.5 (Upper Advanced)</option>
+          <option value="5.0 Open">5.0 (Open)</option>
         </select>
       </div>
       <div><label>Tier</label>
@@ -511,14 +569,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
   <div class="modal">
     <div class="modal-title">Set Session</div>
     <div class="mrow-1"><label>Day</label>
-      <select id="sm-day">
-        <option value="Tuesday Morning Apr 8">☀ Tue Morning Apr 8 · 8am–12pm</option>
-        <option value="Tuesday Evening Apr 8">🌙 Tue Evening Apr 8 · 6–9pm</option>
-        <option value="Tuesday Morning Apr 15">☀ Tue Morning Apr 15 · 8am–12pm</option>
-        <option value="Tuesday Evening Apr 15">🌙 Tue Evening Apr 15 · 6–9pm</option>
-        <option value="Thursday Evening Apr 10">🌙 Thu Evening Apr 10 · 6–9pm</option>
-        <option value="Thursday Evening Apr 17">🌙 Thu Evening Apr 17 · 6–9pm</option>
-        </select>
+      <select id="sm-day"><option value="">Loading sessions...</option></select>
     </div>
     <div class="mrow-1"><label>Date</label><input type="date" id="sm-date"></div>
     <div style="font-size:10px;color:rgba(255,255,255,.25);margin-bottom:12px;">Changing session resets all check-in statuses.</div>
@@ -529,9 +580,11 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
   </div>
 </div>
 
+<footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
 <script src="js/openplay-firebase-config.js"></script>
 <script src="js/south-end-openplay-sync.js"></script>
-<script src="js/openplay-profile-panel.js?v=20260407"></script>
+<script src="js/pickleball-invite-share.js?v=20260425"></script>
+<script src="js/openplay-profile-panel.js?v=20260426-routing2"></script>
 <script>
 SEOpenPlay.migratePin();
 let state = loadState();
@@ -551,7 +604,7 @@ let ADMIN_PIN = SEOpenPlay.getPin();
 /** Expanded roster row keys (pid, or `__idx_${i}` when pid empty). */
 const rosterExpandedKeys = new Set();
 const TIER_DOT = {free:'td-free',disc:'td-disc',full:'td-full',ua:'td-ua'};
-const TIER_TXT = {free:'FREE',disc:'$10',full:'$20',ua:'—'};
+const TIER_TXT = {free:'FREE',disc:'$10',full:'$20',ua:'-'};
 const TIER_CLS = {free:'bt-free',disc:'bt-disc',full:'bt-full',ua:''};
 
 function escapeHtml(s) {
@@ -562,18 +615,18 @@ function escapeAttr(s) {
   return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
 }
 function truncatePreview(s, max) {
-  if (s == null || s === '') return '—';
+  if (s == null || s === '') return '-';
   const t = String(s).trim();
-  if (!t.length) return '—';
+  if (!t.length) return '-';
   if (t.length <= max) return t;
-  return t.slice(0, Math.max(0, max - 1)) + '…';
+  return t.slice(0, Math.max(0, max - 1)) + '...';
 }
 function tierDisplayLabel(t) {
   if (!t || t === 'ua') return 'Unassigned';
   return TIER_TXT[t] || t;
 }
 function waiverPreview(p) {
-  if (!p.waiver) return '—';
+  if (!p.waiver) return '-';
   return p.waiverDone ? 'Signed' : 'Needs sign';
 }
 
@@ -654,6 +707,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
   document.getElementById('sm-date').value = new Date().toISOString().slice(0,10);
+  // Clear stale roster from past sessions: if the saved date is older than today, reset.
+  if (state.date) {
+    var savedTs = new Date(state.date + 'T12:00:00').getTime();
+    if (!isNaN(savedTs) && savedTs < Date.now() - 24*60*60*1000) {
+      state = { session: '', date: '', players: [] };
+      save();
+    }
+  }
+  populateSessionDropdown();
   updateBadge();
   if (drainPendingRsvps()) { save(); }
   renderAll();
@@ -680,13 +742,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const fbSt = document.getElementById('fb-cloud-status');
   if (fbSt) {
     if (SEOpenPlay.firebaseConfigured()) {
-      fbSt.textContent = 'On — Realtime DB (all devices)';
+      fbSt.textContent = 'On - Realtime DB (all devices)';
       SEOpenPlay.initFirebase().catch(() => {
         fbSt.textContent = 'Config set but SDK failed to load';
         fbSt.style.color = '#f87171';
       });
     } else {
-      fbSt.textContent = 'Off — add Firebase in js/openplay-firebase-config.js';
+      fbSt.textContent = 'Off - add Firebase in js/openplay-firebase-config.js';
       fbSt.style.color = 'rgba(255,255,255,.45)';
     }
   }
@@ -809,12 +871,12 @@ function drainPendingRsvps() {
 function updateBadge() {
   const b = document.getElementById('session-badge');
   if (state.session && state.date) {
-    b.textContent = state.session + ' · ' + new Date(state.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    b.textContent = state.session + ' - ' + new Date(state.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
   } else { b.textContent = 'No Session'; }
 }
 
 function renderAll() { syncTierChips(); renderStats(); renderRoster(); renderBracket(); renderQuickActionsPanel(); renderPlayerProfilePanel(); }
-/** Lightweight re-render for in-row toggles — skips bracket/panels rebuild. */
+/** Lightweight re-render for in-row toggles - skips bracket/panels rebuild. */
 function renderInline() { syncTierChips(); renderStats(); renderRoster(); }
 
 function renderStats() {
@@ -855,7 +917,7 @@ function rosterYearHint() {
   return new Date().getFullYear();
 }
 
-/** Parse RSVP session label → sortable meta (upcoming-first = ascending calendar + slot order). */
+/** Parse RSVP session label -> sortable meta (upcoming-first = ascending calendar + slot order). */
 function sessionSortMeta(sessionStr) {
   if (!sessionStr) return { ts: null, slotOrder: 99 };
   const m = String(sessionStr).match(/^(Tuesday Morning|Tuesday Evening|Thursday Evening)\s+(\w+)\s+(\d+)/i);
@@ -1021,9 +1083,9 @@ function renderQuickActionsPanel() {
     previewEl.textContent = 'No players in this group yet.';
     return;
   }
-  const names = players.slice(0, 6).map((p) => p.name || '—');
+  const names = players.slice(0, 6).map((p) => p.name || '-');
   const suffix = players.length > 6 ? ` +${players.length - 6} more` : '';
-  previewEl.textContent = names.join(' · ') + suffix;
+  previewEl.textContent = names.join(' - ') + suffix;
 }
 function ensureQuickTargets() {
   const players = getQuickScopePlayers();
@@ -1082,7 +1144,7 @@ function quickEmailGroup() {
     return;
   }
   const session = state.session || 'Open Play';
-  const subject = `South End Open Play — ${session}`;
+  const subject = `South End Open Play - ${session}`;
   const body = `Hi everyone,\n\nQuick note for ${session}.\n\nThanks!`;
   window.location.href = 'mailto:?bcc=' + encodeURIComponent(emails.join(',')) + '&subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 }
@@ -1121,16 +1183,16 @@ function renderPlayerProfilePanel() {
     bodyEl.innerHTML = '<div class="pp-empty">Click <strong>Profile</strong> on a roster row to view and manage this player.</div>';
     return;
   }
-  nameEl.textContent = p.name || '—';
-  subEl.textContent = `ID: ${p.pid || '—'}`;
+  nameEl.textContent = p.name || '-';
+  subEl.textContent = `ID: ${p.pid || '-'}`;
   const tier = tierDisplayLabel(p.tier);
-  const session = p.session || '—';
+  const session = p.session || '-';
   const waiver = waiverPreview(p);
   bodyEl.innerHTML = `
     <div class="pp-grid">
-      <div class="pp-cell"><div class="pp-k">Email</div><div class="pp-v">${escapeHtml(p.email && String(p.email).trim() ? p.email : '—')}</div></div>
-      <div class="pp-cell"><div class="pp-k">Phone</div><div class="pp-v">${escapeHtml(p.phone && String(p.phone).trim() ? p.phone : '—')}</div></div>
-      <div class="pp-cell"><div class="pp-k">Skill</div><div class="pp-v">${escapeHtml(p.skill || '—')}</div></div>
+      <div class="pp-cell"><div class="pp-k">Email</div><div class="pp-v">${escapeHtml(p.email && String(p.email).trim() ? p.email : '-')}</div></div>
+      <div class="pp-cell"><div class="pp-k">Phone</div><div class="pp-v">${escapeHtml(p.phone && String(p.phone).trim() ? p.phone : '-')}</div></div>
+      <div class="pp-cell"><div class="pp-k">Skill</div><div class="pp-v">${escapeHtml(p.skill || '-')}</div></div>
       <div class="pp-cell"><div class="pp-k">Tier</div><div class="pp-v">${escapeHtml(tier)}</div></div>
       <div class="pp-cell"><div class="pp-k">Check-in</div><div class="pp-v">${p.checkedIn ? 'Checked in' : 'Not checked in'}</div></div>
       <div class="pp-cell"><div class="pp-k">Payment</div><div class="pp-v">${p.paid ? 'Paid' : 'Unpaid'}</div></div>
@@ -1139,7 +1201,7 @@ function renderPlayerProfilePanel() {
     </div>
     <div class="pp-block">
       <div class="pp-k">Notes</div>
-      <div class="pp-v">${p.notes && String(p.notes).trim() ? escapeHtml(p.notes).replace(/\n/g, '<br>') : '—'}</div>
+      <div class="pp-v">${p.notes && String(p.notes).trim() ? escapeHtml(p.notes).replace(/\n/g, '<br>') : '-'}</div>
     </div>`;
 }
 function emailPlayerFromPanel() {
@@ -1209,7 +1271,7 @@ function renderRoster() {
 
   const list=document.getElementById('player-list');
   if (!players.length) {
-    list.innerHTML='<div class="empty"><div class="empty-icon">📋</div>No players. Add using the button above.</div>';
+    list.innerHTML='<div class="empty"><div class="empty-icon"></div>No players. Add using the button above.</div>';
     return;
   }
 
@@ -1237,13 +1299,13 @@ function renderRoster() {
     const rk = playerKeyFor(p, p._i);
     const isOpen = rosterExpandedKeys.has(rk);
     const isSel = selectedPlayerKeys.has(rk);
-    const chev = isOpen ? '▾' : '▸';
+    const chev = isOpen ? 'v' : '>';
     const pvEmail = escapeHtml(truncatePreview(p.email, 36));
     const pvPhone = escapeHtml(truncatePreview(p.phone, 22));
     const pvSkill = escapeHtml(truncatePreview(p.skill, 28));
     const pvSession = escapeHtml(truncatePreview(p.session, 40));
     const pvNotes = escapeHtml(truncatePreview(p.notes, 72));
-    const pvPid = escapeHtml(p.pid || '—');
+    const pvPid = escapeHtml(p.pid || '-');
     const pvTier = escapeHtml(tierDisplayLabel(p.tier));
     const pvCI = p.checkedIn ? 'Checked in' : 'Not checked in';
     const pvPaid = p.paid ? 'Paid' : 'Unpaid';
@@ -1256,7 +1318,7 @@ function renderRoster() {
         <div class="tier-dot ${TIER_DOT[p.tier]||'td-ua'}" title="${escapeAttr(tierDisplayLabel(p.tier))}"></div>
         <div class="prow-mid">
           <div class="prow-hd">
-            <button type="button" class="pr-name pr-name-btn tap-profile ${p.checkedIn?'checked':''}" onclick="openPlayerProfilePanel(${p._i});event.stopPropagation();" title="Open player profile">${escapeHtml(p.name || '—')}</button>
+            <button type="button" class="pr-name pr-name-btn tap-profile ${p.checkedIn?'checked':''}" onclick="openPlayerProfilePanel(${p._i});event.stopPropagation();" title="Open player profile">${escapeHtml(p.name || '-')}</button>
             <span class="prow-chev" aria-hidden="true">${chev}</span>
           </div>
           <div class="pr-preview-grid">
@@ -1269,14 +1331,14 @@ function renderRoster() {
             <div class="pv-cell"><span class="pv-label">Check-in</span><span class="pv-val">${escapeHtml(pvCI)}</span></div>
             <div class="pv-cell"><span class="pv-label">Payment</span><span class="pv-val">${escapeHtml(pvPaid)}</span></div>
             <div class="pv-cell"><span class="pv-label">Waiver</span><span class="pv-val">${pvWaiver}</span></div>
-            <div class="pv-cell"><span class="pv-label">Member card</span><span class="pv-val mono">${mc ? mcPv : '—'}</span></div>
-            <div class="pv-cell" style="grid-column:1/-1;"><span class="pv-label">Notes</span><span class="pv-val dim">${p.notes && String(p.notes).trim() ? pvNotes : '—'}</span></div>
+            <div class="pv-cell"><span class="pv-label">Member card</span><span class="pv-val mono">${mc ? mcPv : '-'}</span></div>
+            <div class="pv-cell" style="grid-column:1/-1;"><span class="pv-label">Notes</span><span class="pv-val dim">${p.notes && String(p.notes).trim() ? pvNotes : '-'}</span></div>
           </div>
           <div class="prow-expand">
-            <div class="pe-block"><div class="pe-k">Email</div><div class="pe-v">${escapeHtml(p.email && String(p.email).trim() ? p.email : '—')}</div></div>
-            <div class="pe-block"><div class="pe-k">Phone</div><div class="pe-v">${escapeHtml(p.phone && String(p.phone).trim() ? p.phone : '—')}</div></div>
+            <div class="pe-block"><div class="pe-k">Email</div><div class="pe-v">${escapeHtml(p.email && String(p.email).trim() ? p.email : '-')}</div></div>
+            <div class="pe-block"><div class="pe-k">Phone</div><div class="pe-v">${escapeHtml(p.phone && String(p.phone).trim() ? p.phone : '-')}</div></div>
             ${mc ? `<div class="pe-block"><div class="pe-k">Member card</div><div class="pe-v mono">${escapeHtml(mc)}</div></div>` : ''}
-            <div class="pe-block"><div class="pe-k">Notes</div><div class="pe-v">${p.notes && String(p.notes).trim() ? escapeHtml(p.notes).replace(/\n/g, '<br>') : '—'}</div></div>
+            <div class="pe-block"><div class="pe-k">Notes</div><div class="pe-v">${p.notes && String(p.notes).trim() ? escapeHtml(p.notes).replace(/\n/g, '<br>') : '-'}</div></div>
           </div>
         </div>
         <div class="prow-actions" onclick="event.stopPropagation();">
@@ -1290,8 +1352,8 @@ function renderRoster() {
             <option value="disc" ${p.tier==='disc'?'selected':''}>$10</option>
             <option value="full" ${p.tier==='full'?'selected':''}>$20</option>
           </select>
-          <button class="paid-btn ${p.paid?'paid':'unpaid'}" onclick="togglePaid(${p._i})">${p.paid?'✓ Paid':'Mark Paid'}</button>
-          <button class="ci-btn ${p.checkedIn?'ci-in':'ci-pending'}" onclick="toggleCI(${p._i})">${p.checkedIn?'✓ In':'Check In'}</button>
+          <button class="paid-btn ${p.paid?'paid':'unpaid'}" onclick="togglePaid(${p._i})">${p.paid?'Yes Paid':'Mark Paid'}</button>
+          <button class="ci-btn ${p.checkedIn?'ci-in':'ci-pending'}" onclick="toggleCI(${p._i})">${p.checkedIn?'Yes In':'Check In'}</button>
           <button class="edit-btn" onclick="editPlayer(${p._i})">Edit</button>
         </div>
       </div>
@@ -1315,8 +1377,8 @@ function toggleCI(i){state.players[i].checkedIn=!state.players[i].checkedIn;save
 function togglePaid(i){state.players[i].paid=!state.players[i].paid;save();renderInline();}
 
 function renderBracket() {
-  const levels=['Beginner','3.0-3.5','3.5-4.0','Advanced 4.0+','Open 5.0+'];
-  const bConfig={'Advanced 4.0+':{lbl:'Advanced 4.0+',cls:'bb-purple'},'Open 5.0+':{lbl:'Open 5.0+',cls:'bb-neon'},unset:{lbl:'Level Not Set',cls:'bb-gold'}};
+  const levels=['2.0 Beginner','2.5 Upper Beginner','3.0 Lower Intermediate','3.5 Intermediate','4.0 Advanced','4.5 Upper Advanced','5.0 Open','Beginner','3.0-3.5','3.5-4.0','Advanced 4.0+','Open 5.0+'];
+  const bConfig={'2.0 Beginner':{lbl:'2.0 Beginner',cls:'bb-gold'},'2.5 Upper Beginner':{lbl:'2.5 Upper Beginner',cls:'bb-gold'},'3.0 Lower Intermediate':{lbl:'3.0 Lower Int.',cls:'bb-gold'},'3.5 Intermediate':{lbl:'3.5 Intermediate',cls:'bb-gold'},'4.0 Advanced':{lbl:'4.0 Advanced',cls:'bb-purple'},'4.5 Upper Advanced':{lbl:'4.5 Upper Adv.',cls:'bb-purple'},'5.0 Open':{lbl:'5.0 Open',cls:'bb-neon'},'Advanced 4.0+':{lbl:'Advanced 4.0+ (legacy)',cls:'bb-purple'},'Open 5.0+':{lbl:'Open 5.0+ (legacy)',cls:'bb-neon'},'Beginner':{lbl:'Beginner (legacy)',cls:'bb-gold'},'3.0-3.5':{lbl:'3.0-3.5 (legacy)',cls:'bb-gold'},'3.5-4.0':{lbl:'3.5-4.0 (legacy)',cls:'bb-gold'},unset:{lbl:'Level Not Set',cls:'bb-gold'}};
   const grouped={};
   state.players.forEach(p=>{const k=p.skill||'unset';if(!grouped[k])grouped[k]=[];grouped[k].push(p);});
   let html='';
@@ -1324,9 +1386,9 @@ function renderBracket() {
     const g=grouped[lvl];if(!g||!g.length)return;
     const b=bConfig[lvl]||{lbl:lvl,cls:'bb-gold'};
     html+=`<div class="bracket-sec"><div class="bracket-hd"><span class="bracket-lbl">${b.lbl}</span><span class="b-badge ${b.cls}">${b.lbl.toUpperCase()}</span><span class="b-ct">${g.length} player${g.length!==1?'s':''}</span></div>
-    <div class="b-players">${g.map(p=>`<div class="b-player ${p.checkedIn?'in':''}"><div class="bp-name">${escapeHtml(p.name||'')}${p.checkedIn?' ✓':''}</div><div class="bp-id">${escapeHtml(p.pid||'')}</div><div class="bp-tier ${TIER_CLS[p.tier]||''}">${TIER_TXT[p.tier]||'—'}</div><div class="bp-flags">${p.waiver&&!p.waiverDone?'<span class="bf bf-waiver">WAIVER</span>':''}${p.paid?'<span class="bf bf-paid">PAID</span>':''}</div></div>`).join('')}</div></div>`;
+    <div class="b-players">${g.map(p=>`<div class="b-player ${p.checkedIn?'in':''}"><div class="bp-name">${escapeHtml(p.name||'')}${p.checkedIn?' Yes':''}</div><div class="bp-id">${escapeHtml(p.pid||'')}</div><div class="bp-tier ${TIER_CLS[p.tier]||''}">${TIER_TXT[p.tier]||'-'}</div><div class="bp-flags">${p.waiver&&!p.waiverDone?'<span class="bf bf-waiver">WAIVER</span>':''}${p.paid?'<span class="bf bf-paid">PAID</span>':''}</div></div>`).join('')}</div></div>`;
   });
-  document.getElementById('bracket-content').innerHTML=html||'<div class="empty"><div class="empty-icon">⚡</div>Add players and assign skill levels to see brackets.</div>';
+  document.getElementById('bracket-content').innerHTML=html||'<div class="empty"><div class="empty-icon"></div>Add players and assign skill levels to see brackets.</div>';
 }
 
 function genId(name,session) {
@@ -1397,17 +1459,17 @@ async function startScan(){
     const det=new BarcodeDetector({formats:['qr_code']});
     scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});
     vid.srcObject=scanStream;
-    btn.textContent='⏹ Stop';btn.className='btn btn-ghost';
-    st.textContent='Starting camera…';
+    btn.textContent='Stop Stop';btn.className='btn btn-ghost';
+    st.textContent='Starting camera...';
     await new Promise(function(resolve){
       if(vid.readyState>=2){resolve();return;}
       vid.addEventListener('canplay',resolve,{once:true});
     });
     scanning=true;
-    st.textContent='Scanning — point at player QR code';
+    st.textContent='Scanning - point at player QR code';
     scanInterval=setInterval(async()=>{if(!scanning)return;try{const bc=await det.detect(vid);if(bc.length)processQR(bc[0].rawValue);}catch(e){}},500);
-  }catch(e){st.textContent='Camera denied. Use name search in Roster tab.';btn.textContent='📷 Start Scan';}}
-function stopScan(){scanning=false;if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}if(scanInterval){clearInterval(scanInterval);scanInterval=null;}const btn=document.getElementById('scan-btn');btn.textContent='📷 Start Scan';btn.className='btn btn-neon';document.getElementById('scan-video').srcObject=null;document.getElementById('scan-status').textContent='Tap Start Scan to open camera';}
+  }catch(e){st.textContent='Camera denied. Use name search in Roster tab.';btn.textContent=' Start Scan';}}
+function stopScan(){scanning=false;if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}if(scanInterval){clearInterval(scanInterval);scanInterval=null;}const btn=document.getElementById('scan-btn');btn.textContent=' Start Scan';btn.className='btn btn-neon';document.getElementById('scan-video').srcObject=null;document.getElementById('scan-status').textContent='Tap Start Scan to open camera';}
 function processQR(raw){
   try{
     const d=JSON.parse(raw);if(!d.n)throw new Error();
@@ -1417,10 +1479,10 @@ function processQR(raw){
     document.getElementById('sr-id').textContent=d.id||'';
     document.getElementById('sr-name').textContent=d.n;
     const p=idx>=0?state.players[idx]:null;
-    document.getElementById('sr-detail').textContent=(p?(TIER_TXT[p.tier]||'Unassigned')+(p.checkedIn?' · Already checked in':' · Not checked in')+(p.waiver&&!p.waiverDone?' · ⚠ WAIVER NEEDED':''):'Not in roster — add manually')+' · '+d.s;
+    document.getElementById('sr-detail').textContent=(p?(TIER_TXT[p.tier]||'Unassigned')+(p.checkedIn?' - Already checked in':' - Not checked in')+(p.waiver&&!p.waiverDone?' - WAIVER NEEDED':''):'Not in roster - add manually')+' - '+d.s;
     document.getElementById('scan-result').classList.add('show');
-    document.getElementById('scan-status').textContent='QR scanned ✓';
-  }catch(e){document.getElementById('scan-status').textContent='Invalid QR — try again';}
+    document.getElementById('scan-status').textContent='QR scanned Yes';
+  }catch(e){document.getElementById('scan-status').textContent='Invalid QR - try again';}
 }
 function openAddFromScan(d){
   editIdx=null;
@@ -1448,7 +1510,7 @@ function confirmCheckin(){
     save();
     renderAll();
     document.getElementById('scan-result').classList.remove('show');
-    document.getElementById('scan-status').textContent='✓ Checked in! Ready for next.';
+    document.getElementById('scan-status').textContent='Yes Checked in! Ready for next.';
     pendingScan=null;
     setTimeout(()=>startScan(),1800);
   } else {
@@ -1461,7 +1523,56 @@ function confirmCheckin(){
 }
 function dismissScan(){document.getElementById('scan-result').classList.remove('show');pendingScan=null;startScan();}
 
-function showSessionModal(){document.getElementById('session-modal').classList.add('open');}
+/** Compute next 4 weeks of session options (Tue Eve, Thu Eve) using Pacific time. */
+function computeUpcomingSessionOptions() {
+  var slots = [
+    { day: 2, label: 'Tuesday Evening', emoji: '', time: '6-9pm' },
+    { day: 4, label: 'Thursday Evening', emoji: '', time: '6-9pm' },
+  ];
+  var parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', year: 'numeric', month: 'numeric', day: 'numeric' }).formatToParts(new Date());
+  var year = parseInt(parts.find(function(p){return p.type==='year';}).value, 10);
+  var month = parseInt(parts.find(function(p){return p.type==='month';}).value, 10);
+  var day = parseInt(parts.find(function(p){return p.type==='day';}).value, 10);
+  var anchor = new Date(year, month - 1, day);
+  var todayStart = anchor.getTime();
+  var out = [];
+  for (var w = 0; w < 4; w++) {
+    slots.forEach(function(slot) {
+      var d = new Date(anchor.getTime());
+      var diff = (slot.day - d.getDay() + 7) % 7;
+      d.setDate(d.getDate() + diff + w * 7);
+      if (d.getTime() < todayStart) return;
+      var monthName = d.toLocaleDateString('en-US', { month: 'short' });
+      var dayNum = d.getDate();
+      var fullLabel = slot.label + ' ' + monthName + ' ' + dayNum;
+      var iso = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+      out.push({ value: fullLabel, label: slot.emoji + ' ' + slot.label.replace(' Evening',' Eve') + ' ' + monthName + ' ' + dayNum + ' - ' + slot.time, iso: iso, ts: d.getTime() });
+    });
+  }
+  out.sort(function(a, b){ return a.ts - b.ts; });
+  return out;
+}
+
+function populateSessionDropdown() {
+  var sel = document.getElementById('sm-day');
+  if (!sel) return;
+  var opts = computeUpcomingSessionOptions();
+  sel.innerHTML = opts.map(function(o){ return '<option value="' + escapeAttr(o.value) + '" data-iso="' + o.iso + '">' + escapeHtml(o.label) + '</option>'; }).join('');
+  if (state.session) {
+    var match = Array.prototype.find.call(sel.options, function(o){ return o.value === state.session; });
+    if (match) sel.value = state.session;
+  }
+  sel.onchange = function() {
+    var iso = sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].getAttribute('data-iso');
+    if (iso) document.getElementById('sm-date').value = iso;
+  };
+  if (sel.options.length && !state.date) {
+    var iso0 = sel.options[0].getAttribute('data-iso');
+    if (iso0) document.getElementById('sm-date').value = iso0;
+  }
+}
+
+function showSessionModal(){populateSessionDropdown();document.getElementById('session-modal').classList.add('open');}
 function setSession(){
   const newSession=document.getElementById('sm-day').value;
   const newDate=document.getElementById('sm-date').value;
@@ -1483,7 +1594,7 @@ function changePin(){
   if(nw.length<4){msg.style.color='#ff6666';msg.textContent='New PIN must be at least 4 characters.';return;}
   if(nw!==cf){msg.style.color='#ff6666';msg.textContent='PINs do not match.';return;}
   ADMIN_PIN=nw;SEOpenPlay.setPin(nw);
-  msg.style.color='var(--neon)';msg.textContent='✓ PIN updated successfully.';
+  msg.style.color='var(--neon)';msg.textContent='Yes PIN updated successfully.';
   ['current-pin','new-pin','confirm-pin'].forEach(id=>document.getElementById(id).value='');
 }
 
@@ -1492,7 +1603,7 @@ function sendDailyList() {
   const tl = {free:'Free',disc:'Discounted $10',full:'Full $20',ua:'Unassigned'};
   const date = state.date || new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   const session = state.session || 'Session';
-  let body = 'SOUTH END OPEN PLAY — ' + session + ' (' + date + ')\n';
+  let body = 'SOUTH END OPEN PLAY - ' + session + ' (' + date + ')\n';
   body += '='.repeat(50) + '\n\n';
   body += 'TOTAL: ' + state.players.length + ' players\n';
   body += 'CHECKED IN: ' + state.players.filter(p=>p.checkedIn).length + '\n';
@@ -1500,15 +1611,15 @@ function sendDailyList() {
   body += 'ROSTER:\n' + '-'.repeat(50) + '\n';
   state.players.forEach((p,i) => {
     body += (i+1) + '. ' + p.name;
-    body += ' | ID: ' + (p.pid||'—');
+    body += ' | ID: ' + (p.pid||'-');
     body += ' | ' + (tl[p.tier]||'Unassigned');
-    body += ' | ' + (p.skill||'—');
+    body += ' | ' + (p.skill||'-');
     body += p.checkedIn ? ' | CHECKED IN' : ' | NOT IN';
     body += p.paid ? ' | PAID' : ' | UNPAID';
     body += p.waiver && !p.waiverDone ? ' | WAIVER NEEDED' : '';
     body += '\n';
   });
-  const subject = 'Open Play Roster — ' + session + ' ' + date;
+  const subject = 'Open Play Roster - ' + session + ' ' + date;
   window.location.href = 'mailto:BrandonHookerPickleball@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 }
 
@@ -1537,5 +1648,7 @@ function applyInitialTabFromQuery() {
   } catch (e) {}
 }
 </script>
+
+<a class="message-board-fab" href="SouthEnd_Message_Board.html" aria-label="Open Message Board">Message Board</a>
 </body>
 </html>

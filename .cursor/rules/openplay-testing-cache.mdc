@@ -43,7 +43,7 @@ When active:
 
 1. Edit **`Programs/Pickleball/advanced-open-play/live/`** for production truth (or **`staging/`** then promote).
 2. Run **`npm run local-test:sync`** (or **`npm run local-test`**).
-3. Open the mirror hub or RSVP under **`/local-page/`** — testing mode is **on** by path; **`se_test=1`** optional.
+3. Open the mirror hub or RSVP under **`/Programs/Pickleball/advanced-open-play/testing/local-page/`** — testing mode is **on** by path; **`se_test=1`** optional.
 4. For non-mirror URLs (e.g. odd local paths), add **`?se_test=1`** once so the **document** gets the **`se_cb`** redirect if needed.
 
 ## Production

@@ -5,7 +5,10 @@ This directory only holds **documentation**. The **actual HTML, CSS, and JS** th
 Repo root `firebase.json` sets:
 
 ```json
-"hosting": { "public": "Programs/Pickleball/advanced-open-play/live" }
+"hosting": {
+  "site": "southend-pickleball-central",
+  "public": "Programs/Pickleball/advanced-open-play/live"
+}
 ```
 
 So **`live/`** is the deploy root (site root on Hosting). There is no separate copy of the app under `firebase-hosting/`.
@@ -14,12 +17,20 @@ So **`live/`** is the deploy root (site root on Hosting). There is no separate c
 
 | Page | URL |
 |------|-----|
-| Account (sign-in / profile / calendar hub) | `https://pickleball-advanced-open-play.web.app/SouthEnd_OpenPlay_Account.html` |
-| RSVP | `https://pickleball-advanced-open-play.web.app/SouthEnd_Session_RSVP.html` |
-| Session check-in (staff) | `https://pickleball-advanced-open-play.web.app/SouthEnd_Session_Checkin.html` |
-| Admin activity (staff admin UID) | `https://pickleball-advanced-open-play.web.app/SouthEnd_Admin_Activity.html` |
+| Central hub | `https://southend-pickleball-central.web.app/` or `/main` |
+| Account (sign-in / profile / calendar hub) | `https://southend-pickleball-central.web.app/advanced-open-play` |
+| RSVP | `https://southend-pickleball-central.web.app/rsvp` |
+| Session check-in (staff) | `https://southend-pickleball-central.web.app/checkin` |
+| Message board | `https://southend-pickleball-central.web.app/message-board` |
+| League Play hub | `https://southend-pickleball-central.web.app/league-play` |
+| League Play account | `https://southend-pickleball-central.web.app/league-play/account` |
+| League Play registration | `https://southend-pickleball-central.web.app/league-play/register` |
+| League Play invites | `https://southend-pickleball-central.web.app/league-play/invites` |
+| Admin hub | `https://southend-pickleball-central.web.app/admin` |
+| Admin activity (staff admin UID) | `https://southend-pickleball-central.web.app/admin/activity` |
+| Admin module access | `https://southend-pickleball-central.web.app/admin/module-access` |
 
-Same paths work on **`https://pickleball-advanced-open-play.firebaseapp.com/...`**.
+Legacy `.html` filenames still work on the same host.
 
 ## Files in `live/`
 

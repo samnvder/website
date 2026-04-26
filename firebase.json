@@ -2,28 +2,56 @@
   "database": {
     "rules": "database.rules.json"
   },
-  "hosting": {
-    "public": "Programs/Pickleball/advanced-open-play/live",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "headers": [
-      {
-        "source": "/js/openplay-firebase-config.js",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "no-cache, max-age=0, must-revalidate"
-          }
-        ]
-      },
-      {
-        "source": "/js/openplay-profile-panel.js",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "no-cache, max-age=0, must-revalidate"
-          }
-        ]
-      }
-    ]
-  }
+  "hosting": [
+    {
+      "site": "southend-pickleball-central",
+      "public": "Programs/Pickleball/advanced-open-play/live",
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "redirects": [
+        { "source": "/advanced-open-play/staging/SouthEnd_Pickleball_Hub.html", "destination": "/hub", "type": 302 },
+        { "source": "/advanced-open-play/staging/SouthEnd_OpenPlay_Account.html", "destination": "/account", "type": 302 },
+        { "source": "/advanced-open-play/live/SouthEnd_Pickleball_Hub.html", "destination": "/hub", "type": 302 },
+        { "source": "/advanced-open-play/live/SouthEnd_OpenPlay_Account.html", "destination": "/account", "type": 302 }
+      ],
+      "rewrites": [
+        { "source": "/", "destination": "/SouthEnd_Pickleball_Hub.html" },
+        { "source": "/main", "destination": "/SouthEnd_Pickleball_Hub.html" },
+        { "source": "/hub", "destination": "/SouthEnd_Pickleball_Hub.html" },
+        { "source": "/signup", "destination": "/SouthEnd_OpenPlay_Account.html" },
+        { "source": "/advanced-open-play", "destination": "/SouthEnd_OpenPlay_Account.html" },
+        { "source": "/account", "destination": "/SouthEnd_OpenPlay_Account.html" },
+        { "source": "/rsvp", "destination": "/SouthEnd_Session_RSVP.html" },
+        { "source": "/checkin", "destination": "/SouthEnd_Session_Checkin.html" },
+        { "source": "/message-board", "destination": "/SouthEnd_Message_Board.html" },
+        { "source": "/league-play", "destination": "/league-play/SouthEnd_League_Play_Hub.html" },
+        { "source": "/league-play/account", "destination": "/league-play/SouthEnd_League_Account.html" },
+        { "source": "/league-play/register", "destination": "/league-play/SouthEnd_League_Teams.html" },
+        { "source": "/league-play/invites", "destination": "/league-play/SouthEnd_League_Invites.html" },
+        { "source": "/league-play/overview", "destination": "/league-play/SouthEnd_League_Overview.html" },
+        { "source": "/admin", "destination": "/SouthEnd_Admin_Hub.html" },
+        { "source": "/admin/activity", "destination": "/SouthEnd_Admin_Activity.html" },
+        { "source": "/admin/module-access", "destination": "/SouthEnd_Admin_Module_Access.html" }
+      ],
+      "headers": [
+        {
+          "source": "/js/openplay-firebase-config.js",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "/js/openplay-profile-panel.js",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0, must-revalidate"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

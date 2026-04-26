@@ -1,4 +1,4 @@
 {
-  "activeTree": "live",
-  "allowProductionHostingDeploy": true
+  "activeTree": "staging",
+  "allowProductionHostingDeploy": false
 }

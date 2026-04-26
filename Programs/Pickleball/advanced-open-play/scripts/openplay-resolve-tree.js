@@ -7,7 +7,10 @@ const path = require('path');
 
 /** This program’s root: Programs/Pickleball/advanced-open-play/ */
 const PROGRAM_ROOT = path.join(__dirname, '..');
-const MODE_FILE = path.join(PROGRAM_ROOT, 'openplay-mode.json');
+/** Override for unit tests: path to a temp mode JSON (absolute or relative to cwd). */
+const MODE_FILE = process.env.OPENPLAY_MODE_FILE
+  ? path.resolve(process.env.OPENPLAY_MODE_FILE)
+  : path.join(PROGRAM_ROOT, 'openplay-mode.json');
 
 const DEFAULTS = {
   activeTree: 'staging',
@@ -52,8 +55,29 @@ function modeFilePath() {
   return MODE_FILE;
 }
 
+/**
+ * Merge updates into openplay-mode.json and write normalized values.
+ * @param {Partial<{ activeTree: string, allowProductionHostingDeploy: boolean }>} updates
+ */
+function writeMode(updates) {
+  const p = modeFilePath();
+  let cur = { ...DEFAULTS };
+  try {
+    if (fs.existsSync(p)) {
+      cur = { ...cur, ...JSON.parse(fs.readFileSync(p, 'utf8')) };
+    }
+  } catch (e) {
+    console.warn('[openplay-mode] writeMode read failed, using defaults:', e.message);
+  }
+  Object.assign(cur, updates);
+  cur.activeTree = cur.activeTree === 'live' ? 'live' : 'staging';
+  cur.allowProductionHostingDeploy = !!cur.allowProductionHostingDeploy;
+  fs.writeFileSync(p, JSON.stringify(cur, null, 2) + '\n', 'utf8');
+}
+
 module.exports = {
   readMode,
+  writeMode,
   getActiveTreeName,
   getActiveSourceDir,
   getProductionSourceDir,

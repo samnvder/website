@@ -15,7 +15,7 @@ alwaysApply: false
 When **`live/`** (production source) is ahead of **`staging/`** and local test mirrors, align **app code** so all three match, **without** overwriting environment-specific Firebase credentials:
 
 - **`staging/`** keeps its existing `js/openplay-firebase-config.js` and `js/openplay-firebase-config.example.js` (if present before the run).
-- **`testing/local-page/`** and repo-root **`local-page/`** keep the same preserved files per folder (so test/staging Firebase projects stay separate from production).
+- **`Programs/Pickleball/advanced-open-play/testing/local-page/`** keeps preserved Firebase files so test/staging Firebase projects stay separate from production.
 
 ## Action (agent)
 
@@ -34,7 +34,7 @@ When **`live/`** (production source) is ahead of **`staging/`** and local test m
 | Target | Behavior |
 |--------|----------|
 | `staging/` | Full tree replace from `live/`, then restore preserved Firebase files from **before** the run. |
-| `testing/local-page/`, `local-page/` | Same **file set** as `local-test.js` (HTML + `js/*`), cache-bust on HTML script tags, `index.html` hub notes source **`live/`**, then restore preserved Firebase files. |
+| `testing/local-page/` | Same **file set** as `local-test.js` (HTML + `js/*`), cache-bust on HTML script tags, `index.html` hub notes source **`live/`**, then restore preserved Firebase files. |
 
 ## Related
 

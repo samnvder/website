@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>League — Account</title>
+    <link rel="icon" type="image/jpeg" href="../favicon.jpg">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/south-end-league.css" />
+  </head>
+  <body class="league-page">
+    <a class="league-skip" href="#main">Skip to content</a>
+    <div class="header" role="banner">
+      <div>
+        <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+        <div class="hdr-title">LEAGUE <span>ACCOUNT</span></div>
+        <div class="hdr-sub">
+          Your league snapshot — division, team, and roster. Use <strong>Profile</strong> for your full Pickleball account (same as Open Play).
+        </div>
+      </div>
+      <a
+        class="league-header-profile"
+        href="../advanced-open-play/staging/SouthEnd_OpenPlay_Account.html?return=SouthEnd_Pickleball_Hub.html"
+        aria-label="Open main Pickleball profile and account (same as Open Play)"
+      >
+        <svg class="league-header-profile__icon" viewBox="0 0 24 24" aria-hidden="true"
+          ><circle cx="12" cy="8" r="3.5" /><path d="M5.5 20.5v-1.2A5.2 5.2 0 0 1 10.7 14h2.6a5.2 5.2 0 0 1 5.2 5.2v1.2"
+        /></svg>
+        Profile
+      </a>
+    </div>
+    <nav class="se-site-nav" aria-label="League play">
+      <a class="se-site-nav-link" href="../advanced-open-play/staging/SouthEnd_Pickleball_Hub.html">Pickleball hub</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Play_Hub.html">League play</a>
+      <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_League_Account.html" aria-current="page">Account</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Teams.html">Register</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Invites.html">Invites</a>
+    </nav>
+    <main id="main" class="league-wrap league-wrap--wide" tabindex="-1">
+      <div id="initBanner" class="league-card" style="display: none" role="status"></div>
+      <div id="signedIn" style="display: none">
+        <section class="league-card" aria-labelledby="accIdentityHeading">
+          <h2 id="accIdentityHeading">Your profile</h2>
+          <p><strong id="accDisplayName">—</strong></p>
+          <p><strong>Email</strong> <span id="emailSpan"></span></p>
+          <div class="league-division-schedule-hint" role="note">
+            <strong>Why this page?</strong> Your <strong>Pickleball account</strong> is shared across Open Play, League, and Message Board — one
+            sign-in, one place to edit your name, contact info, and waivers. Captains search for you in league lookup using the name on that profile.
+            <a href="../advanced-open-play/staging/SouthEnd_Pickleball_Hub.html"
+              >Open the central Pickleball hub</a
+            >.
+          </div>
+        </section>
+
+        <section class="league-card" aria-labelledby="accLeagueHeading">
+          <h2 id="accLeagueHeading">League status</h2>
+          <div id="leagueStatusBody">
+            <p class="help" role="status">Loading…</p>
+          </div>
+        </section>
+
+        <section class="league-card" id="accTeamCard" style="display: none" aria-labelledby="accTeamHeading">
+          <h2 id="accTeamHeading">Your team</h2>
+          <p id="accTeamNameLine" class="help" style="display: none"></p>
+          <h3 id="accTeamName" style="display: none"></h3>
+          <p id="accTeamDivision" class="help" style="display: none"></p>
+          <p id="accRosterCount" class="help" style="display: none"></p>
+          <ul id="accRosterList" class="league-profile-list" aria-label="Team roster"></ul>
+          <p id="accCaptainInvites" class="help" style="display: none"></p>
+        </section>
+
+        <p id="accIncomingInvites" class="help" style="display: none"></p>
+      </div>
+    </main>
+    <footer
+      class="pickleball-share-footer"
+      data-pickleball-share
+      data-share-context="league"
+      aria-label="Invite friends to league play"
+    ></footer>
+    <script src="../advanced-open-play/staging/js/pickleball-invite-share.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="js/league-firebase-config.js"></script>
+    <script src="js/south-end-league-sync.js"></script>
+    <script>
+      (function () {
+        var L = window.LeagueSync;
+        var banner = document.getElementById("initBanner");
+        var inn = document.getElementById("signedIn");
+        var returnTo = new URLSearchParams(window.location.search).get("return");
+        var leagueBody = document.getElementById("leagueStatusBody");
+        var teamCard = document.getElementById("accTeamCard");
+        var rosterList = document.getElementById("accRosterList");
+        var incomingInvitesEl = document.getElementById("accIncomingInvites");
+        var captainInvitesEl = document.getElementById("accCaptainInvites");
+
+        if (!L.init(LEAGUE_FIREBASE_CONFIG) || !LEAGUE_FIREBASE_CONFIG || !LEAGUE_FIREBASE_CONFIG.apiKey) {
+          banner.style.display = "block";
+          banner.textContent = "Set js/league-firebase-config.js (copy from the example) before testing.";
+        }
+
+        function profileReturnTarget() {
+          return "SouthEnd_Pickleball_Hub.html";
+        }
+
+        function redirectToProfile() {
+          window.location.href =
+            "../advanced-open-play/staging/SouthEnd_OpenPlay_Account.html?return=" +
+            encodeURIComponent(profileReturnTarget());
+        }
+
+        function escapeHtml(s) {
+          if (s == null) return "";
+          var d = document.createElement("div");
+          d.textContent = String(s);
+          return d.innerHTML;
+        }
+
+        function registrationRoleLabel(acct) {
+          if (!acct || !acct.registrationStatus) return "";
+          var t = acct.registrationType;
+          if (t === "captain") return "Team captain";
+          if (t === "team_member") return "Team player";
+          if (t === "solo") return "Solo player";
+          return "Registered";
+        }
+
+        function resolvePlayerName(uid) {
+          return L.getDirectoryEntry(uid)
+            .catch(function () {
+              return null;
+            })
+            .then(function (entry) {
+              if (entry && entry.displayName) return entry.displayName;
+              return L.getUserProfile(uid).catch(function () {
+                return null;
+              });
+            })
+            .then(function (result) {
+              if (typeof result === "string") return result;
+              if (result) {
+                var built = L.buildDisplayName(result);
+                if (built) return built;
+              }
+              var u = L.getCurrentUser && L.getCurrentUser();
+              if (u && u.uid === uid) return u.displayName || u.email || "You";
+              return "Player";
+            });
+        }
+
+        function renderRosterRow(name, isCaptainRole) {
+          var chip = document.createElement("div");
+          chip.className = "league-profile-chip";
+          chip.style.display = "flex";
+          chip.style.alignItems = "center";
+          chip.style.gap = "8px";
+          if (isCaptainRole) {
+            var star = document.createElement("span");
+            star.textContent = "\u2605";
+            star.style.cssText = "color:var(--neon);font-size:16px;flex-shrink:0;";
+            star.setAttribute("aria-label", "Captain");
+            chip.appendChild(star);
+          }
+          var nameEl = document.createElement("strong");
+          nameEl.textContent = name;
+          chip.appendChild(nameEl);
+          var roleEl = document.createElement("span");
+          roleEl.textContent = isCaptainRole ? "Captain" : "Player";
+          roleEl.style.cssText =
+            "margin-left:auto;font-size:11px;padding:4px 10px;border-radius:20px;background:rgba(0,255,136,0.08);color:rgba(255,255,255,0.6);letter-spacing:0.06em;text-transform:uppercase;flex-shrink:0;";
+          if (isCaptainRole) roleEl.style.background = "rgba(0,255,136,0.15)";
+          chip.appendChild(roleEl);
+          var li = document.createElement("li");
+          li.appendChild(chip);
+          rosterList.appendChild(li);
+        }
+
+        function loadSignedInDashboard(uid, user) {
+          teamCard.style.display = "none";
+          rosterList.innerHTML = "";
+          document.getElementById("accTeamName").style.display = "none";
+          document.getElementById("accRosterCount").style.display = "none";
+          document.getElementById("accTeamDivision").style.display = "none";
+          captainInvitesEl.style.display = "none";
+          captainInvitesEl.textContent = "";
+          leagueBody.innerHTML = "<p class=\"help\" role=\"status\">Loading…</p>";
+
+          document.getElementById("emailSpan").textContent = user.email || "—";
+          L.syncProfileToDirectory(uid);
+
+          Promise.all([L.getLeagueAccount(uid), L.getUserProfile(uid).catch(function () { return null; })])
+            .then(function (pair) {
+              var acct = pair[0];
+              var profile = pair[1];
+              var display = L.buildDisplayName(profile);
+              if (!display && user) display = user.displayName || "";
+              document.getElementById("accDisplayName").textContent = display || "Add your name on the main account page";
+
+              if (!acct || !acct.registrationStatus) {
+                leagueBody.innerHTML =
+                  "<p>You&rsquo;re signed in but haven&rsquo;t completed <strong>league registration</strong> yet.</p>" +
+                  "<p><a class=\"btn\" href=\"SouthEnd_League_Teams.html\">Register for league</a></p>" +
+                  "<p class=\"help\">Registration covers your division, team or solo placement, and fees.</p>";
+                teamCard.style.display = "none";
+                captainInvitesEl.style.display = "none";
+                captainInvitesEl.textContent = "";
+                return Promise.resolve(null);
+              }
+
+              var role = registrationRoleLabel(acct);
+              var divLine = "";
+              if (acct.divisionLabel) {
+                divLine =
+                  "<p><strong>Division</strong> " +
+                  escapeHtml(acct.divisionLabel) +
+                  (acct.divisionSchedule ? " · " + escapeHtml(acct.divisionSchedule) : "") +
+                  "</p>";
+              } else if (acct.divisionDay || acct.divisionTime) {
+                divLine =
+                  "<p><strong>Schedule</strong> " +
+                  escapeHtml([acct.divisionDay, acct.divisionTime].filter(Boolean).join(" · ")) +
+                  "</p>";
+              }
+              var feeLine = acct.feeLabel ? "<p><strong>Fee</strong> " + escapeHtml(acct.feeLabel) + "</p>" : "";
+              leagueBody.innerHTML =
+                "<p><strong>Role</strong> " + escapeHtml(role) + "</p>" + divLine + feeLine;
+
+              var teamId = acct.teamId;
+
+              if (!teamId) {
+                teamCard.style.display = "none";
+                return Promise.resolve({ acct: acct, team: null });
+              }
+
+              return L.getTeam(teamId).then(function (team) {
+                return { acct: acct, team: team, teamId: teamId };
+              });
+            })
+            .then(function (ctx) {
+              if (!ctx || !ctx.team) {
+                return null;
+              }
+              var team = ctx.team;
+              var teamId = ctx.teamId;
+              var acct = ctx.acct;
+              teamCard.style.display = "block";
+              document.getElementById("accTeamName").style.display = "block";
+              document.getElementById("accTeamName").textContent = team.name || "Your team";
+              var divSched = team.divisionSchedule || [team.divisionDay, team.divisionTime].filter(Boolean).join(" · ");
+              var divEl = document.getElementById("accTeamDivision");
+              if (team.divisionLabel || divSched) {
+                divEl.style.display = "block";
+                divEl.textContent = [team.divisionLabel, divSched].filter(Boolean).join(" · ");
+              } else {
+                divEl.style.display = "none";
+              }
+              rosterList.innerHTML = "";
+              var roster = (team.roster && typeof team.roster === "object") ? team.roster : {};
+              var uids = Object.keys(roster);
+              var capUid = team.captainUid || "";
+              if (capUid && uids.indexOf(capUid) === -1) {
+                uids = [capUid].concat(uids);
+              }
+              var pending = uids.map(function (ruid) {
+                return resolvePlayerName(ruid).then(function (name) {
+                  return { uid: ruid, name: name || ruid, isCap: ruid === capUid };
+                });
+              });
+              return Promise.all(pending).then(function (rows) {
+                rows.sort(function (a, b) {
+                  if (a.isCap && !b.isCap) return -1;
+                  if (!a.isCap && b.isCap) return 1;
+                  return String(a.name).localeCompare(String(b.name));
+                });
+                rows.forEach(function (r) {
+                  renderRosterRow(r.name, r.isCap);
+                });
+                var countEl = document.getElementById("accRosterCount");
+                countEl.style.display = "block";
+                countEl.textContent = "Roster: " + rows.length + " player" + (rows.length !== 1 ? "s" : "");
+
+                if (acct.registrationType === "captain") {
+                  return L.listInvitesFromCaptain(uid).then(function (invRows) {
+                    var pend = (invRows || []).filter(function (r) {
+                      return r.data && r.data.status === "pending" && r.data.teamId === teamId;
+                    });
+                    if (pend.length) {
+                      captainInvitesEl.style.display = "block";
+                      captainInvitesEl.innerHTML =
+                        "<strong>Pending invites you sent:</strong> " +
+                        pend.length +
+                        ". <a href=\"SouthEnd_League_Play_Hub.html#teamPanel\">Manage on hub</a> or see <a href=\"SouthEnd_League_Invites.html\">Invites</a>.";
+                    } else {
+                      captainInvitesEl.style.display = "none";
+                      captainInvitesEl.textContent = "";
+                    }
+                  });
+                }
+                captainInvitesEl.style.display = "none";
+                captainInvitesEl.textContent = "";
+              });
+            })
+            .catch(function () {
+              leagueBody.innerHTML = "<p class=\"help\">Could not load league status. Try refreshing.</p>";
+            });
+
+          L.listInvitesToUser(uid).then(function (invRows) {
+            var pend = (invRows || []).filter(function (r) {
+              return r.data && r.data.status === "pending";
+            });
+            if (pend.length) {
+              incomingInvitesEl.style.display = "block";
+              incomingInvitesEl.innerHTML =
+                "You have <strong>" +
+                pend.length +
+                "</strong> pending invite" +
+                (pend.length !== 1 ? "s" : "") +
+                ". <a href=\"SouthEnd_League_Invites.html\">View invites</a>";
+            } else {
+              incomingInvitesEl.style.display = "none";
+              incomingInvitesEl.textContent = "";
+            }
+          });
+        }
+
+        L.onAuth(function (u) {
+          if (!u) {
+            inn.style.display = "none";
+            redirectToProfile();
+            return;
+          }
+          inn.style.display = "block";
+          if (returnTo) {
+            window.location.href = "../advanced-open-play/staging/SouthEnd_Pickleball_Hub.html";
+            return;
+          }
+          loadSignedInDashboard(u.uid, u);
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+---
+description: Pickleball league divisions must always display from 3.0 through Open (5.0+) in ascending skill order
+globs: "Programs/Pickleball/**/*.html,Programs/Pickleball/**/*.js,Programs/Pickleball/**/*.md"
+alwaysApply: false
+---
+
+# Pickleball League Division Order
+
+## Law
+
+Any user-facing or admin-facing Pickleball league division list must order divisions by ascending skill level:
+
+1. `3.0`
+2. `3.5`
+3. `4.0`
+4. `Open (5.0+)`
+
+## Required Pattern
+
+- Keep `Open (5.0+)` last.
+- Use the label `Open (5.0+)`, not only `Open`, when listing league divisions.
+- If divisions are grouped into columns or filters, each group must still read top-to-bottom in ascending skill order.
+- Do not sort league division lists by day-of-week when the list is presented as division choices, filters, schedules, or summaries.

@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="js/openplay-testing-env.js"></script>
-<title>Admin Activity — South End Open Play</title>
+<title>Admin Activity - South End Open Play</title>
+<link rel="icon" type="image/jpeg" href="favicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -13,17 +14,36 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Barlow',sans-serif;background:radial-gradient(1200px 600px at 10% -10%,rgba(168,85,247,.12),transparent),var(--navy);color:#fff;min-height:100vh;}
-.header{background:linear-gradient(180deg,var(--navy-lt) 0%,rgba(10,22,40,.96) 100%);padding:20px 28px 16px;border-bottom:3px solid var(--neon);box-shadow:0 12px 40px rgba(0,0,0,.35);}
+.header{background:var(--navy-lt);padding:18px 28px 14px;border-bottom:3px solid var(--neon);position:relative;}
 .hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--neon);margin-bottom:3px;}
-.hdr-title{font-family:'Oswald',sans-serif;font-size:26px;color:#fff;letter-spacing:1px;text-transform:uppercase;line-height:1;}
+.hdr-title{font-family:'Oswald',sans-serif;font-size:24px;color:#fff;letter-spacing:1px;text-transform:uppercase;line-height:1;}
 .hdr-title span{color:var(--neon);}
-.hdr-sub{font-size:11px;color:rgba(255,255,255,.68);margin-top:6px;max-width:52ch;line-height:1.45;}
+.hdr-sub{font-size:9px;color:rgba(255,255,255,.65);margin-top:3px;max-width:52ch;line-height:1.45;}
+.se-site-nav{
+  display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;
+  padding:10px 28px 12px;background:rgba(5,12,28,.85);
+  border-bottom:1px solid rgba(0,255,136,.22);
+}
+.se-site-nav-link{
+  font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.55);text-decoration:none;padding:8px 14px;border-radius:6px;
+  border:1px solid transparent;transition:color .15s,border-color .15s,background .15s;
+}
+.se-site-nav-link:hover{color:var(--neon);background:rgba(0,255,136,.08);}
+.se-site-nav-link--active{
+  color:var(--ink);background:var(--neon);border-color:rgba(0,255,136,.45);
+  box-shadow:0 0 20px rgba(0,255,136,.25);
+}
+.sub-nav{display:flex;flex-wrap:wrap;gap:8px;padding:12px 28px;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(0,255,136,.12);}
+.sub-nav a{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);text-decoration:none;padding:6px 12px;border-radius:6px;}
+.sub-nav a:hover{color:var(--neon);}
+.sub-nav a.active{color:var(--ink);background:rgba(0,255,136,.85);}
 .body-wrap{max-width:1240px;margin:0 auto;padding:22px 20px 48px;}
 .top-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
 .status{font-size:12px;color:rgba(255,255,255,.82);}
 .status strong{color:#fff;}
-.back-link{font-size:12px;color:var(--electric);text-decoration:none;}
-.back-link:hover{text-decoration:underline;}
+.subtle-nav-link{font-size:11px;color:rgba(255,255,255,.5);text-decoration:none;white-space:nowrap;}
+.subtle-nav-link:hover{color:var(--electric);text-decoration:underline;}
 
 /* Stat hub */
 .stats-hub{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px;}
@@ -97,6 +117,7 @@ tbody tr:hover td{background:rgba(255,255,255,.04);}
 .pill.type-registration_cancelled{background:rgba(255,80,80,.16);color:#ff9a9a;}
 .pill.type-account_created{background:rgba(96,165,250,.2);color:#bfdbfe;}
 .pill.type-profile_saved,.pill.type-profile_updated{background:rgba(168,85,247,.16);color:#d8b4fe;}
+.pill.type-profile_deleted{background:rgba(255,80,80,.16);color:#ff9a9a;}
 .pill.type-waiver_signed{background:rgba(245,158,11,.18);color:#fde68a;}
 .empty{padding:32px;text-align:center;color:rgba(255,255,255,.5);}
 
@@ -118,19 +139,42 @@ tbody tr:hover td{background:rgba(255,255,255,.04);}
 .acct-events li:last-child{border-bottom:none;}
 .acct-ts{color:rgba(255,255,255,.45);font-size:10px;white-space:nowrap;}
 .hidden{display:none!important;}
+.message-board-fab{
+  position:fixed;right:18px;bottom:18px;z-index:90;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.22);
+  background:linear-gradient(135deg,var(--neon,#00ff88),#34d399);color:var(--ink,#050a12);
+  font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;
+  box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 26px rgba(0,255,136,.25);transition:transform .15s,filter .15s,box-shadow .15s;
+}
+.message-board-fab:hover{filter:brightness(1.06);transform:translateY(-1px);box-shadow:0 12px 32px rgba(0,0,0,.4),0 0 30px rgba(0,255,136,.32);}
+.message-board-fab:focus-visible{outline:2px solid #fff;outline-offset:3px;}
+@media(max-width:520px){.message-board-fab{right:14px;bottom:14px;padding:12px 14px;font-size:12px;}}
 </style>
 </head>
 <body>
 <div class="header">
   <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
   <div class="hdr-title">Admin <span>Activity Hub</span></div>
-  <div class="hdr-sub">Staff-only feed: RSVPs, profiles, waivers, cancellations — filter by person, slice with SQL-style lines, or browse grouped by account.</div>
+  <div class="hdr-sub">Staff-only feed: RSVPs, profiles, waivers, cancellations - filter by person, slice with SQL-style lines, or browse grouped by account.</div>
+</div>
+<nav class="se-site-nav" aria-label="Pickleball hub sections">
+  <a class="se-site-nav-link" href="SouthEnd_Pickleball_Hub.html">Hub</a>
+  <a class="se-site-nav-link" href="SouthEnd_OpenPlay_Account.html">Advanced Open Play</a>
+  <a class="se-site-nav-link" href="SouthEnd_Message_Board.html">Message Board</a>
+  <a class="se-site-nav-link" href="../../league-play/SouthEnd_League_Play_Hub.html">League Play</a>
+  <a class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
+  <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_Advanced_Open_Play.html" aria-current="page">Open Play admin</a>
+</nav>
+<div class="sub-nav" aria-label="Advanced Open Play admin sections">
+  <a href="SouthEnd_Open_Play_Signups.html">Signups</a>
+  <a href="SouthEnd_Session_Checkin.html">Check-ins</a>
+  <a href="SouthEnd_Admin_Activity.html" class="active">Activity</a>
 </div>
 
 <div class="body-wrap">
   <div class="top-row">
     <div class="status" id="auth-status">Checking staff access...</div>
-    <a class="back-link" href="SouthEnd_OpenPlay_Account.html">← Back to account</a>
+    <a class="subtle-nav-link" href="SouthEnd_OpenPlay_Account.html">Open Play account</a>
   </div>
 
   <div class="stats-hub" id="stats-hub" aria-label="Activity summary">
@@ -151,7 +195,7 @@ tbody tr:hover td{background:rgba(255,255,255,.04);}
     <div class="filters">
       <div class="field">
         <label>Quick search</label>
-        <input id="flt-search" type="text" placeholder="Name, email, session, PID, details…">
+        <input id="flt-search" type="text" placeholder="Name, email, session, PID, details...">
       </div>
       <div class="field">
         <label>Event type</label>
@@ -163,6 +207,7 @@ tbody tr:hover td{background:rgba(255,255,255,.04);}
           <option value="account_created">Account created</option>
           <option value="profile_saved">Profile saved</option>
           <option value="profile_updated">Profile updated</option>
+          <option value="profile_deleted">Profile deleted</option>
           <option value="waiver_signed">Waiver signed</option>
         </select>
       </div>
@@ -179,14 +224,14 @@ tbody tr:hover td{background:rgba(255,255,255,.04);}
         <select id="flt-sort">
           <option value="new">Newest first</option>
           <option value="old">Oldest first</option>
-          <option value="name">Full name A–Z</option>
+          <option value="name">Full name A-Z</option>
         </select>
       </div>
     </div>
 
     <div class="sql-panel" id="sql-panel">
       <div class="field">
-        <label>SQL-style conditions (AND — one per line)</label>
+        <label>SQL-style conditions (AND - one per line)</label>
         <textarea id="flt-sql" placeholder="type = registration_cancelled&#10;email contains gmail&#10;name contains Sam&#10;target_uid = abcFirebaseUid123"></textarea>
         <p class="sql-hint">
           Fields: <strong>type</strong>, <strong>email</strong>, <strong>name</strong>, <strong>first_name</strong>, <strong>last_name</strong>, <strong>session</strong>, <strong>pid</strong>,
@@ -221,7 +266,7 @@ tbody tr:hover td{background:rgba(255,255,255,.04);}
           </tr>
         </thead>
         <tbody id="activity-body">
-          <tr><td colspan="9" class="empty">Waiting for activity data…</td></tr>
+          <tr><td colspan="9" class="empty">Waiting for activity data...</td></tr>
         </tbody>
       </table>
     </div>
@@ -230,9 +275,11 @@ tbody tr:hover td{background:rgba(255,255,255,.04);}
   </div>
 </div>
 
+<footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
 <script src="js/openplay-firebase-config.js"></script>
 <script src="js/south-end-openplay-sync.js"></script>
-<script src="js/openplay-profile-panel.js?v=20260407"></script>
+<script src="js/pickleball-invite-share.js?v=20260425"></script>
+<script src="js/openplay-profile-panel.js?v=20260426-routing2"></script>
 <script>
 var rawRows = [];
 var renderedRows = [];
@@ -251,14 +298,14 @@ function toMs(v) {
 }
 function fmtDate(ts) {
   var ms = toMs(ts);
-  if (!ms) return '—';
+  if (!ms) return '-';
   return new Date(ms).toLocaleString();
 }
 function norm(s) {
   return String(s == null ? '' : s).trim().toLowerCase();
 }
 function fullName(r) {
-  return (String(r.firstName || '').trim() + ' ' + String(r.lastName || '').trim()).trim() || '—';
+  return (String(r.firstName || '').trim() + ' ' + String(r.lastName || '').trim()).trim() || '-';
 }
 function dateStartMs(yyyyMmDd) {
   if (!yyyyMmDd) return 0;
@@ -399,7 +446,7 @@ function applyFilters() {
   updateStatsStrip(rawRows, renderedRows);
   document.getElementById('meta-count').textContent =
     renderedRows.length + ' event' + (renderedRows.length === 1 ? '' : 's') +
-    ' · ' + uniquePeopleCount(renderedRows) + ' people in view';
+    ' - ' + uniquePeopleCount(renderedRows) + ' people in view';
   if (currentView === 'table' || currentView === 'sqlhelp') renderTable();
   else if (currentView === 'accounts') renderAccounts();
 }
@@ -417,12 +464,12 @@ function renderTable() {
       '<td>' + esc(fmtDate(r.ts)) + '</td>' +
       '<td><span class="pill type-' + esc(r.type || '') + '">' + esc(r.type || 'event') + '</span></td>' +
       '<td>' + esc(fn) + '</td>' +
-      '<td>' + esc(r.targetEmail || '—') + '</td>' +
-      '<td>' + esc(r.session || '—') + '</td>' +
-      '<td class="mono">' + esc(r.pid || '—') + '</td>' +
-      '<td class="mono">' + esc(r.targetUid || '—') + '</td>' +
-      '<td class="mono">' + esc(r.actorUid || '—') + '</td>' +
-      '<td>' + esc(r.details || '—') + '</td>' +
+      '<td>' + esc(r.targetEmail || '-') + '</td>' +
+      '<td>' + esc(r.session || '-') + '</td>' +
+      '<td class="mono">' + esc(r.pid || '-') + '</td>' +
+      '<td class="mono">' + esc(r.targetUid || '-') + '</td>' +
+      '<td class="mono">' + esc(r.actorUid || '-') + '</td>' +
+      '<td>' + esc(r.details || '-') + '</td>' +
       '</tr>'
     );
   }).join('');
@@ -472,11 +519,11 @@ function renderAccounts() {
           esc(r.type || '') + '</span> <span>' + esc(r.session || '') + '</span></li>'
         );
       }).join('');
-      var more = g.events.length > 12 ? '<li class="acct-ts">… ' + (g.events.length - 12) + ' more</li>' : '';
+      var more = g.events.length > 12 ? '<li class="acct-ts">... ' + (g.events.length - 12) + ' more</li>' : '';
       return (
         '<article class="acct-card">' +
         '<div class="acct-hd"><div><div class="acct-name">' + esc(g.name) + '</div>' +
-        '<div class="acct-meta">' + sub.join(' · ') + '</div></div>' +
+        '<div class="acct-meta">' + sub.join(' - ') + '</div></div>' +
         '<span class="acct-badge">' + g.events.length + ' ev</span></div>' +
         '<ul class="acct-events">' + evHtml + more + '</ul></article>'
       );
@@ -650,5 +697,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .catch(function () {});
 });
 </script>
+
+<a class="message-board-fab" href="SouthEnd_Message_Board.html" aria-label="Open Message Board">Message Board</a>
 </body>
 </html>

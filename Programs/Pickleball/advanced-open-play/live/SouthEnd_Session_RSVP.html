@@ -1,11 +1,12 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="js/openplay-testing-env.js"></script>
-<title>RSVP — South End Open Play</title>
+<title>RSVP - South End Open Play</title>
+<link rel="icon" type="image/jpeg" href="favicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -43,7 +44,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   box-shadow:0 0 20px rgba(0,255,136,.25);
 }
 
-/* HIDDEN COUPON ZONE — top right corner trigger, invisible to casual viewers */
+/* HIDDEN COUPON ZONE - top right corner trigger, invisible to casual viewers */
 
 .coupon-panel{
   display:none;
@@ -126,7 +127,12 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   background:rgba(0,0,0,.18);box-shadow:none;
 }
 .session-card.session-card--registered:hover{border-color:rgba(255,255,255,.08);background:rgba(0,0,0,.18);}
-.sc-registered-label{
+.session-card.session-card--past{
+  opacity:.38;pointer-events:none;cursor:not-allowed;border-color:rgba(255,255,255,.08);
+  background:rgba(0,0,0,.18);box-shadow:none;filter:grayscale(1);
+}
+.session-card.session-card--past:hover{border-color:rgba(255,255,255,.08);background:rgba(0,0,0,.18);}
+.sc-registered-label,.sc-past-label{
   margin-top:8px;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
   color:rgba(255,255,255,.42);
 }
@@ -140,7 +146,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 .session-card.selected .sc-check{background:var(--neon);border-color:var(--neon);color:var(--ink);}
 .session-summary{font-size:12px;color:var(--neon);font-weight:600;margin:14px 0 8px;min-height:1.2em;}
 
-/* DISCOUNT BADGE — shown when coupon applied */
+/* DISCOUNT BADGE - shown when coupon applied */
 #discount-badge{
   display:none;
   background:var(--neon-dim);border:1px solid rgba(0,255,136,.3);
@@ -286,6 +292,44 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   background:var(--neon);color:var(--ink);font-family:'Oswald',sans-serif;
   font-size:15px;letter-spacing:.5px;border-radius:4px;text-decoration:none;font-weight:700;
 }
+/* Hero payment block on the confirmation page */
+.success-pay-hero{
+  background:linear-gradient(180deg, rgba(147,51,234,.18), rgba(147,51,234,.08));
+  border:2px solid rgba(147,51,234,.55);
+  border-radius:12px;
+  padding:22px 20px 20px;
+  max-width:460px;
+  margin:4px auto 24px;
+  box-shadow:0 0 28px rgba(147,51,234,.18), 0 6px 18px rgba(0,0,0,.35);
+  text-align:center;
+}
+.success-pay-hero .sp-title{
+  font-size:12px;letter-spacing:3px;color:var(--neon);margin-bottom:10px;
+}
+.success-pay-hero .sp-sub{
+  font-family:'Oswald',sans-serif;
+  font-size:34px;letter-spacing:1px;color:#fff;line-height:1;
+  margin:4px 0 14px;
+}
+.success-pay-hero .sp-btn-hero{
+  display:block;width:100%;margin-top:4px;padding:16px 20px;
+  font-size:18px;letter-spacing:1px;border-radius:8px;
+  box-shadow:0 0 18px rgba(var(--neon-rgb, 57,255,20),.25);
+  transition:transform .08s ease, box-shadow .2s ease;
+}
+.success-pay-hero .sp-btn-hero:hover,
+.success-pay-hero .sp-btn-hero:focus{
+  transform:translateY(-1px);
+  box-shadow:0 0 26px rgba(var(--neon-rgb, 57,255,20),.45);
+}
+.success-pay-hero .sp-hint{
+  font-size:12px;color:rgba(255,255,255,.7);margin-top:10px;
+}
+@media(max-width:740px){
+  .success-pay-hero{padding:20px 16px 18px;}
+  .success-pay-hero .sp-sub{font-size:30px;}
+  .success-pay-hero .sp-btn-hero{font-size:17px;padding:15px 18px;}
+}
 .show-qr-note{font-size:11px;color:var(--neon);margin-top:22px;font-weight:600;padding:0 12px;line-height:1.5;}
 .hidden{display:none!important;}
 
@@ -348,7 +392,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 .waiver-modal-agree:disabled{opacity:.4;cursor:not-allowed;}
 .waiver-modal-agree:not(:disabled):hover{filter:brightness(1.06);}
 
-/* ACCOUNT — sign-in lives on SouthEnd_OpenPlay_Account.html; RSVP shows a link + session state */
+/* ACCOUNT - sign-in lives on SouthEnd_OpenPlay_Account.html; RSVP shows a link + session state */
 .account-strip{
   background:rgba(0,255,136,.06);border:1.5px solid rgba(0,255,136,.2);
   border-radius:8px;padding:12px 14px;margin-bottom:18px;font-size:12px;color:rgba(255,255,255,.78);
@@ -407,7 +451,7 @@ button.account-strip-link:hover{text-decoration:underline;}
   overflow:hidden!important;clip:rect(0,0,0,0)!important;border:0!important;white-space:nowrap!important;
 }
 
-/* Auth gate — shown until signed-in user confirmed (Firebase) */
+/* Auth gate - shown until signed-in user confirmed (Firebase) */
 .rsvp-gate-overlay{
   position:fixed;inset:0;z-index:99999;background:var(--navy);display:flex;align-items:center;justify-content:center;
   padding:28px 20px;text-align:center;
@@ -423,21 +467,31 @@ button.account-strip-link:hover{text-decoration:underline;}
 }
 .rsvp-gate-link:hover{text-decoration:underline;}
 #main-form-wrap.rsvp-main-hidden{display:none!important;}
+.message-board-fab{
+  position:fixed;right:18px;bottom:18px;z-index:90;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.22);
+  background:linear-gradient(135deg,var(--neon,#00ff88),#34d399);color:var(--ink,#050a12);
+  font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;
+  box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 26px rgba(0,255,136,.25);transition:transform .15s,filter .15s,box-shadow .15s;
+}
+.message-board-fab:hover{filter:brightness(1.06);transform:translateY(-1px);box-shadow:0 12px 32px rgba(0,0,0,.4),0 0 30px rgba(0,255,136,.32);}
+.message-board-fab:focus-visible{outline:2px solid #fff;outline-offset:3px;}
+@media(max-width:520px){.message-board-fab{right:14px;bottom:14px;padding:12px 14px;font-size:12px;}}
 </style>
 </head>
 <body>
 
 <div id="rsvp-auth-loading" class="rsvp-gate-overlay" aria-busy="true" aria-label="Checking sign in">
   <div class="rsvp-gate-inner">
-    <p class="rsvp-gate-title">Checking sign-in…</p>
-    <p class="rsvp-gate-sub">If you aren’t redirected, sign in on the account page.</p>
+    <p class="rsvp-gate-title">Checking sign-in...</p>
+    <p class="rsvp-gate-sub">If you aren't redirected, sign in on the account page.</p>
   </div>
 </div>
 <div id="rsvp-no-firebase" class="rsvp-gate-overlay hidden" role="alert">
   <div class="rsvp-gate-inner">
     <p class="rsvp-gate-title">RSVP requires sign-in</p>
     <p class="rsvp-gate-sub">Add Firebase in <code>js/openplay-firebase-config.js</code> and reload. If scripts failed to load, check your connection.</p>
-    <a class="rsvp-gate-link" href="SouthEnd_OpenPlay_Account.html">Open Play account →</a>
+    <a class="rsvp-gate-link" href="SouthEnd_OpenPlay_Account.html">Open Play account -></a>
   </div>
 </div>
 
@@ -446,18 +500,19 @@ button.account-strip-link:hover{text-decoration:underline;}
   <div>
     <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
     <div class="hdr-title">OPEN <span>PLAY</span> RSVP</div>
-    <div class="hdr-sub">Tuesday &amp; Thursday Sessions &nbsp;·&nbsp; Competitive Open Play</div>
+    <div class="hdr-sub">Tuesday &amp; Thursday Sessions &nbsp;-&nbsp; Competitive Open Play</div>
   </div>
 </div>
-<nav class="se-site-nav" aria-label="Open Play sections">
-  <a class="se-site-nav-link" href="SouthEnd_OpenPlay_Account.html">Hub</a>
-  <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Session_RSVP.html" aria-current="page">RSVP</a>
-  <a class="se-site-nav-link" href="SouthEnd_Message_Board.html">Board</a>
+<nav class="se-site-nav" aria-label="Pickleball hub sections">
+  <a class="se-site-nav-link" href="SouthEnd_Pickleball_Hub.html">Hub</a>
+  <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_OpenPlay_Account.html" aria-current="page">Advanced Open Play</a>
+  <a class="se-site-nav-link" href="SouthEnd_Message_Board.html">Message Board</a>
+  <a class="se-site-nav-link" href="../../league-play/SouthEnd_League_Play_Hub.html">League Play</a>
 </nav>
 
 <div class="coupon-panel" id="coupon-panel">
   <div class="coupon-box">
-    <div class="coupon-title">⚡ Access Code</div>
+    <div class="coupon-title"> Access Code</div>
     <div class="coupon-subtitle">Enter your access code below. Codes are case-insensitive.</div>
     <input class="coupon-input" type="text" id="coupon-input" placeholder="Enter code..." maxlength="20" oninput="this.value=this.value.toUpperCase()">
     <div class="coupon-msg" id="coupon-msg"></div>
@@ -467,8 +522,8 @@ button.account-strip-link:hover{text-decoration:underline;}
     </div>
     <hr class="coupon-divider">
     <div class="coupon-admin-title">Staff Access</div>
-    <input class="pin-input" type="password" id="pin-input" placeholder="••••" maxlength="20">
-    <button class="pin-btn" onclick="checkPin()">Unlock Admin →</button>
+    <input class="pin-input" type="password" id="pin-input" placeholder="****" maxlength="20">
+    <button class="pin-btn" onclick="checkPin()">Unlock Admin -></button>
   </div>
 </div>
 
@@ -479,14 +534,14 @@ button.account-strip-link:hover{text-decoration:underline;}
       <span class="account-strip-text" id="account-strip-msg">Sign in on the account page to save your details for next time.</span>
       <span class="account-strip-actions">
         <button type="button" class="account-strip-link" id="btn-manage-rsvps">Manage RSVPs</button>
-        <a class="account-strip-link" id="account-strip-link" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Session_RSVP.html">Account page →</a>
+        <a class="account-strip-link" id="account-strip-link" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Session_RSVP.html">Account page -></a>
       </span>
     </div>
 
     <div class="section" id="section-your-info">
       <div id="profile-summary-wrap" class="profile-summary-card hidden" aria-live="polite">
         <div class="sec-head"><div class="sec-num">1</div><div class="sec-label">Your Information</div></div>
-        <p class="profile-summary-lead">Using your saved account profile. You can still add your access card below if you’re a member.</p>
+        <p class="profile-summary-lead">Using your saved account profile. You can still add your access card below if you're a member.</p>
         <div class="profile-summary-body" id="profile-summary-body"></div>
         <p class="profile-summary-edit"><a id="profile-summary-account-link" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Session_RSVP.html">Edit details on account page</a></p>
       </div>
@@ -505,8 +560,13 @@ button.account-strip-link:hover{text-decoration:underline;}
           <label>Skill Level <span class="req">*</span></label>
           <select id="p-skill">
             <option value="">Select level...</option>
-            <option value="Advanced 4.0+">Advanced 4.0+</option>
-            <option value="Open 5.0+">Open 5.0+</option>
+            <option value="2.0 Beginner">2.0 (Beginner)</option>
+            <option value="2.5 Upper Beginner">2.5 (Upper Beginner)</option>
+            <option value="3.0 Lower Intermediate">3.0 (Lower Intermediate)</option>
+            <option value="3.5 Intermediate">3.5 (Intermediate)</option>
+            <option value="4.0 Advanced">4.0 (Advanced)</option>
+            <option value="4.5 Upper Advanced">4.5 (Upper Advanced)</option>
+            <option value="5.0 Open">5.0 (Open)</option>
           </select>
           <div class="err-msg" id="err-skill">Select a skill level.</div>
         </div>
@@ -514,8 +574,8 @@ button.account-strip-link:hover{text-decoration:underline;}
           <label>South End Member? <span class="req">*</span></label>
           <select id="p-member" onchange="toggleMemberPay(this.value)">
             <option value="">Select...</option>
-            <option value="yes">Yes — Member</option>
-            <option value="no">No — Guest</option>
+            <option value="yes">Yes - Member</option>
+            <option value="no">No - Guest</option>
           </select>
           <div class="err-msg" id="err-member">Required.</div>
         </div>
@@ -547,13 +607,12 @@ button.account-strip-link:hover{text-decoration:underline;}
     </div>
 
     <div class="sec-head"><div class="sec-num">2</div><div class="sec-label">Choose Your Session</div></div>
-    <p class="session-help">Select <strong>one or more</strong> sessions. Tap a card to toggle. Use quick add to grab every Tuesday morning, every evening slot, a full week, or all dates at once.</p>
+    <p class="session-help">Select <strong>one or more</strong> sessions. Tap a card to toggle. Use quick add to grab every Tuesday, every Thursday, a full week, or all dates at once.</p>
     <div class="session-quick">
-      <button type="button" class="sq-chip" onclick="selectQuick('tue-am')">All Tue AM</button>
-      <button type="button" class="sq-chip" onclick="selectQuick('tue-pm')">All Tue PM</button>
-      <button type="button" class="sq-chip" onclick="selectQuick('thu-pm')">All Thu PM</button>
-      <button type="button" class="sq-chip" onclick="selectQuick('week1')">This Week (Apr 8–10)</button>
-      <button type="button" class="sq-chip" onclick="selectQuick('week2')">Next Week (Apr 15–17)</button>
+      <button type="button" class="sq-chip" onclick="selectQuick('tue-pm')">All Tue</button>
+      <button type="button" class="sq-chip" onclick="selectQuick('thu-pm')">All Thu</button>
+      <button type="button" class="sq-chip" onclick="selectQuick('week1')">This Week (Apr 8-10)</button>
+      <button type="button" class="sq-chip" onclick="selectQuick('week2')">Next Week (Apr 15-17)</button>
       <button type="button" class="sq-chip" onclick="selectQuick('all')">All sessions</button>
       <button type="button" class="sq-chip muted" onclick="clearSessionSelection()">Clear</button>
     </div>
@@ -563,12 +622,13 @@ button.account-strip-link:hover{text-decoration:underline;}
     <div class="session-summary" id="session-summary">No sessions selected</div>
     <div class="err-msg" id="err-session" style="margin-bottom:14px;">Select at least one session.</div>
 
-    <div id="discount-badge">✓ Special rate applied</div>
+    <div id="discount-badge">Yes Special rate applied</div>
 
     <div class="pay-box" id="pay-box">
       <div class="pay-title">Payment</div>
-      <div class="pay-num">Zelle: 310-251-3804</div>
+      <div class="pay-num">PayPal</div>
       <div class="pay-sub">Total Due: $0</div>
+      <div class="pay-note" style="grid-column:1/-1;font-size:11px;color:rgba(255,255,255,.5);margin-top:4px;">You'll get the PayPal link on the next screen after you reserve.</div>
     </div>
 
     <div class="waiver-block" id="waiver-block">
@@ -595,17 +655,17 @@ button.account-strip-link:hover{text-decoration:underline;}
         <div class="err-msg" id="err-waiver-communication">Please read and sign the communications consent to continue.</div>
       </div>
 
-      <div style="font-size:10px;color:rgba(255,255,255,.38);margin-top:6px;">Waivers schema v2 — sign once on your account; here you confirm they still apply. Club counsel should review all legal text.</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.38);margin-top:6px;">Waivers schema v2 - sign once on your account; here you confirm they still apply. Club counsel should review all legal text.</div>
     </div>
 
     <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:14px 16px;margin-bottom:16px;font-size:11px;color:rgba(255,255,255,.45);line-height:1.8;">
       <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:8px;">Court Rules</div>
-      🏆 <strong style="color:rgba(255,255,255,.7);">Challenge court always.</strong> Winners stay, losers rotate.<br>
-      ⚡ Director may remove or adjust players and/or court rotations as necessary based on skill.<br>
-      📋 By reserving, you agree to abide by all facility and session rules.
+       <strong style="color:rgba(255,255,255,.7);">Challenge court always.</strong> Winners stay, losers rotate.<br>
+       Director may remove or adjust players and/or court rotations as necessary based on skill.<br>
+       By reserving, you agree to abide by all facility and session rules.
     </div>
     <div class="err-msg" id="err-general" style="margin-bottom:10px;font-size:12px;"></div>
-    <button class="submit-btn" id="submit-btn" type="button" onclick="submitRSVP()">RESERVE MY SPOT →</button>
+    <button class="submit-btn" id="submit-btn" type="button" onclick="submitRSVP()">RESERVE MY SPOT -></button>
     <div style="text-align:center;margin-top:18px;">
       <span style="font-size:10px;color:rgba(255,255,255,.15);cursor:default;user-select:none;" ondblclick="openCoupon()">South End Racquet &amp; Health Club &copy; 2026</span>
     </div>
@@ -618,7 +678,7 @@ button.account-strip-link:hover{text-decoration:underline;}
   <div class="waiver-modal-box" role="document">
     <div class="waiver-modal-head">
       <h2 id="waiver-modal-liability-title">Liability waiver &amp; release</h2>
-      <button type="button" class="waiver-modal-close" id="waiver-modal-liability-close" aria-label="Close">×</button>
+      <button type="button" class="waiver-modal-close" id="waiver-modal-liability-close" aria-label="Close">x</button>
     </div>
     <div class="waiver-modal-scroll" id="waiver-scroll-liability" tabindex="0">
       <h3>Please read carefully</h3>
@@ -661,7 +721,7 @@ button.account-strip-link:hover{text-decoration:underline;}
   <div class="waiver-modal-box" role="document">
     <div class="waiver-modal-head">
       <h2 id="waiver-modal-communication-title">Communications consent</h2>
-      <button type="button" class="waiver-modal-close" id="waiver-modal-communication-close" aria-label="Close">×</button>
+      <button type="button" class="waiver-modal-close" id="waiver-modal-communication-close" aria-label="Close">x</button>
     </div>
     <div class="waiver-modal-scroll" id="waiver-scroll-communication" tabindex="0">
       <h3>Please read carefully</h3>
@@ -687,11 +747,18 @@ button.account-strip-link:hover{text-decoration:underline;}
 </div>
 
 <div id="success">
-  <div class="success-icon">⚡</div>
+  <div class="success-icon"></div>
   <div class="success-title">YOU'RE <span>IN!</span></div>
   <div class="success-sub" id="success-sub-msg">
     Spot reserved. Show this screen at the door.<br>
-    <span style="color:var(--neon);">Screenshot your QR code(s) — your check-in ticket(s).</span>
+    <span style="color:var(--neon);">Screenshot your QR code(s) - your check-in ticket(s).</span>
+  </div>
+
+  <div class="success-pay success-pay-hero" id="success-pay-box">
+    <div class="sp-title"> Pay with PayPal</div>
+    <div class="sp-sub" id="success-pay-amount">Total Due: $0</div>
+    <a id="success-pay-btn" href="https://www.paypal.com/qrcodes/managed/e99aaef1-4565-4c15-aba7-c7853b9c4aca" class="zelle-btn sp-btn-hero" target="_blank" rel="noopener">Open PayPal -></a>
+    <div class="sp-hint" id="success-pay-hint" style="font-size:11px;color:rgba(255,255,255,.6);margin-top:6px;">Enter this amount manually in PayPal</div>
   </div>
 
   <div class="id-badge" id="player-id-badge"></div>
@@ -703,45 +770,39 @@ button.account-strip-link:hover{text-decoration:underline;}
   <div class="confirm-card" id="confirm-detail"></div>
 
   <div class="success-account-cta">
-    <a class="success-account-cta-link" id="success-view-rsvps-link" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Session_RSVP.html">View or cancel RSVPs →</a>
-    <div class="success-account-cta-sub">Opens your Open Play account — calendar, cancellations, and profile.</div>
+    <a class="success-account-cta-link" id="success-view-rsvps-link" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Session_RSVP.html">View or cancel RSVPs -></a>
+    <div class="success-account-cta-sub">Opens your Open Play account - calendar, cancellations, and profile.</div>
   </div>
 
-  <div class="success-pay" id="success-pay-box">
-    <div class="sp-title">💜 Pay via Zelle</div>
-    <div class="sp-num">310-251-3804</div>
-    <div class="sp-sub">Total Due: $0</div>
-    <a href="https://enroll.zellepay.com/qr-codes?data=ewogICJuYW1lIjogIkJSQU5ET04gSE9PS0VSIFRFTU5JUyBMTEMiLAogICJ0b2tlbiI6ICIzMTAtMjUxLTM4MDQiLAogICJhY3Rpb24iOiAicGF5bWVudCIKfQ==" class="zelle-btn" target="_blank">Open Zelle →</a>
-  </div>
-
-  <div class="show-qr-note">📱 Show QR code + Player ID to staff at the door</div>
+  <div class="show-qr-note"> Show QR code + Player ID to staff at the door</div>
 </div>
 
 <div id="manage-rsvp-modal" class="waiver-modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="manage-rsvp-modal-title">
   <div class="waiver-modal-box" role="document">
     <div class="waiver-modal-head">
       <h2 id="manage-rsvp-modal-title">Your RSVPs</h2>
-      <button type="button" class="waiver-modal-close" id="manage-rsvp-modal-close" aria-label="Close">×</button>
+      <button type="button" class="waiver-modal-close" id="manage-rsvp-modal-close" aria-label="Close">x</button>
     </div>
     <div class="waiver-modal-scroll" id="manage-rsvp-list"></div>
   </div>
 </div>
 
+<footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="js/openplay-firebase-config.js"></script>
 <script src="js/south-end-openplay-sync.js"></script>
-<script src="js/openplay-profile-panel.js?v=20260407"></script>
+<script src="js/pickleball-invite-share.js?v=20260425"></script>
+<script src="js/openplay-profile-panel.js?v=20260426-routing2"></script>
 <script src="js/openplay-rsvp-helpers.js"></script>
 <script src="js/openplay-waiver-modals.js"></script>
 <script>
 // Removed applyOpenPlayWeekHeadings - now handled by dynamic schedule generator
 
-// ── SCHEDULE CONFIGURATION (edit slots here if times change) ──
+// Schedule configuration (edit slots here if times change)
 var SCHEDULE_CONFIG = {
   slots: [
-    { day: 2, label: 'Tuesday Morning',  abbr: 'TUES.', time: '8:00 AM – 12:00 PM', tag: 'MORNING',  emoji: '☀', tagColor: 'rgba(0,255,136,.6)', timeColor: 'var(--neon)' },
-    { day: 2, label: 'Tuesday Evening',  abbr: 'TUES.', time: '6:00 – 9:00 PM',     tag: 'EVENING',  emoji: '🌙', tagColor: 'rgba(168,85,247,.6)', timeColor: 'var(--electric)' },
-    { day: 4, label: 'Thursday Evening', abbr: 'THURS.', time: '6:00 – 9:00 PM',    tag: 'EVENING',  emoji: '🌙', tagColor: 'rgba(168,85,247,.6)', timeColor: 'var(--electric)' },
+    { day: 2, label: 'Tuesday Evening',  abbr: 'TUES.', time: '6:00 - 9:00 PM',     tag: 'EVENING',  emoji: '', tagColor: 'rgba(168,85,247,.6)', timeColor: 'var(--electric)' },
+    { day: 4, label: 'Thursday Evening', abbr: 'THURS.', time: '6:00 - 9:00 PM',    tag: 'EVENING',  emoji: '', tagColor: 'rgba(168,85,247,.6)', timeColor: 'var(--electric)' },
   ],
   weeksToShow: 2,
   lastSessionEndHour: 21, // 9 PM PT - roll after this
@@ -773,6 +834,7 @@ function computeSessionWeeks(config) {
   
   var rollPast = now.dow > maxDay || (now.dow === maxDay && now.hour >= config.lastSessionEndHour);
   
+  var todayStart = new Date(now.year, now.month - 1, now.day).getTime();
   var anchor = new Date(now.year, now.month - 1, now.day);
   var currentDow = anchor.getDay();
   
@@ -816,6 +878,7 @@ function computeSessionWeeks(config) {
         tagColor: slot.tagColor,
         timeColor: slot.timeColor,
         date: sessionDate,
+        isPast: sessionDate.getTime() < todayStart,
       });
     });
     
@@ -827,7 +890,7 @@ function computeSessionWeeks(config) {
     var lastDate = sessions[sessions.length - 1].date;
     var weekLabel = w === 0 ? 'This Week' : 'Next Week';
     var rangeLabel = firstDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) +
-      ' – ' + lastDate.getDate();
+      ' - ' + lastDate.getDate();
     
     weeks.push({
       label: weekLabel,
@@ -846,22 +909,30 @@ function renderSessionCards(weeks) {
   var html = '';
   weeks.forEach(function (week) {
     html += '<div class="session-week-block">';
-    html += '<div class="swb-head"><span class="swb-label">' + week.label + '</span> · <span class="swb-range">' + week.range + '</span></div>';
+    html += '<div class="swb-head"><span class="swb-label">' + week.label + '</span> - <span class="swb-range">' + week.range + '</span></div>';
     html += '<div class="session-grid">';
     
     week.sessions.forEach(function (sess) {
       var fullLabel = sess.fullLabel;
       var escapedLabel = fullLabel.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-      
-      html += '<div class="session-card" role="checkbox" tabindex="0" aria-checked="false" data-session="' + escapedLabel + '" ';
-      html += 'onclick="toggleSession(this,\'' + escapedLabel.replace(/'/g, "\\'") + '\')" ';
-      html += 'onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();toggleSession(this,\'' + escapedLabel.replace(/'/g, "\\'") + '\');}">';
-      html += '<input type="checkbox" name="session" value="' + escapedLabel + '">';
+      var pastClass = sess.isPast ? ' session-card--past' : '';
+      var pastAttrs = sess.isPast ? ' aria-disabled="true" data-past="1"' : '';
+      var tabIndex = sess.isPast ? '-1' : '0';
+      var clickAttr = sess.isPast
+        ? ''
+        : ' onclick="toggleSession(this,\'' + escapedLabel.replace(/'/g, "\\'") + '\')"'
+          + ' onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();toggleSession(this,\'' + escapedLabel.replace(/'/g, "\\'") + '\');}"';
+
+      html += '<div class="session-card' + pastClass + '" role="checkbox" tabindex="' + tabIndex + '" aria-checked="false" data-session="' + escapedLabel + '"' + pastAttrs + clickAttr + '>';
+      html += '<input type="checkbox" name="session" value="' + escapedLabel + '"' + (sess.isPast ? ' disabled' : '') + '>';
       html += '<div class="sc-tag" style="color:' + sess.tagColor + '">' + sess.emoji + ' ' + sess.tag + '</div>';
       html += '<div class="sc-day">' + sess.abbr + '</div>';
       html += '<div class="sc-date">' + sess.monthDay + '</div>';
       html += '<div class="sc-time" style="color:' + sess.timeColor + ';">' + sess.time + '</div>';
       html += '<div class="sc-check"></div>';
+      if (sess.isPast) {
+        html += '<div class="sc-past-label">Past - cannot reserve</div>';
+      }
       html += '</div>';
     });
     
@@ -871,20 +942,38 @@ function renderSessionCards(weeks) {
   container.innerHTML = html;
 }
 
-// ── COUPON CODES (edit here to add/remove codes) ──
+// Coupon codes (edit here to add/remove codes)
 // Format: 'CODE': {type: 'free'|'half', label: 'display message'}
 const CODES = {
-  'GUEST2026':  {type:'free',  label:'Guest pass applied — no charge'},
-  'FOUNDING50': {type:'half',  label:'Founding member rate applied — 50% off'},
-  'STAFF':      {type:'free',  label:'Staff pass applied — complimentary'},
+  'GUEST2026':  {type:'free',  label:'Guest pass applied - no charge'},
+  'FOUNDING50': {type:'half',  label:'Founding member rate applied - 50% off'},
+  'STAFF':      {type:'free',  label:'Staff pass applied - complimentary'},
 };
 
-// ── ADMIN PIN (shared with check-in page via se_pin) ──
+// Admin PIN (shared with check-in page via se_pin)
 let ADMIN_PIN = (typeof SEOpenPlay !== 'undefined' ? SEOpenPlay.getPin() : localStorage.getItem('se_pin')) || '1234';
 
 let selectedSessions = new Set();
 let appliedCode = null;
-const NON_MEMBER_SESSION_RATE = 20;
+const NON_MEMBER_SESSION_RATE = 15;
+const DISCOUNT_SESSION_RATE = 10;
+// Prefilled PayPal NCP links, keyed by total dollars. Missing amounts fall back
+// to PAYPAL_FALLBACK_URL (manual-entry QR link).
+const PAYPAL_LINKS = {
+  15: 'https://www.paypal.com/ncp/payment/UFXTWG4JHK38S',
+  30: 'https://www.paypal.com/ncp/payment/MZTNTLDBBQ7MA',
+  45: 'https://www.paypal.com/ncp/payment/UJL6S2MJLPERL',
+  60: 'https://www.paypal.com/ncp/payment/K8ZQAYY8BVGYA',
+};
+const PAYPAL_FALLBACK_URL = 'https://www.paypal.com/qrcodes/managed/e99aaef1-4565-4c15-aba7-c7853b9c4aca';
+function paypalUrlFor(total) {
+  var amt = Math.max(0, Number(total) || 0);
+  return PAYPAL_LINKS[amt] || PAYPAL_FALLBACK_URL;
+}
+function paypalIsPrefilled(total) {
+  var amt = Math.max(0, Number(total) || 0);
+  return Object.prototype.hasOwnProperty.call(PAYPAL_LINKS, amt);
+}
 /** Rows from Firebase for the signed-in user (see subscribeMyRsvps). */
 var myRsvpRows = [];
 /** True once the first subscribeMyRsvps callback fires (even if list is empty). */
@@ -939,14 +1028,14 @@ function getCheckoutPricing(memberVal, sessionCount) {
   }
 
   if (appliedCode && appliedCode.type === 'half') {
-    var halfTotal = Math.round(baseTotal / 2);
+    var discountedTotal = DISCOUNT_SESSION_RATE * count;
     return {
       count: count,
       baseTotal: baseTotal,
-      total: halfTotal,
+      total: discountedTotal,
       memberIncluded: false,
-      summary: 'Total Due: ' + formatUsd(halfTotal),
-      chargeField: formatUsd(halfTotal),
+      summary: 'Total Due: ' + formatUsd(discountedTotal),
+      chargeField: formatUsd(discountedTotal),
     };
   }
 
@@ -985,7 +1074,7 @@ function updatePaymentDisplay() {
 
   payBox.style.opacity = '1';
   payBox.style.pointerEvents = '';
-  payNum.textContent = 'Zelle: 310-251-3804';
+  payNum.textContent = 'PayPal';
   paySub.textContent = pricing.summary;
 }
 
@@ -1032,7 +1121,17 @@ function applyProfileToForm(p) {
   if (p.firstName) document.getElementById('p-first').value = p.firstName;
   if (p.lastName) document.getElementById('p-last').value = p.lastName;
   if (p.phone) document.getElementById('p-phone').value = p.phone;
-  if (p.skill) document.getElementById('p-skill').value = p.skill;
+  if (p.skill) {
+    var pSk = document.getElementById('p-skill');
+    pSk.value = p.skill;
+    if (pSk.value !== p.skill) {
+      var o = document.createElement('option');
+      o.value = p.skill;
+      o.textContent = p.skill + ' (legacy)';
+      pSk.appendChild(o);
+      pSk.value = p.skill;
+    }
+  }
   var mem = normalizeMembership(p.membership);
   var memSel = document.getElementById('p-member');
   if (memSel) {
@@ -1049,35 +1148,35 @@ function applyProfileToForm(p) {
 function fillProfileSummaryBody(p) {
   var el = document.getElementById('profile-summary-body');
   if (!el || !p) return;
-  var hear = p.hear ? escapeHtml(p.hear) : '—';
-  var notes = p.notes ? escapeHtml(p.notes) : '—';
+  var hear = p.hear ? escapeHtml(p.hear) : '-';
+  var notes = p.notes ? escapeHtml(p.notes) : '-';
   var em = document.getElementById('p-email') ? document.getElementById('p-email').value : '';
   el.innerHTML =
-    '<div class="ps-line"><strong>Name</strong> — ' +
+    '<div class="ps-line"><strong>Name</strong> - ' +
     escapeHtml(p.firstName) +
     ' ' +
     escapeHtml(p.lastName) +
     '</div>' +
-    '<div class="ps-line"><strong>Email</strong> — ' +
+    '<div class="ps-line"><strong>Email</strong> - ' +
     escapeHtml(em) +
     '</div>' +
-    '<div class="ps-line"><strong>Phone</strong> — ' +
+    '<div class="ps-line"><strong>Phone</strong> - ' +
     escapeHtml(p.phone) +
     '</div>' +
-    '<div class="ps-line"><strong>Skill</strong> — ' +
+    '<div class="ps-line"><strong>Skill</strong> - ' +
     escapeHtml(p.skill) +
     '</div>' +
-    '<div class="ps-line"><strong>Member</strong> — ' +
+    '<div class="ps-line"><strong>Member</strong> - ' +
     (normalizeMembership(p.membership) === 'yes'
-      ? 'Yes — Member'
+      ? 'Yes - Member'
       : normalizeMembership(p.membership) === 'no'
         ? 'Guest'
-        : '—') +
+        : '-') +
     '</div>' +
-    '<div class="ps-line"><strong>Heard via</strong> — ' +
+    '<div class="ps-line"><strong>Heard via</strong> - ' +
     hear +
     '</div>' +
-    '<div class="ps-line"><strong>Notes</strong> — ' +
+    '<div class="ps-line"><strong>Notes</strong> - ' +
     notes +
     '</div>';
 }
@@ -1104,13 +1203,14 @@ function saveProfileAfterRsvp() {
 function accountPageHrefForRsvp() {
   var page = 'SouthEnd_Session_RSVP.html';
   try {
-    var seg = (window.location.pathname || '').split('/').filter(Boolean).pop();
-    if (seg && /\.html?$/i.test(seg)) page = seg;
+    var path = window.location.pathname || '';
+    var seg = path.split('/').filter(Boolean).pop();
+    if (seg && /\.html?$/i.test(seg)) page = seg + (window.location.search || '');
   } catch (e) {}
   return 'SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent(page);
 }
 
-/** RSVP: no inline sign-in — account page holds email/password; Firebase Auth persists the session in-browser. */
+/** RSVP: no inline sign-in - account page holds email/password; Firebase Auth persists the session in-browser. */
 function initRsvpProfileOnly() {
   if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()) return;
   var psLink = document.getElementById('profile-summary-account-link');
@@ -1131,7 +1231,7 @@ function initRsvpProfileOnly() {
       }
       if (stripMsg) stripMsg.innerHTML = 'Signed in as <strong>' + escapeHtml(user.email) + '</strong>.';
       if (stripLink) {
-        stripLink.textContent = 'Account page →';
+        stripLink.textContent = 'Account page ->';
         stripLink.href = accountPageHrefForRsvp();
       }
       SEOpenPlay.loadUserProfile(user.uid).then(function (p) {
@@ -1158,7 +1258,7 @@ function initRsvpProfileOnly() {
       setRsvpProfileSummaryMode(false);
       if (stripMsg) stripMsg.textContent = 'Sign in on the account page to continue.';
       if (stripLink) {
-        stripLink.textContent = 'Account page →';
+        stripLink.textContent = 'Account page ->';
         stripLink.href = accountPageHrefForRsvp();
       }
     }
@@ -1166,6 +1266,7 @@ function initRsvpProfileOnly() {
 }
 
 var rsvpProfileGateDone = false;
+var rsvpModuleAccessAllowed = false;
 
 /** Require Firebase + signed-in user before showing the RSVP form; otherwise redirect to account or show config error. */
 function isSessionRegisteredForMe(sessionVal) {
@@ -1197,8 +1298,13 @@ function paintRegisteredSessions() {
       }
     } else {
       card.classList.remove('session-card--registered');
-      card.removeAttribute('aria-disabled');
-      card.tabIndex = 0;
+      if (card.classList.contains('session-card--past')) {
+        card.setAttribute('aria-disabled', 'true');
+        card.tabIndex = -1;
+      } else {
+        card.removeAttribute('aria-disabled');
+        card.tabIndex = 0;
+      }
       if (regEl) regEl.remove();
     }
   });
@@ -1310,10 +1416,14 @@ function initRsvpAuthGate(onAllowed) {
   function showMain() {
     if (main) main.classList.remove('rsvp-main-hidden');
   }
-  function blockMain(msg) {
+  function blockMain(msg, title) {
     hideLoading();
     if (main) main.classList.add('rsvp-main-hidden');
     if (noFb) {
+      if (title) {
+        var gateTitle = noFb.querySelector('.rsvp-gate-title');
+        if (gateTitle) gateTitle.textContent = title;
+      }
       if (msg) {
         var sub = noFb.querySelector('.rsvp-gate-sub');
         if (sub) sub.textContent = msg;
@@ -1339,13 +1449,28 @@ function initRsvpAuthGate(onAllowed) {
     SEOpenPlay.onAuthStateChanged(function (user) {
       hideLoading();
       if (user) {
-        showMain();
-        if (!rsvpProfileGateDone && typeof onAllowed === 'function') {
-          rsvpProfileGateDone = true;
-          onAllowed();
-        }
+        var accessCheck = SEOpenPlay.hasModuleAccess
+          ? SEOpenPlay.hasModuleAccess(user.uid, SEOpenPlay.MODULE_ADVANCED_OPEN_PLAY || 'advanced_open_play')
+          : Promise.resolve(true);
+        accessCheck.then(function (ok) {
+          if (!ok) {
+            rsvpModuleAccessAllowed = false;
+            blockMain(
+              'Advanced Open Play is for players rated 4.0 and above (or staff-assigned access). Your account does not show an eligible rating yet. Update your skill on the Open Play account page, or contact South End staff.',
+              'Not eligible for Advanced Open Play'
+            );
+            return;
+          }
+          rsvpModuleAccessAllowed = true;
+          showMain();
+          if (!rsvpProfileGateDone && typeof onAllowed === 'function') {
+            rsvpProfileGateDone = true;
+            onAllowed();
+          }
+        });
         return;
       }
+      rsvpModuleAccessAllowed = false;
       window.location.replace(accountPageHrefForRsvp());
     });
   });
@@ -1355,7 +1480,6 @@ var SESSION_GROUPS = {}; // Built dynamically from computed schedule
 
 function buildSessionGroups(weeks) {
   var groups = {
-    'tue-am': [],
     'tue-pm': [],
     'thu-pm': [],
     'week1': [],
@@ -1371,7 +1495,6 @@ function buildSessionGroups(weeks) {
       if (weekIdx === 0) groups.week1.push(label);
       if (weekIdx === 1) groups.week2.push(label);
       
-      if (/Tuesday Morning/i.test(label)) groups['tue-am'].push(label);
       if (/Tuesday Evening/i.test(label)) groups['tue-pm'].push(label);
       if (/Thursday Evening/i.test(label)) groups['thu-pm'].push(label);
     });
@@ -1414,7 +1537,7 @@ function setCardVisual(card, on) {
     card.classList.add('selected');
     if (inp) inp.checked = true;
     card.setAttribute('aria-checked', 'true');
-    if (chk) chk.textContent = '✓';
+    if (chk) chk.textContent = 'Yes';
   } else {
     card.classList.remove('selected');
     if (inp) inp.checked = false;
@@ -1426,16 +1549,17 @@ function updateSessionSummary() {
   var n = selectedSessions.size;
   var el = document.getElementById('session-summary');
   if (!el) return;
-  el.textContent = n === 0 ? 'No sessions selected' : '✓ ' + n + ' session' + (n === 1 ? '' : 's') + ' selected';
+  el.textContent = n === 0 ? 'No sessions selected' : 'Yes ' + n + ' session' + (n === 1 ? '' : 's') + ' selected';
   var btn = document.getElementById('submit-btn');
   if (btn && !btn.disabled) {
-    if (n <= 1) btn.textContent = 'RESERVE MY SPOT →';
-    else btn.textContent = 'RESERVE MY SPOTS (' + n + ') →';
+    if (n <= 1) btn.textContent = 'RESERVE MY SPOT ->';
+    else btn.textContent = 'RESERVE MY SPOTS (' + n + ') ->';
   }
   updatePaymentDisplay();
 }
 function toggleSession(card, val) {
   if (card && card.classList.contains('session-card--registered')) return;
+  if (card && card.classList.contains('session-card--past')) return;
   if (selectedSessions.has(val)) {
     selectedSessions.delete(val);
     setCardVisual(card, false);
@@ -1459,14 +1583,39 @@ function selectQuick(mode) {
   clearSessionSelection();
   list.forEach(function (val) {
     if (isSessionRegisteredForMe(val)) return;
+    var card = findSessionCard(val);
+    if (card && card.classList.contains('session-card--past')) return;
     selectedSessions.add(val);
-    setCardVisual(findSessionCard(val), true);
+    setCardVisual(card, true);
   });
   updateSessionSummary();
   document.getElementById('err-session').classList.remove('show');
 }
 
-// ── COUPON ZONE ──
+function requestedInviteSession() {
+  try {
+    return new URLSearchParams(window.location.search || '').get('session') || '';
+  } catch (e) {
+    return '';
+  }
+}
+
+function applyRequestedInviteSession() {
+  var val = requestedInviteSession();
+  if (!val) return;
+  var card = findSessionCard(val);
+  if (!card || card.classList.contains('session-card--past') || card.classList.contains('session-card--registered')) return;
+  selectedSessions.add(val);
+  setCardVisual(card, true);
+  updateSessionSummary();
+  var err = document.getElementById('err-session');
+  if (err) err.classList.remove('show');
+  try {
+    card.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  } catch (e) {}
+}
+
+// Coupon zone
 function openCoupon() {
   document.getElementById('coupon-panel').classList.add('open');
   document.getElementById('coupon-input').focus();
@@ -1483,8 +1632,8 @@ function applyCoupon() {
   if (code) {
     appliedCode = {code: val, ...code};
     msgEl.className = 'coupon-msg success';
-    msgEl.textContent = '✓ ' + code.label;
-    document.getElementById('discount-badge').textContent = '✓ ' + code.label;
+    msgEl.textContent = 'Yes ' + code.label;
+    document.getElementById('discount-badge').textContent = 'Yes ' + code.label;
     document.getElementById('discount-badge').classList.add('show');
     updatePaymentDisplay();
     setTimeout(closeCoupon, 1200);
@@ -1504,7 +1653,7 @@ function checkPin() {
     showAdminPanel();
   } else {
     document.getElementById('pin-input').value = '';
-    document.getElementById('pin-input').placeholder = 'Incorrect — try again';
+    document.getElementById('pin-input').placeholder = 'Incorrect - try again';
   }
 }
 function showAdminPanel() {
@@ -1549,7 +1698,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// ── SESSION SELECT ──
+// Session select
 function toggleMemberPay(val) {
   const payBox = document.getElementById('pay-box');
   const cardRow = document.getElementById('member-card-row');
@@ -1569,7 +1718,7 @@ function toggleMemberPay(val) {
   updatePaymentDisplay();
 }
 
-// ── VALIDATION ──
+// Validation
 function showErr(id) { const el=document.getElementById(id); if(el) el.classList.add('show'); }
 function clearErrors() {
   document.querySelectorAll('.err-msg').forEach(e=>e.classList.remove('show'));
@@ -1582,7 +1731,7 @@ function clearErrors() {
   if (wb) wb.classList.remove('waiver-error');
 }
 
-// ── PLAYER ID (shared prefix logic with check-in) ──
+// Player ID (shared prefix logic with check-in)
 function generateId(name, session) {
   return SEOpenPlay.generatePlayerId(name, session);
 }
@@ -1594,13 +1743,21 @@ function pickPidForRsvp(firebaseUid, name, session) {
   return generateId(name, session);
 }
 
-// ── SUBMIT ──
+// Submit
 function submitRSVP() {
   clearErrors();
   if (typeof SEOpenPlay !== 'undefined' && SEOpenPlay.firebaseConfigured()) {
     var cu = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
     if (!cu) {
       window.location.replace(accountPageHrefForRsvp());
+      return;
+    }
+    if (!rsvpModuleAccessAllowed) {
+      var egAccess = document.getElementById('err-general');
+      if (egAccess) {
+        egAccess.textContent = 'Advanced Open Play requires a 4.0+ skill rating, staff-assigned access, or admin approval.';
+        egAccess.classList.add('show');
+      }
       return;
     }
   }
@@ -1610,7 +1767,7 @@ function submitRSVP() {
   if (!myRsvpLoaded && typeof SEOpenPlay !== 'undefined' && SEOpenPlay.firebaseConfigured()) {
     var egWarn = document.getElementById('err-general');
     if (egWarn) {
-      egWarn.textContent = 'Still loading your existing RSVPs — please wait a moment and try again.';
+      egWarn.textContent = 'Still loading your existing RSVPs - please wait a moment and try again.';
       egWarn.classList.add('show');
     }
     return;
@@ -1698,7 +1855,7 @@ function submitRSVP() {
 
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
-  btn.textContent = sessions.length > 1 ? ('Sending… 0/' + sessions.length) : 'Sending…';
+  btn.textContent = sessions.length > 1 ? ('Sending... 0/' + sessions.length) : 'Sending...';
   document.getElementById('err-general').classList.remove('show');
   document.getElementById('err-general').textContent = '';
 
@@ -1712,7 +1869,7 @@ function submitRSVP() {
       });
       if (!okRes.length) {
         btn.disabled = false;
-        btn.textContent = sessions.length > 1 ? 'RESERVE MY SPOTS →' : 'RESERVE MY SPOT →';
+        btn.textContent = sessions.length > 1 ? 'RESERVE MY SPOTS ->' : 'RESERVE MY SPOT ->';
         var egAll = document.getElementById('err-general');
         if (egAll) {
           egAll.textContent = 'Those sessions are already booked for your account.';
@@ -1721,6 +1878,13 @@ function submitRSVP() {
         return;
       }
       showSuccessMulti(name, email, phone, skill, okRes, isNew, tierHint, memberCard, codeInfo, sessions.length);
+      try {
+        if (typeof SEOpenPlay !== 'undefined' && SEOpenPlay.pushBoardRsvpLog) {
+          SEOpenPlay.pushBoardRsvpLog(
+            okRes.map(function (r) { return r.session; })
+          ).catch(function () {});
+        }
+      } catch (e) {}
       return;
     }
     const selectedSession = sessions[idx];
@@ -1736,13 +1900,13 @@ function submitRSVP() {
     }
 
     function runFetch() {
-      if (sessions.length > 1) btn.textContent = 'Sending… ' + (idx + 1) + '/' + sessions.length;
+      if (sessions.length > 1) btn.textContent = 'Sending... ' + (idx + 1) + '/' + sessions.length;
 
       const payload = {
         _subject:
-          'Open Play RSVP — ' +
+          'Open Play RSVP - ' +
           name +
-          ' · ' +
+          ' - ' +
           selectedSession +
           (sessions.length > 1 ? ' (' + (idx + 1) + '/' + sessions.length + ')' : ''),
         Player_ID: pid,
@@ -1762,7 +1926,7 @@ function submitRSVP() {
         Member_Access_Card: member === 'yes' ? memberCard : 'N/A',
         Waiver: isNew ? 'NEEDED' : 'On file',
         Code_Used: codeInfo,
-        Tier: 'PENDING — assign in check-in',
+        Tier: 'PENDING - assign in check-in',
         Charge:
           pricingForSubmission.chargeField,
         Heard_Via: document.getElementById('p-hear').value || 'Not specified',
@@ -1811,7 +1975,7 @@ function submitRSVP() {
         })
         .catch(function () {
           btn.disabled = false;
-          btn.textContent = sessions.length > 1 ? 'RESERVE MY SPOTS →' : 'RESERVE MY SPOT →';
+          btn.textContent = sessions.length > 1 ? 'RESERVE MY SPOTS ->' : 'RESERVE MY SPOT ->';
           var eg = document.getElementById('err-general');
           eg.textContent =
             'Could not send confirmation (failed on session ' +
@@ -1841,7 +2005,7 @@ function submitRSVP() {
               if (snap.exists()) {
                 var v = snap.val();
                 // The PID is deterministic per (uid, session) so if the node exists
-                // with this session it is always this user's booking — no uid re-check needed.
+                // with this session it is always this user's booking - no uid re-check needed.
                 if (v && String(v.session || '') === String(selectedSession)) {
                   skipDuplicate();
                   return;
@@ -1863,7 +2027,7 @@ function submitRSVP() {
 
   function showSuccessMulti(n, em, ph, sk, resList, newPlayer, tier, mc, cInfo, totalSessions) {
     saveProfileAfterRsvp();
-    btn.textContent = 'Submitted ✓';
+    btn.textContent = 'Submitted Yes';
     document.getElementById('main-form-wrap').classList.add('hidden');
     var s = document.getElementById('success');
     s.style.display = 'block';
@@ -1876,16 +2040,16 @@ function submitRSVP() {
       sub.textContent = 'Your Player ID';
     } else {
       badge.textContent = resList.length + ' sessions';
-      sub.textContent = 'One Player ID per session — scan the matching QR at the door';
+      sub.textContent = 'One Player ID per session - scan the matching QR at the door';
       var subm = document.getElementById('success-sub-msg');
-      if (subm) subm.innerHTML = 'Spots reserved. Show this screen at the door.<br><span style="color:var(--neon);">Screenshot each QR — one check-in ticket per session.</span>';
+      if (subm) subm.innerHTML = 'Spots reserved. Show this screen at the door.<br><span style="color:var(--neon);">Screenshot each QR - one check-in ticket per session.</span>';
     }
 
     var hintEl = document.getElementById('qr-multi-hint');
     if (hintEl) {
       if (resList.length > 1) {
         hintEl.style.display = 'block';
-        hintEl.textContent = 'Each ticket is for one session — scan the QR that matches the day you arrive.';
+        hintEl.textContent = 'Each ticket is for one session - scan the QR that matches the day you arrive.';
       } else {
         hintEl.style.display = 'none';
         hintEl.textContent = '';
@@ -1928,11 +2092,11 @@ function submitRSVP() {
       var r0 = resList[0];
       var ts0 = SEOpenPlay.timeForFullSession(r0.session);
       detailHtml = '<div class="cc-line"><strong>Name:</strong> ' + escapeHtml(n) + '</div>';
-      detailHtml += '<div class="cc-line"><strong>Session:</strong> ' + escapeHtml(r0.session) + ' · ' + escapeHtml(ts0) + '</div>';
+      detailHtml += '<div class="cc-line"><strong>Session:</strong> ' + escapeHtml(r0.session) + ' - ' + escapeHtml(ts0) + '</div>';
       detailHtml += '<div class="cc-line"><strong>Player ID:</strong> ' + escapeHtml(r0.pid) + '</div>';
       if (sk) detailHtml += '<div class="cc-line"><strong>Level:</strong> ' + escapeHtml(sk) + '</div>';
       detailHtml += '<div class="cc-line"><strong>Payment:</strong> ' + escapeHtml(paymentLineText(pricingForSuccess)) + '</div>';
-      if (appliedCode) detailHtml += '<div class="cc-line"><strong>Code:</strong> Applied ✓</div>';
+      if (appliedCode) detailHtml += '<div class="cc-line"><strong>Code:</strong> Applied Yes</div>';
     } else {
       detailHtml = '<div class="cc-line"><strong>Name:</strong> ' + escapeHtml(n) + '</div>';
       detailHtml += '<div class="confirm-sessions-wrap"><table class="confirm-sessions-table"><thead><tr><th>Session</th><th>Time</th><th>Player ID</th></tr></thead><tbody>';
@@ -1943,7 +2107,7 @@ function submitRSVP() {
       detailHtml += '</tbody></table></div>';
       if (sk) detailHtml += '<div class="cc-line" style="margin-top:16px"><strong>Level:</strong> ' + escapeHtml(sk) + '</div>';
       detailHtml += '<div class="cc-line"><strong>Payment:</strong> ' + escapeHtml(paymentLineText(pricingForSuccess)) + '</div>';
-      if (appliedCode) detailHtml += '<div class="cc-line"><strong>Code:</strong> Applied ✓</div>';
+      if (appliedCode) detailHtml += '<div class="cc-line"><strong>Code:</strong> Applied Yes</div>';
     }
     document.getElementById('confirm-detail').innerHTML = detailHtml;
 
@@ -1951,6 +2115,25 @@ function submitRSVP() {
     if (successPay) {
       var successPaySub = successPay.querySelector('.sp-sub');
       if (successPaySub) successPaySub.textContent = pricingForSuccess.summary;
+      var successPayBtn = document.getElementById('success-pay-btn');
+      var successPrefilled = paypalIsPrefilled(pricingForSuccess.total);
+      if (successPayBtn) {
+        successPayBtn.setAttribute('href', paypalUrlFor(pricingForSuccess.total));
+        if (pricingForSuccess.total > 0) {
+          successPayBtn.textContent = 'Open PayPal (' + formatUsd(pricingForSuccess.total) + ') ->';
+        } else {
+          successPayBtn.textContent = 'Open PayPal ->';
+        }
+      }
+      var successPayHint = document.getElementById('success-pay-hint');
+      if (successPayHint) {
+        if (pricingForSuccess.total > 0 && !successPrefilled) {
+          successPayHint.style.display = '';
+          successPayHint.textContent = 'Enter this amount manually in PayPal';
+        } else {
+          successPayHint.style.display = 'none';
+        }
+      }
     }
 
     if (appliedCode && appliedCode.type === 'free') {
@@ -1967,7 +2150,10 @@ function submitRSVP() {
 // Initialize dynamic schedule on page load
 document.addEventListener('DOMContentLoaded', function () {
   initializeSchedule();
+  applyRequestedInviteSession();
 });
 </script>
+
+<a class="message-board-fab" href="SouthEnd_Message_Board.html" aria-label="Open Message Board">Message Board</a>
 </body>
 </html>

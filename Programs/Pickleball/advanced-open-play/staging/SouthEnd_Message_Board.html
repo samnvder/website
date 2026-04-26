@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="js/openplay-testing-env.js"></script>
 <title>Message Board — South End Open Play</title>
+<link rel="icon" type="image/jpeg" href="favicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -90,6 +91,17 @@ body::before{
   cursor:pointer;text-transform:uppercase;letter-spacing:.1em;padding:4px 0;
 }
 .board-del:hover{color:#ff6b6b;}
+.board-card--rsvp-log{
+  border-color:rgba(0,255,136,.38);
+  background:linear-gradient(180deg,rgba(0,255,136,.07),rgba(10,22,42,.72));
+}
+.board-card--rsvp-log:hover{border-color:rgba(0,255,136,.55);box-shadow:0 0 28px rgba(0,255,136,.14);}
+.board-card--rsvp-log .board-card-pulse{background:linear-gradient(180deg,var(--neon),#34d399);opacity:.95;}
+.board-rsvp-pill{
+  font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--ink);background:var(--neon);padding:3px 8px;border-radius:4px;font-weight:700;
+  align-self:center;
+}
 .board-empty{
   text-align:center;padding:36px 20px;color:rgba(255,255,255,.45);font-size:13px;
   border:1px dashed rgba(0,255,200,.2);border-radius:10px;
@@ -176,10 +188,11 @@ body::before{
     <div class="hdr-sub">Community channel · Signed-in members</div>
   </div>
 </div>
-<nav class="se-site-nav" aria-label="Open Play sections">
-  <a class="se-site-nav-link" href="SouthEnd_OpenPlay_Account.html">Hub</a>
-  <a class="se-site-nav-link" href="SouthEnd_Session_RSVP.html">RSVP</a>
-  <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Message_Board.html" aria-current="page">Board</a>
+<nav class="se-site-nav" aria-label="Pickleball hub sections">
+  <a class="se-site-nav-link" href="SouthEnd_Pickleball_Hub.html">Hub</a>
+  <a class="se-site-nav-link" href="SouthEnd_OpenPlay_Account.html">Advanced Open Play</a>
+  <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Message_Board.html" aria-current="page">Message Board</a>
+  <a class="se-site-nav-link" href="../../league-play/SouthEnd_League_Play_Hub.html">League Play</a>
 </nav>
 
 <div class="body-wrap">
@@ -208,9 +221,11 @@ body::before{
   </div>
 </div>
 
+<footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
 <script src="js/openplay-firebase-config.js"></script>
 <script src="js/south-end-openplay-sync.js"></script>
-<script src="js/openplay-profile-panel.js?v=20260407"></script>
+<script src="js/pickleball-invite-share.js?v=20260425"></script>
+<script src="js/openplay-profile-panel.js?v=20260426-routing2"></script>
 <script>
 (function () {
   var SE = window.SEOpenPlay;
@@ -317,8 +332,9 @@ body::before{
       return;
     }
     list.forEach(function (row) {
+      var isRsvpLog = row && row.kind === 'rsvp_log';
       var card = document.createElement('article');
-      card.className = 'board-card';
+      card.className = 'board-card' + (isRsvpLog ? ' board-card--rsvp-log' : '');
       card.appendChild(document.createElement('div')).className = 'board-card-pulse';
 
       var meta = document.createElement('div');
@@ -343,12 +359,20 @@ body::before{
       skill.className = 'board-skill';
       skill.textContent = row.skill ? row.skill : '';
 
+      var rsvpPill = null;
+      if (isRsvpLog) {
+        rsvpPill = document.createElement('span');
+        rsvpPill.className = 'board-rsvp-pill';
+        rsvpPill.textContent = 'RSVP';
+      }
+
       var time = document.createElement('span');
       time.className = 'board-time';
       time.textContent = formatTime(row.ts);
 
       meta.appendChild(authorBtn);
       if (row.skill) meta.appendChild(skill);
+      if (rsvpPill) meta.appendChild(rsvpPill);
       meta.appendChild(time);
 
       var text = document.createElement('div');
@@ -358,7 +382,7 @@ body::before{
       card.appendChild(meta);
       card.appendChild(text);
 
-      if (currentUid && String(row.uid) === String(currentUid)) {
+      if (!isRsvpLog && currentUid && String(row.uid) === String(currentUid)) {
         var del = document.createElement('button');
         del.type = 'button';
         del.className = 'board-del';

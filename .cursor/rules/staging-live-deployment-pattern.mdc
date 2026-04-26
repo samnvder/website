@@ -40,9 +40,10 @@ Default in repo: **`staging`** + **`allowProductionHostingDeploy: false`**.
 | `npm run openplay:use-staging` | Set `activeTree` -> `staging` (local-test uses `staging/`). |
 | `npm run openplay:use-live` | Set `activeTree` -> `live` (local-test uses `live/`). |
 | `npm run openplay:bootstrap-staging` | Replace `staging/` with a full copy of `live/` (init or reset), including Firebase config. |
-| `npm run openplay:sync-from-live` | Copy `live/` → `staging/` + local `local-page/` mirrors **preserving** each folder’s `js/openplay-firebase-config.js` (and `.example.js`). See **`command-openplay-sync-from-live.mdc`**. |
+| `npm run openplay:sync-from-live` | Copy `live/` → `staging/` + `advanced-open-play/testing/local-page/` mirror **preserving** each folder’s `js/openplay-firebase-config.js` (and `.example.js`). See **`command-openplay-sync-from-live.mdc`**. |
 | `npm run openplay:promote` | Copy `staging/` -> `live/` with **`OPENPLAY_CONFIRM_PROMOTE=1`** (overwrites `live/`). |
-| `npm run local-test` / `local-test:sync` | Mirror **active** tree -> gitignored `local-page/`. |
+| **`npm run roll-live -- --yes`** | **Roll live:** promote staging → live, deploy hosting, then reset `openplay-mode.json` to safe dev defaults (`staging` + `allowProductionHostingDeploy: false`). Add **`--all`** for hosting + database rules (like `deploy:openplay:all`). Add **`--dry-run`** to pass Firebase **`deploy --dry-run`** (still runs promote; validates CLI/project). Confirmation: **`--yes`** or env **`OPENPLAY_CONFIRM_ROLL_LIVE`** = **`1`**, **`true`**, or **`yes`**. |
+| `npm run local-test` / `local-test:sync` | Mirror **active** tree -> gitignored `advanced-open-play/testing/local-page/`. |
 | `npm run deploy:openplay` / `deploy:openplay:all` | Run guarded Firebase deploy (hosting + optional rules). |
 
 ## Deploy guard
@@ -59,5 +60,5 @@ Default in repo: **`staging`** + **`allowProductionHostingDeploy: false`**.
 ## Typical workflow
 
 1. Edit **`advanced-open-play/staging/`** (or `openplay:bootstrap-staging` from `live`).
-2. **`npm run local-test`** - mirrors `staging/` to `local-page/`.
-3. When ready: **`OPENPLAY_CONFIRM_PROMOTE=1 npm run openplay:promote`** (or set env in Windows), then set **`openplay-mode.json`** to **`activeTree: "live"`** and **`allowProductionHostingDeploy: true`**, then **`npm run deploy:openplay`**.
+2. **`npm run local-test`** - mirrors `staging/` to `advanced-open-play/testing/local-page/`.
+3. When ready — **one command:** **`npm run roll-live -- --yes`** (optional **`--all`** for rules). Or step-by-step: **`OPENPLAY_CONFIRM_PROMOTE=1 npm run openplay:promote`**, set **`openplay-mode.json`** to **`activeTree: "live"`** and **`allowProductionHostingDeploy: true`**, then **`npm run deploy:openplay`**.

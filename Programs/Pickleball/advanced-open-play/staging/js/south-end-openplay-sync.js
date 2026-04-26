@@ -20,6 +20,32 @@
   var BOARD_MESSAGES_PATH = 'openplay_se/board_messages';
   var MODULE_ADVANCED_OPEN_PLAY = 'advanced_open_play';
 
+  /** Display values stored in `user_profiles/{uid}/skill` (and RSVP forms). */
+  var SKILL_LEVEL_OPTION_VALUES = [
+    '2.0 Beginner',
+    '2.5 Upper Beginner',
+    '3.0 Lower Intermediate',
+    '3.5 Intermediate',
+    '4.0 Advanced',
+    '4.5 Upper Advanced',
+    '5.0 Open',
+  ];
+
+  /**
+   * True when stored skill qualifies for Advanced Open Play (4.0+), including legacy labels.
+   */
+  function isAdvancedOpenPlayEligibleSkill(skill) {
+    var v = String(skill == null ? '' : skill).trim();
+    if (!v) return false;
+    if (v === '4.0 Advanced' || v === '4.5 Upper Advanced' || v === '5.0 Open') return true;
+    if (v === 'Advanced 4.0+' || v === 'Open 5.0+') return true;
+    return false;
+  }
+
+  function isAdvancedOpenPlayEligibleProfile(p) {
+    return isAdvancedOpenPlayEligibleSkill(p && p.skill);
+  }
+
   var SE_OPENPLAY_FIREBASE = Object.assign(
     { apiKey: '', authDomain: '', databaseURL: '', projectId: '' },
     global.SE_OPENPLAY_FIREBASE && typeof global.SE_OPENPLAY_FIREBASE === 'object' ? global.SE_OPENPLAY_FIREBASE : {}
@@ -879,7 +905,14 @@
     return loadAdminUidFlag(uid).then(function (isAdmin) {
       if (isAdmin) return true;
       return loadModuleAccess(uid).then(function (access) {
-        return !!(access && access[id] && access[id].enabled === true);
+        var manual = !!(access && access[id] && access[id].enabled === true);
+        if (manual) return true;
+        if (id === MODULE_ADVANCED_OPEN_PLAY) {
+          return loadUserProfile(uid).then(function (p) {
+            return isAdvancedOpenPlayEligibleProfile(p);
+          });
+        }
+        return false;
       });
     });
   }
@@ -911,6 +944,94 @@
           .then(function () {
             return payload;
           });
+      });
+    });
+  }
+
+  function deleteUserProfileAsAdmin(targetUid) {
+    if (!targetUid) return Promise.reject(new Error('Missing user UID'));
+    return initFirebase().then(function () {
+      if (!firebaseDb || !global.firebase) return Promise.reject(new Error('Not ready'));
+      var u = getCurrentUser();
+      if (!u) return Promise.reject(new Error('Admin sign-in required'));
+      return loadAdminUidFlag(u.uid).then(function (isAdmin) {
+        if (!isAdmin) return Promise.reject(new Error('Admin access required'));
+        var profileRef = firebaseDb.ref(USER_PROFILE_PATH + '/' + targetUid);
+        return profileRef.once('value').then(function (snap) {
+          var profile = snap.val() || {};
+          var targetEmail = String(profile.email || profile.authEmail || profile.userEmail || profile.emailAddress || profile.contactEmail || '').trim();
+          return firebaseDb
+            .ref(MODULE_ACCESS_PATH + '/' + targetUid)
+            .remove()
+            .then(function () {
+              return profileRef.remove();
+            })
+            .then(function () {
+              return logActivity('profile_deleted', {
+                source: 'account',
+                targetUid: String(targetUid),
+                targetEmail: targetEmail,
+                firstName: String(profile.firstName || ''),
+                lastName: String(profile.lastName || ''),
+                details: 'Admin deleted profile and module access',
+              });
+            })
+            .then(function () {
+              return true;
+            });
+        });
+      });
+    });
+  }
+
+  /**
+   * Admin: merge-update another user's profile. Target must not be a staff admin.
+   * Used by User Management and similar tools.
+   */
+  function saveUserProfileAsAdmin(targetUid, patch) {
+    if (!targetUid || !patch || typeof patch !== 'object') {
+      return Promise.reject(new Error('Invalid patch'));
+    }
+    return initFirebase().then(function () {
+      if (!firebaseDb || !global.firebase) return Promise.reject(new Error('Not ready'));
+      var u = getCurrentUser();
+      if (!u) return Promise.reject(new Error('Admin sign-in required'));
+      return loadAdminUidFlag(u.uid).then(function (isAdmin) {
+        if (!isAdmin) return Promise.reject(new Error('Admin access required'));
+        return loadAdminUidFlag(targetUid).then(function (targetIsAdmin) {
+          if (targetIsAdmin) return Promise.reject(new Error('Cannot edit another admin profile'));
+          var o = Object.assign({}, patch, {
+            updatedAt: global.firebase.database.ServerValue.TIMESTAMP,
+          });
+          return firebaseDb
+            .ref(USER_PROFILE_PATH + '/' + targetUid)
+            .update(o)
+            .then(function () {
+              return syncLeagueDirectoryFromUserProfileUid(targetUid);
+            })
+            .then(function () {
+              return loadUserProfile(targetUid);
+            })
+            .then(function (pAfter) {
+              var p = pAfter || {};
+              var changed = Object.keys(patch).filter(function (k) {
+                return k !== 'updatedAt' && k !== 'waiversAcknowledgedAt';
+              });
+              return logActivity('profile_updated', {
+                source: 'user_management',
+                targetUid: String(targetUid),
+                firstName: String(p.firstName || ''),
+                lastName: String(p.lastName || ''),
+                changedFields: changed,
+                waiverLiabilityAccepted: p.waiverLiabilityAccepted,
+                waiverCommunicationAccepted: p.waiverCommunicationAccepted,
+                rsvpWaiversSchema: p.rsvpWaiversSchema,
+                details: 'Admin profile update',
+              }).then(function () {
+                return pAfter;
+              });
+            });
+        });
       });
     });
   }
@@ -989,6 +1110,11 @@
     loadModuleAccess: loadModuleAccess,
     hasModuleAccess: hasModuleAccess,
     setModuleAccess: setModuleAccess,
+    SKILL_LEVEL_OPTION_VALUES: SKILL_LEVEL_OPTION_VALUES,
+    isAdvancedOpenPlayEligibleSkill: isAdvancedOpenPlayEligibleSkill,
+    isAdvancedOpenPlayEligibleProfile: isAdvancedOpenPlayEligibleProfile,
+    saveUserProfileAsAdmin: saveUserProfileAsAdmin,
+    deleteUserProfileAsAdmin: deleteUserProfileAsAdmin,
     loadUserProfileByEmail: loadUserProfileByEmail,
     subscribeBoardMessages: subscribeBoardMessages,
     unsubscribeBoardMessages: unsubscribeBoardMessages,

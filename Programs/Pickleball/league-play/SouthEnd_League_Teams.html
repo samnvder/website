@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>League — Register</title>
+    <link rel="icon" type="image/jpeg" href="../favicon.jpg">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/south-end-league.css" />
+  </head>
+  <body class="league-page">
+    <a class="league-skip" href="#main">Skip to content</a>
+    <div class="header" role="banner">
+      <div>
+        <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+        <div class="hdr-title">LEAGUE <span>REGISTER</span></div>
+        <div class="hdr-sub">Build a team as captain, or sign up solo and we'll pair you up.</div>
+      </div>
+      <a
+        class="league-header-profile"
+        href="../advanced-open-play/staging/SouthEnd_OpenPlay_Account.html?return=SouthEnd_Pickleball_Hub.html"
+        aria-label="Open main Pickleball profile and account (same as Open Play)"
+      >
+        <svg class="league-header-profile__icon" viewBox="0 0 24 24" aria-hidden="true"
+          ><circle cx="12" cy="8" r="3.5" /><path d="M5.5 20.5v-1.2A5.2 5.2 0 0 1 10.7 14h2.6a5.2 5.2 0 0 1 5.2 5.2v1.2"
+        /></svg>
+        Profile
+      </a>
+    </div>
+    <nav class="se-site-nav" aria-label="League play">
+      <a class="se-site-nav-link" href="../advanced-open-play/staging/SouthEnd_Pickleball_Hub.html">Pickleball hub</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Play_Hub.html">League play</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Account.html">Account</a>
+      <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_League_Teams.html" aria-current="page">Register</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Invites.html">Invites</a>
+    </nav>
+    <main id="main" class="league-wrap" tabindex="-1">
+      <div id="banner" class="league-card" style="display: none" role="status"></div>
+
+      <div class="league-card" id="createCard" style="display: none; opacity: 0.5" aria-disabled="true">
+        <h2>Registration form</h2>
+        <form id="teamForm">
+          <fieldset class="league-choice-group">
+            <legend>Registration type</legend>
+            <label class="league-choice">
+              <input type="radio" name="registrationType" value="captain" checked />
+              <span>
+                <strong>Captain / team registration</strong>
+                <small>Create a team now, then add teammates below.</small>
+              </span>
+            </label>
+            <label class="league-choice">
+              <input type="radio" name="registrationType" value="solo" />
+              <span>
+                <strong>Sign up solo</strong>
+                <small>We'll pair you with a team when a spot is available.</small>
+              </span>
+            </label>
+          </fieldset>
+
+          <fieldset class="league-choice-group" id="divisionGroup">
+            <legend>Division</legend>
+            <p class="help" style="margin-top: 0">Choose the league division you are registering for. Your weekly session is one day per week.</p>
+            <div id="divisionChoices" class="league-division-grid" role="radiogroup" aria-label="League division"></div>
+            <div id="divisionScheduleHint" class="league-division-schedule-hint" role="status" aria-live="polite"></div>
+          </fieldset>
+
+          <div id="captainFields">
+            <label for="teamName">Team name</label>
+            <input id="teamName" type="text" required autocomplete="off" />
+            <label class="league-fee-toggle">
+              <input type="checkbox" id="allMembers" />
+              <span>
+                <strong>All-member roster</strong>
+                <small>$200 team fee. Leave off if any player is a non-member.</small>
+              </span>
+            </label>
+            <p id="feeHint" class="help"></p>
+          </div>
+          <div id="soloFields" class="league-solo-note" hidden>
+            <strong>Sign up solo</strong>
+            <p>We'll pair you with a team when a spot is available.</p>
+            <div class="league-fee-summary" id="soloFeeSummary">
+              <strong>Solo player fee</strong>
+              <span id="soloFeeHint">Loading profile fee...</span>
+            </div>
+          </div>
+          <fieldset class="league-choice-group league-agreement-block">
+            <legend>Agreements</legend>
+            <label class="league-check">
+              <input type="checkbox" id="acceptTerms" />
+              <span>
+                I reviewed and accept the
+                <a href="SouthEnd_League_Overview.html" target="_blank" rel="noopener">League Play rules, schedule, and terms</a>
+              </span>
+            </label>
+          </fieldset>
+          <div class="league-form-actions">
+            <button type="submit" class="btn" id="createBtn" disabled>Create team</button>
+          </div>
+        </form>
+        <p id="teamStatus" class="help" style="min-height: 1.2rem" role="status"></p>
+      </div>
+
+      <div class="league-card" id="inviteCard" style="display: none">
+        <h2>Add teammates</h2>
+        <p id="inviteLockStatus" class="help" role="status">Create your team above to start inviting players.</p>
+        <p>
+          <strong>Your team:</strong>
+          <span id="teamNameDisplay"></span>
+        </p>
+        <label for="q">Search by name</label>
+        <input id="q" type="search" placeholder="Type a first or last name" disabled />
+        <ul id="results" class="league-lookup" aria-live="polite"></ul>
+        <p id="invStatus" class="help" role="status"></p>
+        <div class="league-divider">Or invite by email</div>
+        <label for="emailInvite">Player email</label>
+        <input id="emailInvite" type="email" placeholder="player@example.com" disabled />
+        <p>
+          <button type="button" class="btn btn--secondary" id="emailInviteBtn" disabled>Send email invite</button>
+        </p>
+        <p id="emailInviteStatus" class="help" role="status"></p>
+        <p class="league-payment-row">
+          <a class="btn" id="leaguePaymentBtn" href="#" aria-disabled="true">Proceed to Payment</a>
+          <span class="league-payment-amount" id="leaguePaymentAmount" aria-live="polite"></span>
+        </p>
+        <p id="paymentStatus" class="help" role="status">Create your team to see the payment link.</p>
+      </div>
+    </main>
+    <footer
+      class="pickleball-share-footer"
+      data-pickleball-share
+      data-share-context="league"
+      aria-label="Invite friends to league play"
+    ></footer>
+    <script src="../advanced-open-play/staging/js/pickleball-invite-share.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="js/league-firebase-config.js"></script>
+    <script src="js/south-end-league-sync.js"></script>
+    <script src="js/league-team-builder.js"></script>
+    <script>
+      (function () {
+        var L = window.LeagueSync;
+        if (!L.init(LEAGUE_FIREBASE_CONFIG) || !LEAGUE_FIREBASE_CONFIG || !LEAGUE_FIREBASE_CONFIG.apiKey) {
+          var b = document.getElementById("banner");
+          b.style.display = "block";
+          b.textContent = "Set js/league-firebase-config.js (copy from the example) before registering.";
+        }
+        var divisionChoices = document.getElementById("divisionChoices");
+        var divisionScheduleHint = document.getElementById("divisionScheduleHint");
+        var divisionCategories = [
+          { id: "mens", label: "Men's" },
+          { id: "womens", label: "Women's" },
+          { id: "coed", label: "Co-ed" },
+        ];
+        var divisionColumns = {};
+        divisionCategories.forEach(function (category) {
+          var col = document.createElement("div");
+          col.className = "league-division-column";
+          var heading = document.createElement("h3");
+          heading.className = "league-division-column__title";
+          heading.textContent = category.label;
+          var choices = document.createElement("div");
+          choices.className = "league-division-column__choices";
+          col.appendChild(heading);
+          col.appendChild(choices);
+          divisionColumns[category.id] = choices;
+          divisionChoices.appendChild(col);
+        });
+        L.DIVISIONS.forEach(function (d) {
+          var lab = document.createElement("label");
+          lab.className = "league-choice league-choice--division";
+          var inp = document.createElement("input");
+          inp.type = "radio";
+          inp.name = "leagueDivision";
+          inp.value = d.id;
+          inp.required = true;
+          var span = document.createElement("span");
+          var strong = document.createElement("strong");
+          strong.textContent = d.label;
+          var small = document.createElement("small");
+          small.textContent = L.formatDivisionSchedule(d);
+          span.appendChild(strong);
+          span.appendChild(small);
+          lab.appendChild(inp);
+          lab.appendChild(span);
+          inp.addEventListener("change", function () {
+            updateDivisionHint();
+            refreshCreateBtnState();
+          });
+          (divisionColumns[d.category] || divisionChoices).appendChild(lab);
+        });
+        function getSelectedDivisionId() {
+          var c = document.querySelector("input[name=leagueDivision]:checked");
+          return c ? c.value : "";
+        }
+        function updateDivisionHint() {
+          var div = L.getDivisionById(getSelectedDivisionId());
+          if (!div) {
+            divisionScheduleHint.textContent =
+              "Select a division to confirm your weekly session day and time.";
+            return;
+          }
+          divisionScheduleHint.innerHTML =
+            "<strong>Your weekly session:</strong> " +
+            div.label +
+            " · " +
+            L.formatDivisionSchedule(div);
+        }
+        updateDivisionHint();
+        function refreshCreateBtnState() {
+          var atCh = document.getElementById("acceptTerms");
+          var btn = document.getElementById("createBtn");
+          if (btn) btn.disabled = !(atCh && atCh.checked && getSelectedDivisionId());
+        }
+        var createCard = document.getElementById("createCard");
+        var createBtn = document.getElementById("createBtn");
+        var captainFields = document.getElementById("captainFields");
+        var soloFields = document.getElementById("soloFields");
+        var teamName = document.getElementById("teamName");
+        var inviteCard = document.getElementById("inviteCard");
+        var soloIsMember = false;
+        var currentLeagueAccount = null;
+        var createdTeamName = "";
+        function formatUsd(amount) {
+          return "$" + String(Math.max(0, Number(amount) || 0));
+        }
+        function leaguePaymentPageUrlFor(amount, registrationType) {
+          var amt = Math.max(0, Number(amount) || 0);
+          return "SouthEnd_League_Payment.html?amount=" + encodeURIComponent(String(amt)) +
+            "&type=" + encodeURIComponent(registrationType || getRegistrationType());
+        }
+        function leagueFeeAmountFor(registrationType) {
+          if (registrationType === "solo") return soloIsMember ? 50 : 75;
+          return document.getElementById("allMembers").checked ? 200 : 250;
+        }
+        function setLeaguePaymentAmountText(amount) {
+          var paymentAmount = document.getElementById("leaguePaymentAmount");
+          if (paymentAmount) paymentAmount.textContent = amount ? formatUsd(amount) : "";
+        }
+        function setLeaguePaymentCta(amount, registrationType) {
+          var paymentBtn = document.getElementById("leaguePaymentBtn");
+          var paymentStatus = document.getElementById("paymentStatus");
+          if (!paymentBtn || !paymentStatus) return;
+          var feeAmount = Math.max(0, Number(amount) || 0);
+          paymentBtn.textContent = "Proceed to Payment";
+          paymentBtn.setAttribute("data-payment-amount", String(feeAmount));
+          setLeaguePaymentAmountText(feeAmount);
+          paymentBtn.href = leaguePaymentPageUrlFor(feeAmount, registrationType);
+          paymentBtn.removeAttribute("target");
+          paymentBtn.removeAttribute("rel");
+          paymentBtn.setAttribute("aria-disabled", feeAmount > 0 ? "false" : "true");
+          paymentStatus.textContent = feeAmount > 0
+            ? "Review your payment before opening PayPal."
+            : "Create your team to see the payment link.";
+        }
+        function getRegistrationType() {
+          var checked = document.querySelector("input[name=registrationType]:checked");
+          return checked ? checked.value : "captain";
+        }
+        function syncRegistrationMode() {
+          var isSolo = getRegistrationType() === "solo";
+          captainFields.hidden = isSolo;
+          soloFields.hidden = !isSolo;
+          teamName.required = !isSolo;
+          teamName.disabled = isSolo;
+          createBtn.textContent = isSolo ? "Register solo" : "Create team";
+          setLeaguePaymentAmountText(isSolo ? 0 : leagueFeeAmountFor("captain"));
+          if (inviteCard) inviteCard.style.display = isSolo ? "none" : "block";
+        }
+        function refreshFeeHint() {
+          var all = document.getElementById("allMembers").checked;
+          document.getElementById("feeHint").textContent = L.feeLabelForAllMembers(all);
+          if (getRegistrationType() === "captain") setLeaguePaymentAmountText(leagueFeeAmountFor("captain"));
+        }
+        function refreshSoloFeeHint() {
+          document.getElementById("soloFeeHint").textContent =
+            (soloIsMember ? "Member Fee" : "Non-Member Fee") + " — " + L.soloFeeLabelForMember(soloIsMember).split(" — ")[0];
+        }
+        document.getElementById("allMembers").addEventListener("change", refreshFeeHint);
+        document.getElementById("leaguePaymentBtn").addEventListener("click", function (e) {
+          if (this.getAttribute("aria-disabled") !== "true") return;
+          e.preventDefault();
+          var amount = this.getAttribute("data-payment-amount");
+          document.getElementById("paymentStatus").textContent =
+            amount ? "Payment link coming soon." : "Create your team to see the payment link.";
+        });
+        refreshFeeHint();
+        refreshSoloFeeHint();
+        document.querySelectorAll("input[name=registrationType]").forEach(function (radio) {
+          radio.addEventListener("change", syncRegistrationMode);
+        });
+        syncRegistrationMode();
+
+        function setCreateEnabled(on) {
+          createCard.style.opacity = on ? "1" : "0.5";
+          createCard.setAttribute("aria-disabled", on ? "false" : "true");
+        }
+        function redirectToProfile() {
+          window.location.href =
+            "../advanced-open-play/staging/SouthEnd_OpenPlay_Account.html?return=" +
+            encodeURIComponent("SouthEnd_Pickleball_Hub.html");
+        }
+        function redirectToLeagueDashboard() {
+          window.location.replace("SouthEnd_League_Play_Hub.html#teamPanel");
+        }
+        L.onAuth(function (u) {
+          var inv = document.getElementById("inviteCard");
+          if (!u) {
+            createCard.style.display = "none";
+            if (inv) inv.style.display = "none";
+            redirectToProfile();
+            return;
+          }
+          L.syncProfileToDirectory(u.uid);
+          L.getUserProfile(u.uid)
+            .then(function (profile) {
+              soloIsMember = !!(profile && profile.membership === "yes");
+              refreshSoloFeeHint();
+            })
+            .catch(function () {
+              soloIsMember = false;
+              refreshSoloFeeHint();
+            });
+          L.getLeagueAccount(u.uid)
+            .then(function (acct) {
+              currentLeagueAccount = acct || null;
+              if (acct && acct.registrationStatus) {
+                createCard.style.display = "none";
+                if (inv) inv.style.display = "none";
+                redirectToLeagueDashboard();
+                return;
+              }
+              createCard.style.display = "block";
+              if (getRegistrationType() === "captain" && inv) inv.style.display = "block";
+              setCreateEnabled(true);
+              document.getElementById("teamForm").style.display = "block";
+              document.getElementById("teamStatus").textContent = "";
+              if (!acct) return;
+              var atCh = document.getElementById("acceptTerms");
+              if (acct.termsVersion === L.TERMS_VERSION) {
+                atCh.checked = true;
+                atCh.disabled = false;
+              }
+              if (acct.registrationType === "solo") {
+                document.querySelector("input[name=registrationType][value=solo]").checked = true;
+                syncRegistrationMode();
+              }
+              if (acct.divisionId) {
+                var divInp = document.querySelector("input[name=leagueDivision][value=\"" + acct.divisionId + "\"]");
+                if (divInp) divInp.checked = true;
+                updateDivisionHint();
+              }
+              refreshCreateBtnState();
+            });
+        });
+        document.getElementById("acceptTerms").addEventListener("change", function () {
+          refreshCreateBtnState();
+        });
+
+        document.getElementById("teamForm").addEventListener("submit", function (e) {
+          e.preventDefault();
+          var u = L.getCurrentUser();
+          var ts = document.getElementById("teamStatus");
+          if (!u) return;
+          if (!document.getElementById("acceptTerms").checked) {
+            ts.textContent = "Accept the program terms first.";
+            return;
+          }
+          if (!getSelectedDivisionId()) {
+            ts.textContent = "Choose a division.";
+            return;
+          }
+          var registrationType = getRegistrationType();
+          if (currentLeagueAccount && currentLeagueAccount.registrationStatus) {
+            ts.textContent = "You're already signed up for league play.";
+            return;
+          }
+          ts.textContent = registrationType === "solo" ? "Saving solo registration..." : "Creating team...";
+          L.setTermsAccepted(u.uid)
+            .then(function () {
+              var divId = getSelectedDivisionId();
+              if (registrationType === "solo") {
+                return L.saveSoloRegistration(u.uid, soloIsMember, divId);
+              }
+              return L.createTeam(
+                u.uid,
+                teamName.value.trim(),
+                document.getElementById("allMembers").checked,
+                divId
+              );
+            })
+            .then(function (r) {
+              if (registrationType === "solo") {
+                ts.textContent = "You're signed up solo. We'll pair you up.";
+                if (inviteCard) inviteCard.style.display = "none";
+                window.location.href = leaguePaymentPageUrlFor(leagueFeeAmountFor("solo"), "solo");
+                return;
+              }
+              ts.textContent = "Team created — " + r.feeLabel + ".";
+              var tid = r.teamId;
+              createdTeamName = teamName.value.trim();
+              inviteCard.style.display = "block";
+              document.getElementById("inviteLockStatus").textContent = "You can now search for players and send invites.";
+              document.getElementById("teamNameDisplay").textContent = createdTeamName;
+              document.getElementById("q").disabled = false;
+              setLeaguePaymentCta(leagueFeeAmountFor(registrationType), registrationType);
+              document.getElementById("emailInvite").disabled = false;
+              document.getElementById("emailInviteBtn").disabled = false;
+              window.LeagueTeamBuilder.init({
+                teamId: tid,
+                teamName: createdTeamName,
+                searchId: "q",
+                resultsId: "results",
+                inviteStatusId: "invStatus",
+                emailInputId: "emailInvite",
+                emailBtnId: "emailInviteBtn",
+                emailStatusId: "emailInviteStatus",
+                statusId: "invStatus",
+              });
+            })
+            .catch(function (err) {
+              ts.textContent = (err && err.message) || "Registration failed.";
+            });
+        });
+      })();
+    </script>
+  </body>
+</html>
