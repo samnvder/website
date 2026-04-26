@@ -32,4 +32,5 @@ jobs:
       - name: Deploy Hosting (guarded — requires activeTree live + allowProductionHostingDeploy in openplay-mode.json)
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          OPENPLAY_CONFIRM_PRODUCTION: '1'
         run: node Programs/Pickleball/advanced-open-play/scripts/openplay-deploy.js --only hosting
