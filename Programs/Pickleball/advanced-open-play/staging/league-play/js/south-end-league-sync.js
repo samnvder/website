@@ -101,10 +101,10 @@
   }
 
   function setLeagueAdminNavVisible(on) {
-    var link = ensureAdminNavLink();
-    if (link) link.classList.toggle("hidden", !on);
-    var mobileLink = ensureMobileAdminLink();
-    if (mobileLink) mobileLink.classList.toggle("hidden", !on);
+    var link = global.document && global.document.getElementById("league-admin-nav-link");
+    if (link && link.parentNode) link.parentNode.removeChild(link);
+    var mobileLink = global.document && global.document.getElementById("league-admin-mobile-link");
+    if (mobileLink && mobileLink.parentNode) mobileLink.parentNode.removeChild(mobileLink);
   }
 
   function leagueRegisterLinks() {
@@ -138,19 +138,7 @@
   }
 
   function decorateLeagueAdminNav(user) {
-    ensureAdminNavLink();
-    ensureMobileAdminLink();
     setLeagueAdminNavVisible(false);
-    if (!user || !user.uid) return;
-    rtdb()
-      .ref(NS + "/admin_uids/" + user.uid)
-      .once("value")
-      .then(function (snap) {
-        setLeagueAdminNavVisible(!!snap.val());
-      })
-      .catch(function () {
-        setLeagueAdminNavVisible(false);
-      });
   }
 
   var LeagueSync = {

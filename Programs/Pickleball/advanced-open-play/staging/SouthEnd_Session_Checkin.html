@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en">
 <head>
@@ -310,14 +310,11 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;display:f
     <button class="btn-sm btn-ghost-sm" onclick="showSessionModal()">Session</button>
   </div>
 </div>
-<nav class="se-site-nav" aria-label="Pickleball hub sections">
-  <a class="se-site-nav-link" href="SouthEnd_Pickleball_Hub.html">Hub</a>
-  <a class="se-site-nav-link" href="SouthEnd_OpenPlay_Account.html">Advanced Open Play</a>
-  <a class="se-site-nav-link" href="SouthEnd_Message_Board.html">Message Board</a>
-  <a class="se-site-nav-link" href="../../league-play/SouthEnd_League_Play_Hub.html">League Play</a>
-  <a class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
-  <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_Advanced_Open_Play.html" aria-current="page">Open Play admin</a>
+<nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav>
+  <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
+  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_Advanced_Open_Play.html" aria-current="page">Open Play admin</a>
 </nav>
+<script src="pickleball-hub-nav.js"></script>
 <div class="sub-nav" aria-label="Advanced Open Play admin sections">
   <a href="SouthEnd_Open_Play_Signups.html">Signups</a>
   <a href="SouthEnd_Session_Checkin.html" class="active">Check-ins</a>

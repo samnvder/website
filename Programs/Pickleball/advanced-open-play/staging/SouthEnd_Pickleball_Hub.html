@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -89,13 +89,10 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
     <div class="hdr-sub">Program modules, access, and community tools.</div>
   </div>
 </div>
-<nav class="se-site-nav" aria-label="Pickleball hub sections">
-  <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Pickleball_Hub.html" aria-current="page">Hub</a>
-  <a class="se-site-nav-link" href="SouthEnd_OpenPlay_Account.html">Advanced Open Play</a>
-  <a class="se-site-nav-link" href="SouthEnd_Message_Board.html">Message Board</a>
-  <a class="se-site-nav-link" href="../../league-play/SouthEnd_League_Play_Hub.html">League Play</a>
-  <a class="se-site-nav-link se-site-nav-link--admin hidden" id="admin-hub-nav-link" href="SouthEnd_Admin_Hub.html">Admin</a>
+<nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav>
+  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--admin hidden" id="admin-hub-nav-link" href="SouthEnd_Admin_Hub.html">Admin</a>
 </nav>
+<script src="pickleball-hub-nav.js"></script>
 
 <main class="body-wrap">
   <p class="lead">Choose a South End pickleball module. Some modules require admin-assigned access before they open.</p>

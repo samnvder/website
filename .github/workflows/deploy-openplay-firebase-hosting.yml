@@ -13,6 +13,7 @@ on:
       - 'Programs/Pickleball/advanced-open-play/openplay-mode.json'
       - 'firebase.json'
       - '.firebaserc'
+      - '.github/workflows/deploy-openplay-firebase-hosting.yml'
 
 jobs:
   hosting:

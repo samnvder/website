@@ -66,12 +66,11 @@ body{font-family:'Barlow',sans-serif;background:radial-gradient(1200px 600px at 
   <div class="hdr-title">User <span>Management</span></div>
   <div class="hdr-sub">View and edit member profiles (non-admin accounts only). Changes are written to <code>openplay_se/user_profiles</code> and logged to activity.</div>
 </div>
-<nav class="se-site-nav" aria-label="Admin navigation">
-  <a class="se-site-nav-link" href="SouthEnd_Pickleball_Hub.html">Hub</a>
-  <a class="se-site-nav-link" href="SouthEnd_OpenPlay_Account.html">Advanced Open Play</a>
-  <a class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
-  <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_User_Management.html" aria-current="page">User management</a>
+<nav class="se-site-nav" aria-label="Admin navigation" data-se-hub-nav>
+  <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
+  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_User_Management.html" aria-current="page">User management</a>
 </nav>
+<script src="pickleball-hub-nav.js"></script>
 
 <main class="body-wrap">
   <div class="top-row">

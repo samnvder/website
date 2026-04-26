@@ -42,6 +42,8 @@ const FILES = [
   'SouthEnd_Admin_Activity.html',
   'SouthEnd_Admin_Module_Access.html',
   'SouthEnd_Admin_User_Management.html',
+  'pickleball-hub-nav.js',
+  'league-play/js/pickleball-hub-nav.js',
   'js/south-end-openplay-sync.js',
   'js/pickleball-invite-share.js',
   'js/openplay-profile-panel.js',

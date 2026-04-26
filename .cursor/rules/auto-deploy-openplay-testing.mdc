@@ -18,9 +18,9 @@ Applies whenever **`Programs/Pickleball/advanced-open-play/live/`** (deployed HT
 
 If deploy fails (auth): run **`firebase login`** once locally, or configure CI secret **`FIREBASE_TOKEN`** from **`firebase login:ci`**.
 
-## CI (no manual step after push)
+## CI (optional auto-deploy on push)
 
-On push to **`main`** / **`master`**, **`.github/workflows/deploy-openplay-firebase-hosting.yml`** runs **`firebase deploy --only hosting`** when the paths above change. Requires **`FIREBASE_TOKEN`** in GitHub repo **Settings → Secrets**.
+Workflow **`.github/workflows/deploy-openplay-firebase-hosting.yml`** runs on **`workflow_dispatch`** always, and on push to **`main`/`master`** only when repo variable **`OPENPLAY_CI_AUTO_DEPLOY`** is **`true`**. Requires GitHub Actions secret **`FIREBASE_TOKEN`** (`firebase login:ci`). See **`Programs/Pickleball/advanced-open-play/firebase-hosting/README.md`** (section **CI: auto-deploy on push**).
 
 ## Not auto here
 

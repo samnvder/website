@@ -48,6 +48,17 @@ Admin-only pages/actions require `openplay_se/admin_uids/{uid} === true` in Real
 | `js/openplay-rsvp-helpers.js` | Member card validation, session time helpers |
 | `js/openplay-waiver-modals.js` | Liability + communications consent modals |
 | `js/openplay-testing-env.js` | Testing environment detection |
+| `pickleball-hub-nav.js` | Canonical hub primary nav (injected into `<nav data-se-hub-nav>`) |
+
+## CI: auto-deploy on push to GitHub
+
+Workflow: [`.github/workflows/deploy-openplay-firebase-hosting.yml`](../../../../.github/workflows/deploy-openplay-firebase-hosting.yml).
+
+1. **Repository secret:** `FIREBASE_TOKEN` — create with `firebase login:ci` (Firebase CLI), then add the token under GitHub **Settings → Secrets and variables → Actions**.
+2. **Repository variable:** `OPENPLAY_CI_AUTO_DEPLOY` = `true` — under **Settings → Secrets and variables → Actions → Variables**. If unset or not `true`, the workflow only runs on **manual** dispatch.
+3. Push to **`main`** or **`master`** with changes under `Programs/Pickleball/advanced-open-play/live/**` (or edits to `firebase.json`, `.firebaserc`, `openplay-mode.json`, or the workflow file) to trigger a deploy.
+
+`openplay-deploy.js` still requires `openplay-mode.json` to allow production hosting (`activeTree: "live"` and `allowProductionHostingDeploy: true`, or use `OPENPLAY_CONFIRM_PRODUCTION=1` locally).
 
 ## Firebase-related surfaces
 

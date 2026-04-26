@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -82,14 +82,11 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
   <div class="hdr-title">League <span>Play Admin</span></div>
   <div class="hdr-sub">Staff-only league operations. Team management, solo players, invites, and roster tools.</div>
 </div>
-<nav class="se-site-nav" aria-label="Pickleball hub sections">
-  <a class="se-site-nav-link" href="SouthEnd_Pickleball_Hub.html">Hub</a>
-  <a class="se-site-nav-link" href="SouthEnd_OpenPlay_Account.html">Advanced Open Play</a>
-  <a class="se-site-nav-link" href="SouthEnd_Message_Board.html">Message Board</a>
-  <a class="se-site-nav-link" href="../../league-play/SouthEnd_League_Play_Hub.html">League Play</a>
-  <a class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
-  <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_League_Play.html" aria-current="page">League admin</a>
+<nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav>
+  <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
+  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_League_Play.html" aria-current="page">League admin</a>
 </nav>
+<script src="pickleball-hub-nav.js"></script>
 <div class="sub-nav" aria-label="League admin sections">
   <a href="#team-management" class="active">Team management</a>
 </div>
