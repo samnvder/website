@@ -13,9 +13,12 @@
   var BC_NAME = 'se-openplay-sync';
   var FB_PATH = 'openplay_se/rsvps';
   var USER_PROFILE_PATH = 'openplay_se/user_profiles';
+  var LEAGUE_DIRECTORY_PATH = 'openplay_se/league_directory';
   var ADMIN_UIDS_PATH = 'openplay_se/admin_uids';
+  var MODULE_ACCESS_PATH = 'openplay_se/module_access';
   var ACTIVITY_PATH = 'openplay_se/activity';
   var BOARD_MESSAGES_PATH = 'openplay_se/board_messages';
+  var MODULE_ADVANCED_OPEN_PLAY = 'advanced_open_play';
 
   var SE_OPENPLAY_FIREBASE = Object.assign(
     { apiKey: '', authDomain: '', databaseURL: '', projectId: '' },
@@ -402,6 +405,49 @@
     });
   }
 
+  function buildLeagueDisplayNameFromProfile(p) {
+    p = p || {};
+    var a = String(p.firstName || '').trim();
+    var b = String(p.lastName || '').trim();
+    return [a, b].filter(Boolean).join(' ') || '';
+  }
+
+  function leagueDirectoryNameKey(displayName) {
+    if (!displayName) return '';
+    return String(displayName)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  /**
+   * Keeps League captain lookup in sync with user profile first/last name. Always lists the player
+   * for search (no separate opt-in). Called after profile save.
+   */
+  function syncLeagueDirectoryFromUserProfileUid(uid) {
+    if (!firebaseDb || !uid || !global.firebase) return Promise.resolve();
+    return loadUserProfile(uid).then(function (p) {
+      var displayName = buildLeagueDisplayNameFromProfile(p);
+      var ref = firebaseDb.ref(LEAGUE_DIRECTORY_PATH + '/' + uid);
+      var ts = global.firebase.database.ServerValue.TIMESTAMP;
+      if (!displayName) {
+        return ref.set({
+          displayName: '',
+          nameKey: '',
+          optInForSearch: true,
+          updatedAt: ts,
+        });
+      }
+      return ref.set({
+        displayName: displayName,
+        nameKey: leagueDirectoryNameKey(displayName),
+        optInForSearch: true,
+        updatedAt: ts,
+      });
+    });
+  }
+
   /**
    * Saves profile fields.
    * New fields: add to payload here and to PROFILE_FIELD_DEFS in `openplay-profile-panel.js`.
@@ -412,6 +458,7 @@
     var payload = {
       firstName: (data && data.firstName) || '',
       lastName: (data && data.lastName) || '',
+      email: String((getCurrentUser() && getCurrentUser().email) || (data && data.email) || ''),
       phone: (data && data.phone) || '',
       skill: (data && data.skill) || '',
       membership: (data && data.membership) || '',
@@ -424,31 +471,36 @@
       waiversAcknowledgedAt: global.firebase.database.ServerValue.TIMESTAMP,
       updatedAt: global.firebase.database.ServerValue.TIMESTAMP,
     };
-    return ref.update(payload).then(function () {
-      var changed = [
-        'firstName',
-        'lastName',
-        'phone',
-        'skill',
-        'membership',
-        'memberCard',
-        'hear',
-        'notes',
-        'waiverLiabilityAccepted',
-        'waiverCommunicationAccepted',
-      ];
-      return logActivity('profile_saved', {
-        source: 'account',
-        targetUid: String(uid),
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        changedFields: changed,
-        waiverLiabilityAccepted: payload.waiverLiabilityAccepted,
-        waiverCommunicationAccepted: payload.waiverCommunicationAccepted,
-        rsvpWaiversSchema: payload.rsvpWaiversSchema,
-        details: 'Full profile save',
+    return ref
+      .update(payload)
+      .then(function () {
+        return syncLeagueDirectoryFromUserProfileUid(uid);
+      })
+      .then(function () {
+        var changed = [
+          'firstName',
+          'lastName',
+          'phone',
+          'skill',
+          'membership',
+          'memberCard',
+          'hear',
+          'notes',
+          'waiverLiabilityAccepted',
+          'waiverCommunicationAccepted',
+        ];
+        return logActivity('profile_saved', {
+          source: 'account',
+          targetUid: String(uid),
+          firstName: payload.firstName,
+          lastName: payload.lastName,
+          changedFields: changed,
+          waiverLiabilityAccepted: payload.waiverLiabilityAccepted,
+          waiverCommunicationAccepted: payload.waiverCommunicationAccepted,
+          rsvpWaiversSchema: payload.rsvpWaiversSchema,
+          details: 'Full profile save',
+        });
       });
-    });
   }
 
   /**
@@ -461,12 +513,18 @@
       if (!firebaseDb || !global.firebase) return Promise.reject(new Error('Not ready'));
       var ref = firebaseDb.ref(USER_PROFILE_PATH + '/' + uid);
       var o = Object.assign({}, patch, {
+        email: String((getCurrentUser() && getCurrentUser().email) || patch.email || ''),
         updatedAt: global.firebase.database.ServerValue.TIMESTAMP,
       });
       if (patch.waiverLiabilityAccepted === true || patch.waiverCommunicationAccepted === true) {
         o.waiversAcknowledgedAt = global.firebase.database.ServerValue.TIMESTAMP;
       }
-      return ref.update(o).then(function () {
+      return ref
+        .update(o)
+        .then(function () {
+          return syncLeagueDirectoryFromUserProfileUid(uid);
+        })
+        .then(function () {
         var changed = Object.keys(patch).filter(function (k) {
           return k !== 'updatedAt' && k !== 'waiversAcknowledgedAt';
         });
@@ -648,23 +706,6 @@
     } catch (e) {}
   }
 
-  /**
-   * Legacy email allowlist helper from openplay-firebase-config.js.
-   * Current admin-only pages use openplay_se/admin_uids/{uid} in RTDB.
-   */
-  function isStaffEmailAllowed(user) {
-    var cfg =
-      (typeof window !== 'undefined' && window.SE_OPENPLAY_FIREBASE) || global.SE_OPENPLAY_FIREBASE || {};
-    var allow = Array.isArray(cfg.staffEmails) ? cfg.staffEmails : [];
-    if (!user || !user.email) return false;
-    var email = String(user.email).trim().toLowerCase();
-    if (!allow.length) return false;
-    for (var i = 0; i < allow.length; i++) {
-      if (String(allow[i] || '').trim().toLowerCase() === email) return true;
-    }
-    return false;
-  }
-
   /** True if openplay_se/admin_uids/{uid} === true (set in Firebase Console). */
   var boardMessagesRef = null;
 
@@ -734,6 +775,51 @@
     });
   }
 
+  // Auto-posts a "signed up for …" entry to the board when an RSVP is confirmed.
+  // Same schema as pushBoardMessage; adds kind:'rsvp_log' so the board UI can
+  // style it differently from user-authored chat.
+  function pushBoardRsvpLog(sessionLabels) {
+    var u = getCurrentUser();
+    if (!u) return Promise.reject(new Error('Sign in required'));
+    var labels = [];
+    if (Array.isArray(sessionLabels)) {
+      sessionLabels.forEach(function (s) {
+        var t = String(s == null ? '' : s).trim();
+        if (t) labels.push(t);
+      });
+    }
+    if (!labels.length) return Promise.resolve(null);
+    var text;
+    if (labels.length === 1) {
+      text = '🎾 Signed up for ' + labels[0];
+    } else {
+      text = '🎾 Signed up for ' + labels.length + ' sessions: ' + labels.join('; ');
+    }
+    if (text.length > 500) text = text.substring(0, 497) + '…';
+    return initFirebase().then(function () {
+      if (!firebaseDb || !global.firebase) return Promise.reject(new Error('Not ready'));
+      return loadUserProfile(u.uid).then(function (p) {
+        var prof = p || {};
+        var first = String(prof.firstName || '').trim();
+        var last = String(prof.lastName || '').trim();
+        var name = (first + ' ' + last).trim() || String(u.email || 'Member');
+        var skill = String(prof.skill || '').trim();
+        return loadAdminUidFlag(u.uid).then(function (isAdmin) {
+          var ref = firebaseDb.ref(BOARD_MESSAGES_PATH).push();
+          return ref.set({
+            uid: u.uid,
+            authorName: name,
+            skill: skill,
+            text: text,
+            kind: 'rsvp_log',
+            isStaffAdmin: !!isAdmin,
+            ts: global.firebase.database.ServerValue.TIMESTAMP,
+          });
+        });
+      });
+    });
+  }
+
   function deleteBoardMessage(messageId) {
     var u = getCurrentUser();
     if (!u) return Promise.reject(new Error('Sign in required'));
@@ -766,6 +852,92 @@
       });
   }
 
+  function normalizeModuleId(moduleId) {
+    return String(moduleId || MODULE_ADVANCED_OPEN_PLAY).trim() || MODULE_ADVANCED_OPEN_PLAY;
+  }
+
+  function loadModuleAccess(uid) {
+    if (!firebaseConfigured() || !uid) return Promise.resolve({});
+    return initFirebase()
+      .then(function () {
+        if (!firebaseDb) return {};
+        return firebaseDb
+          .ref(MODULE_ACCESS_PATH + '/' + uid)
+          .once('value')
+          .then(function (snap) {
+            return snap.val() || {};
+          });
+      })
+      .catch(function () {
+        return {};
+      });
+  }
+
+  function hasModuleAccess(uid, moduleId) {
+    var id = normalizeModuleId(moduleId);
+    if (!firebaseConfigured() || !uid) return Promise.resolve(false);
+    return loadAdminUidFlag(uid).then(function (isAdmin) {
+      if (isAdmin) return true;
+      return loadModuleAccess(uid).then(function (access) {
+        return !!(access && access[id] && access[id].enabled === true);
+      });
+    });
+  }
+
+  function setModuleAccess(targetUid, moduleId, enabled) {
+    var id = normalizeModuleId(moduleId);
+    if (!targetUid) return Promise.reject(new Error('Missing user UID'));
+    return initFirebase().then(function () {
+      if (!firebaseDb || !global.firebase) return Promise.reject(new Error('Not ready'));
+      var u = getCurrentUser();
+      if (!u) return Promise.reject(new Error('Admin sign-in required'));
+      return loadAdminUidFlag(u.uid).then(function (isAdmin) {
+        if (!isAdmin) return Promise.reject(new Error('Admin access required'));
+        var payload = {
+          enabled: enabled === true,
+          assignedBy: u.uid,
+          assignedAt: global.firebase.database.ServerValue.TIMESTAMP,
+        };
+        return firebaseDb
+          .ref(MODULE_ACCESS_PATH + '/' + targetUid + '/' + id)
+          .set(payload)
+          .then(function () {
+            return logActivity(enabled === true ? 'module_access_granted' : 'module_access_revoked', {
+              source: 'account',
+              targetUid: String(targetUid),
+              details: id,
+            });
+          })
+          .then(function () {
+            return payload;
+          });
+      });
+    });
+  }
+
+  function loadUserProfileByEmail(email) {
+    var target = String(email || '').trim();
+    if (!firebaseConfigured() || !target) return Promise.resolve(null);
+    return initFirebase()
+      .then(function () {
+        if (!firebaseDb) return null;
+        return firebaseDb
+          .ref(USER_PROFILE_PATH)
+          .orderByChild('email')
+          .equalTo(target)
+          .once('value')
+          .then(function (snap) {
+            var rows = snap.val() || {};
+            var uid = Object.keys(rows)[0];
+            if (!uid) return null;
+            return Object.assign({ uid: uid }, rows[uid] || {});
+          });
+      })
+      .catch(function () {
+        return null;
+      });
+  }
+
   global.SEOpenPlay = {
     PIN_KEY: PIN_KEY,
     PENDING_KEY: PENDING_KEY,
@@ -773,6 +945,8 @@
     FB_PATH: FB_PATH,
     USER_PROFILE_PATH: USER_PROFILE_PATH,
     ADMIN_UIDS_PATH: ADMIN_UIDS_PATH,
+    MODULE_ACCESS_PATH: MODULE_ACCESS_PATH,
+    MODULE_ADVANCED_OPEN_PLAY: MODULE_ADVANCED_OPEN_PLAY,
     ACTIVITY_PATH: ACTIVITY_PATH,
     BOARD_MESSAGES_PATH: BOARD_MESSAGES_PATH,
     migratePin: migratePin,
@@ -811,11 +985,15 @@
     loadUserProfile: loadUserProfile,
     logActivity: logActivity,
     isProfileComplete: isProfileComplete,
-    isStaffEmailAllowed: isStaffEmailAllowed,
     loadAdminUidFlag: loadAdminUidFlag,
+    loadModuleAccess: loadModuleAccess,
+    hasModuleAccess: hasModuleAccess,
+    setModuleAccess: setModuleAccess,
+    loadUserProfileByEmail: loadUserProfileByEmail,
     subscribeBoardMessages: subscribeBoardMessages,
     unsubscribeBoardMessages: unsubscribeBoardMessages,
     pushBoardMessage: pushBoardMessage,
+    pushBoardRsvpLog: pushBoardRsvpLog,
     deleteBoardMessage: deleteBoardMessage,
   };
 })(typeof window !== 'undefined' ? window : this);

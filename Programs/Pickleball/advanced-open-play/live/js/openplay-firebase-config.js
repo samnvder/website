@@ -44,11 +44,4 @@ window.SE_OPENPLAY_FIREBASE = {
   authDomain: 'pickleball-advanced-open-play.firebaseapp.com',
   databaseURL: 'https://pickleball-advanced-open-play-default-rtdb.firebaseio.com',
   projectId: 'pickleball-advanced-open-play',
-  // Legacy optional email allowlist. Admin-only pages now enforce openplay_se/admin_uids/{uid}.
-  staffEmails: [
-    'samnader21@gmail.com',
-    'brandonhookertennis@gmail.com',
-    'brandonhookerpickleball@gmail.com',
-    's@southendclub.com',
-  ],
 };
