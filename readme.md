@@ -83,7 +83,7 @@ Some membership and tour pages call Supabase Edge Functions (`check-availability
 
 | File | Purpose |
 |------|---------|
-| `firebase.json` | Hosting public dir (`Programs/Pickleball/live`), DB rules path, cache headers |
+| `firebase.json` | Hosting public dirs for Pickleball (`southend-pickleball-central`, `pickleball-advanced-open-play` redirect); DB rules path |
 | `.firebaserc` | Default Firebase project (`pickleball-advanced-open-play`) |
 | `database.rules.json` | Realtime Database security rules (deployed via CLI) |
 | `package.json` | All npm scripts for test, deploy, local-test, carousels |
