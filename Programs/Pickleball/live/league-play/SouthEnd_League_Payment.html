@@ -4,13 +4,14 @@
     <base href="/league-play/" />
 <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>League — Payment</title>
+    <title>League — Payment | South End Pickleball</title>
+    <meta name="description" content="Complete league registration payment for South End pickleball.">
     <link rel="icon" type="image/jpeg" href="../favicon.jpg">
     <link
       href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/south-end-league.css" />
+    <link rel="stylesheet" href="css/south-end-league.css?v=20260427b" />
   </head>
   <body class="league-page">
     <a class="league-skip" href="#main">Skip to content</a>
@@ -54,7 +55,7 @@
         </a>
         <a
           class="league-header-profile"
-          href="../SouthEnd_OpenPlay_Account.html?return=SouthEnd_League_Payment.html"
+          href="/open-play/account"
           aria-label="Open main Pickleball profile and account (same as Open Play)"
         >
           <svg class="league-header-profile__icon" viewBox="0 0 24 24" aria-hidden="true"
@@ -67,10 +68,10 @@
     <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav></nav>
     <script src="js/pickleball-hub-nav.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
     <nav class="se-site-nav" aria-label="League play">
-      <a class="se-site-nav-link" href="SouthEnd_League_Overview.html">Overview</a>
-      <a class="se-site-nav-link" href="SouthEnd_League_Schedule.html">Schedule</a>
-      <a class="se-site-nav-link" href="SouthEnd_League_Standings.html">Standings</a>
-      <a class="se-site-nav-link" href="SouthEnd_League_Teams.html">Register</a>
+      <a class="se-site-nav-link" href="/league-play">Overview</a>
+      <a class="se-site-nav-link" href="/league-play/schedule">Schedule</a>
+      <a class="se-site-nav-link" href="/league-play/standings">Standings</a>
+      <a class="se-site-nav-link" href="/league-play/register">Register</a>
     </nav>
     <main id="main" class="league-wrap league-wrap--narrow" tabindex="-1">
       <section class="league-payment-hero" aria-labelledby="leaguePaymentHeading">
@@ -102,7 +103,7 @@
         <h2>After payment</h2>
         <p>Keep your PayPal receipt for your records. You can return to your league dashboard for team details and notification updates.</p>
         <p>
-          <a class="btn" href="SouthEnd_League_Play_Hub.html#teamPanel">Back to league dashboard</a>
+          <a class="btn" href="/league-play#teamPanel">Back to league dashboard</a>
         </p>
       </section>
     </main>
@@ -127,14 +128,25 @@
         if (!L || !window.LEAGUE_FIREBASE_CONFIG) return;
         if (!L.init(window.LEAGUE_FIREBASE_CONFIG) || !window.LEAGUE_FIREBASE_CONFIG.apiKey) return;
 
+        function leaguePaymentReturnTarget() {
+          var p = String(window.location.pathname || '').replace(/\\/g, '/');
+          var q = window.location.search || '';
+          if (/SouthEnd_League_Payment\.html$/i.test(p)) {
+            return 'league-play/SouthEnd_League_Payment.html' + q;
+          }
+          return '/league-play/payment' + q;
+        }
+
         function fixPaymentPageProfileReturn() {
           var a = document.querySelector("a.league-header-profile");
           if (a) {
-            a.href =
-              "../SouthEnd_OpenPlay_Account.html?return=" +
-              encodeURIComponent(
-                "league-play/SouthEnd_League_Payment.html" + (window.location.search || "")
-              );
+            var targ = leaguePaymentReturnTarget();
+            var p = String(window.location.pathname || '').replace(/\\/g, '/');
+            if (/SouthEnd_League_Payment\.html$/i.test(p)) {
+              a.href = '../SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent(targ);
+            } else {
+              a.href = '/open-play/account?return=' + encodeURIComponent(targ);
+            }
           }
         }
         fixPaymentPageProfileReturn();
@@ -338,10 +350,12 @@
             pendingAuthRedirect = setTimeout(function () {
               pendingAuthRedirect = null;
               if (L.getCurrentUser()) return;
-              var ret = "league-play/SouthEnd_League_Payment.html" + (window.location.search || "");
-              window.location.replace(
-                "../SouthEnd_OpenPlay_Account.html?return=" + encodeURIComponent(ret)
-              );
+              var p = String(window.location.pathname || '').replace(/\\/g, '/');
+              if (/SouthEnd_League_Payment\.html$/i.test(p)) {
+                window.location.replace('../SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent(leaguePaymentReturnTarget()));
+              } else {
+                window.location.replace('/open-play/account?return=' + encodeURIComponent(leaguePaymentReturnTarget()));
+              }
             }, 800);
             return;
           }

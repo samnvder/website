@@ -4,13 +4,14 @@
     <base href="/league-play/" />
 <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>League — Rules &amp; Schedule Overview</title>
+    <title>League Play | South End Pickleball</title>
+    <meta name="description" content="South End pickleball league: format, schedule, rules, and registration.">
     <link rel="icon" type="image/jpeg" href="../favicon.jpg">
     <link
       href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/south-end-league.css" />
+    <link rel="stylesheet" href="/league-play/css/south-end-league.css?v=20260427c" />
   </head>
   <body class="league-page">
     <a class="league-skip" href="#main">Skip to content</a>
@@ -54,7 +55,7 @@
         </a>
         <a
           class="league-header-profile"
-          href="../SouthEnd_OpenPlay_Account.html?return=SouthEnd_League_Overview.html"
+          href="/open-play/account"
           aria-label="Open main Pickleball profile and account (same as Open Play)"
         >
           <svg class="league-header-profile__icon" viewBox="0 0 24 24" aria-hidden="true"
@@ -65,12 +66,12 @@
       </div>
     </div>
     <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav></nav>
-    <script src="js/pickleball-hub-nav.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="/league-play/js/pickleball-hub-nav.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
     <nav class="se-site-nav" aria-label="League play">
-      <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_League_Overview.html" aria-current="page">Overview</a>
-      <a class="se-site-nav-link" href="SouthEnd_League_Schedule.html">Schedule</a>
-      <a class="se-site-nav-link" href="SouthEnd_League_Standings.html">Standings</a>
-      <a class="se-site-nav-link" href="SouthEnd_League_Teams.html">Register</a>
+      <a class="se-site-nav-link se-site-nav-link--active" href="/league-play" aria-current="page">Overview</a>
+      <a class="se-site-nav-link" href="/league-play/schedule">Schedule</a>
+      <a class="se-site-nav-link" href="/league-play/standings">Standings</a>
+      <a class="se-site-nav-link" href="/league-play/register">Register</a>
     </nav>
     <main id="main" class="league-wrap league-wrap--wide league-overview" tabindex="-1">
       <section class="league-hero-card league-hero-card--clean">
@@ -81,7 +82,7 @@
           standings, and playoff seeding.
         </p>
         <div class="league-hero-actions">
-          <a class="btn league-overview-cta" id="leagueOverviewCta" href="SouthEnd_League_Teams.html">Register</a>
+          <a class="btn league-overview-cta" id="leagueOverviewCta" href="/league-play/register">Register</a>
         </div>
       </section>
 
@@ -177,8 +178,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="js/league-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-    <script src="js/south-end-league-sync.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="/league-play/js/league-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="/league-play/js/south-end-league-sync.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
     <script src="../js/openplay-firebase-config.js"></script>
     <script src="../js/south-end-openplay-sync.js"></script>
     <script src="../js/openplay-profile-panel.js?v=20260427-admin-hub"></script>
@@ -186,15 +187,26 @@
       (function () {
         var L = window.LeagueSync;
         var overviewCta = document.getElementById("leagueOverviewCta");
+        function leagueRegisterHref() {
+          var p = String(window.location.pathname || '').replace(/\\/g, '/');
+          return /SouthEnd_League_\w+\.html$/i.test(p) ? 'SouthEnd_League_Teams.html' : '/league-play/register';
+        }
         function paymentUrlFor(amount, type) {
-          return "SouthEnd_League_Payment.html?amount=" +
+          var q =
+            '?amount=' +
             encodeURIComponent(String(Math.max(0, Number(amount) || 0))) +
-            "&type=" + encodeURIComponent(type || "");
+            '&type=' +
+            encodeURIComponent(type || '');
+          var p = String(window.location.pathname || '').replace(/\\/g, '/');
+          if (/SouthEnd_League_\w+\.html$/i.test(p)) {
+            return 'SouthEnd_League_Payment.html' + q;
+          }
+          return '/league-play/payment' + q;
         }
         function applyRegisterCta() {
           if (!overviewCta) return;
           overviewCta.textContent = "Register";
-          overviewCta.href = "SouthEnd_League_Teams.html";
+          overviewCta.href = leagueRegisterHref();
         }
         function applyFinalizeCta(amount, type) {
           if (!overviewCta) return;
@@ -210,7 +222,7 @@
           if (!account.teamId) {
             if (account.adminMarkedPaid === true) {
               overviewCta.textContent = "Registration status";
-              overviewCta.href = "SouthEnd_League_Teams.html";
+              overviewCta.href = leagueRegisterHref();
               return Promise.resolve();
             }
             applyFinalizeCta(account.feeAmount || 0, "solo");
@@ -223,10 +235,10 @@
               return;
             }
             overviewCta.textContent = "View Team";
-            overviewCta.href = "SouthEnd_League_Teams.html";
+            overviewCta.href = leagueRegisterHref();
           }).catch(function () {
             overviewCta.textContent = "View Team";
-            overviewCta.href = "SouthEnd_League_Teams.html";
+            overviewCta.href = leagueRegisterHref();
           });
         }
         if (!L || !window.LEAGUE_FIREBASE_CONFIG) {

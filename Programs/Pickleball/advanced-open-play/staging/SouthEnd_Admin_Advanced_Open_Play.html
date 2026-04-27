@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<script src="js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<title>Advanced Open Play Admin - South End</title>
-<link rel="icon" type="image/jpeg" href="favicon.jpg">
+<script src="/js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<title>Advanced Open Play admin | South End Pickleball</title>
+<meta name="description" content="Staff admin tools for South End Advanced Open Play.">
+<link rel="icon" type="image/jpeg" href="/favicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -61,10 +62,10 @@ body{font-family:'Barlow',sans-serif;background:radial-gradient(1200px 600px at 
   <div class="hdr-sub">Staff-only Advanced Open Play tools for session registration, check-ins, and activity review.</div>
 </div>
 <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav data-se-hide-message-board="1">
-  <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
-  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_Advanced_Open_Play.html" aria-current="page">Open Play admin</a>
+  <a data-se-hub-tail class="se-site-nav-link" href="/admin">Admin hub</a>
+  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="/admin/open-play" aria-current="page">Open Play admin</a>
 </nav>
-<script src="pickleball-hub-nav.js?v=20260426nav"></script>
+<script src="/pickleball-hub-nav.js?v=20260426nav"></script>
 <div class="sub-nav" aria-label="Advanced Open Play admin sections">
   <a href="#signups">Signups</a>
   <a href="#checkins">Check-ins</a>
@@ -78,19 +79,19 @@ body{font-family:'Barlow',sans-serif;background:radial-gradient(1200px 600px at 
   <p class="lead">Choose an Advanced Open Play submodule. These tools stay grouped under this parent area.</p>
 
   <section class="admin-grid hidden" id="admin-grid" aria-label="Advanced Open Play admin submodules">
-    <a class="admin-card" id="signups" href="SouthEnd_Open_Play_Signups.html">
+    <a class="admin-card" id="signups" href="/signups">
       <div class="admin-kicker">Registration view</div>
       <div class="admin-title">Signups</div>
       <p class="admin-desc">See upcoming session signups by date, identify empty sessions, and invite players by email.</p>
       <span class="admin-cta">Open signups &rarr;</span>
     </a>
-    <a class="admin-card" id="checkins" href="SouthEnd_Session_Checkin.html">
+    <a class="admin-card" id="checkins" href="/checkin">
       <div class="admin-kicker">Session operations</div>
       <div class="admin-title">Check-ins</div>
       <p class="admin-desc">Run court-side attendance, walk-ins, session lists, cancellations, and staff actions.</p>
       <span class="admin-cta">Open check-ins &rarr;</span>
     </a>
-    <a class="admin-card" id="activity" href="SouthEnd_Admin_Activity.html">
+    <a class="admin-card" id="activity" href="/admin/activity">
       <div class="admin-kicker">Activity history</div>
       <div class="admin-title">Activity</div>
       <p class="admin-desc">Review RSVPs, cancellations, profile changes, waivers, and access events by person or timeline.</p>
@@ -100,10 +101,10 @@ body{font-family:'Barlow',sans-serif;background:radial-gradient(1200px 600px at 
 </main>
 
 <footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
-<script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script>
 function escapeHtml(s) {
   var d = document.createElement('div');
@@ -112,14 +113,15 @@ function escapeHtml(s) {
 }
 
 function accountReturnHref() {
-  return 'SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent('SouthEnd_Admin_Advanced_Open_Play.html');
+  return '/open-play/account?return=/admin/open-play';
 }
 
 function initAdvancedOpenPlayAdmin() {
   var status = document.getElementById('auth-status');
   var grid = document.getElementById('admin-grid');
   if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()) {
-    if (status) status.textContent = 'Firebase is not configured. Admin access cannot be checked.';
+    if (typeof sePickleballLogFirebase === 'function') sePickleballLogFirebase('Admin open play', 'firebase not configured');
+    if (status) status.textContent = typeof sePickleballFirebaseUserMessage === 'function' ? sePickleballFirebaseUserMessage() : 'Unavailable.';
     return;
   }
   SEOpenPlay.initFirebase().then(function () {
@@ -148,6 +150,6 @@ function initAdvancedOpenPlayAdmin() {
 document.addEventListener('DOMContentLoaded', initAdvancedOpenPlayAdmin);
 </script>
 
-<a class="message-board-fab" href="SouthEnd_Message_Board.html" aria-label="Open Message Board">Message Board</a>
+<a class="message-board-fab" href="/message-board" aria-label="Open Message Board">Message Board</a>
 </body>
 </html>

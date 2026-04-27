@@ -4,9 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f3f22">
-<script src="js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<title>Admin Hub - South End Pickleball</title>
-<link rel="icon" type="image/jpeg" href="favicon.jpg">
+<script src="/js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<title>Admin | South End Pickleball</title>
+<meta name="description" content="South End pickleball staff admin hub: module shortcuts and tools.">
+<link rel="icon" type="image/jpeg" href="/favicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -186,7 +187,7 @@ body.admin-hub-season{
     <div class="hdr-sub">Staff tools for pickleball operations and access. Choose the page you need from the categorized admin menu.</div>
   </header>
   <nav class="admin-page-nav" aria-label="Admin page selector" id="admin-page-nav">
-    <a class="admin-page-nav__link" data-hub-home-link href="SouthEnd_Pickleball_Hub.html">Pickleball hub</a>
+    <a class="admin-page-nav__link" data-hub-home-link href="/hub">Pickleball hub</a>
   </nav>
 
   <main class="body-wrap">
@@ -198,10 +199,10 @@ body.admin-hub-season{
 </div>
 
 <footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
-<script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script>
 var ADMIN_GROUPS = [
   {
@@ -209,8 +210,8 @@ var ADMIN_GROUPS = [
     title: 'League play',
     desc: 'Teams, rosters, schedules, and scores.',
     items: [
-      { key: 'team_management', label: 'League teams', href: 'SouthEnd_Admin_League_Play.html?module=league_play#team-management', slug: '/admin/league-play/teams' },
-      { key: 'schedule_scores', label: 'Schedule & scores', href: 'SouthEnd_Admin_League_Play.html?module=league_play#schedule-scores', slug: '/admin/league-play/schedule' }
+      { key: 'team_management', label: 'League teams', href: '/admin/league-play?module=league_play#team-management', slug: '/admin/league-play/teams' },
+      { key: 'schedule_scores', label: 'Schedule & scores', href: '/admin/league-play?module=league_play#schedule-scores', slug: '/admin/league-play/schedule' }
     ]
   },
   {
@@ -218,9 +219,9 @@ var ADMIN_GROUPS = [
     title: 'Advanced Open Play',
     desc: 'Signups, check-ins, and activity.',
     items: [
-      { key: 'signups', label: 'Open Play signups', href: 'SouthEnd_Admin_Advanced_Open_Play.html?module=open_play#signups', slug: '/admin/open-play/signups' },
-      { key: 'checkins', label: 'Open Play check-ins', href: 'SouthEnd_Admin_Advanced_Open_Play.html?module=open_play#checkins', slug: '/admin/open-play/check-ins' },
-      { key: 'activity', label: 'Open Play activity', href: 'SouthEnd_Admin_Activity.html?module=open_play', slug: '/admin/open-play/activity' }
+      { key: 'signups', label: 'Open Play signups', href: '/admin/open-play?module=open_play#signups', slug: '/admin/open-play/signups' },
+      { key: 'checkins', label: 'Open Play check-ins', href: '/admin/open-play?module=open_play#checkins', slug: '/admin/open-play/check-ins' },
+      { key: 'activity', label: 'Open Play activity', href: '/admin/activity?module=open_play', slug: '/admin/open-play/activity' }
     ]
   },
   {
@@ -228,8 +229,8 @@ var ADMIN_GROUPS = [
     title: 'General',
     desc: 'Access controls and member profile tools.',
     items: [
-      { key: 'module_access', label: 'Module access', href: 'SouthEnd_Admin_Module_Access.html?module=platform', slug: '/admin/module-access' },
-      { key: 'user_management', label: 'User management', href: 'SouthEnd_Admin_User_Management.html?module=platform', slug: '/admin/user-management' }
+      { key: 'module_access', label: 'Module access', href: '/admin/module-access?module=platform', slug: '/admin/module-access' },
+      { key: 'user_management', label: 'User management', href: '/admin/user-management?module=platform', slug: '/admin/user-management' }
     ]
   }
 ];
@@ -241,7 +242,7 @@ function escapeHtml(s) {
 }
 
 function accountReturnHref() {
-  return 'SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent('SouthEnd_Admin_Hub.html');
+  return '/open-play/account?return=/admin';
 }
 
 function scopedGroups(scope) {
@@ -291,7 +292,8 @@ function initAdminHub() {
   var status = document.getElementById('auth-status');
   var empty = document.getElementById('empty-state');
   if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()) {
-    if (status) status.textContent = 'Firebase is not configured. Admin access cannot be checked.';
+    if (typeof sePickleballLogFirebase === 'function') sePickleballLogFirebase('Admin hub', 'firebase not configured');
+    if (status) status.textContent = typeof sePickleballFirebaseUserMessage === 'function' ? sePickleballFirebaseUserMessage() : 'Unavailable.';
     return;
   }
   SEOpenPlay.initFirebase().then(function () {

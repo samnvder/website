@@ -275,22 +275,47 @@
     return String(parts[parts.length - 1] || '').trim();
   }
 
+  /** True when opening static trees (local-page, staging copy, raw file paths) that still use `.html` siblings. */
+  function useRelativeAccountHtmlPaths() {
+    var path = currentPathname().replace(/\\/g, '/');
+    if (path.indexOf('/testing/local-page') !== -1) return true;
+    if (path.indexOf('/advanced-open-play/staging') !== -1) return true;
+    if (path.indexOf('/advanced-open-play/live') !== -1) return true;
+    if (path.indexOf('/Programs/Pickleball/live') !== -1 && /\.html$/i.test(path)) return true;
+    return false;
+  }
+
   function isAccountPage() {
     var name = currentFileName();
     if (/^SouthEnd_OpenPlay_Account\.html$/i.test(name)) return true;
     var pathname = currentPathname().toLowerCase();
-    return pathname === '/account' || /\/account\/?$/.test(pathname);
+    if (pathname === '/account' || /\/account\/?$/.test(pathname)) return true;
+    if (pathname === '/open-play' || /^\/open-play(\/|$)/.test(pathname)) return true;
+    return false;
   }
 
   function accountHrefForCurrentPath() {
     var pathname = currentPathname();
-    if (/\/league-play\//i.test(pathname)) return '../SouthEnd_OpenPlay_Account.html';
-    return 'SouthEnd_OpenPlay_Account.html';
+    if (/\/league-play\//i.test(pathname)) {
+      if (useRelativeAccountHtmlPaths()) return '../SouthEnd_OpenPlay_Account.html';
+      return '/open-play/account';
+    }
+    if (useRelativeAccountHtmlPaths()) return 'SouthEnd_OpenPlay_Account.html';
+    return '/open-play/account';
   }
 
   function signedOutReturnTarget() {
     var pathname = currentPathname();
     if (!pathname) return '';
+    if (!useRelativeAccountHtmlPaths()) {
+      try {
+        var search = global.location && global.location.search ? String(global.location.search) : '';
+        if (pathname === '/' || pathname === '') return '';
+        return pathname + search;
+      } catch (e) {
+        return '';
+      }
+    }
     var leagueMatch = pathname.match(/\/league-play\/([^/?#]+)$/i);
     if (leagueMatch && leagueMatch[1]) return 'league-play/' + leagueMatch[1];
     var name = currentFileName();

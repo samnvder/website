@@ -21,6 +21,20 @@
   var authUser = null;
   var gamesUnsub = null;
 
+  function standingsSignInHref() {
+    try {
+      var path = String(window.location && window.location.pathname ? window.location.pathname : '').replace(/\\/g, '/');
+      if (
+        /southend_league_standings\.html$/i.test(path) ||
+        (path.indexOf('/Programs/Pickleball/live/league-play') !== -1 && /\.html$/i.test(path)) ||
+        path.indexOf('/testing/local-page') !== -1
+      ) {
+        return '../SouthEnd_OpenPlay_Account.html?return=SouthEnd_League_Standings.html';
+      }
+    } catch (e) {}
+    return '/open-play/account?return=' + encodeURIComponent('/league-play/standings');
+  }
+
   function pct(w, l) {
     var g = w + l;
     if (!g) return '—';
@@ -272,7 +286,7 @@
     if (!authUser) {
       out.innerHTML =
         '<p class="league-standings-hint">Sign in with your South End account to view standings. ' +
-        '<a href="../SouthEnd_OpenPlay_Account.html?return=SouthEnd_League_Standings.html">Open account / sign in</a></p>';
+        '<a href="' + standingsSignInHref() + '">Open account / sign in</a></p>';
       return;
     }
 
@@ -381,6 +395,10 @@
   }
 
   function boot() {
+    // Render the standings shell immediately so the page never appears blank
+    // if Firebase/Auth scripts fail to initialize.
+    render();
+
     if (!window.LEAGUE_FIREBASE_CONFIG || !window.LEAGUE_FIREBASE_CONFIG.apiKey) {
       var out = document.getElementById('leagueStandingsTable');
       if (out) {
@@ -393,7 +411,14 @@
       if (o2) o2.innerHTML = '<p class="league-standings-empty">Could not start league data connection.</p>';
       return;
     }
-    if (!window.firebase || !window.firebase.auth) return;
+    if (!window.firebase || !window.firebase.auth) {
+      var o3 = document.getElementById('leagueStandingsTable');
+      if (o3) {
+        o3.innerHTML =
+          '<p class="league-standings-empty">Standings service is temporarily unavailable. Please refresh and try again.</p>';
+      }
+      return;
+    }
     window.firebase.auth().onAuthStateChanged(function (user) {
       authUser = user;
       if (user) {

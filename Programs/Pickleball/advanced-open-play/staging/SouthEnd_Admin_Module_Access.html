@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<script src="js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<title>Module Access - South End Admin</title>
-<link rel="icon" type="image/jpeg" href="favicon.jpg">
+<script src="/js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<title>Module access (admin) | South End Pickleball</title>
+<meta name="description" content="Manage South End pickleball module access for members.">
+<link rel="icon" type="image/jpeg" href="/favicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -147,11 +148,11 @@ body{font-family:'Barlow',sans-serif;background:radial-gradient(1200px 600px at 
   </div>
 </div>
 <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav data-se-hide-message-board="1">
-  <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
-  <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_User_Management.html">User management</a>
-  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_Module_Access.html" aria-current="page">Module access</a>
+  <a data-se-hub-tail class="se-site-nav-link" href="/admin">Admin hub</a>
+  <a data-se-hub-tail class="se-site-nav-link" href="/admin/user-management">User management</a>
+  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="/admin/module-access" aria-current="page">Module access</a>
 </nav>
-<script src="pickleball-hub-nav.js?v=20260426nav"></script>
+<script src="/pickleball-hub-nav.js?v=20260426nav"></script>
 
 <div class="body-wrap">
   <div class="top-row">
@@ -220,10 +221,10 @@ body{font-family:'Barlow',sans-serif;background:radial-gradient(1200px 600px at 
 </div>
 
 <footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
-<script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script>
 var MODULES = [
   {
@@ -707,7 +708,9 @@ function applyAccess(enabled) {
 
 function initPage() {
   if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()) {
-    document.getElementById('auth-status').textContent = 'Firebase not configured.';
+    if (typeof sePickleballLogFirebase === 'function') sePickleballLogFirebase('Module access', 'firebase not configured');
+    document.getElementById('auth-status').textContent =
+      typeof sePickleballFirebaseUserMessage === 'function' ? sePickleballFirebaseUserMessage() : 'Unavailable.';
     return;
   }
 
@@ -715,7 +718,7 @@ function initPage() {
   SEOpenPlay.initFirebase().then(function () {
     SEOpenPlay.onAuthStateChanged(function (user) {
       if (!user) {
-        document.getElementById('auth-status').innerHTML = 'Sign in required. <a href="SouthEnd_OpenPlay_Account.html" style="color:var(--electric)">Go to account</a>';
+        document.getElementById('auth-status').innerHTML = 'Sign in required. <a href="/open-play/account" style="color:var(--electric)">Go to account</a>';
         return;
       }
       SEOpenPlay.loadAdminUidFlag(user.uid).then(function (isAdmin) {
@@ -770,6 +773,6 @@ function initPage() {
 document.addEventListener('DOMContentLoaded', initPage);
 </script>
 
-<a class="message-board-fab" href="SouthEnd_Message_Board.html" aria-label="Open Message Board">Message Board</a>
+<a class="message-board-fab" href="/message-board" aria-label="Open Message Board">Message Board</a>
 </body>
 </html>

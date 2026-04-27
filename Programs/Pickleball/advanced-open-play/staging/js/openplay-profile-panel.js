@@ -61,6 +61,10 @@
   }
 
   function isAdminPage() {
+    try {
+      var path = String((global.location && global.location.pathname) || '').replace(/\\/g, '/').toLowerCase();
+      if (/^\/admin(\/|$)/.test(path)) return true;
+    } catch (e) {}
     return /^SouthEnd_(?:Admin_(?:Hub|Activity|Module_Access|League_Play|User_Management)|Open_Play_Signups)\.html$/i.test(pageFileName());
   }
 
@@ -85,6 +89,8 @@
       prefix = '../';
     } else if (path.indexOf('/advanced-open-play/staging/') !== -1 || path.indexOf('/advanced-open-play/live/') !== -1) {
       prefix = '';
+    } else if (path.indexOf('/Programs/Pickleball/live/') !== -1) {
+      prefix = '/Programs/Pickleball/live/';
     } else if (path.indexOf('/testing/local-page/') === -1 && !/^\/(?:SouthEnd_|index\.html|$)/i.test(path)) {
       prefix = '/Programs/Pickleball/advanced-open-play/testing/local-page/';
     }
@@ -119,10 +125,14 @@
   function inferModuleContextFromPath() {
     var path = String((global.location && global.location.pathname) || '').toLowerCase();
     if (path.indexOf('/league-play/') !== -1 || /southend_admin_league_play\.html$/.test(path)) return 'league_play';
+    if (path.indexOf('/admin/') !== -1 || path === '/admin' || /southend_admin_(?:hub|module_access|user_management)\.html$/.test(path)) {
+      return 'platform';
+    }
     if (
       /southend_(?:open_play_signups|session_checkin|admin_activity|admin_advanced_open_play|session_rsvp|pickleball_hub|message_board)\.html$/.test(path)
       || /southend_openplay_account\.html$/.test(path)
       || path.indexOf('/hub') !== -1
+      || path.indexOf('/open-play') !== -1
       || path.indexOf('/account') !== -1
     ) {
       return 'open_play';
@@ -198,20 +208,43 @@
   }
 
   function liveHref(href) {
+    var raw = String(href || '').trim();
     var path = String((global.location && global.location.pathname) || '').replace(/\\/g, '/');
-    var key = String(href || '').replace(/\.html(?:\?.*)?$/i, '');
-    if (isLocalPreviewHost() || path.indexOf('/testing/local-page/') !== -1) {
+    var isLocal = isLocalPreviewHost() || path.indexOf('/testing/local-page/') !== -1;
+    if (!isLocal && /^\/[^/]/.test(raw)) return raw;
+    var hashIdx0 = raw.indexOf('#');
+    var pathPart = hashIdx0 >= 0 ? raw.slice(0, hashIdx0) : raw;
+    var hashPart = hashIdx0 >= 0 ? raw.slice(hashIdx0) : '';
+    var key = pathPart.replace(/\.html(?:\?.*)?$/i, '');
+    if (isLocal) {
       var localRoutes = localHtmlRoutes(path);
-      return localRoutes[key] || String(href || '');
+      var resolvedLocal = localRoutes[key] || pathPart;
+      if (!hashPart) return resolvedLocal;
+      var baseLocal = resolvedLocal.split('#')[0];
+      return baseLocal + hashPart;
     }
     var routes = {
       SouthEnd_Admin_Hub: '/admin?v=20260427-admin-hub',
       SouthEnd_Admin_Activity: '/admin/activity',
+      SouthEnd_Admin_Advanced_Open_Play: '/admin/open-play',
+      SouthEnd_Admin_League_Play: '/admin/league-play',
       SouthEnd_Admin_Module_Access: '/admin/module-access',
-      SouthEnd_OpenPlay_Account: '/account',
+      SouthEnd_Admin_User_Management: '/admin/user-management',
+      SouthEnd_Open_Play_Signups: '/signups',
+      SouthEnd_Session_Checkin: '/checkin',
+      SouthEnd_OpenPlay_Account: '/open-play/account',
       SouthEnd_Pickleball_Hub: '/hub',
+      'league-play/SouthEnd_League_Teams': '/league-play/register',
+      'league-play/SouthEnd_League_Overview': '/league-play',
+      'league-play/SouthEnd_League_Schedule': '/league-play/schedule',
+      'league-play/SouthEnd_League_Standings': '/league-play/standings',
+      'league-play/SouthEnd_League_Payment': '/league-play/payment',
     };
-    return routes[key] || '/' + String(href || '').replace(/^\/+/, '');
+    if (routes[key]) {
+      var base = routes[key].split('#')[0];
+      return base + hashPart;
+    }
+    return '/' + String(href || '').replace(/^\/+/, '');
   }
 
   function normalizeLegacyLiveUrl(rawHref) {
@@ -222,7 +255,7 @@
     if (/advanced-open-play\/(?:staging|live)\/SouthEnd_Pickleball_Hub\.html/i.test(href)) return '/hub';
     if (/advanced-open-play\/(?:staging|live)\/SouthEnd_OpenPlay_Account\.html/i.test(href)) {
       var query = href.indexOf('?') >= 0 ? href.slice(href.indexOf('?')) : '';
-      return '/account' + query;
+      return '/open-play/account' + query;
     }
     return '';
   }
@@ -352,7 +385,7 @@
       '<path d="M12 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/>' +
       '<path d="M5 20.5c.8-3.2 3.4-5.5 7-5.5s6.2 2.3 7 5.5" stroke-linecap="round"/>' +
       '</svg>' +
-      '<span class="' + NS + '-label">Profile</span>' +
+      '<span class="' + NS + '-label">Sign in</span>' +
       '</button>' +
       '<div class="' + NS + '-menu" role="menu">' +
       '<div class="' + NS + '-menu-head"><div class="' + NS + '-menu-status">Not signed in</div></div>' +
@@ -927,24 +960,45 @@
       if (path.indexOf('/league-play') === -1) return '';
       var slug = path.split('/').filter(Boolean).pop() || '';
       slug = slug.replace(/\.html$/i, '').toLowerCase();
-      var map = {
-        'overview': 'SouthEnd_League_Overview.html',
-        'schedule': 'SouthEnd_League_Schedule.html',
-        'standings': 'SouthEnd_League_Standings.html',
-        'register': 'SouthEnd_League_Teams.html',
-        'invites': 'SouthEnd_League_Teams.html',
-        'payment': 'SouthEnd_League_Payment.html',
-        'southend_league_overview': 'SouthEnd_League_Overview.html',
-        'southend_league_schedule': 'SouthEnd_League_Schedule.html',
-        'southend_league_standings': 'SouthEnd_League_Standings.html',
-        'southend_league_teams': 'SouthEnd_League_Teams.html',
-        'southend_league_invites': 'SouthEnd_League_Teams.html',
-        'southend_league_payment': 'SouthEnd_League_Payment.html',
-        'southend_league_play_hub': 'SouthEnd_League_Overview.html',
+      var mapClean = {
+        overview: '/league-play',
+        schedule: '/league-play/schedule',
+        standings: '/league-play/standings',
+        register: '/league-play/register',
+        invites: '/league-play/register',
+        payment: '/league-play/payment',
+        southend_league_overview: '/league-play',
+        southend_league_schedule: '/league-play/schedule',
+        southend_league_standings: '/league-play/standings',
+        southend_league_teams: '/league-play/register',
+        southend_league_invites: '/league-play/register',
+        southend_league_payment: '/league-play/payment',
+        southend_league_play_hub: '/league-play',
+        'league-play': '/league-play',
+        '': '/league-play'
+      };
+      var mapFile = {
+        overview: 'SouthEnd_League_Overview.html',
+        schedule: 'SouthEnd_League_Schedule.html',
+        standings: 'SouthEnd_League_Standings.html',
+        register: 'SouthEnd_League_Teams.html',
+        invites: 'SouthEnd_League_Teams.html',
+        payment: 'SouthEnd_League_Payment.html',
+        southend_league_overview: 'SouthEnd_League_Overview.html',
+        southend_league_schedule: 'SouthEnd_League_Schedule.html',
+        southend_league_standings: 'SouthEnd_League_Standings.html',
+        southend_league_teams: 'SouthEnd_League_Teams.html',
+        southend_league_invites: 'SouthEnd_League_Teams.html',
+        southend_league_payment: 'SouthEnd_League_Payment.html',
+        southend_league_play_hub: 'SouthEnd_League_Overview.html',
         'league-play': 'SouthEnd_League_Overview.html',
         '': 'SouthEnd_League_Overview.html'
       };
-      return map[slug] || 'SouthEnd_League_Overview.html';
+      var accProbe = liveHref('SouthEnd_OpenPlay_Account.html');
+      if (accProbe.indexOf('.html') !== -1) {
+        return mapFile[slug] || 'SouthEnd_League_Overview.html';
+      }
+      return mapClean[slug] || '/league-play';
     } catch (e) {
       return '';
     }
@@ -962,8 +1016,15 @@
     if (!anchorEl) return;
     if (off) {
       anchorEl.classList.add('is-signed-out');
-      anchorEl.style.display = 'none';
-      setHeaderActionLane(false);
+      anchorEl.style.display = 'flex';
+      setHeaderActionLane(true);
+      if (btnEl) {
+        btnEl.setAttribute('aria-label', 'Sign in to your South End account');
+        var signedOutLabel = btnEl.querySelector('.' + NS + '-label');
+        if (signedOutLabel) signedOutLabel.textContent = 'Sign in';
+      }
+      if (notifyBtnEl) notifyBtnEl.style.display = 'none';
+      if (adminQuickEl) adminQuickEl.style.display = 'none';
       setStaticLeagueLink('sign-in');
       externalNotificationBells().forEach(function (bell) {
         bell.style.display = 'none';
@@ -973,6 +1034,13 @@
       anchorEl.classList.remove('is-signed-out');
       anchorEl.style.display = 'flex';
       setHeaderActionLane(true);
+      if (btnEl) {
+        btnEl.setAttribute('aria-label', 'Open your South End account menu');
+        var signedInLabel = btnEl.querySelector('.' + NS + '-label');
+        if (signedInLabel) signedInLabel.textContent = 'Account';
+      }
+      if (notifyBtnEl) notifyBtnEl.style.display = '';
+      if (adminQuickEl) adminQuickEl.style.display = '';
       setStaticLeagueLink('hide');
       externalNotificationBells().forEach(function (bell) {
         bell.style.display = '';
@@ -985,7 +1053,11 @@
     if (!nav) return null;
     Array.prototype.slice.call(nav.querySelectorAll('a.se-site-nav-link')).forEach(function (a) {
       var href = a.getAttribute('href') || '';
-      if (/SouthEnd_(?:Admin_(?:Activity|Module_Access|League_Play|User_Management)|Open_Play_Signups)\.html/i.test(href)) {
+      if (
+        /SouthEnd_(?:Admin_(?:Activity|Module_Access|League_Play|User_Management)|Open_Play_Signups)\.html/i.test(href) ||
+        /^\/admin\/(activity|module-access|open-play|user-management|league-play)(\?|#|$)/i.test(href) ||
+        /^\/signups(\?|#|$)/i.test(href)
+      ) {
         a.classList.remove('se-site-nav-link--active');
         a.removeAttribute('aria-current');
         a.style.display = 'none';
@@ -1104,7 +1176,6 @@
 
   function init() {
     var SE = global.SEOpenPlay;
-    if (!SE || !SE.firebaseConfigured || !SE.firebaseConfigured()) return;
     ensureDom();
     mountAnchor();
     refreshAccountLink();
@@ -1112,6 +1183,7 @@
     renderAdminMenuItems();
     setVisible(true);
     setSignedOutMode(true);
+    if (!SE || !SE.firebaseConfigured || !SE.firebaseConfigured()) return;
     if (global.PickleballInviteShare && typeof global.PickleballInviteShare.refresh === 'function') {
       global.PickleballInviteShare.refresh();
     }

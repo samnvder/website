@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<script src="js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<title>League Play Admin - South End</title>
-<link rel="icon" type="image/jpeg" href="favicon.jpg">
+<script src="/js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<title>League Play admin | South End Pickleball</title>
+<meta name="description" content="Staff admin for South End pickleball league: teams, schedule, and scores.">
+<link rel="icon" type="image/jpeg" href="/favicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0a1628;--navy-lt:#152342;--electric:#a855f7;--neon:#00ff88;--ink:#0a0a1a;--red:#ff6b6b;--muted:rgba(255,255,255,.55);}
@@ -84,10 +85,10 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
   <div class="hdr-sub">Staff-only: team management, weekly matchups and scores, solo players, invites, and roster tools.</div>
 </div>
 <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav data-se-hide-message-board="1">
-  <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
-  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_League_Play.html" aria-current="page">League admin</a>
+  <a data-se-hub-tail class="se-site-nav-link" href="/admin">Admin hub</a>
+  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="/admin/league-play" aria-current="page">League admin</a>
 </nav>
-<script src="pickleball-hub-nav.js?v=20260426nav"></script>
+<script src="/pickleball-hub-nav.js?v=20260426nav"></script>
 <div class="sub-nav" aria-label="League admin sections">
   <a href="#team-management" class="active" data-section="teams">Team management</a>
   <a href="#schedule-scores" data-section="scores">Schedule &amp; scores</a>
@@ -216,10 +217,10 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
   </div>
 </div>
 
-<script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/league-admin-games.js"></script>
+<script src="/js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/league-admin-games.js"></script>
 <script>
 (function () {
   'use strict';
@@ -273,12 +274,7 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
   }
 
   function accountReturnHref() {
-    var page = 'SouthEnd_Admin_League_Play.html';
-    try {
-      var seg = (window.location.pathname || '').split('/').filter(Boolean).pop();
-      if (seg && /\.html?$/i.test(seg)) page = seg;
-    } catch (e) {}
-    return 'SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent(page);
+    return '/open-play/account?return=/admin/league-play';
   }
 
   function db() {
@@ -907,6 +903,6 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
 })();
 </script>
 
-<a class="message-board-fab" href="SouthEnd_Message_Board.html" aria-label="Open Message Board">Message Board</a>
+<a class="message-board-fab" href="/message-board" aria-label="Open Message Board">Message Board</a>
 </body>
 </html>

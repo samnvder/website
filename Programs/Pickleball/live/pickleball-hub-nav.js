@@ -40,17 +40,17 @@
     if (ctx === 'hosted-root') {
       return {
         hub: '/hub',
-        openplay: '/account',
+        openplay: '/open-play/account',
         board: '/message-board',
-        league: '/league-play/SouthEnd_League_Overview.html',
+        league: '/league-play',
       };
     }
     if (ctx === 'hosted-league') {
       return {
         hub: '/hub',
-        openplay: '/account',
+        openplay: '/open-play/account',
         board: '/message-board',
-        league: 'SouthEnd_League_Overview.html',
+        league: '/league-play',
       };
     }
     if (ctx === 'openplay-league-staging') {
@@ -97,27 +97,22 @@
   }
 
   function detectActive() {
-    var seg = (typeof location !== 'undefined' && location.pathname ? location.pathname : '')
-      .replace(/\\/g, '/')
-      .split('/')
-      .filter(Boolean);
-    var name = seg.length ? seg[seg.length - 1] : '';
+    var path = (typeof location !== 'undefined' && location.pathname ? location.pathname : '')
+      .replace(/\\/g, '/');
+    if (!path || path === '/') return '';
+    if (/^\/(hub|main)(\/|$)/i.test(path)) return 'hub';
+    if (/^\/(open-play|account|signup|rsvp|advanced-open-play)(\/|$)/i.test(path)) return 'openplay';
+    if (/^\/message-board(\/|$)/i.test(path)) return 'board';
+    if (/^\/league-play(\/|$)/i.test(path)) return 'league';
+    if (/^\/admin(\/|$)/i.test(path)) return 'admin';
+    // Fallback for file:// local dev
+    var name = path.split('/').filter(Boolean).pop() || '';
     name = (name.split('?')[0] || '').trim();
-    if (!name) {
-      if (seg.indexOf('hub') !== -1 || seg.indexOf('main') !== -1) return 'hub';
-      if (seg.indexOf('account') !== -1 || seg.indexOf('advanced-open-play') !== -1) return 'openplay';
-      if (seg.indexOf('message-board') !== -1) return 'board';
-      if (seg.indexOf('league-play') !== -1) return 'league';
-      return '';
-    }
-    if (/^hub$/i.test(name) || /^main$/i.test(name)) return 'hub';
-    if (/^account$/i.test(name) || /^signup$/i.test(name) || /^advanced-open-play$/i.test(name)) return 'openplay';
-    if (/^message-board$/i.test(name)) return 'board';
-    if (/^league-play$/i.test(name)) return 'league';
     if (/^SouthEnd_Pickleball_Hub\.html$/i.test(name)) return 'hub';
     if (/^SouthEnd_OpenPlay_Account\.html$/i.test(name)) return 'openplay';
     if (/^SouthEnd_Message_Board\.html$/i.test(name)) return 'board';
     if (/^SouthEnd_League_/i.test(name)) return 'league';
+    if (/^SouthEnd_Admin_/i.test(name)) return 'admin';
     return '';
   }
 
@@ -240,7 +235,7 @@
         adminLink.id = 'admin-hub-nav-link';
         adminLink.setAttribute('data-se-hub-tail', '');
         adminLink.className = 'se-site-nav-link se-site-nav-link--admin hidden';
-        adminLink.href = 'SouthEnd_Admin_Hub.html';
+        adminLink.href = '/admin';
         adminLink.textContent = 'Admin';
         tails.push(adminLink);
       }

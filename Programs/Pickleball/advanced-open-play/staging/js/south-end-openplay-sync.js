@@ -275,22 +275,47 @@
     return String(parts[parts.length - 1] || '').trim();
   }
 
+  /** True when opening static trees (local-page, staging copy, raw file paths) that still use `.html` siblings. */
+  function useRelativeAccountHtmlPaths() {
+    var path = currentPathname().replace(/\\/g, '/');
+    if (path.indexOf('/testing/local-page') !== -1) return true;
+    if (path.indexOf('/advanced-open-play/staging') !== -1) return true;
+    if (path.indexOf('/advanced-open-play/live') !== -1) return true;
+    if (path.indexOf('/Programs/Pickleball/live') !== -1 && /\.html$/i.test(path)) return true;
+    return false;
+  }
+
   function isAccountPage() {
     var name = currentFileName();
     if (/^SouthEnd_OpenPlay_Account\.html$/i.test(name)) return true;
     var pathname = currentPathname().toLowerCase();
-    return pathname === '/account' || /\/account\/?$/.test(pathname);
+    if (pathname === '/account' || /\/account\/?$/.test(pathname)) return true;
+    if (pathname === '/open-play' || /^\/open-play(\/|$)/.test(pathname)) return true;
+    return false;
   }
 
   function accountHrefForCurrentPath() {
     var pathname = currentPathname();
-    if (/\/league-play\//i.test(pathname)) return '../SouthEnd_OpenPlay_Account.html';
-    return 'SouthEnd_OpenPlay_Account.html';
+    if (/\/league-play\//i.test(pathname)) {
+      if (useRelativeAccountHtmlPaths()) return '../SouthEnd_OpenPlay_Account.html';
+      return '/open-play/account';
+    }
+    if (useRelativeAccountHtmlPaths()) return 'SouthEnd_OpenPlay_Account.html';
+    return '/open-play/account';
   }
 
   function signedOutReturnTarget() {
     var pathname = currentPathname();
     if (!pathname) return '';
+    if (!useRelativeAccountHtmlPaths()) {
+      try {
+        var search = global.location && global.location.search ? String(global.location.search) : '';
+        if (pathname === '/' || pathname === '') return '';
+        return pathname + search;
+      } catch (e) {
+        return '';
+      }
+    }
     var leagueMatch = pathname.match(/\/league-play\/([^/?#]+)$/i);
     if (leagueMatch && leagueMatch[1]) return 'league-play/' + leagueMatch[1];
     var name = currentFileName();
@@ -1122,51 +1147,6 @@
             });
           }).then(function () {
             syncUserAggregateBoardPost(u.uid);
-          });
-        });
-      });
-    });
-  }
-
-  // Auto-posts a "signed up for …" entry to the board when an RSVP is confirmed.
-  // Same schema as pushBoardMessage; adds kind:'rsvp_log' so the board UI can
-  // style it differently from user-authored chat.
-  function pushBoardRsvpLog(sessionLabels) {
-    var u = getCurrentUser();
-    if (!u) return Promise.reject(new Error('Sign in required'));
-    var labels = [];
-    if (Array.isArray(sessionLabels)) {
-      sessionLabels.forEach(function (s) {
-        var t = String(s == null ? '' : s).trim();
-        if (t) labels.push(t);
-      });
-    }
-    if (!labels.length) return Promise.resolve(null);
-    var text;
-    if (labels.length === 1) {
-      text = '🎾 Signed up for ' + labels[0];
-    } else {
-      text = '🎾 Signed up for ' + labels.length + ' sessions: ' + labels.join('; ');
-    }
-    if (text.length > 500) text = text.substring(0, 497) + '…';
-    return initFirebase().then(function () {
-      if (!firebaseDb || !global.firebase) return Promise.reject(new Error('Not ready'));
-      return loadUserProfile(u.uid).then(function (p) {
-        var prof = p || {};
-        var first = String(prof.firstName || '').trim();
-        var last = String(prof.lastName || '').trim();
-        var name = (first + ' ' + last).trim() || String(u.email || 'Member');
-        var skill = String(prof.skill || '').trim();
-        return loadAdminUidFlag(u.uid).then(function (isAdmin) {
-          var ref = firebaseDb.ref(BOARD_MESSAGES_PATH).push();
-          return ref.set({
-            uid: u.uid,
-            authorName: name,
-            skill: skill,
-            text: text,
-            kind: 'rsvp_log',
-            isStaffAdmin: !!isAdmin,
-            ts: global.firebase.database.ServerValue.TIMESTAMP,
           });
         });
       });

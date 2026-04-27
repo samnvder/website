@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<script src="js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<title>Admin Activity - South End Open Play</title>
-<link rel="icon" type="image/jpeg" href="favicon.jpg">
+<script src="/js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<title>Admin activity | South End Pickleball</title>
+<meta name="description" content="Staff activity log for South End pickleball operations.">
+<link rel="icon" type="image/jpeg" href="/favicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -158,14 +159,14 @@ tbody tr:hover td{background:rgba(255,255,255,.04);}
   <div class="hdr-sub">Staff-only feed: RSVPs, profiles, waivers, cancellations - filter by person, slice with SQL-style lines, or browse grouped by account.</div>
 </div>
 <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav data-se-hide-message-board="1">
-  <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
-  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_Advanced_Open_Play.html" aria-current="page">Open Play admin</a>
+  <a data-se-hub-tail class="se-site-nav-link" href="/admin">Admin hub</a>
+  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="/admin/open-play" aria-current="page">Open Play admin</a>
 </nav>
-<script src="pickleball-hub-nav.js?v=20260426nav"></script>
+<script src="/pickleball-hub-nav.js?v=20260426nav"></script>
 <div class="sub-nav" aria-label="Advanced Open Play admin sections">
-  <a href="SouthEnd_Open_Play_Signups.html">Signups</a>
-  <a href="SouthEnd_Session_Checkin.html">Check-ins</a>
-  <a href="SouthEnd_Admin_Activity.html" class="active">Activity</a>
+  <a href="/signups">Signups</a>
+  <a href="/checkin">Check-ins</a>
+  <a href="/admin/activity" class="active">Activity</a>
 </div>
 
 <div class="body-wrap">
@@ -272,10 +273,10 @@ tbody tr:hover td{background:rgba(255,255,255,.04);}
 </div>
 
 <footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
-<script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script>
 var rawRows = [];
 var renderedRows = [];
@@ -625,12 +626,7 @@ function subscribeActivityFeed() {
   });
 }
 function accountPageHrefForActivity() {
-  var page = 'SouthEnd_Admin_Activity.html';
-  try {
-    var seg = (window.location.pathname || '').split('/').filter(Boolean).pop();
-    if (seg && /\.html?$/i.test(seg)) page = seg;
-  } catch (e) {}
-  return 'SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent(page);
+  return '/open-play/account?return=/admin/activity';
 }
 function checkStaffAccessForActivity(user) {
   if (typeof SEOpenPlay !== 'undefined' && SEOpenPlay.loadAdminUidFlag) {
@@ -640,8 +636,11 @@ function checkStaffAccessForActivity(user) {
 }
 function initActivityAuthGate() {
   if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()) {
-    alert('Activity requires Firebase auth configuration. Add js/openplay-firebase-config.js first.');
-    window.location.replace(accountPageHrefForActivity());
+    if (typeof sePickleballShowFirebaseBanner === 'function') {
+      sePickleballShowFirebaseBanner('Activity', 'SEOpenPlay missing or not configured');
+    }
+    var st = document.getElementById('auth-status');
+    if (st) st.textContent = typeof sePickleballFirebaseUserMessage === 'function' ? sePickleballFirebaseUserMessage() : 'Unavailable.';
     return Promise.reject(new Error('Firebase auth/config required'));
   }
   return SEOpenPlay.initFirebase().then(function () {
@@ -694,6 +693,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
-<a class="message-board-fab" href="SouthEnd_Message_Board.html" aria-label="Open Message Board">Message Board</a>
+<a class="message-board-fab" href="/message-board" aria-label="Open Message Board">Message Board</a>
 </body>
 </html>

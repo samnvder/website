@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<script src="js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<title>Account - South End Advanced Open Play</title>
-<link rel="icon" type="image/jpeg" href="favicon.jpg">
+<script src="/js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<title>Open Play Account | South End Pickleball</title>
+<meta name="description" content="Sign in to manage your South End Advanced Open Play profile, waiver, skill level, and bookings.">
+<link rel="icon" type="image/jpeg" href="/favicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -370,7 +371,7 @@ body.account-calendar-view #auth-panel{display:none!important;}
   </div>
 </div>
 <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav></nav>
-<script src="pickleball-hub-nav.js"></script>
+<script src="/pickleball-hub-nav.js"></script>
 
 <div class="body-wrap">
   <p class="page-lead">
@@ -392,7 +393,7 @@ body.account-calendar-view #auth-panel{display:none!important;}
       <div class="auth-actions">
         <button type="button" class="auth-btn auth-btn-primary" id="auth-primary-btn">Sign in</button>
         <button type="button" class="auth-btn auth-btn-secondary" id="auth-toggle-mode">Create account instead</button>
-        <a class="auth-btn auth-btn-secondary" id="auth-forgot" href="SouthEnd_Forgot_Password.html">Forgot password?</a>
+        <a class="auth-btn auth-btn-secondary" id="auth-forgot" href="/forgot-password">Forgot password?</a>
       </div>
       <div class="auth-msg" id="auth-msg" role="status"></div>
     </div>
@@ -532,10 +533,10 @@ body.account-calendar-view #auth-panel{display:none!important;}
       <div id="cal-unparsed" class="cal-unparsed hidden"></div>
     </div>
     <div class="hub-actions">
-      <a class="cta-primary" id="hub-cta-rsvp" href="SouthEnd_Session_RSVP.html">Book sessions</a>
+      <a class="cta-primary" id="hub-cta-rsvp" href="/open-play/book">Book sessions</a>
       <button type="button" class="cta-staff" id="cta-manage-rsvps">Manage RSVPs</button>
-      <a class="cta-staff hidden" id="hub-cta-checkin" href="SouthEnd_Session_Checkin.html">Check-ins</a>
-      <a class="cta-staff hidden" id="hub-cta-activity" href="SouthEnd_Admin_Hub.html">Admin hub</a>
+      <a class="cta-staff hidden" id="hub-cta-checkin" href="/checkin">Check-ins</a>
+      <a class="cta-staff hidden" id="hub-cta-activity" href="/admin">Admin hub</a>
     </div>
     <div class="module-admin-panel hidden" id="module-admin-panel">
       <div class="auth-title">Module access admin</div>
@@ -640,21 +641,15 @@ body.account-calendar-view #auth-panel{display:none!important;}
 </div>
 
 <footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
-<script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/openplay-rsvp-helpers.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/openplay-waiver-modals.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-rsvp-helpers.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-waiver-modals.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script>
 function getReturnRsvpHref() {
-  try {
-    var q = new URLSearchParams(window.location.search);
-    var r = String(q.get('return') || '').trim();
-    // Keep booking CTA pinned to RSVP; do not route this button to check-in.
-    if (/^SouthEnd_Session_RSVP\.html$/i.test(r)) return 'SouthEnd_Session_RSVP.html';
-  } catch (e) {}
-  return 'SouthEnd_Session_RSVP.html';
+  return '/open-play/book';
 }
 
 function getAccountReturnParamRaw() {
@@ -671,7 +666,7 @@ function accountReturnIsLeagueModule(raw) {
 }
 
 function getCentralHubHref() {
-  return 'SouthEnd_Pickleball_Hub.html';
+  return '/hub';
 }
 
 /** From local-page account root, resolve ?return= to a league-play path so sign-in returns to Invites/Teams/Payment. */
@@ -691,14 +686,24 @@ function resolveLocalLeagueReturnPath(raw) {
 function getAccountReturnHref() {
   var raw = getAccountReturnParamRaw();
   if (!raw) return '';
-  if (/^SouthEnd_Pickleball_Hub\.html$/i.test(raw) || /^\/?(?:main|hub)$/i.test(raw)) return getCentralHubHref();
-  if (/^SouthEnd_Session_RSVP\.html$/i.test(raw)) return 'SouthEnd_Session_RSVP.html';
-  if (/^SouthEnd_Session_Checkin\.html$/i.test(raw)) return 'SouthEnd_Session_Checkin.html';
-  if (/^SouthEnd_Message_Board\.html$/i.test(raw)) return 'SouthEnd_Message_Board.html';
-  if (/^SouthEnd_Admin_(?:Hub|Advanced_Open_Play|Activity|Module_Access)\.html$/i.test(raw)) return raw;
+  // Accept trusted clean URL slugs
+  if (/^\/(?:hub|open-play(?:\/[\w\-]*)?|checkin|signups|message-board|league-play(?:\/[\w\-]*)?|admin(?:\/[\w\-]*)?)(?:[?#].*)?$/.test(raw)) return raw;
+  // Legacy filename → clean slug
+  if (/^SouthEnd_Pickleball_Hub\.html$/i.test(raw) || /^\/?(?:main|hub)$/i.test(raw)) return '/hub';
+  if (/^SouthEnd_Session_RSVP\.html$/i.test(raw)) return '/open-play/book';
+  if (/^SouthEnd_Session_Checkin\.html$/i.test(raw)) return '/checkin';
+  if (/^SouthEnd_Open_Play_Signups\.html$/i.test(raw)) return '/signups';
+  if (/^SouthEnd_Message_Board\.html$/i.test(raw)) return '/message-board';
+  if (/^SouthEnd_Admin_Hub\.html$/i.test(raw)) return '/admin';
+  if (/^SouthEnd_Admin_Advanced_Open_Play\.html$/i.test(raw)) return '/admin/open-play';
+  if (/^SouthEnd_Admin_Activity\.html$/i.test(raw)) return '/admin/activity';
+  if (/^SouthEnd_Admin_Module_Access\.html$/i.test(raw)) return '/admin/module-access';
+  if (/^SouthEnd_Admin_League_Play\.html$/i.test(raw)) return '/admin/league-play';
+  if (/^SouthEnd_Admin_User_Management\.html$/i.test(raw)) return '/admin/user-management';
+  // Legacy league relative paths (local dev)
   var leagueHref = resolveLocalLeagueReturnPath(raw);
   if (leagueHref) return leagueHref;
-  if (accountReturnIsLeagueModule(raw)) return getCentralHubHref();
+  if (accountReturnIsLeagueModule(raw)) return '/hub';
   return '';
 }
 
@@ -740,11 +745,11 @@ function syncAccountCtaRsvpHref() {
     hubCta.href = href;
     hubCta.textContent = 'Book sessions';
   }
-  var adminHref = /SouthEnd_Admin_Activity\.html|admin[_\s-]*activity/i.test(rawReturn)
-    ? 'SouthEnd_Admin_Activity.html'
-    : (/SouthEnd_Admin_Advanced_Open_Play\.html|admin[_\s-]*advanced[_\s-]*open[_\s-]*play/i.test(rawReturn)
-      ? 'SouthEnd_Admin_Advanced_Open_Play.html'
-      : 'SouthEnd_Admin_Hub.html');
+  var adminHref = /SouthEnd_Admin_Activity\.html|admin[_\s-]*activity|\/admin\/activity/i.test(rawReturn)
+    ? '/admin/activity'
+    : (/SouthEnd_Admin_Advanced_Open_Play\.html|admin[_\s-]*advanced[_\s-]*open[_\s-]*play|\/admin\/open-play/i.test(rawReturn)
+      ? '/admin/open-play'
+      : '/admin');
   var hubActivity = document.getElementById('hub-cta-activity');
   if (hubActivity) {
     hubActivity.href = adminHref;
@@ -1390,7 +1395,7 @@ function normalizeSessionKey(s) {
 
 function getRsvpSessionHref(sessionLabel) {
   var label = String(sessionLabel || '').trim();
-  return label ? 'SouthEnd_Session_RSVP.html?session=' + encodeURIComponent(label) : 'SouthEnd_Session_RSVP.html';
+  return label ? '/open-play/book?session=' + encodeURIComponent(label) : '/open-play/book';
 }
 
 function abbrevSlotName(slot) {
@@ -1659,7 +1664,11 @@ function initAccountPage() {
   syncAccountCtaRsvpHref();
 
   if (!SEOpenPlay.firebaseConfigured()) {
-    if (noFb) noFb.classList.remove('hidden');
+    if (noFb) {
+      noFb.textContent = typeof sePickleballFirebaseUserMessage === 'function' ? sePickleballFirebaseUserMessage() : 'Unavailable.';
+      if (typeof sePickleballLogFirebase === 'function') sePickleballLogFirebase('Account', 'firebaseConfigured() is false');
+      noFb.classList.remove('hidden');
+    }
     return;
   }
 
@@ -2004,6 +2013,6 @@ function initAccountPage() {
 document.addEventListener('DOMContentLoaded', initAccountPage);
 </script>
 
-<a class="message-board-fab" href="SouthEnd_Message_Board.html" aria-label="Open Message Board">Message Board</a>
+<a class="message-board-fab" href="/message-board" aria-label="Open Message Board">Message Board</a>
 </body>
 </html>

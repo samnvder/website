@@ -4,13 +4,14 @@
     <base href="/league-play/" />
 <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>League — Register</title>
+    <title>League — Register | South End Pickleball</title>
+    <meta name="description" content="Register a team or solo spot for South End pickleball league play.">
     <link rel="icon" type="image/jpeg" href="../favicon.jpg">
     <link
       href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/south-end-league.css" />
+    <link rel="stylesheet" href="css/south-end-league.css?v=20260427b" />
   </head>
   <body class="league-page">
     <a class="league-skip" href="#main">Skip to content</a>
@@ -54,7 +55,7 @@
         </a>
         <a
           class="league-header-profile"
-          href="../SouthEnd_OpenPlay_Account.html?return=SouthEnd_League_Teams.html"
+          href="/open-play/account"
           aria-label="Open main Pickleball profile and account (same as Open Play)"
         >
           <svg class="league-header-profile__icon" viewBox="0 0 24 24" aria-hidden="true"
@@ -67,10 +68,10 @@
     <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav></nav>
     <script src="js/pickleball-hub-nav.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
     <nav class="se-site-nav" aria-label="League play">
-      <a class="se-site-nav-link" href="SouthEnd_League_Overview.html">Overview</a>
-      <a class="se-site-nav-link" href="SouthEnd_League_Schedule.html">Schedule</a>
-      <a class="se-site-nav-link" href="SouthEnd_League_Standings.html">Standings</a>
-      <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_League_Teams.html" aria-current="page">Register</a>
+      <a class="se-site-nav-link" href="/league-play">Overview</a>
+      <a class="se-site-nav-link" href="/league-play/schedule">Schedule</a>
+      <a class="se-site-nav-link" href="/league-play/standings">Standings</a>
+      <a class="se-site-nav-link se-site-nav-link--active" href="/league-play/register" aria-current="page">Register</a>
     </nav>
     <main id="main" class="league-wrap" tabindex="-1">
       <div id="banner" class="league-card" style="display: none" role="status"></div>
@@ -143,7 +144,7 @@
               <input type="checkbox" id="acceptTerms" required />
               <span>
                 I reviewed and accept the
-                <a href="SouthEnd_League_Overview.html" target="_blank" rel="noopener">League Play rules, schedule, and terms</a>
+                <a href="/league-play" target="_blank" rel="noopener">League Play rules, schedule, and terms</a>
                 <span class="league-required-inline" aria-hidden="true">*</span>
               </span>
             </label>
@@ -199,8 +200,8 @@
           League staff have recorded your solo payment. No PayPal payment is due.
         </p>
         <p class="league-hero-actions">
-          <a class="btn btn--secondary" href="SouthEnd_League_Overview.html">League overview</a>
-          <a class="btn" id="soloPaymentBtn" href="SouthEnd_League_Payment.html">Payment</a>
+          <a class="btn btn--secondary" href="/league-play">League overview</a>
+          <a class="btn" id="soloPaymentBtn" href="/league-play/payment">Payment</a>
         </p>
       </div>
 
@@ -333,8 +334,13 @@
         }
         function leaguePaymentPageUrlFor(amount, registrationType) {
           var amt = Math.max(0, Number(amount) || 0);
-          return "SouthEnd_League_Payment.html?amount=" + encodeURIComponent(String(amt)) +
-            "&type=" + encodeURIComponent(registrationType || getRegistrationType());
+          var q =
+            '?amount=' + encodeURIComponent(String(amt)) + '&type=' + encodeURIComponent(registrationType || getRegistrationType());
+          var p = String(window.location.pathname || '').replace(/\\/g, '/');
+          if (/SouthEnd_League_\w+\.html$/i.test(p)) {
+            return 'SouthEnd_League_Payment.html' + q;
+          }
+          return '/league-play/payment' + q;
         }
         function leagueFeeAmountFor(registrationType) {
           if (registrationType === "solo") return soloIsMember ? 50 : 75;

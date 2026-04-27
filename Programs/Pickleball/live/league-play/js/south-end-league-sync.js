@@ -24,7 +24,8 @@
   }
 
   function notificationHrefForInvite(inviteId) {
-    return "SouthEnd_League_Overview.html?notifications=1&invite=" + encodeURIComponent(inviteId);
+    var q = "?notifications=1&invite=" + encodeURIComponent(inviteId);
+    return isOpenPlayLocalMirror() ? "SouthEnd_League_Overview.html" + q : "/league-play" + q;
   }
 
   function notificationRef(uid, notificationId) {
@@ -136,16 +137,22 @@
     return isOpenPlayLocalMirror() ? "../SouthEnd_Admin_Hub.html" : "/admin?v=20260427-admin-hub";
   }
 
+  function leagueRegisterTargetHref() {
+    return isOpenPlayLocalMirror() ? "SouthEnd_League_Teams.html" : "/league-play/register";
+  }
+
   function mainPickleballAccountHrefWithReturn(returnHtml) {
-    var ret = encodeURIComponent(returnHtml || "SouthEnd_Pickleball_Hub.html");
     if (isOpenPlayLocalMirror()) {
-      return "../SouthEnd_OpenPlay_Account.html?return=" + ret;
+      var retLegacy = returnHtml || "SouthEnd_Pickleball_Hub.html";
+      return "../SouthEnd_OpenPlay_Account.html?return=" + encodeURIComponent(retLegacy);
     }
-    return "/account?return=" + ret;
+    var retClean = returnHtml || "/hub";
+    if (/^SouthEnd_Pickleball_Hub\.html$/i.test(String(retClean))) retClean = "/hub";
+    return "/open-play/account?return=" + encodeURIComponent(retClean);
   }
 
   function mainPickleballAccountHref() {
-    return mainPickleballAccountHrefWithReturn("SouthEnd_Pickleball_Hub.html");
+    return mainPickleballAccountHrefWithReturn(null);
   }
 
   function patchLeagueHeaderProfileHrefs() {
@@ -191,7 +198,9 @@
   function leagueRegisterLinks() {
     if (!global.document) return [];
     return Array.prototype.slice.call(
-      global.document.querySelectorAll('.se-site-nav a[href="SouthEnd_League_Teams.html"]')
+      global.document.querySelectorAll(
+        '.se-site-nav a[href="SouthEnd_League_Teams.html"], .se-site-nav a[href="/league-play/register"]'
+      )
     );
   }
 
@@ -478,7 +487,7 @@
       var committed = leagueAccountIsCommitted(account);
       if (onTeam) {
         link.textContent = "View Team";
-        link.href = "SouthEnd_League_Teams.html";
+        link.href = leagueRegisterTargetHref();
         link.setAttribute("aria-hidden", "false");
         link.tabIndex = 0;
         return;
@@ -490,7 +499,7 @@
         return;
       }
       link.textContent = "Register";
-      link.href = "SouthEnd_League_Teams.html";
+      link.href = leagueRegisterTargetHref();
       link.setAttribute("aria-hidden", "false");
       link.tabIndex = 0;
     });
@@ -502,7 +511,7 @@
       links.forEach(function (link) {
         link.hidden = false;
         link.textContent = "Register";
-        link.href = "SouthEnd_League_Teams.html";
+        link.href = leagueRegisterTargetHref();
         link.setAttribute("aria-hidden", "false");
         link.tabIndex = 0;
       });
@@ -518,7 +527,7 @@
         links.forEach(function (link) {
           link.hidden = false;
           link.textContent = "Register";
-          link.href = "SouthEnd_League_Teams.html";
+          link.href = leagueRegisterTargetHref();
         });
       });
   }

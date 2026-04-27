@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<script src="js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <title>Message Board — South End Pickleball</title>
-<link rel="icon" type="image/jpeg" href="favicon.jpg">
+<meta name="description" content="Community updates and messages for South End pickleball members. Sign in to participate.">
+<link rel="icon" type="image/jpeg" href="/favicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -173,6 +174,7 @@ body{font-family:"DM Sans",sans-serif;background:var(--green-dk);color:var(--ink
 </head>
 <body>
 
+
 <div id="board-gate" class="board-gate">
   <div id="board-gate-loading" aria-busy="true" aria-live="polite">
     <p class="board-gate-loading-title">Checking sign-in…</p>
@@ -181,12 +183,12 @@ body{font-family:"DM Sans",sans-serif;background:var(--green-dk);color:var(--ink
   <div id="board-gate-signin" class="hidden">
     <p class="hdr-title" style="margin-bottom:10px;">SIGN IN <span>REQUIRED</span></p>
     <p class="board-lead" id="board-gate-signin-lead" style="max-width:360px;margin:0 auto 16px;">The message board is for signed-in Open Play members only.</p>
-    <a class="se-site-nav-link se-site-nav-link--active" style="display:inline-block;" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Message_Board.html">Open Play account →</a>
+    <a class="se-site-nav-link se-site-nav-link--active" style="display:inline-block;" href="/open-play/account?return=/message-board">Open Play account →</a>
   </div>
   <div id="board-gate-nofb" class="hidden">
     <p class="hdr-title" style="margin-bottom:10px;">SETUP <span>NEEDED</span></p>
     <p class="board-lead" style="max-width:360px;margin:0 auto 16px;">Add Firebase in <code style="font-size:11px;color:var(--gold);">js/openplay-firebase-config.js</code> and reload.</p>
-    <a class="se-site-nav-link se-site-nav-link--active" style="display:inline-block;" href="SouthEnd_OpenPlay_Account.html">Open Play account →</a>
+    <a class="se-site-nav-link se-site-nav-link--active" style="display:inline-block;" href="/open-play/account">Open Play account →</a>
   </div>
 </div>
 
@@ -199,7 +201,7 @@ body{font-family:"DM Sans",sans-serif;background:var(--green-dk);color:var(--ink
   </div>
 </div>
 <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav></nav>
-<script src="pickleball-hub-nav.js"></script>
+<script src="/pickleball-hub-nav.js"></script>
 
 <div class="body-wrap">
   <div class="board-holo">Community feed</div>
@@ -226,10 +228,10 @@ body{font-family:"DM Sans",sans-serif;background:var(--green-dk);color:var(--ink
 </div>
 
 <footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
-<script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script>
 (function () {
   var SE = window.SEOpenPlay;
@@ -271,7 +273,14 @@ body{font-family:"DM Sans",sans-serif;background:var(--green-dk);color:var(--ink
       gateLoading.setAttribute('aria-busy', 'false');
     }
     if (gateSignin) gateSignin.classList.add('hidden');
-    if (gateNofb) gateNofb.classList.remove('hidden');
+    if (typeof sePickleballLogFirebase === 'function') sePickleballLogFirebase('Message board', 'firebase not configured');
+    if (gateNofb) {
+      var lead = gateNofb.querySelector('.board-lead');
+      if (lead && typeof sePickleballFirebaseUserMessage === 'function') {
+        lead.textContent = sePickleballFirebaseUserMessage();
+      }
+      gateNofb.classList.remove('hidden');
+    }
     if (gate) gate.classList.remove('hidden');
   }
 

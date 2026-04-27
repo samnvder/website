@@ -4,13 +4,14 @@
     <base href="/league-play/" />
 <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>South End League Play — Hub</title>
+    <title>League Play Hub | South End Pickleball</title>
+    <meta name="description" content="South End league play hub: registration status and quick links.">
     <link rel="icon" type="image/jpeg" href="../favicon.jpg">
     <link
       href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/south-end-league.css" />
+    <link rel="stylesheet" href="css/south-end-league.css?v=20260427b" />
   </head>
   <body class="league-page">
     <a class="league-skip" href="#main">Skip to content</a>
@@ -54,7 +55,7 @@
         </a>
         <a
           class="league-header-profile"
-          href="../SouthEnd_OpenPlay_Account.html?return=SouthEnd_League_Overview.html"
+          href="/open-play/account"
           aria-label="Open main Pickleball profile and account (same as Open Play)"
         >
           <svg class="league-header-profile__icon" viewBox="0 0 24 24" aria-hidden="true"
@@ -67,10 +68,10 @@
     <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav></nav>
     <script src="js/pickleball-hub-nav.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
     <nav class="se-site-nav" aria-label="League play">
-      <a class="se-site-nav-link" href="SouthEnd_League_Overview.html">Overview</a>
-      <a class="se-site-nav-link" href="SouthEnd_League_Schedule.html">Schedule</a>
-      <a class="se-site-nav-link" href="SouthEnd_League_Standings.html">Standings</a>
-      <a class="se-site-nav-link" id="leagueRegisterNavLink" href="SouthEnd_League_Teams.html">Register</a>
+      <a class="se-site-nav-link" href="/league-play">Overview</a>
+      <a class="se-site-nav-link" href="/league-play/schedule">Schedule</a>
+      <a class="se-site-nav-link" href="/league-play/standings">Standings</a>
+      <a class="se-site-nav-link" id="leagueRegisterNavLink" href="/league-play/register">Register</a>
     </nav>
     <main id="main" class="league-wrap league-wrap--wide league-overview" tabindex="-1">
       <section class="league-hero-card league-hero-card--clean">
@@ -81,7 +82,7 @@
           standings, and playoff seeding.
         </p>
         <div class="league-hero-actions" id="leagueRegisterPrompt">
-          <a class="btn" id="leagueHeroCta" href="SouthEnd_League_Teams.html">Register</a>
+          <a class="btn" id="leagueHeroCta" href="/league-play/register">Register</a>
         </div>
       </section>
 
@@ -188,6 +189,15 @@
         var registerPrompt = document.getElementById("leagueRegisterPrompt");
         var L = window.LeagueSync;
 
+        function leagueRegisterHref() {
+          var p = String(window.location.pathname || '').replace(/\\/g, '/');
+          return /SouthEnd_League_\w+\.html$/i.test(p) ? 'SouthEnd_League_Teams.html' : '/league-play/register';
+        }
+        function leagueOverviewHref() {
+          var p = String(window.location.pathname || '').replace(/\\/g, '/');
+          return /SouthEnd_League_\w+\.html$/i.test(p) ? 'SouthEnd_League_Overview.html' : '/league-play';
+        }
+
         function applyHeroCta(account) {
           if (!heroCta) return;
           var onTeam = !!(account && account.teamId);
@@ -196,18 +206,18 @@
             !!(account && (account.registrationStatus || account.teamId));
           if (onTeam) {
             heroCta.textContent = "View Team";
-            heroCta.href = "SouthEnd_League_Teams.html";
+            heroCta.href = leagueRegisterHref();
             if (registerPrompt) registerPrompt.hidden = false;
             return;
           }
           if (committed) {
             heroCta.textContent = "Registration status";
-            heroCta.href = "SouthEnd_League_Overview.html";
+            heroCta.href = leagueOverviewHref();
             if (registerPrompt) registerPrompt.hidden = false;
             return;
           }
           heroCta.textContent = "Register";
-          heroCta.href = "SouthEnd_League_Teams.html";
+          heroCta.href = leagueRegisterHref();
           if (registerPrompt) registerPrompt.hidden = false;
         }
 
@@ -218,7 +228,7 @@
           if (!user) {
             if (heroCta) {
               heroCta.textContent = "Register";
-              heroCta.href = "SouthEnd_League_Teams.html";
+              heroCta.href = leagueRegisterHref();
             }
             if (registerPrompt) registerPrompt.hidden = false;
             return;

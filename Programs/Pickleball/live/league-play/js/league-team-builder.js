@@ -111,8 +111,17 @@
       }
 
       function buildInviteUrl(inviteId) {
-        var path = window.location.pathname.replace(/[^/]*$/, "SouthEnd_League_Overview.html");
-        return window.location.origin + path + "?notifications=1&invite=" + encodeURIComponent(inviteId);
+        var path = String(window.location.pathname || '').replace(/\\/g, '/');
+        var q = '?notifications=1&invite=' + encodeURIComponent(inviteId);
+        if (
+          /southend_league_teams\.html$/i.test(path) ||
+          path.indexOf('/testing/local-page') !== -1 ||
+          (path.indexOf('/Programs/Pickleball/live/league-play') !== -1 && /\.html$/i.test(path))
+        ) {
+          var base = window.location.pathname.replace(/[^/]*$/, 'SouthEnd_League_Overview.html');
+          return window.location.origin + base + q;
+        }
+        return window.location.origin + '/league-play' + q;
       }
 
       function openInviteEmail(toEmail, inviteId) {
