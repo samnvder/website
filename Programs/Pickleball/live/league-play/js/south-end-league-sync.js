@@ -19,6 +19,18 @@
     return Date.now();
   }
 
+  /** Mirror league milestones into openplay_se/users/{uid} when SEOpenPlay is loaded. */
+  function syncOpenPlayUserAgg(uid, delta) {
+    try {
+      if (!uid || !global.SEOpenPlay || typeof global.SEOpenPlay.syncUserAggregateFromLeague !== "function") {
+        return Promise.resolve();
+      }
+      return global.SEOpenPlay.syncUserAggregateFromLeague(uid, delta) || Promise.resolve();
+    } catch (e) {
+      return Promise.resolve();
+    }
+  }
+
   function toNameKey(displayName) {
     if (!displayName) return "";
     return String(displayName)
@@ -486,6 +498,13 @@
             });
         })
         .then(function () {
+          return syncOpenPlayUserAgg(captainUid, {
+            teamId: teamId,
+            registrationType: "captain",
+            registrationStatus: "team_created",
+          });
+        })
+        .then(function () {
           return { teamId: teamId, feeLabel: feeLabel };
         })
         .catch(function (err) {
@@ -526,6 +545,13 @@
         .set({
           joinedAt: nowTs(),
           role: "player",
+        })
+        .then(function () {
+          return syncOpenPlayUserAgg(memberUid, {
+            teamId: teamId,
+            rosterRole: "player",
+            registrationStatus: "on_roster",
+          });
         });
     },
 
@@ -634,7 +660,13 @@
           });
         })
         .then(function () {
-          return ref.key;
+          return syncOpenPlayUserAgg(fromUid, {
+            inviteId: ref.key,
+            teamId: teamId,
+            registrationStatus: "invite_sent",
+          }).then(function () {
+            return ref.key;
+          });
         });
     },
 
@@ -721,8 +753,14 @@
           }
           function doUpdate() {
             return ref.update(updates).then(function () {
-              if (!accept) return null;
-              return applyAcceptanceToRoster();
+              return syncOpenPlayUserAgg(toUid, {
+                inviteId: inviteId,
+                teamId: v.teamId,
+                registrationStatus: updates.status,
+              }).then(function () {
+                if (!accept) return null;
+                return applyAcceptanceToRoster();
+              });
             });
           }
           if (!accept) {

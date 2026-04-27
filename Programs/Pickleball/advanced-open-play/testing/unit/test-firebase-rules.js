@@ -21,6 +21,8 @@ describe('database.rules.json', () => {
     assert.ok(data.rules.openplay_se.admin_uids.$uid, 'must define admin_uids/$uid');
     assert.ok(data.rules.openplay_se.module_access, 'must define openplay_se/module_access');
     assert.ok(data.rules.openplay_se.module_access.$uid, 'must define module_access/$uid');
+    assert.ok(data.rules.openplay_se.users, 'must define openplay_se/users');
+    assert.ok(data.rules.openplay_se.users.$uid, 'must define users/$uid');
   });
 
   it('keeps module access admin-assigned and self-readable', () => {
@@ -143,6 +145,27 @@ describe('database.rules.json', () => {
       rsvpWrite,
       /newData\.child\('pid'\)\.val\(\) === \$pid/,
       'pid in payload must match the path key'
+    );
+  });
+
+  it('validates RSVP pid matches path key on writes (unless admin)', () => {
+    const data = JSON.parse(fs.readFileSync(RULES_PATH, 'utf8'));
+    const v = data.rules.openplay_se.rsvps.$pid['.validate'];
+    assert.match(v, /newData\.child\('pid'\)\.val\(\) === \$pid/, 'RSVP validate must pin pid to path');
+    assert.match(v, /admin_uids/, 'admins must bypass strict pid validate when repairing data');
+  });
+
+  it('defines per-user aggregate openplay_se/users with self-or-admin access and schemaVersion', () => {
+    const data = JSON.parse(fs.readFileSync(RULES_PATH, 'utf8'));
+    const users = data.rules.openplay_se.users.$uid;
+    assert.match(users['.read'], /auth\.uid === \$uid/, 'user can read own aggregate');
+    assert.match(users['.read'], /admin_uids/, 'admin can read user aggregates');
+    assert.match(users['.write'], /auth\.uid === \$uid/, 'user can write own aggregate');
+    assert.match(users['.write'], /admin_uids/, 'admin can write user aggregates');
+    assert.match(
+      users['.validate'],
+      /schemaVersion.*=== 1/,
+      'aggregate must declare schemaVersion 1'
     );
   });
 

@@ -123,7 +123,7 @@
       'nav.se-site-nav{position:relative;z-index:1;}' +
       '.' + NS + '-anchor{display:none;align-items:center;gap:8px;z-index:500;}' +
       '.header > .' + NS + '-anchor{' +
-      'position:absolute;right:24px;bottom:16px;}' +
+      'position:absolute;right:18px;top:12px;}' +
       '.topbar-right > .' + NS + '-anchor{' +
       'position:relative;}' +
       '.' + NS + '-admin-quick{' +
@@ -133,9 +133,9 @@
       'box-shadow:0 0 18px color-mix(in srgb,var(--pp-accent) 22%,transparent);}' +
       '.' + NS + '-btn{' +
       'display:flex;align-items:center;gap:8px;min-height:38px;padding:7px 12px;border-radius:8px;' +
-      'background:rgba(255,255,255,.08);border:1.5px solid color-mix(in srgb,var(--pp-accent) 32%,transparent);color:#fff;cursor:pointer;' +
+      'background:rgba(255,255,255,.08);border:1.5px solid color-mix(in srgb,var(--pp-accent) 32%,transparent);color:#fff;cursor:pointer;text-decoration:none;' +
       'font-family:Oswald,sans-serif;font-size:13px;letter-spacing:.4px;text-transform:uppercase;}' +
-      '.' + NS + '-btn:hover{border-color:var(--pp-accent);background:color-mix(in srgb,var(--pp-accent) 12%,transparent);}' +
+      '.' + NS + '-btn:hover{border-color:var(--pp-accent);background:color-mix(in srgb,var(--pp-accent) 12%,transparent);color:#fff;}' +
       '.' + NS + '-icon{width:20px;height:20px;display:block;}' +
       '.' + NS + '-label{white-space:nowrap;line-height:1;}' +
       '.' + NS + '-menu{' +
@@ -159,7 +159,6 @@
       'a.se-site-nav-link--admin.se-site-nav-link--active,' +
       'a.se-site-nav-link--admin[aria-current="page"]{color:var(--pp-ink);}' +
       '.se-site-nav-link--admin.hidden{display:none!important;}' +
-      '#league-admin-mobile-link{display:none!important;}' +
       '.' + NS + '-modal{position:fixed;inset:0;z-index:850;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;padding:16px;}' +
       '.' + NS + '-modal.open{display:flex;}' +
       '.' + NS + '-card{max-width:420px;width:100%;max-height:85vh;overflow:auto;background:var(--pp-bg);border:2px solid color-mix(in srgb,var(--pp-accent) 35%,transparent);border-radius:12px;padding:18px;}' +
@@ -182,7 +181,7 @@
       '.' + NS + '-msg.error{color:#ff8a8a;}' +
       '.' + NS + '-msg.ok{color:var(--pp-accent);}' +
       '@media(max-width:680px){' +
-      '.header > .' + NS + '-anchor{right:16px;bottom:16px;}' +
+      '.header > .' + NS + '-anchor{right:10px;top:8px;}' +
       '.' + NS + '-admin-quick.is-visible{display:inline-flex;}' +
       '.' + NS + '-btn{min-height:34px;padding:6px 10px;font-size:12px;}' +
       '.' + NS + '-menu{width:240px;top:40px;}' +
@@ -232,6 +231,10 @@
     document.body.appendChild(modalEl);
 
     btnEl.addEventListener('click', function () {
+      if (!currentUser) {
+        global.location.href = getSignInHref();
+        return;
+      }
       var open = menuEl.classList.toggle('open');
       btnEl.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
@@ -442,11 +445,15 @@
     modalEl.classList.add('open');
   }
 
+  function getStaticLeagueLink() {
+    return document.querySelector('.league-header-profile');
+  }
+
   function mountAnchor() {
     if (!anchorEl) return;
-    var leagueProfile = document.querySelector('.league-header-profile');
+    var leagueProfile = getStaticLeagueLink();
     if (leagueProfile && leagueProfile.parentNode) {
-      leagueProfile.parentNode.replaceChild(anchorEl, leagueProfile);
+      leagueProfile.parentNode.insertBefore(anchorEl, leagueProfile.nextSibling);
       return;
     }
     var topbarRight = document.querySelector('.topbar-right');
@@ -463,6 +470,83 @@
   function setVisible(on) {
     if (!anchorEl) return;
     anchorEl.style.display = on ? 'flex' : 'none';
+  }
+
+  function setStaticLeagueLink(mode) {
+    var staticEl = getStaticLeagueLink();
+    if (!staticEl) return;
+    if (mode === 'sign-in') {
+      staticEl.style.display = '';
+      staticEl.setAttribute('href', getSignInHref());
+      var label = staticEl.querySelector('.league-header-profile__label');
+      if (label) label.textContent = 'Sign in';
+      else {
+        var lastNode = staticEl.lastChild;
+        if (lastNode && lastNode.nodeType === 3) lastNode.nodeValue = ' Sign in';
+      }
+      staticEl.setAttribute('aria-label', 'Sign in to your South End account');
+    } else if (mode === 'hide') {
+      staticEl.style.display = 'none';
+    } else if (mode === 'profile') {
+      staticEl.style.display = '';
+      staticEl.setAttribute('href', liveHref('SouthEnd_OpenPlay_Account.html'));
+      var label2 = staticEl.querySelector('.league-header-profile__label');
+      if (label2) label2.textContent = 'Profile';
+      else {
+        var lastNode2 = staticEl.lastChild;
+        if (lastNode2 && lastNode2.nodeType === 3) lastNode2.nodeValue = ' Profile';
+      }
+      staticEl.setAttribute('aria-label', 'Open your South End profile');
+    }
+  }
+
+  function leagueReturnFilename() {
+    try {
+      var path = String((global.location && global.location.pathname) || '').toLowerCase();
+      if (path.indexOf('/league-play') === -1) return '';
+      var slug = path.split('/').filter(Boolean).pop() || '';
+      slug = slug.replace(/\.html$/i, '').toLowerCase();
+      var map = {
+        'overview': 'SouthEnd_League_Overview.html',
+        'schedule': 'SouthEnd_League_Schedule.html',
+        'register': 'SouthEnd_League_Teams.html',
+        'invites': 'SouthEnd_League_Invites.html',
+        'payment': 'SouthEnd_League_Payment.html',
+        'southend_league_overview': 'SouthEnd_League_Overview.html',
+        'southend_league_schedule': 'SouthEnd_League_Schedule.html',
+        'southend_league_teams': 'SouthEnd_League_Teams.html',
+        'southend_league_invites': 'SouthEnd_League_Invites.html',
+        'southend_league_payment': 'SouthEnd_League_Payment.html',
+        'southend_league_play_hub': 'SouthEnd_League_Overview.html',
+        'league-play': 'SouthEnd_League_Overview.html',
+        '': 'SouthEnd_League_Overview.html'
+      };
+      return map[slug] || 'SouthEnd_League_Overview.html';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function getSignInHref() {
+    var base = liveHref('SouthEnd_OpenPlay_Account.html');
+    var ret = leagueReturnFilename();
+    if (!ret) return base;
+    var sep = base.indexOf('?') !== -1 ? '&' : '?';
+    return base + sep + 'return=' + encodeURIComponent(ret);
+  }
+
+  function setSignedOutMode(off) {
+    if (!anchorEl) return;
+    if (off) {
+      anchorEl.classList.add('is-signed-out');
+      anchorEl.style.display = 'none';
+      setStaticLeagueLink('sign-in');
+      closeMenu();
+    } else {
+      anchorEl.classList.remove('is-signed-out');
+      anchorEl.style.display = 'flex';
+      setStaticLeagueLink('hide');
+    }
   }
 
   function ensureAdminNavLink() {
@@ -543,7 +627,8 @@
     currentUser = user || null;
     currentProfile = null;
     currentIsAdmin = false;
-    setVisible(!!currentUser);
+    setVisible(true);
+    setSignedOutMode(!currentUser);
     refreshAccountLink();
     refreshMenuStatus();
     setStaffMenuVisible(false);
@@ -570,6 +655,8 @@
     ensureDom();
     mountAnchor();
     ensureAdminNavLink();
+    setVisible(true);
+    setSignedOutMode(true);
     if (global.PickleballInviteShare && typeof global.PickleballInviteShare.refresh === 'function') {
       global.PickleballInviteShare.refresh();
     }

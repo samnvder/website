@@ -18,6 +18,9 @@
   var MODULE_ACCESS_PATH = 'openplay_se/module_access';
   var ACTIVITY_PATH = 'openplay_se/activity';
   var BOARD_MESSAGES_PATH = 'openplay_se/board_messages';
+  /** Consolidated per-user projection (profile mirror, access snapshot, stats, league refs). */
+  var USER_AGGREGATE_PATH = 'openplay_se/users';
+  var USER_AGGREGATE_SCHEMA_VERSION = 1;
   var MODULE_ADVANCED_OPEN_PLAY = 'advanced_open_play';
 
   /** Display values stored in `user_profiles/{uid}/skill` (and RSVP forms). */
@@ -208,6 +211,8 @@
       var row = snap.val() || null;
       return ref.remove().then(function () {
         if (!row) return;
+        var rowUid = String((row && row.firebaseUid) || '').trim();
+        if (rowUid) syncUserAggregateFromRsvpDeleted(rowUid, pidStr);
         var nm = splitName(String(row.name || ''));
         return logActivity('registration_cancelled', {
           source: 'rsvp',
@@ -285,22 +290,6 @@
     return '';
   }
 
-  function likelySignedInFromStorage() {
-    try {
-      var ls = global.localStorage;
-      if (!ls) return false;
-      for (var i = 0; i < ls.length; i++) {
-        var key = String(ls.key(i) || '');
-        if (key.indexOf('firebase:authUser:') !== 0) continue;
-        var raw = ls.getItem(key);
-        if (!raw) continue;
-        var parsed = JSON.parse(raw);
-        if (parsed && parsed.uid) return true;
-      }
-    } catch (e) {}
-    return false;
-  }
-
   /** Access gate: if signed out, force all non-account pages to account/sign-in. */
   function enforceSignedInAccessGate() {
     if (isAccountPage()) return;
@@ -314,13 +303,33 @@
       global.location.replace(target);
     }
 
-    if (!firebaseConfigured() || !likelySignedInFromStorage()) {
+    if (!firebaseConfigured()) {
       redirectToAccount();
       return;
     }
 
-    onAuthStateChanged(function (user) {
-      if (!user) redirectToAccount();
+    /**
+     * Wait for IndexedDB/session restore before treating user as signed out.
+     * Then keep watching so sign-out elsewhere still returns to account.
+     */
+    initFirebase().then(function () {
+      if (!firebaseAuth) {
+        redirectToAccount();
+        return;
+      }
+      var ready = firebaseAuth.authStateReady && firebaseAuth.authStateReady();
+      function watch() {
+        firebaseAuth.onAuthStateChanged(function (user) {
+          if (!user) redirectToAccount();
+        });
+      }
+      if (ready && typeof ready.then === 'function') {
+        ready.then(watch).catch(function () {
+          redirectToAccount();
+        });
+      } else {
+        watch();
+      }
     });
   }
 
@@ -581,6 +590,9 @@
         return syncLeagueDirectoryFromUserProfileUid(uid);
       })
       .then(function () {
+        return syncUserAggregateFromProfile(uid);
+      })
+      .then(function () {
         var changed = [
           'firstName',
           'lastName',
@@ -627,6 +639,9 @@
         .update(o)
         .then(function () {
           return syncLeagueDirectoryFromUserProfileUid(uid);
+        })
+        .then(function () {
+          return syncUserAggregateFromProfile(uid);
         })
         .then(function () {
         var changed = Object.keys(patch).filter(function (k) {
@@ -701,6 +716,120 @@
       });
   }
 
+  function loadUserAggregate(uid) {
+    if (!firebaseDb || !uid) return Promise.resolve(null);
+    return firebaseDb
+      .ref(USER_AGGREGATE_PATH + '/' + uid)
+      .once('value')
+      .then(function (snap) {
+        return snap.val() || null;
+      });
+  }
+
+  function buildAggregateProfileMirror(p) {
+    p = p || {};
+    return {
+      firstName: String(p.firstName || ''),
+      lastName: String(p.lastName || ''),
+      email: String(p.email || ''),
+      phone: String(p.phone || ''),
+      skill: String(p.skill || ''),
+      membership: String(p.membership || ''),
+      memberCard: String(p.memberCard || ''),
+      waiverLiabilityAccepted: !!p.waiverLiabilityAccepted,
+      waiverCommunicationAccepted: !!p.waiverCommunicationAccepted,
+      rsvpWaiversSchema: String(p.rsvpWaiversSchema || ''),
+    };
+  }
+
+  function syncUserAggregateFromProfile(uid) {
+    if (!firebaseDb || !uid || !global.firebase) return Promise.resolve();
+    return Promise.all([
+      loadUserProfile(uid),
+      loadAdminUidFlag(uid),
+      loadModuleAccess(uid),
+    ])
+      .then(function (results) {
+        var p = results[0];
+        var isAdmin = results[1];
+        var modules = results[2] || {};
+        var ts = global.firebase.database.ServerValue.TIMESTAMP;
+        return firebaseDb.ref(USER_AGGREGATE_PATH + '/' + uid).update({
+          schemaVersion: USER_AGGREGATE_SCHEMA_VERSION,
+          updatedAt: ts,
+          profile: buildAggregateProfileMirror(p),
+          access: {
+            isAdmin: !!isAdmin,
+            modules: modules,
+          },
+        });
+      })
+      .catch(function () {});
+  }
+
+  function syncUserAggregateFromRsvp(uid, row) {
+    if (!firebaseDb || !uid || !global.firebase) return Promise.resolve();
+    row = row || {};
+    var ts = global.firebase.database.ServerValue.TIMESTAMP;
+    return firebaseDb
+      .ref(USER_AGGREGATE_PATH + '/' + uid)
+      .update({
+        schemaVersion: USER_AGGREGATE_SCHEMA_VERSION,
+        updatedAt: ts,
+        'stats/lastRsvpPid': String(row.pid || ''),
+        'stats/lastRsvpSession': String(row.session || ''),
+        'stats/lastRsvpAt': ts,
+      })
+      .catch(function () {});
+  }
+
+  function syncUserAggregateFromRsvpDeleted(uid, pid) {
+    if (!firebaseDb || !uid || !global.firebase) return Promise.resolve();
+    var ts = global.firebase.database.ServerValue.TIMESTAMP;
+    return firebaseDb
+      .ref(USER_AGGREGATE_PATH + '/' + uid)
+      .update({
+        schemaVersion: USER_AGGREGATE_SCHEMA_VERSION,
+        updatedAt: ts,
+        'stats/lastRsvpCancelledPid': String(pid || ''),
+        'stats/lastRsvpCancelledAt': ts,
+      })
+      .catch(function () {});
+  }
+
+  function syncUserAggregateBoardPost(uid) {
+    if (!firebaseDb || !uid || !global.firebase) return Promise.resolve();
+    var ts = global.firebase.database.ServerValue.TIMESTAMP;
+    return firebaseDb
+      .ref(USER_AGGREGATE_PATH + '/' + uid)
+      .update({
+        schemaVersion: USER_AGGREGATE_SCHEMA_VERSION,
+        updatedAt: ts,
+        'stats/lastBoardPostAt': ts,
+      })
+      .catch(function () {});
+  }
+
+  /**
+   * @param {string} uid
+   * @param {Object} delta — optional: teamId, inviteId, registrationStatus, registrationType, rosterRole
+   */
+  function syncUserAggregateFromLeague(uid, delta) {
+    if (!firebaseDb || !uid || !global.firebase) return Promise.resolve();
+    delta = delta || {};
+    var ts = global.firebase.database.ServerValue.TIMESTAMP;
+    var patch = {
+      schemaVersion: USER_AGGREGATE_SCHEMA_VERSION,
+      updatedAt: ts,
+    };
+    if (delta.teamId != null) patch['refs/leagueTeamId'] = String(delta.teamId);
+    if (delta.inviteId != null) patch['refs/lastLeagueInviteId'] = String(delta.inviteId);
+    if (delta.registrationStatus != null) patch['refs/leagueRegistrationStatus'] = String(delta.registrationStatus);
+    if (delta.registrationType != null) patch['refs/leagueRegistrationType'] = String(delta.registrationType);
+    if (delta.rosterRole != null) patch['refs/leagueRosterRole'] = String(delta.rosterRole);
+    return firebaseDb.ref(USER_AGGREGATE_PATH + '/' + uid).update(patch).catch(function () {});
+  }
+
   var WAIVERS_SCHEMA_CURRENT = '2';
 
   /** Same rule on account + RSVP: required registration fields + electronic waivers on file (schema v2). */
@@ -734,6 +863,8 @@
         var existed = snap.exists();
         return ref.update(copy).then(function () {
           var nm = splitName(String(copy.name || ''));
+          var uid = String(copy.firebaseUid || '').trim();
+          if (uid) syncUserAggregateFromRsvp(uid, copy);
           return logActivity(existed ? 'registration_updated' : 'registration_created', {
             source: 'rsvp',
             targetUid: String(copy.firebaseUid || ''),
@@ -873,6 +1004,8 @@
             text: trimmed,
             isStaffAdmin: !!isAdmin,
             ts: global.firebase.database.ServerValue.TIMESTAMP,
+          }).then(function () {
+            syncUserAggregateBoardPost(u.uid);
           });
         });
       });
@@ -918,6 +1051,8 @@
             kind: 'rsvp_log',
             isStaffAdmin: !!isAdmin,
             ts: global.firebase.database.ServerValue.TIMESTAMP,
+          }).then(function () {
+            syncUserAggregateBoardPost(u.uid);
           });
         });
       });
@@ -1018,6 +1153,9 @@
             });
           })
           .then(function () {
+            return syncUserAggregateFromProfile(targetUid);
+          })
+          .then(function () {
             return payload;
           });
       });
@@ -1041,6 +1179,9 @@
             .remove()
             .then(function () {
               return profileRef.remove();
+            })
+            .then(function () {
+              return firebaseDb.ref(USER_AGGREGATE_PATH + '/' + targetUid).remove();
             })
             .then(function () {
               return logActivity('profile_deleted', {
@@ -1084,6 +1225,9 @@
             .update(o)
             .then(function () {
               return syncLeagueDirectoryFromUserProfileUid(targetUid);
+            })
+            .then(function () {
+              return syncUserAggregateFromProfile(targetUid);
             })
             .then(function () {
               return loadUserProfile(targetUid);
@@ -1146,6 +1290,8 @@
     MODULE_ADVANCED_OPEN_PLAY: MODULE_ADVANCED_OPEN_PLAY,
     ACTIVITY_PATH: ACTIVITY_PATH,
     BOARD_MESSAGES_PATH: BOARD_MESSAGES_PATH,
+    USER_AGGREGATE_PATH: USER_AGGREGATE_PATH,
+    USER_AGGREGATE_SCHEMA_VERSION: USER_AGGREGATE_SCHEMA_VERSION,
     migratePin: migratePin,
     getPin: getPin,
     setPin: setPin,
@@ -1180,6 +1326,12 @@
     saveUserProfile: saveUserProfile,
     saveUserProfilePatch: saveUserProfilePatch,
     loadUserProfile: loadUserProfile,
+    loadUserAggregate: loadUserAggregate,
+    syncUserAggregateFromProfile: syncUserAggregateFromProfile,
+    syncUserAggregateFromRsvp: syncUserAggregateFromRsvp,
+    syncUserAggregateFromRsvpDeleted: syncUserAggregateFromRsvpDeleted,
+    syncUserAggregateBoardPost: syncUserAggregateBoardPost,
+    syncUserAggregateFromLeague: syncUserAggregateFromLeague,
     logActivity: logActivity,
     isProfileComplete: isProfileComplete,
     loadAdminUidFlag: loadAdminUidFlag,

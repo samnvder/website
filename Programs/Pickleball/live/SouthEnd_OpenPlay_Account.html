@@ -65,6 +65,43 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 .auth-msg{font-size:11px;margin-top:8px;min-height:1.2em;}
 .auth-msg.err{color:#ff8888;}
 .auth-msg.ok{color:var(--neon);}
+.fp-modal{
+  position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.78);
+  display:none;align-items:center;justify-content:center;padding:18px;
+}
+.fp-modal.open{display:flex;}
+.fp-card{
+  position:relative;width:100%;max-width:420px;max-height:90vh;overflow:auto;
+  background:var(--navy-lt);border:2px solid rgba(0,255,136,.4);border-radius:12px;
+  padding:24px 22px 22px;color:#fff;
+  box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 1px rgba(0,255,136,.08) inset;
+}
+.fp-close{
+  position:absolute;top:10px;right:12px;width:32px;height:32px;border:none;border-radius:8px;
+  background:transparent;color:rgba(255,255,255,.65);font-size:22px;line-height:1;cursor:pointer;
+}
+.fp-close:hover{color:#fff;background:rgba(255,255,255,.08);}
+.fp-eyebrow{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:6px;}
+.fp-title{font-family:'Oswald',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:.5px;color:#fff;margin-bottom:8px;line-height:1.1;}
+.fp-desc{font-size:13px;color:rgba(255,255,255,.7);line-height:1.5;margin-bottom:16px;}
+.fp-field{margin-bottom:14px;}
+.fp-field label{display:block;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:6px;}
+.fp-field input{
+  width:100%;padding:11px 13px;background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(255,255,255,.14);border-radius:6px;
+  font-family:'Barlow',sans-serif;font-size:14px;color:#fff;outline:none;
+}
+.fp-field input:focus{border-color:var(--neon);}
+.fp-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;}
+.fp-btn{flex:1;min-width:120px;padding:11px 14px;border:none;border-radius:6px;font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;cursor:pointer;}
+.fp-btn-primary{background:var(--neon);color:var(--ink);}
+.fp-btn-primary:hover{filter:brightness(1.05);}
+.fp-btn-primary[disabled]{opacity:.6;cursor:wait;}
+.fp-btn-secondary{background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);}
+.fp-btn-secondary:hover{background:rgba(255,255,255,.16);}
+.fp-msg{margin-top:12px;font-size:12px;line-height:1.5;min-height:1.2em;}
+.fp-msg.err{color:#ff8888;}
+.fp-msg.ok{color:var(--neon);}
 .cta-primary{
   display:block;width:100%;padding:14px;background:var(--neon);color:var(--ink);font-family:'Oswald',sans-serif;
   font-size:18px;letter-spacing:.5px;text-transform:uppercase;border:none;border-radius:6px;cursor:pointer;font-weight:700;
@@ -359,6 +396,24 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
     </div>
   </div>
 
+  <div class="fp-modal" id="fp-modal" role="dialog" aria-modal="true" aria-labelledby="fp-title" aria-hidden="true">
+    <div class="fp-card">
+      <button type="button" class="fp-close" id="fp-close" aria-label="Close">&times;</button>
+      <div class="fp-eyebrow">Reset password</div>
+      <div class="fp-title" id="fp-title">Forgot your password?</div>
+      <p class="fp-desc">Enter the email on your South End account. We&rsquo;ll send a secure reset link from Firebase. Check your spam folder if it doesn&rsquo;t arrive within a minute.</p>
+      <div class="fp-field">
+        <label for="fp-email">Email</label>
+        <input type="email" id="fp-email" autocomplete="email" placeholder="you@email.com" inputmode="email">
+      </div>
+      <div class="fp-actions">
+        <button type="button" class="fp-btn fp-btn-primary" id="fp-send">Send reset link</button>
+        <button type="button" class="fp-btn fp-btn-secondary" id="fp-cancel">Cancel</button>
+      </div>
+      <div class="fp-msg" id="fp-msg" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
   <div class="profile-data-panel hidden" id="profile-data-panel">
     <button type="button" class="auth-btn auth-btn-secondary hidden" id="acc-back-to-hub" style="width:100%;margin-bottom:14px;">Back to my schedule</button>
     <div class="auth-title">Your information</div>
@@ -602,6 +657,20 @@ function getCentralHubHref() {
   return 'SouthEnd_Pickleball_Hub.html';
 }
 
+/** From local-page account root, resolve ?return= to a league-play path so sign-in returns to Invites/Teams/Payment. */
+function resolveLocalLeagueReturnPath(raw) {
+  try {
+    var s = String(raw || '').replace(/\\/g, '/').trim();
+    if (!s) return '';
+    var qIdx = s.indexOf('?');
+    var pathPart = qIdx === -1 ? s : s.slice(0, qIdx);
+    var queryPart = qIdx === -1 ? '' : s.slice(qIdx);
+    if (/^league-play\/SouthEnd_League_/i.test(pathPart)) return pathPart + queryPart;
+    if (/^SouthEnd_League_\w+\.html$/i.test(pathPart)) return 'league-play/' + pathPart + queryPart;
+  } catch (e) {}
+  return '';
+}
+
 function getAccountReturnHref() {
   var raw = getAccountReturnParamRaw();
   if (!raw) return '';
@@ -610,6 +679,8 @@ function getAccountReturnHref() {
   if (/^SouthEnd_Session_Checkin\.html$/i.test(raw)) return 'SouthEnd_Session_Checkin.html';
   if (/^SouthEnd_Message_Board\.html$/i.test(raw)) return 'SouthEnd_Message_Board.html';
   if (/^SouthEnd_Admin_(?:Hub|Advanced_Open_Play|Activity|Module_Access)\.html$/i.test(raw)) return raw;
+  var leagueHref = resolveLocalLeagueReturnPath(raw);
+  if (leagueHref) return leagueHref;
   if (accountReturnIsLeagueModule(raw)) return getCentralHubHref();
   return '';
 }
@@ -987,7 +1058,14 @@ function updateStaffCheckinButtons(user) {
 }
 
 function accountHasAdvancedOpenPlay() {
+  var moduleId =
+    typeof SEOpenPlay !== 'undefined' && SEOpenPlay.MODULE_ADVANCED_OPEN_PLAY
+      ? SEOpenPlay.MODULE_ADVANCED_OPEN_PLAY
+      : 'advanced_open_play';
   if (accountIsAdmin) return true;
+  if (accountModuleAccess && accountModuleAccess[moduleId] && accountModuleAccess[moduleId].enabled === true) {
+    return true;
+  }
   return !!(
     typeof SEOpenPlay !== 'undefined' &&
     SEOpenPlay.isAdvancedOpenPlayEligibleProfile &&
@@ -1499,16 +1577,95 @@ function initAccountPage() {
   });
 
   document.getElementById('auth-forgot').addEventListener('click', function () {
-    authShowMsg('');
-    var email = (document.getElementById('auth-email').value || '').trim();
-    if (!email) {
-      authShowMsg('Enter your email first.', 'err');
+    openForgotPasswordModal();
+  });
+
+  function fpShowMsg(text, kind) {
+    var el = document.getElementById('fp-msg');
+    if (!el) return;
+    el.textContent = text || '';
+    el.classList.remove('err', 'ok');
+    if (kind) el.classList.add(kind);
+  }
+
+  function openForgotPasswordModal() {
+    var modal = document.getElementById('fp-modal');
+    if (!modal) return;
+    var emailInput = document.getElementById('fp-email');
+    var prefill = (document.getElementById('auth-email').value || '').trim();
+    if (emailInput) {
+      emailInput.value = prefill;
+      setTimeout(function () { emailInput.focus(); emailInput.select(); }, 30);
+    }
+    fpShowMsg('');
+    var sendBtn = document.getElementById('fp-send');
+    if (sendBtn) sendBtn.disabled = false;
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeForgotPasswordModal() {
+    var modal = document.getElementById('fp-modal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+  }
+
+  document.getElementById('fp-close').addEventListener('click', closeForgotPasswordModal);
+  document.getElementById('fp-cancel').addEventListener('click', closeForgotPasswordModal);
+  document.getElementById('fp-modal').addEventListener('click', function (e) {
+    if (e.target === this) closeForgotPasswordModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      var modal = document.getElementById('fp-modal');
+      if (modal && modal.classList.contains('open')) closeForgotPasswordModal();
+    }
+  });
+
+  document.getElementById('fp-email').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      document.getElementById('fp-send').click();
+    }
+  });
+
+  document.getElementById('fp-send').addEventListener('click', function () {
+    var btn = this;
+    var email = (document.getElementById('fp-email').value || '').trim();
+    if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+      fpShowMsg('Enter a valid email address.', 'err');
       return;
     }
+    if (!SEOpenPlay || !SEOpenPlay.sendPasswordReset) {
+      fpShowMsg('Sign-in service unavailable. Please try again later.', 'err');
+      return;
+    }
+    btn.disabled = true;
+    var originalText = btn.textContent;
+    btn.textContent = 'Sending...';
+    fpShowMsg('Sending reset email...', 'ok');
     SEOpenPlay.sendPasswordReset(email).then(function () {
-      authShowMsg('Check your email for a reset link.', 'ok');
+      fpShowMsg('Reset link sent to ' + email + '. Check your inbox (and spam folder).', 'ok');
+      btn.textContent = 'Sent';
+      var emailInput = document.getElementById('auth-email');
+      if (emailInput && !emailInput.value) emailInput.value = email;
+      setTimeout(closeForgotPasswordModal, 2400);
     }).catch(function (err) {
-      authShowMsg((err && err.message) || 'Could not send reset email.', 'err');
+      var msg = (err && err.message) || 'Could not send reset email.';
+      var code = err && err.code ? String(err.code) : '';
+      if (code === 'auth/user-not-found') {
+        msg = 'No account found for that email. Try the email you registered with, or create a new account.';
+      } else if (code === 'auth/invalid-email') {
+        msg = 'That email address looks invalid. Double-check it and try again.';
+      } else if (code === 'auth/too-many-requests') {
+        msg = 'Too many attempts. Wait a few minutes before trying again.';
+      } else if (code === 'auth/network-request-failed') {
+        msg = 'Network error. Check your connection and try again.';
+      }
+      fpShowMsg(msg, 'err');
+      btn.disabled = false;
+      btn.textContent = originalText;
     });
   });
 
