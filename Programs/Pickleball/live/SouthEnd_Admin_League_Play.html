@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<script src="js/openplay-testing-env.js"></script>
+<script src="js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <title>League Play Admin - South End</title>
 <link rel="icon" type="image/jpeg" href="favicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -55,6 +55,7 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
 .field-row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:10px;}
 .field-row label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);display:block;margin-bottom:4px;}
 .field-row input[type=text],.field-row select{padding:8px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;min-width:180px;}
+.field-row select option{background:#fff;color:var(--ink);}
 .roster-list,.invite-list{list-style:none;margin:8px 0;padding:0;}
 .roster-list li,.invite-list li{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.05);margin-bottom:6px;font-size:12px;}
 .assign-box{margin-top:12px;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.2);}
@@ -95,7 +96,6 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
   <div class="top-row">
     <div class="status" id="auth-status">Checking admin access...</div>
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
-      <a class="subtle-nav-link" href="SouthEnd_OpenPlay_Account.html">Open Play account</a>
       <button type="button" class="btn btn-ghost hidden" id="btn-refresh">Reload data</button>
     </div>
   </div>
@@ -119,7 +119,7 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
       <h2>Solo signups</h2>
       <div style="overflow:auto;">
         <table>
-          <thead><tr><th>Player</th><th>Email</th><th>UID</th><th>Division</th><th>Fee</th></tr></thead>
+          <thead><tr><th>Player</th><th>Email</th><th>UID</th><th>Division</th><th>Fee</th><th>Paid?</th></tr></thead>
           <tbody id="solo-tbody"></tbody>
         </table>
       </div>
@@ -134,9 +134,9 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
   </div>
 </div>
 
-<script src="js/openplay-firebase-config.js"></script>
-<script src="js/south-end-openplay-sync.js"></script>
-<script src="js/openplay-profile-panel.js?v=20260426-routing2"></script>
+<script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/openplay-profile-panel.js?v=20260426-routing2&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script>
 (function () {
   'use strict';
@@ -258,6 +258,12 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
     }).length;
   }
 
+  function showLoadError(e) {
+    var msg = (e && e.message) || 'League data could not be loaded.';
+    document.getElementById('load-hint').textContent =
+      'Could not load league data: ' + msg + ' Check that database rules are deployed and this account is an admin.';
+  }
+
   function loadAllData() {
     var d = db();
     if (!d) return Promise.reject(new Error('No database'));
@@ -276,6 +282,7 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
       });
       CACHE.directory = snaps[3].val() || {};
       CACHE.profiles = snaps[4].val() || {};
+      document.getElementById('load-hint').textContent = 'Use division toggles and quick filters. Deploy updated database rules for full listing.';
     });
   }
 
@@ -364,8 +371,16 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
         '<td>' + esc(email) + '</td>' +
         '<td style="font-size:10px;font-family:monospace">' + esc(r.uid) + '</td>' +
         '<td>' + esc(r.a.divisionLabel || r.a.divisionId || '-') + '</td>' +
-        '<td>' + esc(r.a.feeLabel || '-') + '</td>';
+        '<td>' + esc(r.a.feeLabel || '-') + '</td>' +
+        '<td><label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">' +
+        '<input type="checkbox" data-solo-paid="' + esc(r.uid) + '"' + (r.a.adminMarkedPaid ? ' checked' : '') + '> ' +
+        '<span>Paid?</span></label></td>';
       tbody.appendChild(tr);
+    });
+    tbody.querySelectorAll('[data-solo-paid]').forEach(function (chk) {
+      chk.addEventListener('change', function () {
+        setAdminSoloPaymentStatus(chk.getAttribute('data-solo-paid'), chk.checked);
+      });
     });
   }
 
@@ -404,6 +419,44 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
     }).then(render).catch(function (e) {
       msg.textContent = (e && e.message) || 'Save failed.';
       msg.className = 'msg err';
+    });
+  }
+
+  function setAdminTeamPaymentStatus(teamId, paid) {
+    var user = window.firebase && window.firebase.auth && window.firebase.auth().currentUser;
+    var patch = { updatedAt: ts() };
+    if (paid) {
+      patch.adminMarkedPaid = true;
+      patch.adminMarkedPaidAt = Date.now();
+      patch.adminMarkedPaidBy = user ? user.uid : null;
+    } else {
+      patch.adminMarkedPaid = false;
+      patch.adminMarkedPaidAt = null;
+      patch.adminMarkedPaidBy = null;
+    }
+    return db().ref(NS + '/league_teams/' + teamId).update(patch).then(function () {
+      return loadAllData();
+    }).then(render).catch(function (e) {
+      alert((e && e.message) || 'Could not update payment status.');
+    });
+  }
+
+  function setAdminSoloPaymentStatus(uid, paid) {
+    var user = window.firebase && window.firebase.auth && window.firebase.auth().currentUser;
+    var patch = { updatedAt: ts() };
+    if (paid) {
+      patch.adminMarkedPaid = true;
+      patch.adminMarkedPaidAt = Date.now();
+      patch.adminMarkedPaidBy = user ? user.uid : null;
+    } else {
+      patch.adminMarkedPaid = false;
+      patch.adminMarkedPaidAt = null;
+      patch.adminMarkedPaidBy = null;
+    }
+    return db().ref(NS + '/league_account/' + uid).update(patch).then(function () {
+      return loadAllData();
+    }).then(render).catch(function (e) {
+      alert((e && e.message) || 'Could not update solo payment status.');
     });
   }
 
@@ -491,6 +544,40 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
       return loadAllData();
     }).then(render).catch(function (e) {
       alert((e && e.message) || 'Cancel failed.');
+    });
+  }
+
+  function deleteTeam(teamId) {
+    var team = CACHE.teams[teamId];
+    if (!team) return;
+    var teamName = team.name || teamId;
+    var typed = prompt('Type the team name exactly to delete this team:\n\n' + teamName);
+    if (typed === null) return;
+    if (typed.trim() !== teamName) {
+      alert('Team name did not match. Nothing was deleted.');
+      return;
+    }
+    var updates = {};
+    updates[NS + '/league_teams/' + teamId] = null;
+    Object.keys(CACHE.accounts).forEach(function (uid) {
+      var acct = CACHE.accounts[uid];
+      if (acct && acct.teamId === teamId) {
+        updates[NS + '/league_account/' + uid] = null;
+      }
+    });
+    if (team.captainUid) {
+      updates[NS + '/league_account/' + team.captainUid] = null;
+    }
+    Object.keys(team.roster || {}).forEach(function (uid) {
+      updates[NS + '/league_account/' + uid] = null;
+    });
+    invitesForTeam(teamId).forEach(function (inv) {
+      updates[NS + '/league_invites/' + inv.id] = null;
+    });
+    db().ref().update(updates).then(function () {
+      return loadAllData();
+    }).then(render).catch(function (e) {
+      alert((e && e.message) || 'Delete failed.');
     });
   }
 
@@ -596,12 +683,20 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
         '<h3>' + esc(t.name || teamId) + '</h3>' +
         '<div class="team-meta">Team ID: <code style="font-size:11px">' + esc(teamId) + '</code> - Roster: ' + rosterCount(t) + ' / ' + ROSTER_MAX +
         (pendingInviteCount(teamId) ? ' - Pending invites: ' + pendingInviteCount(teamId) : '') +
+        (t.adminMarkedPaid ? ' <span class="pill" style="background:rgba(0,255,136,.2);color:var(--neon)">Payment recorded</span>' : '') +
         '</div>' +
+        '<p class="hint" style="margin:0 0 10px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;">' +
+        '<label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">' +
+        '<input type="checkbox" id="admin-paid-' + teamId + '"' + (t.adminMarkedPaid ? ' checked' : '') + '> ' +
+        '<span>Paid?</span></label>' +
+        '<label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">' +
+        '<input type="checkbox" id="team-members-' + teamId + '"' + (t.allMembers ? ' checked' : '') + '> ' +
+        '<span>All Member Team?</span></label></p>' +
         '<div class="field-row">' +
         '<div><label>Team name</label><input type="text" id="team-name-' + teamId + '" value="' + esc(t.name || '') + '"></div>' +
         '<div><label>Division</label><select id="team-div-' + teamId + '">' + divOpts + '</select></div>' +
-        '<div><label><input type="checkbox" id="team-members-' + teamId + '"' + (t.allMembers ? ' checked' : '') + '> All-member fee</label></div>' +
         '<button type="button" class="btn btn-neon" data-save-team="' + esc(teamId) + '">Save team</button>' +
+        '<button type="button" class="btn btn-danger" data-delete-team="' + esc(teamId) + '">Delete team</button>' +
         '</div>' +
         '<p class="msg" id="team-msg-' + teamId + '"></p>' +
         '<strong style="font-size:12px;text-transform:uppercase;color:var(--muted);">Roster</strong>' +
@@ -618,6 +713,9 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
       card.querySelector('[data-save-team="' + teamId + '"]').addEventListener('click', function () {
         saveTeam(teamId);
       });
+      card.querySelector('[data-delete-team="' + teamId + '"]').addEventListener('click', function () {
+        deleteTeam(teamId);
+      });
       card.querySelectorAll('[data-remove]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           removePlayer(teamId, btn.getAttribute('data-remove'));
@@ -632,6 +730,12 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
       if (aq) {
         aq.addEventListener('input', function () {
           renderAssignSearch(teamId);
+        });
+      }
+      var apChk = card.querySelector('#admin-paid-' + teamId);
+      if (apChk) {
+        apChk.addEventListener('change', function () {
+          setAdminTeamPaymentStatus(teamId, apChk.checked);
         });
       }
       host.appendChild(card);
@@ -691,6 +795,7 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
 
   document.getElementById('btn-refresh').addEventListener('click', function () {
     loadAllData().then(render).catch(function (e) {
+      showLoadError(e);
       alert((e && e.message) || 'Reload failed.');
     });
   });
@@ -706,11 +811,12 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
     initAuth().then(function () {
       document.getElementById('main-admin').classList.remove('hidden');
       document.getElementById('btn-refresh').classList.remove('hidden');
-      document.getElementById('load-hint').textContent = 'Use division toggles and quick filters. Deploy updated database rules for full listing.';
       return loadAllData();
     }).then(function () {
       render();
-    }).catch(function () {});
+    }).catch(function (e) {
+      if (e) showLoadError(e);
+    });
   });
 })();
 </script>

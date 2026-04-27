@@ -1,5 +1,5 @@
 ---
-description: Why static HTML/JS can look "stuck" after edits, and Open Play testing-mode cache gating (se_test, mirrors, SE_OPENPLAY_TESTING).
+description: Why static HTML/JS can look "stuck" after edits, and Open Play testing-mode cache gating (se_test, local-page, SE_OPENPLAY_TESTING).
 globs:
   - Programs/Pickleball/live/**
   - Programs/Pickleball/advanced-open-play/testing/**
@@ -7,6 +7,10 @@ alwaysApply: false
 ---
 
 # Open Play — testing cache behavior (RSVP / check-in)
+
+## Local Test Source
+
+`Programs/Pickleball/advanced-open-play/testing/local-page/` is the local test site. Do not mirror staging/live into it unless Sam explicitly asks for a copy operation.
 
 ## Why a "hard refresh" sometimes still shows old UI
 
@@ -25,7 +29,7 @@ So: **changing only inline HTML** while **`js/foo.js` URL is unchanged** can lea
 
 | Condition | Meaning |
 |-----------|---------|
-| URL path contains **`/local-page`** or **`testing/local-page`** | **Mirror** from `npm run local-test:sync` — always treated as testing. |
+| URL path contains **`/local-page`** or **`testing/local-page`** | Local test site — always treated as testing. |
 | Query contains **`se_test=1`** | Explicit test flag (staging, or forcing test behavior on any host). |
 | Host is **`localhost` / `127.0.0.1`** **and** `localStorage.se_openplay_test === '1'` | Opt-in on plain local URLs without mirror path. Set once: `localStorage.setItem('se_openplay_test','1')`. |
 
@@ -35,16 +39,16 @@ When active:
 2. **Meta hints** `Cache-Control` / `Pragma` / `Expires` are injected (best-effort; not a substitute for server headers).
 3. If the URL has **`se_test=1`** but **no** `se_cb=` parameter, the page does a **single** `location.replace` to add **`se_cb=<timestamp>`**. That makes the **HTML document URL unique** so caches that key by full URL fetch a **fresh document** on the **next** load (one navigation; not an infinite loop).
 
-## Mirror builds — guaranteed fresh `js/` after each sync
+## Local-page cache behavior
 
-`Programs/Pickleball/advanced-open-play/testing/scripts/local-test.js` rewrites every **`src="js/...` script tag** in mirrored HTML to append **`?se_cb=<ISO sync timestamp>`** (or `&se_cb=` if a query already exists). Each **`npm run local-test:sync`** changes that string, so **relative scripts get a new cache key** without editing `live/` files.
+`npm run local-test` serves the local-page files directly. It does not rewrite HTML or append cache-busting query strings. If the browser shows old HTML after an edit, hard refresh or add a temporary `?se_test=1` query.
 
 **Workflow that reliably shows edits on first load after sync:**
 
-1. Edit **`Programs/Pickleball/live/`** for production truth (or **`staging/`** then promote).
-2. Run **`npm run local-test:sync`** (or **`npm run local-test`**).
-3. Open the mirror hub or RSVP under **`/Programs/Pickleball/advanced-open-play/testing/local-page/`** — testing mode is **on** by path; **`se_test=1`** optional.
-4. For non-mirror URLs (e.g. odd local paths), add **`?se_test=1`** once so the **document** gets the **`se_cb`** redirect if needed.
+1. Edit **`Programs/Pickleball/advanced-open-play/testing/local-page/`**.
+2. Run **`npm run local-test`** if the server is not already running.
+3. Open the local hub or page under **`/Programs/Pickleball/advanced-open-play/testing/local-page/`** — testing mode is **on** by path; **`se_test=1`** optional.
+4. For non-local-page URLs (e.g. odd local paths), add **`?se_test=1`** once so the **document** gets the **`se_cb`** redirect if needed.
 
 ## Production
 
@@ -52,4 +56,4 @@ Deploy **`Programs/Pickleball/live/`** only. Do **not** deploy mirror folders. P
 
 ## Related
 
-- **`local-test.mdc`** — `npm run local-test` / port **3456** / mirror layout.
+- **`local-test.mdc`** — `npm run local-test` / port **3456** / local-page layout.

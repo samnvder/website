@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<script src="js/openplay-testing-env.js"></script>
+<script src="js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <title>User Management — South End Admin</title>
 <link rel="icon" type="image/jpeg" href="favicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -69,13 +69,13 @@ body{font-family:'Barlow',sans-serif;background:radial-gradient(1200px 600px at 
 <nav class="se-site-nav" aria-label="Admin navigation" data-se-hub-nav>
   <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
   <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_User_Management.html" aria-current="page">User management</a>
+  <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_Module_Access.html">Module access</a>
 </nav>
 <script src="pickleball-hub-nav.js"></script>
 
 <main class="body-wrap">
   <div class="top-row">
     <div class="status" id="um-status">Checking access…</div>
-    <a class="subtle-nav-link" href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Admin_User_Management.html">Open Play account</a>
   </div>
   <p class="lead">Select a user to edit. Staff UIDs in <code>openplay_se/admin_uids</code> cannot be changed here—use the Firebase console for those accounts if needed.</p>
 
@@ -132,10 +132,10 @@ body{font-family:'Barlow',sans-serif;background:radial-gradient(1200px 600px at 
 </main>
 
 <footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
-<script src="js/openplay-firebase-config.js"></script>
-<script src="js/south-end-openplay-sync.js"></script>
-<script src="js/pickleball-invite-share.js?v=20260425"></script>
-<script src="js/openplay-profile-panel.js?v=20260426-routing2"></script>
+<script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/openplay-profile-panel.js?v=20260426-routing2&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script>
 function escapeHtml(s) {
   var d = document.createElement('div');
@@ -234,26 +234,20 @@ function loadDirectory() {
   var db = SEOpenPlay.getFirebaseDb && SEOpenPlay.getFirebaseDb();
   if (!db) return Promise.reject(new Error('No database'));
   var pPath = SEOpenPlay.USER_PROFILE_PATH;
-  var aPath = SEOpenPlay.ADMIN_UIDS_PATH;
   return db
-    .ref(aPath)
+    .ref(pPath)
     .once('value')
-    .then(function (as) {
-      adminUidMap = as.val() || {};
-      return db.ref(pPath).once('value');
-    })
     .then(function (snap) {
       var v = snap.val() || {};
       allRows = Object.keys(v).map(function (uid) {
         var p = v[uid] || {};
-        var isA = adminUidMap[uid] === true;
         return {
           uid: uid,
           raw: p,
           name: fullName(p),
           email: String(p.email || '').trim() || '—',
           skill: p.skill || '—',
-          isAdmin: isA,
+          isAdmin: false,
         };
       });
       allRows.sort(function (a, b) {
@@ -263,7 +257,20 @@ function loadDirectory() {
         if (al > bl) return 1;
         return 0;
       });
-      renderTable(document.getElementById('um-search').value);
+      adminUidMap = {};
+      return Promise.all(allRows.map(function (row) {
+        return SEOpenPlay.loadAdminUidFlag(row.uid)
+          .then(function (isAdmin) {
+            adminUidMap[row.uid] = isAdmin === true;
+            row.isAdmin = isAdmin === true;
+          })
+          .catch(function () {
+            adminUidMap[row.uid] = false;
+            row.isAdmin = false;
+          });
+      })).then(function () {
+        renderTable(document.getElementById('um-search').value);
+      });
     });
 }
 
@@ -291,7 +298,9 @@ function initUserManagement() {
         }
         if (status) status.innerHTML = 'Signed in as <strong>' + escapeHtml(user.email || '') + '</strong>.';
         if (listPanel) listPanel.classList.remove('hidden');
-        return loadDirectory();
+        return loadDirectory().catch(function (err) {
+          if (status) status.textContent = (err && err.message) || 'Could not load user directory.';
+        });
       });
     });
   });

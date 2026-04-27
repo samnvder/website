@@ -75,7 +75,7 @@
   padding: 22px 28px 16px;
   border-bottom: 3px solid var(--gold);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 .header::before {
   content: "";
@@ -96,6 +96,8 @@
 }
 /* Dashboard-style profile pill (all league pages) */
 .league-header-profile {
+  position: relative;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -252,6 +254,19 @@
 .se-site-nav-link--admin:hover {
   background: rgba(45, 148, 88, 0.2);
 }
+.se-site-nav-link--admin.se-site-nav-link--active,
+.se-site-nav-link--admin[aria-current="page"] {
+  color: var(--ink);
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 4px 16px rgba(232, 160, 32, 0.25);
+}
+.se-site-nav-link--admin.se-site-nav-link--active:hover,
+.se-site-nav-link--admin[aria-current="page"]:hover {
+  color: var(--ink);
+  background: var(--gold);
+  border-color: var(--gold);
+}
 .se-site-nav-link--admin.hidden {
   display: none !important;
 }
@@ -272,6 +287,9 @@
 }
 .league-wrap--wide {
   max-width: 960px;
+}
+.league-wrap--schedule {
+  max-width: 1120px;
 }
 .page-lead {
   font-size: 14px;
@@ -444,6 +462,27 @@
   border-color: var(--green-lt);
   color: var(--green-dk);
 }
+.league-roster-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.league-roster-captain-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(232, 160, 32, 0.18);
+  color: var(--ink);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
 .league-profile-preview {
   display: grid;
   gap: 6px;
@@ -521,6 +560,312 @@
   text-transform: uppercase;
   color: var(--green);
 }
+.league-schedule-poster {
+  overflow: hidden;
+  margin-bottom: 24px;
+  border: 1px solid rgba(17, 24, 16, 0.14);
+  border-radius: 8px;
+  background: var(--cream);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+}
+.league-schedule-accent {
+  height: 5px;
+  background: linear-gradient(
+    90deg,
+    var(--green-dk) 0%,
+    var(--green-lt) 35%,
+    var(--gold) 58%,
+    var(--green-lt) 80%,
+    var(--green-dk) 100%
+  );
+}
+.league-schedule-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 28px;
+  background: var(--green-dk);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.league-schedule-header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 18px,
+    rgba(255, 255, 255, 0.025) 18px,
+    rgba(255, 255, 255, 0.025) 19px
+  );
+  pointer-events: none;
+}
+.league-schedule-header > * {
+  position: relative;
+  z-index: 1;
+}
+.league-schedule-brand {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+}
+.league-schedule-mark {
+  display: grid;
+  place-items: center;
+  width: 74px;
+  height: 74px;
+  flex: 0 0 auto;
+  border: 2px solid rgba(232, 160, 32, 0.6);
+  border-radius: 50%;
+  color: var(--gold-lt);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 32px;
+  letter-spacing: 0.08em;
+  background: rgba(0, 0, 0, 0.18);
+  box-shadow: 0 2px 18px rgba(0, 0, 0, 0.28);
+}
+.league-schedule-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  color: var(--gold);
+  font-size: clamp(8px, 1vw, 9px);
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+.league-schedule-eyebrow::before,
+.league-schedule-eyebrow::after {
+  content: "";
+  width: 20px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--gold);
+}
+.league-schedule-header h1 {
+  margin: 0;
+  color: #fff;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(36px, 7vw, 58px);
+  line-height: 0.9;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.league-schedule-header h1 span {
+  color: var(--gold);
+}
+.league-schedule-header p {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: clamp(10px, 1.4vw, 12px);
+  font-weight: 600;
+  line-height: 1.4;
+}
+.league-schedule-legend {
+  flex: 0 0 auto;
+}
+.league-schedule-legend-title {
+  margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-align: right;
+  text-transform: uppercase;
+}
+.league-schedule-legend-grid {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 8px 18px;
+}
+.league-schedule-legend-grid span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: clamp(10px, 1.2vw, 12px);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.league-dot {
+  display: inline-block;
+  width: 26px;
+  height: 14px;
+  border-radius: 3px;
+  flex: 0 0 auto;
+}
+.league-dot--womens {
+  background: #8a1a5a;
+}
+.league-dot--mens {
+  background: #1a4a8a;
+}
+.league-dot--mixed {
+  background: #b85c00;
+}
+.league-dot--open {
+  background: var(--green);
+}
+.league-schedule-board {
+  display: grid;
+  grid-template-columns: minmax(44px, 0.46fr) repeat(7, minmax(92px, 1fr));
+  gap: 1px;
+  margin: 18px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--rule);
+  overflow-x: auto;
+}
+.league-schedule-corner,
+.league-schedule-day {
+  min-width: 0;
+  background: var(--ink);
+  color: #fff;
+}
+.league-schedule-day {
+  padding: 10px 6px 8px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(13px, 1.5vw, 16px);
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+}
+.league-schedule-day span {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.34);
+  font-family: "DM Sans", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.league-schedule-day--active {
+  background: #1b3020;
+}
+.league-schedule-day--weekend {
+  background: #16251b;
+}
+.league-schedule-time {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  min-height: 106px;
+  padding: 8px 6px 0;
+  background: #d8e2d7;
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 800;
+}
+.league-schedule-slot {
+  min-height: 106px;
+  padding: 5px;
+  background: #fff;
+}
+.league-schedule-slot--weekend {
+  background: #f8fbf7;
+}
+.league-schedule-event {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 94px;
+  height: 100%;
+  padding: 10px;
+  border-left: 4px solid var(--event-accent);
+  border-radius: 5px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.09);
+}
+.league-schedule-event span {
+  margin-bottom: 4px;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  opacity: 0.65;
+  text-transform: uppercase;
+}
+.league-schedule-event strong {
+  font-size: clamp(11px, 1.35vw, 13px);
+  line-height: 1.22;
+  color: currentColor;
+}
+.league-schedule-event em {
+  margin-top: 5px;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 700;
+  opacity: 0.7;
+}
+.league-schedule-event b {
+  align-self: flex-start;
+  margin-top: 8px;
+  padding: 3px 7px;
+  border-radius: 3px;
+  color: #fff;
+  background: var(--event-accent);
+  font-size: 8px;
+  letter-spacing: 0.04em;
+}
+.league-schedule-event--womens {
+  --event-accent: #8a1a5a;
+  color: #5c0f3c;
+  background: rgba(138, 26, 90, 0.13);
+}
+.league-schedule-event--mens {
+  --event-accent: #1a4a8a;
+  color: #0f2f5e;
+  background: rgba(26, 74, 138, 0.13);
+}
+.league-schedule-event--mixed {
+  --event-accent: #b85c00;
+  color: #7a3c00;
+  background: rgba(184, 92, 0, 0.13);
+}
+.league-schedule-event--open {
+  --event-accent: var(--green);
+  color: #0a3d1a;
+  background: rgba(26, 107, 58, 0.14);
+}
+.league-schedule-register {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 18px 18px;
+  padding: 16px 20px;
+  border: 1px solid rgba(232, 160, 32, 0.28);
+  border-radius: 6px;
+  background: var(--green-dk);
+  color: #fff;
+}
+.league-schedule-register[hidden] {
+  display: none !important;
+}
+.league-schedule-register strong {
+  display: block;
+  color: #fff;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(22px, 3vw, 28px);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+.league-schedule-register span {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  font-weight: 600;
+}
+.league-schedule-register .btn {
+  flex: 0 0 auto;
+  margin: 0;
+}
 /* Form fields */
 label {
   display: block;
@@ -594,10 +939,17 @@ label.league-check input {
   margin: 4px 0 0 0;
   flex-shrink: 0;
 }
-label.league-check span {
+label.league-check > span {
   display: block;
   min-width: 0;
   text-wrap: pretty;
+}
+.league-required-inline {
+  display: inline !important;
+  color: var(--red);
+  font-weight: 700;
+  margin-left: 3px;
+  white-space: nowrap;
 }
 .league-terms-version {
   white-space: nowrap;
@@ -633,6 +985,14 @@ label.league-check span {
   opacity: 0.45;
   cursor: not-allowed;
   filter: none;
+}
+.league-overview-cta {
+  min-width: 190px;
+  min-height: 54px;
+  padding: 16px 30px;
+  font-size: 22px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(232, 160, 32, 0.3);
 }
 .league-payment-row {
   display: flex;
@@ -1027,12 +1387,50 @@ code {
 .hidden {
   display: none !important;
 }
+
+/* Registration payment status (Teams + Hub) */
+.league-registration-status {
+  margin-top: 12px;
+  margin-bottom: 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(26, 107, 58, 0.12);
+  border: 1px solid rgba(26, 107, 58, 0.35);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.league-registration-status--hub {
+  margin-top: 16px;
+  max-width: 44rem;
+}
 @media (max-width: 640px) {
   .league-wrap {
     padding: 24px 16px 48px;
   }
   .league-card {
     padding: 24px 16px;
+  }
+  .league-schedule-header,
+  .league-schedule-brand,
+  .league-schedule-register {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .league-schedule-mark {
+    width: 58px;
+    height: 58px;
+    font-size: 25px;
+  }
+  .league-schedule-legend-title {
+    text-align: left;
+  }
+  .league-schedule-board {
+    grid-template-columns: minmax(42px, 0.45fr) repeat(7, minmax(120px, 1fr));
+    margin: 14px;
+  }
+  .league-schedule-register {
+    margin: 0 14px 14px;
   }
   .league-module-grid,
   .league-dashboard-grid,

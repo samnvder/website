@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<!-- Weekly Visual Calendar — All Divisions + Clinics | 2026
+     Brandon, this is the at-a-glance court schedule for the whole week.
+     Clinics are Monday mornings. Matches run Tue through Thu, plus Saturday afternoons.
+     Print this and put it near the courts so players know exactly when to show up.
+     PDF version is in the same folder. -->
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>South End Pickleball – Weekly Schedule</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ── */
+:root {
+  --green:#1a6b3a; --green-lt:#2d9458; --green-dk:#0f3f22;
+  --gold:#e8a020;  --gold-lt:#ffd166;  --cream:#fafaf5;
+  --ink:#111810;   --muted:#5a6357;    --rule:#dde5d9;
+  --mens:#1a4a8a;   --mens-bg:rgba(26,74,138,0.13);
+  --womens:#8a1a5a; --womens-bg:rgba(138,26,90,0.13);
+  --mixed:#b85c00;  --mixed-bg:rgba(184,92,0,0.13);
+  --open:#1a6b3a;   --open-bg:rgba(26,107,58,0.14);
+  --l30:#2a6080; --l40:#7a5a00;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--green-dk);
+  display:flex; align-items:flex-start; justify-content:center;
+  padding:28px 16px; min-height:100vh;
+}
+
+/* ── PAGE ── */
+.page {
+  width:800px;
+  background:var(--cream);
+  box-shadow:0 24px 80px rgba(0,0,0,.55);
+  border-radius:2px;
+  overflow:hidden;
+}
+.accent-bar {
+  height:5px;
+  background:linear-gradient(90deg,var(--green-dk) 0%,var(--green-lt) 38%,var(--gold) 58%,var(--green-lt) 80%,var(--green-dk) 100%);
+}
+
+/* ── HEADER: 3-column logo | title | legend ── */
+.header {
+  background:var(--green-dk);
+  padding:16px 24px 14px;
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+  position:relative; overflow:hidden;
+}
+.header::after {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:repeating-linear-gradient(-45deg,transparent,transparent 18px,rgba(255,255,255,.022) 18px,rgba(255,255,255,.022) 19px);
+}
+
+/* Logo col */
+.hdr-logo { position:relative; z-index:2; flex-shrink:0; }
+.hdr-logo img { height:76px; width:auto; display:block; filter:drop-shadow(0 2px 8px rgba(0,0,0,.45)); }
+
+/* Title col */
+.hdr-center {
+  position:relative; z-index:2;
+  flex:1; text-align:center;
+}
+.eyebrow {
+  font-size:8.5px; font-weight:700; letter-spacing:3px; text-transform:uppercase;
+  color:var(--gold); margin-bottom:4px;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.eyebrow::before, .eyebrow::after {
+  content:''; display:inline-block; width:20px; height:2px;
+  background:var(--gold); border-radius:1px;
+}
+.hdr-center h1 {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:44px; line-height:.88; color:#fff; letter-spacing:1px;
+}
+.hdr-center h1 span { color:var(--gold); }
+.hdr-sub {
+  font-size:10px; color:rgba(255,255,255,.45); margin-top:5px; font-weight:500;
+}
+
+/* Legend col */
+.hdr-legend { position:relative; z-index:2; flex-shrink:0; }
+.legend-title {
+  font-size:8px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+  color:rgba(255,255,255,.3); margin-bottom:7px; text-align:right;
+}
+.legend-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px 16px; }
+.leg { display:flex; align-items:center; gap:6px; }
+.leg-dot {
+  width:26px; height:14px; border-radius:3px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:7px; font-weight:800; color:#fff; letter-spacing:.3px;
+}
+.leg-dot.dashed { background:transparent !important; border:1.5px dashed; }
+.leg-label { font-size:9.5px; color:rgba(255,255,255,.72); font-weight:600; white-space:nowrap; }
+.leg-label small { font-size:7.5px; color:rgba(255,255,255,.32); font-weight:400; }
+
+/* ── CALENDAR GRID ── */
+.grid-wrap { padding:10px 20px 8px; }
+.cal {
+  display:grid;
+  grid-template-columns:42px repeat(7,1fr);
+  border:1px solid var(--rule);
+  border-radius:4px;
+  overflow:hidden;
+  background:var(--rule);
+  gap:1px;
+}
+.time-head { background:var(--ink); }
+.col-head {
+  background:var(--ink); color:#fff;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:12px; letter-spacing:1.5px;
+  padding:8px 4px 6px; text-align:center; line-height:1;
+}
+.col-head .sub {
+  display:block; font-family:'DM Sans',sans-serif;
+  font-size:7.5px; font-weight:600; letter-spacing:.4px;
+  color:rgba(255,255,255,.28); margin-top:2px;
+}
+.col-head.active  { background:#1b3020; }
+.col-head.weekend { background:#16251b; }
+.time-cell {
+  background:#e0e8df;
+  display:flex; align-items:flex-start; justify-content:flex-end;
+  padding:2px 4px 0; font-size:8px; font-weight:800; color:var(--muted);
+}
+.time-cell.major { color:var(--ink); font-size:8.5px; background:#d8e2d7; }
+.time-cell.minor { color:rgba(90,99,87,.35); font-size:7px; }
+.cell { background:#fff; position:relative; }
+.cell.hour-top { background:#f5f8f4; }
+.cell.weekend  { background:#f8fbf7; }
+
+/* ── EVENTS ── */
+.event {
+  position:absolute; left:2px; right:2px; top:1px;
+  border-radius:3px; overflow:hidden; z-index:3;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:5px 7px;
+}
+.ev-badge  { font-size:7px; font-weight:800; letter-spacing:.7px; text-transform:uppercase; opacity:.6; margin-bottom:2px; }
+.ev-title  { font-size:10px; font-weight:800; line-height:1.25; }
+.ev-time   { font-size:8px; font-weight:600; opacity:.65; margin-top:3px; }
+.ev-pill   {
+  display:inline-block; margin-top:5px;
+  font-size:7.5px; font-weight:800; letter-spacing:.3px;
+  padding:2px 6px; border-radius:2px; color:#fff; align-self:flex-start;
+}
+.event.match  { border-left:4px solid; box-shadow:0 1px 4px rgba(0,0,0,.1); }
+.event.clinic { border:1.5px dashed; background:transparent !important; }
+.event.clinic .ev-badge, .event.clinic .ev-time { opacity:.5; }
+.event.clinic .ev-title { opacity:.82; }
+
+.ev-womens.match { background:var(--womens-bg); border-color:var(--womens); color:#5c0f3c; }
+.ev-womens.match .ev-pill { background:var(--womens); }
+.ev-mixed.match  { background:var(--mixed-bg);  border-color:var(--mixed);  color:#7a3c00; }
+.ev-mixed.match  .ev-pill { background:var(--mixed); }
+.ev-mens.match   { background:var(--mens-bg);   border-color:var(--mens);   color:#0f2f5e; }
+.ev-mens.match   .ev-pill { background:var(--mens); }
+.ev-open.match   { background:var(--open-bg);   border-color:var(--open);   color:#0a3d1a; }
+.ev-open.match   .ev-pill { background:var(--open); }
+.ev-level30.clinic { border-color:var(--l30); color:var(--l30); }
+.ev-level40.clinic { border-color:var(--l40); color:var(--l40); }
+
+/* ── REGISTRATION STRIP ── */
+.reg-strip {
+  background:var(--green-dk);
+  margin:0 20px 8px;
+  border-radius:6px;
+  padding:12px 20px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  border:1px solid rgba(232,160,32,.28);
+}
+.rs-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:20px; color:#fff; letter-spacing:.5px; line-height:1; margin-bottom:3px;
+}
+.rs-sub { font-size:9.5px; color:rgba(255,255,255,.5); font-weight:500; }
+.rs-cta {
+  background:var(--gold); color:var(--ink);
+  font-weight:800; font-size:12px; letter-spacing:.5px;
+  padding:10px 20px; border-radius:4px;
+  text-decoration:none;
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  flex-shrink:0; text-align:center;
+}
+.rs-cta small { font-size:8px; font-weight:600; opacity:.7; letter-spacing:.3px; }
+
+/* ── FOOTER ── */
+.footer {
+  background:var(--ink);
+  padding:10px 24px;
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
+}
+.ft-tagline { font-size:9.5px; color:#8aab8f; font-style:italic; flex-shrink:0; }
+.ft-pricing { display:flex; align-items:center; gap:16px; flex:1; justify-content:center; }
+.ft-col     { display:flex; flex-direction:column; gap:4px; }
+.ft-head    { font-size:8px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#6a8870; margin-bottom:2px; }
+.ft-row     { display:flex; align-items:center; gap:5px; }
+.ft-price   { font-size:17px; font-weight:800; color:var(--gold-lt); line-height:1; }
+.ft-price.member { color:#c8e8b0; }
+.ft-unit    { font-size:9px; color:#8aab8f; font-weight:500; }
+.ft-unit.member { color:#7a9f80; }
+.ft-badge   {
+  display:inline-block; background:var(--green-lt); color:#fff;
+  font-size:7px; font-weight:800; letter-spacing:.8px;
+  padding:2px 5px; border-radius:2px; vertical-align:middle;
+}
+.ft-divider { width:1px; height:38px; background:#2d4a35; flex-shrink:0; }
+.ft-contact { font-size:9px; color:#8aab8f; flex-shrink:0; }
+
+/* ── PRINT ── */
+@media print {
+  @page { size:8.5in 11in portrait; margin:0; }
+  html,body { margin:0 !important; padding:0 !important; background:white !important; }
+  .page { width:8.5in !important; box-shadow:none !important; }
+  .page * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+  * { page-break-inside:avoid !important; page-break-before:avoid !important; page-break-after:avoid !important; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="accent-bar"></div>
+
+  <div class="header">
+    <div class="hdr-logo">
+      <img src="data:image/png;base64,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" alt="South End Racquet &amp; Health Club">
+    </div>
+    <div class="hdr-center">
+      <div class="eyebrow">Keep the Spirit Alive</div>
+      <h1>PICKLEBALL<br><span>LEAGUE</span></h1>
+      <div class="hdr-sub">South End Racquet &amp; Health Club &nbsp;&middot;&nbsp; 2026 Season</div>
+    </div>
+    <div class="hdr-legend">
+      <div class="legend-title">Key</div>
+      <div class="legend-grid">
+        <div class="leg"><div class="leg-dot" style="background:var(--womens)">WD</div><span class="leg-label">Women's Doubles</span></div>
+        <div class="leg"><div class="leg-dot" style="background:var(--mixed)">MXD</div><span class="leg-label">Mixed Doubles</span></div>
+        <div class="leg"><div class="leg-dot" style="background:var(--mens)">MD</div><span class="leg-label">Men's Doubles</span></div>
+        <div class="leg"><div class="leg-dot" style="background:var(--open)">OPEN</div><span class="leg-label">Open Division</span></div>
+        <div class="leg"><div class="leg-dot dashed" style="border-color:var(--l30);color:var(--l30)">3.0</div><span class="leg-label">3.0 Clinic <small>(dashed)</small></span></div>
+        <div class="leg"><div class="leg-dot dashed" style="border-color:var(--l40);color:var(--l40)">4.0</div><span class="leg-label">4.0 Clinic <small>(dashed)</small></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-wrap">
+    <div class="cal">
+<div class="time-head"></div><div class="col-head active">MON<span class="sub">Monday</span></div><div class="col-head active">TUE<span class="sub">Tuesday</span></div><div class="col-head active">WED<span class="sub">Wednesday</span></div><div class="col-head active">THU<span class="sub">Thursday</span></div><div class="col-head">FRI<span class="sub">Friday</span></div><div class="col-head active weekend">SAT<span class="sub">Saturday</span></div><div class="col-head weekend">SUN<span class="sub">Sunday</span></div>
+<div class="time-cell major" style="height:36px">9AM</div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div>
+<div class="time-cell minor" style="height:36px">:30</div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div>
+<div class="time-cell major" style="height:36px">10AM</div><div class="cell hour-top" style="height:36px"><div class="event clinic ev-level30" style="height:105px"><span class="ev-badge">&#127947; Clinic &amp; Drills</span><span class="ev-title">3.0 Clinic &amp; Drills</span><span class="ev-time">10:00 – 11:30 AM</span></div></div><div class="cell hour-top" style="height:36px"><div class="event match ev-womens" style="height:141px"><span class="ev-badge">&#9658; League Match</span><span class="ev-title">3.0 Women&#39;s Doubles</span><span class="ev-time">10:00 AM – 12:00 PM</span><span class="ev-pill">3.0 WD</span></div></div><div class="cell hour-top" style="height:36px"><div class="event match ev-womens" style="height:141px"><span class="ev-badge">&#9658; League Match</span><span class="ev-title">4.0 Women&#39;s Doubles</span><span class="ev-time">10:00 AM – 12:00 PM</span><span class="ev-pill">4.0 WD</span></div></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div>
+<div class="time-cell minor" style="height:36px">:30</div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div>
+<div class="time-cell major" style="height:36px">11AM</div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div>
+<div class="time-cell minor" style="height:36px">:30</div><div class="cell half" style="height:36px"><div class="event clinic ev-level40" style="height:105px"><span class="ev-badge">&#127947; Clinic &amp; Drills</span><span class="ev-title">4.0 Clinic &amp; Drills</span><span class="ev-time">11:30 AM – 1:00 PM</span></div></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div>
+<div class="time-cell major" style="height:36px">12PM</div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div>
+<div class="time-cell minor" style="height:36px">:30</div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div>
+<div class="time-cell major" style="height:36px">1PM</div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div>
+<div class="time-cell minor" style="height:36px">:30</div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div>
+<div class="time-cell major" style="height:36px">2PM</div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div>
+<div class="time-cell minor" style="height:36px">:30</div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div>
+<div class="time-cell major" style="height:36px">3PM</div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div>
+<div class="time-cell minor" style="height:36px">:30</div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div>
+<div class="time-cell major" style="height:36px">4PM</div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"><div class="event match ev-mens" style="height:141px"><span class="ev-badge">&#9658; League Match</span><span class="ev-title">4.0 Men&#39;s Doubles</span><span class="ev-time">4:00 – 6:00 PM</span><span class="ev-pill">4.0 MD</span></div></div><div class="cell hour-top weekend" style="height:36px"></div>
+<div class="time-cell minor" style="height:36px">:30</div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div>
+<div class="time-cell major" style="height:36px">5PM</div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div>
+<div class="time-cell minor" style="height:36px">:30</div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div>
+<div class="time-cell major" style="height:36px">6PM</div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div>
+<div class="time-cell minor" style="height:36px">:30</div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"><div class="event match ev-mixed" style="height:141px"><span class="ev-badge">&#9658; League Match</span><span class="ev-title">4.0 Mixed Doubles</span><span class="ev-time">6:30 – 8:30 PM</span><span class="ev-pill">4.0 MXD</span></div></div><div class="cell half" style="height:36px"><div class="event match ev-mixed" style="height:141px"><span class="ev-badge">&#9658; League Match</span><span class="ev-title">3.0 Mixed Doubles</span><span class="ev-time">6:30 – 8:30 PM</span><span class="ev-pill">3.0 MXD</span></div></div><div class="cell half" style="height:36px"><div class="event match ev-open" style="height:141px"><span class="ev-badge">&#9658; League Match</span><span class="ev-title">Open Division</span><span class="ev-time">6:30 – 8:30 PM</span><span class="ev-pill">OPEN</span></div></div><div class="cell half" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div>
+<div class="time-cell major" style="height:36px">7PM</div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div>
+<div class="time-cell minor" style="height:36px">:30</div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div>
+<div class="time-cell major" style="height:36px">8PM</div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div><div class="cell hour-top weekend" style="height:36px"></div>
+<div class="time-cell minor" style="height:36px">:30</div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div><div class="cell half weekend" style="height:36px"></div>
+    </div>
+  </div>
+
+  <div class="reg-strip">
+    <div>
+      <div class="rs-title">Register Your Team</div>
+      <div class="rs-sub">Limited spots per division &nbsp;&middot;&nbsp; Season starts soon</div>
+    </div>
+    <a class="rs-cta" href="mailto:BrandonHookerPickleball@gmail.com">
+      SIGN UP NOW
+      <small>southendracquetclub.com</small>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p class="ft-tagline">Keep the Spirit Alive</p>
+    <div class="ft-pricing">
+      <div class="ft-col">
+        <div class="ft-head">League Entry</div>
+        <div class="ft-row">
+          <span class="ft-price">$250</span>
+          <span class="ft-unit">/ team / season</span>
+        </div>
+        <div class="ft-row">
+          <span class="ft-price member">$200</span>
+          <span class="ft-unit member">/ team / season</span>
+          <span class="ft-badge">MEMBER</span>
+        </div>
+      </div>
+      <div class="ft-divider"></div>
+      <div class="ft-col">
+        <div class="ft-head">Clinic Drop-In</div>
+        <div class="ft-row">
+          <span class="ft-price">$25</span>
+          <span class="ft-unit">/ session</span>
+        </div>
+        <div class="ft-row">
+          <span class="ft-price member">$20</span>
+          <span class="ft-unit member">/ session</span>
+          <span class="ft-badge">MEMBER</span>
+        </div>
+      </div>
+    </div>
+    <p class="f
+</div>
+</div>
+
+</body>
+</html>

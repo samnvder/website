@@ -75,7 +75,7 @@
   padding: 22px 28px 16px;
   border-bottom: 3px solid var(--gold);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 .header::before {
   content: "";
@@ -96,6 +96,8 @@
 }
 /* Dashboard-style profile pill (all league pages) */
 .league-header-profile {
+  position: relative;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -251,6 +253,19 @@
 }
 .se-site-nav-link--admin:hover {
   background: rgba(45, 148, 88, 0.2);
+}
+.se-site-nav-link--admin.se-site-nav-link--active,
+.se-site-nav-link--admin[aria-current="page"] {
+  color: var(--ink);
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 4px 16px rgba(232, 160, 32, 0.25);
+}
+.se-site-nav-link--admin.se-site-nav-link--active:hover,
+.se-site-nav-link--admin[aria-current="page"]:hover {
+  color: var(--ink);
+  background: var(--gold);
+  border-color: var(--gold);
 }
 .se-site-nav-link--admin.hidden {
   display: none !important;
@@ -594,10 +609,17 @@ label.league-check input {
   margin: 4px 0 0 0;
   flex-shrink: 0;
 }
-label.league-check span {
+label.league-check > span {
   display: block;
   min-width: 0;
   text-wrap: pretty;
+}
+.league-required-inline {
+  display: inline !important;
+  color: var(--red);
+  font-weight: 700;
+  margin-left: 3px;
+  white-space: nowrap;
 }
 .league-terms-version {
   white-space: nowrap;

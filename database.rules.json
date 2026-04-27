@@ -10,6 +10,7 @@
         }
       },
       "admin_uids": {
+        ".read": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
         "$uid": {
           ".read": "auth != null && (auth.uid === $uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
           ".write": false
@@ -47,6 +48,7 @@
         }
       },
       "league_account": {
+        ".read": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
         "$uid": {
           ".read": "auth != null && ($uid === auth.uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
           ".write": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || $uid === auth.uid || (data.exists() && !newData.exists() && data.child('teamId').exists() && root.child('openplay_se/league_teams/' + data.child('teamId').val() + '/captainUid').val() === auth.uid))"
@@ -72,7 +74,7 @@
         ".read": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (query.orderByChild === 'captainUid' && query.equalTo === auth.uid))",
         "$teamId": {
           ".read": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (!data.exists() && $teamId === ('captain_' + auth.uid)) || (data.exists() && (data.child('captainUid').val() === auth.uid || root.child('openplay_se/league_teams/' + $teamId + '/roster/' + auth.uid).exists())) )",
-          ".write": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (!data.exists() && newData.exists() && $teamId === ('captain_' + auth.uid) && !root.child('openplay_se/league_account/' + auth.uid + '/registrationStatus').exists() && newData.hasChildren(['captainUid', 'name', 'allMembers', 'feeLabel', 'status', 'createdAt']) && newData.child('captainUid').val() === auth.uid) || (data.exists() && newData.exists() && data.child('captainUid').val() === newData.child('captainUid').val() && data.child('createdAt').val() === newData.child('createdAt').val() && data.child('captainUid').val() === auth.uid) || (data.exists() && !newData.exists() && data.child('captainUid').val() === auth.uid))",
+          ".write": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (!data.exists() && newData.exists() && $teamId === ('captain_' + auth.uid) && !root.child('openplay_se/league_account/' + auth.uid + '/registrationStatus').exists() && newData.hasChildren(['captainUid', 'name', 'allMembers', 'feeLabel', 'status', 'createdAt']) && newData.child('captainUid').val() === auth.uid && !newData.hasChild('adminMarkedPaid') && !newData.hasChild('adminMarkedPaidAt') && !newData.hasChild('adminMarkedPaidBy')) || (data.exists() && newData.exists() && data.child('captainUid').val() === newData.child('captainUid').val() && data.child('createdAt').val() === newData.child('createdAt').val() && data.child('captainUid').val() === auth.uid && ((!data.hasChild('adminMarkedPaid') && !newData.hasChild('adminMarkedPaid')) || (data.hasChild('adminMarkedPaid') && newData.hasChild('adminMarkedPaid') && data.child('adminMarkedPaid').val() === newData.child('adminMarkedPaid').val())) && ((!data.hasChild('adminMarkedPaidAt') && !newData.hasChild('adminMarkedPaidAt')) || (data.hasChild('adminMarkedPaidAt') && newData.hasChild('adminMarkedPaidAt') && data.child('adminMarkedPaidAt').val() === newData.child('adminMarkedPaidAt').val())) && ((!data.hasChild('adminMarkedPaidBy') && !newData.hasChild('adminMarkedPaidBy')) || (data.hasChild('adminMarkedPaidBy') && newData.hasChild('adminMarkedPaidBy') && data.child('adminMarkedPaidBy').val() === newData.child('adminMarkedPaidBy').val()))) || (data.exists() && !newData.exists() && data.child('captainUid').val() === auth.uid))",
           "roster": {
             "$memberUid": {
               ".read": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || root.child('openplay_se/league_teams/' + $teamId + '/captainUid').val() === auth.uid || $memberUid === auth.uid || root.child('openplay_se/league_teams/' + $teamId + '/roster/' + auth.uid).exists() )",

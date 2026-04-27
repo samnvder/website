@@ -13,7 +13,7 @@
     "openplay:sync-from-live": "node Programs/Pickleball/advanced-open-play/scripts/openplay-sync-from-live.js",
     "openplay:promote": "node Programs/Pickleball/advanced-open-play/scripts/openplay-promote-staging-to-live.js",
     "roll-live": "node Programs/Pickleball/advanced-open-play/scripts/openplay-roll-live.js",
-    "local-test": "node Programs/Pickleball/advanced-open-play/testing/scripts/local-test.js && npx live-server --port=3456 --open=/Programs/Pickleball/advanced-open-play/testing/local-page/index.html",
+    "local-test": "npx live-server --port=3456 --open=/Programs/Pickleball/advanced-open-play/testing/local-page/index.html",
     "local-test:sync": "node Programs/Pickleball/advanced-open-play/testing/scripts/local-test.js",
     "local-test:syn": "node Programs/Pickleball/advanced-open-play/testing/scripts/local-test.js",
     "start": "npx live-server --port=3000 --open=/",

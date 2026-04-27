@@ -45,6 +45,36 @@
     return /^SouthEnd_(?:Admin_(?:Hub|Activity|Module_Access|League_Play|User_Management)|Open_Play_Signups)\.html$/i.test(pageFileName());
   }
 
+  function isLocalPreviewHost() {
+    try {
+      var host = String((global.location && global.location.hostname) || '').toLowerCase();
+      return host === '127.0.0.1' || host === 'localhost' || host === '::1';
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function localHtmlRoutes(path) {
+    var prefix = '';
+    if (path.indexOf('/testing/local-page/league-play/') !== -1 || /^\/league-play\//i.test(path)) {
+      prefix = '../';
+    } else if (path.indexOf('/testing/local-page/') === -1 && !/^\/(?:SouthEnd_|index\.html|$)/i.test(path)) {
+      prefix = '/Programs/Pickleball/advanced-open-play/testing/local-page/';
+    }
+    return {
+      SouthEnd_Admin_Hub: prefix + 'SouthEnd_Admin_Hub.html',
+      SouthEnd_Admin_Activity: prefix + 'SouthEnd_Admin_Activity.html',
+      SouthEnd_Admin_Advanced_Open_Play: prefix + 'SouthEnd_Admin_Advanced_Open_Play.html',
+      SouthEnd_Admin_League_Play: prefix + 'SouthEnd_Admin_League_Play.html',
+      SouthEnd_Admin_Module_Access: prefix + 'SouthEnd_Admin_Module_Access.html',
+      SouthEnd_Admin_User_Management: prefix + 'SouthEnd_Admin_User_Management.html',
+      SouthEnd_Open_Play_Signups: prefix + 'SouthEnd_Open_Play_Signups.html',
+      SouthEnd_Session_Checkin: prefix + 'SouthEnd_Session_Checkin.html',
+      SouthEnd_OpenPlay_Account: prefix + 'SouthEnd_OpenPlay_Account.html',
+      SouthEnd_Pickleball_Hub: prefix + 'SouthEnd_Pickleball_Hub.html',
+    };
+  }
+
   function adminItemsHtml() {
     return ADMIN_ITEMS.map(function (item) {
       return '<a class="' + NS + '-menu-item" data-action="' + item.action + '" href="' + liveHref(item.href) + '">' + item.label + '</a>';
@@ -54,24 +84,8 @@
   function liveHref(href) {
     var path = String((global.location && global.location.pathname) || '').replace(/\\/g, '/');
     var key = String(href || '').replace(/\.html(?:\?.*)?$/i, '');
-    if (path.indexOf('/testing/local-page/league-play/') !== -1) {
-      var localLeagueRoutes = {
-        SouthEnd_Admin_Hub: '../SouthEnd_Admin_Hub.html',
-        SouthEnd_Admin_Activity: '../SouthEnd_Admin_Activity.html',
-        SouthEnd_Admin_Module_Access: '../SouthEnd_Admin_Module_Access.html',
-        SouthEnd_OpenPlay_Account: '../SouthEnd_OpenPlay_Account.html',
-        SouthEnd_Pickleball_Hub: '../SouthEnd_Pickleball_Hub.html',
-      };
-      return localLeagueRoutes[key] || String(href || '');
-    }
-    if (path.indexOf('/testing/local-page/') !== -1) {
-      var localRoutes = {
-        SouthEnd_Admin_Hub: 'SouthEnd_Admin_Hub.html',
-        SouthEnd_Admin_Activity: 'SouthEnd_Admin_Activity.html',
-        SouthEnd_Admin_Module_Access: 'SouthEnd_Admin_Module_Access.html',
-        SouthEnd_OpenPlay_Account: 'SouthEnd_OpenPlay_Account.html',
-        SouthEnd_Pickleball_Hub: 'SouthEnd_Pickleball_Hub.html',
-      };
+    if (isLocalPreviewHost() || path.indexOf('/testing/local-page/') !== -1) {
+      var localRoutes = localHtmlRoutes(path);
       return localRoutes[key] || String(href || '');
     }
     var routes = {
@@ -86,6 +100,8 @@
 
   function normalizeLegacyLiveUrl(rawHref) {
     if (!rawHref) return '';
+    var path = String((global.location && global.location.pathname) || '').replace(/\\/g, '/');
+    if (path.indexOf('/testing/') !== -1 || path.indexOf('/staging/') !== -1) return '';
     var href = String(rawHref);
     if (/advanced-open-play\/(?:staging|live)\/SouthEnd_Pickleball_Hub\.html/i.test(href)) return '/hub';
     if (/advanced-open-play\/(?:staging|live)\/SouthEnd_OpenPlay_Account\.html/i.test(href)) {
@@ -102,48 +118,52 @@
     var style = document.createElement('style');
     style.id = NS + '-css';
     style.textContent =
-      '.header{position:relative;z-index:10;}' +
+      ':root{--pp-accent:var(--neon,#00ff88);--pp-bg:var(--navy-lt,#111e35);--pp-ink:var(--ink,#0a1628);}' +
+      '.header{position:relative;z-index:10;overflow:visible!important;}' +
       'nav.se-site-nav{position:relative;z-index:1;}' +
       '.' + NS + '-anchor{display:none;align-items:center;gap:8px;z-index:500;}' +
       '.header > .' + NS + '-anchor{' +
-      'position:absolute;right:18px;top:12px;}' +
+      'position:absolute;right:24px;bottom:16px;}' +
       '.topbar-right > .' + NS + '-anchor{' +
       'position:relative;}' +
       '.' + NS + '-admin-quick{' +
       'display:none;align-items:center;justify-content:center;min-height:34px;padding:6px 10px;border-radius:8px;' +
-      'background:#00ff88;border:1.5px solid rgba(0,255,136,.45);color:#0a1628;text-decoration:none;' +
+      'background:var(--pp-accent);border:1.5px solid color-mix(in srgb,var(--pp-accent) 45%,transparent);color:var(--pp-ink);text-decoration:none;' +
       'font-family:Oswald,sans-serif;font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;' +
-      'box-shadow:0 0 18px rgba(0,255,136,.22);}' +
+      'box-shadow:0 0 18px color-mix(in srgb,var(--pp-accent) 22%,transparent);}' +
       '.' + NS + '-btn{' +
       'display:flex;align-items:center;gap:8px;min-height:38px;padding:7px 12px;border-radius:8px;' +
-      'background:rgba(255,255,255,.08);border:1.5px solid rgba(0,255,136,.32);color:#fff;cursor:pointer;' +
+      'background:rgba(255,255,255,.08);border:1.5px solid color-mix(in srgb,var(--pp-accent) 32%,transparent);color:#fff;cursor:pointer;' +
       'font-family:Oswald,sans-serif;font-size:13px;letter-spacing:.4px;text-transform:uppercase;}' +
-      '.' + NS + '-btn:hover{border-color:#00ff88;background:rgba(0,255,136,.12);}' +
+      '.' + NS + '-btn:hover{border-color:var(--pp-accent);background:color-mix(in srgb,var(--pp-accent) 12%,transparent);}' +
       '.' + NS + '-icon{width:20px;height:20px;display:block;}' +
       '.' + NS + '-label{white-space:nowrap;line-height:1;}' +
       '.' + NS + '-menu{' +
-      'position:absolute;right:0;top:44px;z-index:20;width:260px;background:#111e35;border:1.5px solid rgba(0,255,136,.35);' +
+      'position:absolute;right:0;top:44px;z-index:20;width:260px;background:var(--pp-bg);border:1.5px solid color-mix(in srgb,var(--pp-accent) 35%,transparent);' +
       'border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.45);padding:8px;display:none;}' +
       '.' + NS + '-menu.open{display:block;}' +
       '.' + NS + '-menu-head{padding:8px 10px 10px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:6px;}' +
       '.' + NS + '-menu-status{font-size:10px;color:rgba(255,255,255,.58);line-height:1.4;word-break:break-word;}' +
-      '.' + NS + '-menu-item{' +
+      'a.' + NS + '-menu-item,button.' + NS + '-menu-item,.' + NS + '-menu .' + NS + '-menu-item{' +
       'display:block;width:100%;text-align:left;padding:9px 10px;border:none;background:transparent;border-radius:7px;' +
-      'font-family:Barlow,sans-serif;font-size:12px;color:rgba(255,255,255,.88);cursor:pointer;text-decoration:none;}' +
-      '.' + NS + '-menu-item:hover{background:rgba(0,255,136,.11);color:#00ff88;}' +
-      '.' + NS + '-menu-item.staff{color:#d8b4fe;}' +
+      'font-family:Barlow,sans-serif;font-size:12px;color:rgba(255,255,255,.88)!important;cursor:pointer;text-decoration:none!important;}' +
+      'a.' + NS + '-menu-item:hover,button.' + NS + '-menu-item:hover,.' + NS + '-menu .' + NS + '-menu-item:hover{background:color-mix(in srgb,var(--pp-accent) 11%,transparent);color:var(--pp-accent)!important;}' +
+      '.' + NS + '-menu-item.staff{color:#d8b4fe!important;}' +
       '.' + NS + '-admin-toggle{position:relative;}' +
       '.' + NS + '-admin-toggle .chevron{display:inline-block;margin-left:auto;font-size:10px;transition:transform .2s ease;color:rgba(255,255,255,.45);}' +
       '.' + NS + '-admin-toggle[aria-expanded="true"] .chevron{transform:rotate(180deg);}' +
-      '.' + NS + '-admin-sub{overflow:hidden;max-height:0;transition:max-height .25s ease;padding-left:10px;border-left:2px solid rgba(168,85,247,.3);}' +
+      '.' + NS + '-admin-sub{overflow:hidden;max-height:0;transition:max-height .25s ease;padding-left:10px;border-left:2px solid color-mix(in srgb,var(--pp-accent) 30%,transparent);}' +
       '.' + NS + '-admin-sub.open{max-height:300px;}' +
       '.' + NS + '-admin-sub .' + NS + '-menu-item{font-size:11px;padding:7px 10px;}' +
-      '.se-site-nav-link--admin{margin-left:auto;color:#00ff88;border-color:rgba(0,255,136,.22);}' +
+      '.se-site-nav-link--admin{margin-left:auto;color:var(--pp-accent);border-color:color-mix(in srgb,var(--pp-accent) 22%,transparent);}' +
+      'a.se-site-nav-link--admin.se-site-nav-link--active,' +
+      'a.se-site-nav-link--admin[aria-current="page"]{color:var(--pp-ink);}' +
       '.se-site-nav-link--admin.hidden{display:none!important;}' +
+      '#league-admin-mobile-link{display:none!important;}' +
       '.' + NS + '-modal{position:fixed;inset:0;z-index:850;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;padding:16px;}' +
       '.' + NS + '-modal.open{display:flex;}' +
-      '.' + NS + '-card{max-width:420px;width:100%;max-height:85vh;overflow:auto;background:#111e35;border:2px solid rgba(0,255,136,.35);border-radius:12px;padding:18px;}' +
-      '.' + NS + '-title{font-family:Oswald,sans-serif;font-size:18px;color:#00ff88;text-transform:uppercase;margin-bottom:10px;}' +
+      '.' + NS + '-card{max-width:420px;width:100%;max-height:85vh;overflow:auto;background:var(--pp-bg);border:2px solid color-mix(in srgb,var(--pp-accent) 35%,transparent);border-radius:12px;padding:18px;}' +
+      '.' + NS + '-title{font-family:Oswald,sans-serif;font-size:18px;color:var(--pp-accent);text-transform:uppercase;margin-bottom:10px;}' +
       '.' + NS + '-close{background:transparent;border:none;color:rgba(255,255,255,.65);font-size:22px;cursor:pointer;position:absolute;right:16px;top:10px;}' +
       '.' + NS + '-row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08);}' +
       '.' + NS + '-lbl{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;}' +
@@ -153,16 +173,16 @@
       '.' + NS + '-field label{display:block;font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}' +
       '.' + NS + '-input,.' + NS + '-textarea,.' + NS + '-select{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:6px;color:#fff;font-size:13px;padding:9px 10px;font-family:Barlow,sans-serif;}' +
       '.' + NS + '-textarea{resize:vertical;min-height:72px;}' +
-      '.' + NS + '-input:focus,.' + NS + '-textarea:focus,.' + NS + '-select:focus{outline:none;border-color:#00ff88;}' +
-      '.' + NS + '-select option{background:#111e35;color:#fff;}' +
+      '.' + NS + '-input:focus,.' + NS + '-textarea:focus,.' + NS + '-select:focus{outline:none;border-color:var(--pp-accent);}' +
+      '.' + NS + '-select option{background:var(--pp-bg);color:#fff;}' +
       '.' + NS + '-actions{display:flex;justify-content:flex-end;margin-top:14px;}' +
-      '.' + NS + '-save{background:#00ff88;color:#0a1628;border:none;border-radius:7px;padding:9px 12px;font-family:Oswald,sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;}' +
+      '.' + NS + '-save{background:var(--pp-accent);color:var(--pp-ink);border:none;border-radius:7px;padding:9px 12px;font-family:Oswald,sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;}' +
       '.' + NS + '-save[disabled]{opacity:.6;cursor:not-allowed;}' +
       '.' + NS + '-msg{margin-top:10px;font-size:11px;min-height:16px;color:rgba(255,255,255,.72);}' +
       '.' + NS + '-msg.error{color:#ff8a8a;}' +
-      '.' + NS + '-msg.ok{color:#00ff88;}' +
+      '.' + NS + '-msg.ok{color:var(--pp-accent);}' +
       '@media(max-width:680px){' +
-      '.header > .' + NS + '-anchor{right:10px;top:8px;}' +
+      '.header > .' + NS + '-anchor{right:16px;bottom:16px;}' +
       '.' + NS + '-admin-quick.is-visible{display:inline-flex;}' +
       '.' + NS + '-btn{min-height:34px;padding:6px 10px;font-size:12px;}' +
       '.' + NS + '-menu{width:240px;top:40px;}' +

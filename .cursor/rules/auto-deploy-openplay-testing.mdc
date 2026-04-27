@@ -1,18 +1,18 @@
 ---
-description: Universal — after Open Play live/testing changes, sync mirrors, test, and deploy Firebase Hosting (testing site).
+description: Manual Open Play deployment checklist; local-page is never auto-synced or deployed.
 globs: []
-alwaysApply: true
+alwaysApply: false
 ---
 
-# Auto-deploy Open Play (testing + hosted site)
+# Open Play Deployment Checklist
 
 ## Scope
 
-Applies whenever **`Programs/Pickleball/live/`** (deployed HTML/JS) or **`Programs/Pickleball/advanced-open-play/testing/`** (unit tests, `local-test.js`, mirrors) is edited.
+Use only when Sam explicitly asks to deploy Open Play.
 
 ## Agent must run (from `Website/` = repo root)
 
-1. **`npm run local-test:sync`** — refresh `Programs/Pickleball/advanced-open-play/testing/local-page/` so local QA matches the tree in **`openplay-mode.json`** (`staging/` or **`Programs/Pickleball/live/`**).
+1. **Do not run `npm run local-test:sync` to copy files.** Local-page is independent.
 2. **`npm test`** — must pass before deploy.
 3. **`npm run deploy:openplay`** — push **`Programs/Pickleball/live`** to **Firebase Hosting** (`firebase.json` → `hosting.public`). This updates the **hosted URL** (e.g. `*.web.app` / custom domain for project `pickleball-advanced-open-play`).
 
@@ -28,4 +28,4 @@ Workflow **`.github/workflows/deploy-openplay-firebase-hosting.yml`** runs on **
 
 ## Do not deploy
 
-Gitignored mirror (`Programs/Pickleball/advanced-open-play/testing/local-page/`) — generated only; **Hosting serves `live/`** per `firebase.json`.
+`Programs/Pickleball/advanced-open-play/testing/local-page/` — local test source only; **Hosting serves `live/`** per `firebase.json`.

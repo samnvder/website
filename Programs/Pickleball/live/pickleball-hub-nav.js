@@ -3,6 +3,9 @@
  * Deployed with Firebase Hosting public root (live/). Pages mount via <nav data-se-hub-nav>.
  */
 (function () {
+  var openPlayAccessState = 'pending';
+  var authWatchStarted = false;
+
   function isHostedOpenPlaySite() {
     try {
       var h =
@@ -39,7 +42,7 @@
         hub: '/hub',
         openplay: '/account',
         board: '/message-board',
-        league: '/league-play',
+        league: '/league-play/SouthEnd_League_Overview.html',
       };
     }
     if (ctx === 'hosted-league') {
@@ -47,7 +50,7 @@
         hub: '/hub',
         openplay: '/account',
         board: '/message-board',
-        league: 'SouthEnd_League_Play_Hub.html',
+        league: 'SouthEnd_League_Overview.html',
       };
     }
     if (ctx === 'openplay-league-staging') {
@@ -55,7 +58,7 @@
         hub: '/hub',
         openplay: '/account',
         board: '../SouthEnd_Message_Board.html',
-        league: 'SouthEnd_League_Play_Hub.html',
+        league: 'SouthEnd_League_Overview.html',
       };
     }
     if (ctx === 'openplay-league-local') {
@@ -63,32 +66,31 @@
         hub: '../SouthEnd_Pickleball_Hub.html',
         openplay: '../SouthEnd_OpenPlay_Account.html',
         board: '../SouthEnd_Message_Board.html',
-        league: 'SouthEnd_League_Play_Hub.html',
+        league: 'SouthEnd_League_Overview.html',
       };
     }
     if (ctx === 'openplay-league-live') {
-      var st = '../advanced-open-play/staging/';
       return {
-        hub: st + 'SouthEnd_Pickleball_Hub.html',
-        openplay: st + 'SouthEnd_OpenPlay_Account.html',
-        board: st + 'SouthEnd_Message_Board.html',
-        league: 'SouthEnd_League_Play_Hub.html',
+        hub: '../SouthEnd_Pickleball_Hub.html',
+        openplay: '../SouthEnd_OpenPlay_Account.html',
+        board: '../SouthEnd_Message_Board.html',
+        league: 'SouthEnd_League_Overview.html',
       };
     }
     if (ctx === 'central-league') {
-      var c = '../advanced-open-play/staging/';
+      var c = '../live/';
       return {
         hub: c + 'SouthEnd_Pickleball_Hub.html',
         openplay: c + 'SouthEnd_OpenPlay_Account.html',
         board: c + 'SouthEnd_Message_Board.html',
-        league: 'SouthEnd_League_Play_Hub.html',
+        league: 'SouthEnd_League_Overview.html',
       };
     }
     return {
       hub: 'SouthEnd_Pickleball_Hub.html',
       openplay: 'SouthEnd_OpenPlay_Account.html',
       board: 'SouthEnd_Message_Board.html',
-      league: 'league-play/SouthEnd_League_Play_Hub.html',
+      league: 'league-play/SouthEnd_League_Overview.html',
     };
   }
 
@@ -113,7 +115,7 @@
     if (/^SouthEnd_Pickleball_Hub\.html$/i.test(name)) return 'hub';
     if (/^SouthEnd_OpenPlay_Account\.html$/i.test(name)) return 'openplay';
     if (/^SouthEnd_Message_Board\.html$/i.test(name)) return 'board';
-    if (/^SouthEnd_League_Play_Hub\.html$/i.test(name)) return 'league';
+    if (/^SouthEnd_League_/i.test(name)) return 'league';
     return '';
   }
 
@@ -143,17 +145,67 @@
       ['board', p.board, 'Message Board'],
     ];
     return order
+      .filter(function (row) {
+        return row[0] !== 'openplay' || openPlayAccessState === 'allowed';
+      })
       .map(function (row) {
         return link(row[1], row[2], active, row[0]);
       })
       .join('');
   }
 
+  function setOpenPlayAccessState(state) {
+    if (openPlayAccessState === state) return;
+    openPlayAccessState = state;
+    run();
+  }
+
+  function watchOpenPlayAccess() {
+    if (authWatchStarted) return;
+    if (typeof window === 'undefined' || !window.SEOpenPlay) return;
+    var SE = window.SEOpenPlay;
+    if (!SE.firebaseConfigured || !SE.firebaseConfigured() || !SE.initFirebase || !SE.onAuthStateChanged) {
+      setOpenPlayAccessState('denied');
+      authWatchStarted = true;
+      return;
+    }
+    authWatchStarted = true;
+    SE.initFirebase()
+      .then(function () {
+        SE.onAuthStateChanged(function (user) {
+          if (!user || !SE.hasModuleAccess) {
+            setOpenPlayAccessState('denied');
+            return;
+          }
+          SE.hasModuleAccess(user.uid, SE.MODULE_ADVANCED_OPEN_PLAY || 'advanced_open_play')
+            .then(function (allowed) {
+              setOpenPlayAccessState(allowed ? 'allowed' : 'denied');
+            })
+            .catch(function () {
+              setOpenPlayAccessState('denied');
+            });
+        });
+      })
+      .catch(function () {
+        setOpenPlayAccessState('denied');
+      });
+  }
+
+  function scheduleAccessWatch() {
+    watchOpenPlayAccess();
+    setTimeout(watchOpenPlayAccess, 0);
+    setTimeout(watchOpenPlayAccess, 150);
+    setTimeout(watchOpenPlayAccess, 500);
+  }
+
   function run() {
     if (!document.getElementById('se-hub-nav-hub-styles')) {
       var s = document.createElement('style');
       s.id = 'se-hub-nav-hub-styles';
-      s.textContent = '.se-site-nav-link--hub{font-weight:600;}';
+      s.textContent =
+        '.se-site-nav-link--hub{font-weight:600;}' +
+        'a.se-site-nav-link--admin.se-site-nav-link--active,' +
+        'a.se-site-nav-link--admin[aria-current="page"]{color:#0a0a1a;}';
       document.head.appendChild(s);
     }
     document.querySelectorAll('nav[data-se-hub-nav]').forEach(function (nav) {
@@ -166,6 +218,18 @@
         tails.push(node);
         node.remove();
       });
+      var hasAdminTail = tails.some(function (n) {
+        return n.id === 'admin-hub-nav-link' || n.id === 'league-admin-nav-link';
+      });
+      if (!hasAdminTail) {
+        var adminLink = document.createElement('a');
+        adminLink.id = 'admin-hub-nav-link';
+        adminLink.setAttribute('data-se-hub-tail', '');
+        adminLink.className = 'se-site-nav-link se-site-nav-link--admin hidden';
+        adminLink.href = 'SouthEnd_Admin_Hub.html';
+        adminLink.textContent = 'Admin';
+        tails.push(adminLink);
+      }
       nav.innerHTML = buildCore(ctx, active);
       tails.forEach(function (node) {
         nav.appendChild(node);
@@ -174,8 +238,12 @@
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', run);
+    document.addEventListener('DOMContentLoaded', function () {
+      run();
+      scheduleAccessWatch();
+    });
   } else {
     run();
+    scheduleAccessWatch();
   }
 })();

@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <base href="/league-play/" />
-    <meta charset="utf-8" />
+<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>League — Invite inbox</title>
     <link rel="icon" type="image/jpeg" href="../favicon.jpg">
@@ -22,7 +21,7 @@
       </div>
       <a
         class="league-header-profile"
-        href="/account?return=SouthEnd_Pickleball_Hub.html"
+        href="../SouthEnd_OpenPlay_Account.html?return=SouthEnd_Pickleball_Hub.html"
         aria-label="Open main Pickleball profile and account (same as Open Play)"
       >
         <svg class="league-header-profile__icon" viewBox="0 0 24 24" aria-hidden="true"
@@ -32,9 +31,10 @@
       </a>
     </div>
     <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav></nav>
-    <script src="js/pickleball-hub-nav.js"></script>
+    <script src="js/pickleball-hub-nav.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
     <nav class="se-site-nav" aria-label="League play">
-      <a class="se-site-nav-link" href="SouthEnd_League_Account.html">Account</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Overview.html">Overview</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Schedule.html">Schedule</a>
       <a class="se-site-nav-link" href="SouthEnd_League_Teams.html">Register</a>
       <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_League_Invites.html" aria-current="page">Invites</a>
     </nav>
@@ -52,12 +52,15 @@
       data-share-context="league"
       aria-label="Invite friends to league play"
     ></footer>
-    <script src="/js/pickleball-invite-share.js"></script>
+    <script src="../js/pickleball-invite-share.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="js/league-firebase-config.js"></script>
-    <script src="js/south-end-league-sync.js?v=20260426-adminsingle"></script>
+    <script src="js/league-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="js/south-end-league-sync.js?v=20260426-league-flow&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="../js/openplay-firebase-config.js"></script>
+    <script src="../js/south-end-openplay-sync.js"></script>
+    <script src="../js/openplay-profile-panel.js?v=20260426-leagueprofile"></script>
     <script>
       (function () {
         var L = window.LeagueSync;
@@ -69,10 +72,20 @@
         var list = document.getElementById("list");
         var empty = document.getElementById("empty");
         var pendingInviteId = new URLSearchParams(window.location.search).get("invite");
+        function leagueInvitesReturnTarget() {
+          var ret = "league-play/SouthEnd_League_Invites.html";
+          if (pendingInviteId) {
+            ret += "?invite=" + encodeURIComponent(pendingInviteId);
+          }
+          return ret;
+        }
         function redirectToProfile() {
+          if (L && L.redirectToMainPickleballAccountWithReturn) {
+            L.redirectToMainPickleballAccountWithReturn(leagueInvitesReturnTarget());
+            return;
+          }
           window.location.href =
-            "/account?return=" +
-            encodeURIComponent("SouthEnd_Pickleball_Hub.html");
+            "../SouthEnd_OpenPlay_Account.html?return=" + encodeURIComponent(leagueInvitesReturnTarget());
         }
         function resolveTeamName(teamId) {
           return L.getTeam(teamId)

@@ -246,6 +246,84 @@
     return !!(SE_OPENPLAY_FIREBASE && SE_OPENPLAY_FIREBASE.apiKey && SE_OPENPLAY_FIREBASE.databaseURL);
   }
 
+  function currentPathname() {
+    try {
+      return String(global.location && global.location.pathname ? global.location.pathname : '');
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function currentFileName() {
+    var pathname = currentPathname();
+    if (!pathname) return '';
+    var clean = pathname.split('?')[0].split('#')[0];
+    var parts = clean.split('/');
+    return String(parts[parts.length - 1] || '').trim();
+  }
+
+  function isAccountPage() {
+    var name = currentFileName();
+    if (/^SouthEnd_OpenPlay_Account\.html$/i.test(name)) return true;
+    var pathname = currentPathname().toLowerCase();
+    return pathname === '/account' || /\/account\/?$/.test(pathname);
+  }
+
+  function accountHrefForCurrentPath() {
+    var pathname = currentPathname();
+    if (/\/league-play\//i.test(pathname)) return '../SouthEnd_OpenPlay_Account.html';
+    return 'SouthEnd_OpenPlay_Account.html';
+  }
+
+  function signedOutReturnTarget() {
+    var pathname = currentPathname();
+    if (!pathname) return '';
+    var leagueMatch = pathname.match(/\/league-play\/([^/?#]+)$/i);
+    if (leagueMatch && leagueMatch[1]) return 'league-play/' + leagueMatch[1];
+    var name = currentFileName();
+    if (name) return name;
+    return '';
+  }
+
+  function likelySignedInFromStorage() {
+    try {
+      var ls = global.localStorage;
+      if (!ls) return false;
+      for (var i = 0; i < ls.length; i++) {
+        var key = String(ls.key(i) || '');
+        if (key.indexOf('firebase:authUser:') !== 0) continue;
+        var raw = ls.getItem(key);
+        if (!raw) continue;
+        var parsed = JSON.parse(raw);
+        if (parsed && parsed.uid) return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  /** Access gate: if signed out, force all non-account pages to account/sign-in. */
+  function enforceSignedInAccessGate() {
+    if (isAccountPage()) return;
+
+    function redirectToAccount() {
+      var target = accountHrefForCurrentPath();
+      var ret = signedOutReturnTarget();
+      if (ret) {
+        target += (target.indexOf('?') === -1 ? '?' : '&') + 'return=' + encodeURIComponent(ret);
+      }
+      global.location.replace(target);
+    }
+
+    if (!firebaseConfigured() || !likelySignedInFromStorage()) {
+      redirectToAccount();
+      return;
+    }
+
+    onAuthStateChanged(function (user) {
+      if (!user) redirectToAccount();
+    });
+  }
+
   var firebaseReady = false;
   var firebaseInitFailed = false;
   var firebaseInitPromise = null;
@@ -904,15 +982,13 @@
     if (!firebaseConfigured() || !uid) return Promise.resolve(false);
     return loadAdminUidFlag(uid).then(function (isAdmin) {
       if (isAdmin) return true;
+      if (id === MODULE_ADVANCED_OPEN_PLAY) {
+        return loadUserProfile(uid).then(function (p) {
+          return isAdvancedOpenPlayEligibleProfile(p);
+        });
+      }
       return loadModuleAccess(uid).then(function (access) {
-        var manual = !!(access && access[id] && access[id].enabled === true);
-        if (manual) return true;
-        if (id === MODULE_ADVANCED_OPEN_PLAY) {
-          return loadUserProfile(uid).then(function (p) {
-            return isAdvancedOpenPlayEligibleProfile(p);
-          });
-        }
-        return false;
+        return !!(access && access[id] && access[id].enabled === true);
       });
     });
   }
@@ -1122,4 +1198,6 @@
     pushBoardRsvpLog: pushBoardRsvpLog,
     deleteBoardMessage: deleteBoardMessage,
   };
+
+  enforceSignedInAccessGate();
 })(typeof window !== 'undefined' ? window : this);

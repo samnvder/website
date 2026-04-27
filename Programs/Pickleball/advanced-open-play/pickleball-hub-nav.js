@@ -3,6 +3,9 @@
  * Deployed with Firebase Hosting public root (live/). Pages mount via <nav data-se-hub-nav>.
  */
 (function () {
+  var openPlayAccessState = 'pending';
+  var authWatchStarted = false;
+
   function isHostedOpenPlaySite() {
     try {
       var h =
@@ -143,17 +146,67 @@
       ['board', p.board, 'Message Board'],
     ];
     return order
+      .filter(function (row) {
+        return row[0] !== 'openplay' || openPlayAccessState === 'allowed';
+      })
       .map(function (row) {
         return link(row[1], row[2], active, row[0]);
       })
       .join('');
   }
 
+  function setOpenPlayAccessState(state) {
+    if (openPlayAccessState === state) return;
+    openPlayAccessState = state;
+    run();
+  }
+
+  function watchOpenPlayAccess() {
+    if (authWatchStarted) return;
+    if (typeof window === 'undefined' || !window.SEOpenPlay) return;
+    var SE = window.SEOpenPlay;
+    if (!SE.firebaseConfigured || !SE.firebaseConfigured() || !SE.initFirebase || !SE.onAuthStateChanged) {
+      setOpenPlayAccessState('denied');
+      authWatchStarted = true;
+      return;
+    }
+    authWatchStarted = true;
+    SE.initFirebase()
+      .then(function () {
+        SE.onAuthStateChanged(function (user) {
+          if (!user || !SE.hasModuleAccess) {
+            setOpenPlayAccessState('denied');
+            return;
+          }
+          SE.hasModuleAccess(user.uid, SE.MODULE_ADVANCED_OPEN_PLAY || 'advanced_open_play')
+            .then(function (allowed) {
+              setOpenPlayAccessState(allowed ? 'allowed' : 'denied');
+            })
+            .catch(function () {
+              setOpenPlayAccessState('denied');
+            });
+        });
+      })
+      .catch(function () {
+        setOpenPlayAccessState('denied');
+      });
+  }
+
+  function scheduleAccessWatch() {
+    watchOpenPlayAccess();
+    setTimeout(watchOpenPlayAccess, 0);
+    setTimeout(watchOpenPlayAccess, 150);
+    setTimeout(watchOpenPlayAccess, 500);
+  }
+
   function run() {
     if (!document.getElementById('se-hub-nav-hub-styles')) {
       var s = document.createElement('style');
       s.id = 'se-hub-nav-hub-styles';
-      s.textContent = '.se-site-nav-link--hub{font-weight:600;}';
+      s.textContent =
+        '.se-site-nav-link--hub{font-weight:600;}' +
+        'a.se-site-nav-link--admin.se-site-nav-link--active,' +
+        'a.se-site-nav-link--admin[aria-current="page"]{color:#0a0a1a;}';
       document.head.appendChild(s);
     }
     document.querySelectorAll('nav[data-se-hub-nav]').forEach(function (nav) {
@@ -166,6 +219,18 @@
         tails.push(node);
         node.remove();
       });
+      var hasAdminTail = tails.some(function (n) {
+        return n.id === 'admin-hub-nav-link' || n.id === 'league-admin-nav-link';
+      });
+      if (!hasAdminTail) {
+        var adminLink = document.createElement('a');
+        adminLink.id = 'admin-hub-nav-link';
+        adminLink.setAttribute('data-se-hub-tail', '');
+        adminLink.className = 'se-site-nav-link se-site-nav-link--admin hidden';
+        adminLink.href = 'SouthEnd_Admin_Hub.html';
+        adminLink.textContent = 'Admin';
+        tails.push(adminLink);
+      }
       nav.innerHTML = buildCore(ctx, active);
       tails.forEach(function (node) {
         nav.appendChild(node);
@@ -174,8 +239,12 @@
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', run);
+    document.addEventListener('DOMContentLoaded', function () {
+      run();
+      scheduleAccessWatch();
+    });
   } else {
     run();
+    scheduleAccessWatch();
   }
 })();

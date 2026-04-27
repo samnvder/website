@@ -1,14 +1,18 @@
 ---
-description: Pickleball Advanced Open Play local mirror — advanced-open-play/testing. Invoke with command-local-test.
+description: Pickleball local test site — serve advanced-open-play/testing/local-page directly. Invoke with command-local-test.
 globs: []
 alwaysApply: false
 ---
 
 # command-local-test — Quick local QA (Pickleball Advanced Open Play)
 
-> **Invoke:** Type `command-local-test`, `@command-local-test`, or "run local test" for mirrored Open Play pages.
+> **Invoke:** Type `command-local-test`, `@command-local-test`, or "run local test" for the Open Play local-page site.
 
 ---
+
+## Law
+
+`Programs/Pickleball/advanced-open-play/testing/local-page/` is the only local test site source. Do not mirror staging/live into it unless Sam explicitly asks for a copy operation.
 
 ## Action
 
@@ -16,18 +20,19 @@ alwaysApply: false
    ```powershell
    npm run local-test
    ```
-   This runs `Programs/Pickleball/advanced-open-play/testing/scripts/local-test.js` (copies the active tree from `Programs/Pickleball/advanced-open-play/{staging|live}/` into `Programs/Pickleball/advanced-open-play/testing/local-page/` and writes hub `index.html`) then starts **live-server** on port **3456** and opens `/Programs/Pickleball/advanced-open-play/testing/local-page/index.html`.
+   This starts **live-server** on port **3456** and opens `/Programs/Pickleball/advanced-open-play/testing/local-page/index.html`. It does not copy files.
 
-2. **Copy only** (no browser):
+2. **Guard only** (no browser):
    ```powershell
    npm run local-test:sync
    ```
+   This validates the local test site exists. It does not copy files.
 
 ---
 
-## What gets mirrored
+## What gets served
 
-Configured in `Programs/Pickleball/advanced-open-play/testing/scripts/local-test.js` (`FILES` array). Includes RSVP, check-in, and shared `js/` under the active tree.
+The existing files under `Programs/Pickleball/advanced-open-play/testing/local-page/`.
 
 ---
 
@@ -35,9 +40,9 @@ Configured in `Programs/Pickleball/advanced-open-play/testing/scripts/local-test
 
 | Path | Purpose |
 |------|---------|
-| `Programs/Pickleball/advanced-open-play/testing/local-page/...` | Canonical mirror — **not** for deploy |
+| `Programs/Pickleball/advanced-open-play/testing/local-page/...` | Canonical local test site — **not** for deploy |
 
-Both mirror folders are gitignored — regenerate with `npm run local-test:sync` anytime.
+Do not regenerate this folder from staging/live during normal local development.
 
 ---
 
@@ -51,4 +56,4 @@ Canonical path:
 
 ## Staging vs live (Open Play)
 
-Default dev edits go to **`Programs/Pickleball/advanced-open-play/staging/`**. **`npm run local-test`** mirrors whichever tree **`openplay-mode.json`** selects (`activeTree`: `staging` or `live`). Firebase Hosting always deploys **`Programs/Pickleball/live/`** — guarded by **`openplay-deploy.js`**. See **`openplay-mode.mdc`** and **`Programs/Pickleball/README.md`**.
+Local preview edits go to **`Programs/Pickleball/advanced-open-play/testing/local-page/`**. Firebase Hosting deploys **`Programs/Pickleball/live/`** only when Sam explicitly asks for production propagation/deploy.

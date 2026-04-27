@@ -21,11 +21,10 @@ Open `http://127.0.0.1:8080/`.
 ## Smoke path (two browsers or normal + private)
 
 1. **Player A (captain)**  
-   - `SouthEnd_League_Account.html` — sign up, save directory with **opt-in** for name lookup.  
-   - `SouthEnd_League_Teams.html` — check terms, choose **Captain / team registration**, then create a team.
+   - Sign in from `SouthEnd_League_Teams.html`, then check terms, choose **Captain / team registration**, and create a team.
 
 2. **Player B (invitee)**  
-   - Sign up on Account page, opt-in.  
+   - Sign in through the main Pickleball profile/account page and make sure name lookup is enabled.
    - `SouthEnd_League_Invites.html` — keep ready (or refresh after invite).
 
 3. **Invite**  

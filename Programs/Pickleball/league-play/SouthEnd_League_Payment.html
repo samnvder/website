@@ -33,7 +33,6 @@
     <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav></nav>
     <script src="js/pickleball-hub-nav.js"></script>
     <nav class="se-site-nav" aria-label="League play">
-      <a class="se-site-nav-link" href="SouthEnd_League_Account.html">Account</a>
       <a class="se-site-nav-link" href="SouthEnd_League_Teams.html">Register</a>
       <a class="se-site-nav-link" href="SouthEnd_League_Invites.html">Invites</a>
     </nav>
@@ -74,17 +73,15 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script src="js/league-firebase-config.js"></script>
     <script src="js/south-end-league-sync.js?v=20260426-profileclick"></script>
+    <script src="/js/openplay-firebase-config.js"></script>
+    <script src="/js/south-end-openplay-sync.js"></script>
+    <script src="/js/openplay-profile-panel.js?v=20260426-leagueprofile"></script>
     <script>
       (function () {
         var L = window.LeagueSync;
         if (!L || !window.LEAGUE_FIREBASE_CONFIG) return;
-        var config = window.LEAGUE_FIREBASE_CONFIG;
-        if (!L.init(config) || !config.apiKey) return;
-        L.onAuth(function () {});
-      })();
-    </script>
-    <script>
-      (function () {
+        if (!L.init(window.LEAGUE_FIREBASE_CONFIG) || !window.LEAGUE_FIREBASE_CONFIG.apiKey) return;
+
         var PAYPAL_LINKS = {
           50: "",
           75: "",
@@ -94,33 +91,73 @@
         var PAYPAL_FALLBACK_URL = "https://www.paypal.com/qrcodes/managed/e99aaef1-4565-4c15-aba7-c7853b9c4aca";
         var params = new URLSearchParams(window.location.search);
         var amount = Math.max(0, Number(params.get("amount")) || 0);
-        var type = String(params.get("type") || "").toLowerCase();
+        var regType = String(params.get("type") || "").toLowerCase();
         var amountEl = document.getElementById("leaguePaymentAmount");
         var copyEl = document.getElementById("leaguePaymentCopy");
         var btn = document.getElementById("leaguePayPalBtn");
         var hint = document.getElementById("leaguePaymentHint");
+        var payHeading = document.getElementById("leaguePaymentHeading");
+        var sub = document.querySelector(".hdr-sub");
         var label = "$" + String(amount);
         var isKnownLeagueFee = amount === 50 || amount === 75 || amount === 200 || amount === 250;
         var paymentUrl = PAYPAL_LINKS[amount] || PAYPAL_FALLBACK_URL;
 
-        if (amountEl) amountEl.textContent = "Total Due: " + label;
-        if (copyEl) {
-          copyEl.textContent = type === "solo"
-            ? "Complete your solo league registration payment in PayPal."
-            : "Complete your team league registration payment in PayPal.";
-        }
-        if (btn) {
-          btn.href = paymentUrl;
-          btn.textContent = amount > 0 ? "Open PayPal (" + label + ") ->" : "Open PayPal ->";
-        }
-        if (hint) {
-          hint.textContent = PAYPAL_LINKS[amount]
-            ? "PayPal will open with this amount."
-            : "Enter this amount manually in PayPal.";
-          if (!isKnownLeagueFee) {
-            hint.textContent = "If this amount looks wrong, return to registration before paying.";
+        function initFromQuery() {
+          if (amountEl) amountEl.textContent = "Total Due: " + label;
+          if (copyEl) {
+            copyEl.textContent = regType === "solo"
+              ? "Complete your solo league registration payment in PayPal."
+              : "Complete your team league registration payment in PayPal.";
+          }
+          if (btn) {
+            btn.href = paymentUrl;
+            btn.textContent = amount > 0 ? "Open PayPal (" + label + ") ->" : "Open PayPal ->";
+          }
+          if (hint) {
+            hint.textContent = PAYPAL_LINKS[amount]
+              ? "PayPal will open with this amount."
+              : "Enter this amount manually in PayPal.";
+            if (!isKnownLeagueFee) {
+              hint.textContent = "If this amount looks wrong, return to registration before paying.";
+            }
           }
         }
+
+        function applyStaffTeamPaymentRecorded() {
+          document.body.classList.add("league-page--team-payment-on-file");
+          if (payHeading) payHeading.textContent = "Payment on file";
+          if (sub) sub.textContent = "League staff have recorded a team payment for your squad.";
+          if (amountEl) amountEl.textContent = "No PayPal total due (staff)";
+          if (copyEl) {
+            copyEl.textContent =
+              "League staff marked your team as paid. You do not need to use PayPal on this page unless the club tells you to pay again.";
+          }
+          if (btn) {
+            btn.removeAttribute("href");
+            btn.removeAttribute("target");
+            btn.removeAttribute("rel");
+            btn.setAttribute("hidden", "true");
+            btn.setAttribute("aria-hidden", "true");
+            btn.style.display = "none";
+          }
+          if (hint) hint.textContent = "";
+        }
+
+        initFromQuery();
+
+        L.onAuth(function (user) {
+          if (!user) return;
+          L.getLeagueAccount(user.uid)
+            .then(function (acct) {
+              if (!acct || !acct.teamId) return null;
+              if (regType === "solo") return null;
+              return L.getTeam(acct.teamId);
+            })
+            .then(function (team) {
+              if (team && team.adminMarkedPaid === true) applyStaffTeamPaymentRecorded();
+            })
+            .catch(function () {});
+        });
       })();
     </script>
   </body>

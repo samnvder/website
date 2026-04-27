@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <base href="/league-play/" />
-    <meta charset="utf-8" />
+<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>South End League Play — Hub</title>
     <link rel="icon" type="image/jpeg" href="../favicon.jpg">
@@ -22,7 +21,7 @@
       </div>
       <a
         class="league-header-profile"
-        href="/account?return=SouthEnd_Pickleball_Hub.html"
+        href="../SouthEnd_OpenPlay_Account.html?return=SouthEnd_Pickleball_Hub.html"
         aria-label="Open main Pickleball profile and account (same as Open Play)"
       >
         <svg class="league-header-profile__icon" viewBox="0 0 24 24" aria-hidden="true"
@@ -32,9 +31,10 @@
       </a>
     </div>
     <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav></nav>
-    <script src="js/pickleball-hub-nav.js"></script>
+    <script src="js/pickleball-hub-nav.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
     <nav class="se-site-nav" aria-label="League play">
-      <a class="se-site-nav-link" href="SouthEnd_League_Account.html">Account</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Overview.html">Overview</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Schedule.html">Schedule</a>
       <a class="se-site-nav-link" id="leagueRegisterNavLink" href="SouthEnd_League_Teams.html">Register</a>
       <a class="se-site-nav-link" href="SouthEnd_League_Invites.html">Invites</a>
     </nav>
@@ -47,46 +47,20 @@
           standings, and playoff seeding.
         </p>
         <div class="league-hero-actions" id="leagueRegisterPrompt">
-          <a class="btn" href="SouthEnd_League_Teams.html">Register</a>
+          <a class="btn" id="leagueHeroCta" href="SouthEnd_League_Teams.html">Register</a>
         </div>
       </section>
 
-      <div class="league-content-grid">
-        <section class="league-card">
-          <h2>League fees</h2>
-          <ul>
-            <li>The fee is due in full at registration or by the established deadline.</li>
-            <li><strong>$250</strong> for teams with any non-member.</li>
-            <li><strong>$200</strong> for teams with all members.</li>
-            <li><strong>$75</strong> for solo non-member registration.</li>
-            <li><strong>$50</strong> for solo member registration.</li>
-          </ul>
-        </section>
-
-        <section class="league-card">
-          <h2>Weekly schedule</h2>
-          <table class="league-table">
-            <thead>
-              <tr>
-                <th>Day</th>
-                <th>Time</th>
-                <th>Activity</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>Monday</td><td>10:00 AM - 12:00 PM</td><td>3.0 women's</td></tr>
-              <tr><td>Saturday</td><td>2:00 PM - 4:00 PM</td><td>3.0 mixed</td></tr>
-              <tr><td>Tuesday</td><td>10:00 AM - 12:00 PM</td><td>3.5 women's</td></tr>
-              <tr><td>Saturday</td><td>4:00 PM - 6:00 PM</td><td>3.5 mixed</td></tr>
-              <tr><td>Sunday</td><td>2:00 PM - 4:00 PM</td><td>3.5 men's</td></tr>
-              <tr><td>Wednesday</td><td>10:00 AM - 12:00 PM</td><td>4.0 women's</td></tr>
-              <tr><td>Friday</td><td>5:00 PM - 7:00 PM</td><td>4.0 mixed</td></tr>
-              <tr><td>Sunday</td><td>4:00 PM - 6:00 PM</td><td>4.0 men's</td></tr>
-              <tr><td>Friday</td><td>7:00 PM - 9:00 PM</td><td>Open (5.0+)</td></tr>
-            </tbody>
-          </table>
-        </section>
-      </div>
+      <section class="league-card">
+        <h2>League fees</h2>
+        <ul>
+          <li>The fee is due in full at registration or by the established deadline.</li>
+          <li><strong>$250</strong> for teams with any non-member.</li>
+          <li><strong>$200</strong> for teams with all members.</li>
+          <li><strong>$75</strong> for solo non-member registration.</li>
+          <li><strong>$50</strong> for solo member registration.</li>
+        </ul>
+      </section>
 
       <section class="league-card">
         <h2>League play structure</h2>
@@ -164,383 +138,63 @@
       data-share-context="league"
       aria-label="Invite friends to league play"
     ></footer>
-    <script src="/js/pickleball-invite-share.js"></script>
+    <script src="../js/pickleball-invite-share.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="js/league-firebase-config.js"></script>
-    <script src="js/south-end-league-sync.js?v=20260426-adminsingle"></script>
-    <script src="js/league-team-builder.js"></script>
+    <script src="js/league-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="js/south-end-league-sync.js?v=20260426-adminsingle&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="../js/openplay-firebase-config.js"></script>
+    <script src="../js/south-end-openplay-sync.js"></script>
+    <script src="../js/openplay-profile-panel.js?v=20260426-leagueprofile"></script>
+    <script src="js/league-team-builder.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
     <script>
       (function () {
+        var heroCta = document.getElementById("leagueHeroCta");
         var registerPrompt = document.getElementById("leagueRegisterPrompt");
-        var registerNavLink = document.getElementById("leagueRegisterNavLink");
         var L = window.LeagueSync;
 
-        function setRegisterVisible(isVisible) {
-          if (registerPrompt) registerPrompt.hidden = !isVisible;
-          if (registerNavLink) registerNavLink.hidden = !isVisible;
+        function applyHeroCta(account) {
+          if (!heroCta) return;
+          var onTeam = !!(account && account.teamId);
+          var committed =
+            (L.leagueAccountIsCommitted && L.leagueAccountIsCommitted(account)) ||
+            !!(account && (account.registrationStatus || account.teamId));
+          if (onTeam) {
+            heroCta.textContent = "View Team";
+            heroCta.href = "SouthEnd_League_Teams.html";
+            if (registerPrompt) registerPrompt.hidden = false;
+            return;
+          }
+          if (committed) {
+            heroCta.textContent = "Registration status";
+            heroCta.href = "SouthEnd_League_Overview.html";
+            if (registerPrompt) registerPrompt.hidden = false;
+            return;
+          }
+          heroCta.textContent = "Register";
+          heroCta.href = "SouthEnd_League_Teams.html";
+          if (registerPrompt) registerPrompt.hidden = false;
         }
 
-        if (!registerPrompt || !L || !window.LEAGUE_FIREBASE_CONFIG) return;
+        if (!heroCta || !L || !window.LEAGUE_FIREBASE_CONFIG) return;
         if (!L.init(LEAGUE_FIREBASE_CONFIG) || !LEAGUE_FIREBASE_CONFIG.apiKey) return;
 
         L.onAuth(function (user) {
           if (!user) {
-            setRegisterVisible(true);
+            if (heroCta) {
+              heroCta.textContent = "Register";
+              heroCta.href = "SouthEnd_League_Teams.html";
+            }
+            if (registerPrompt) registerPrompt.hidden = false;
             return;
           }
           L.getLeagueAccount(user.uid)
             .then(function (account) {
-              setRegisterVisible(!(account && account.registrationStatus));
+              applyHeroCta(account);
             })
             .catch(function () {
-              setRegisterVisible(true);
-            });
-        });
-      })();
-    </script>
-    <script>
-      (function () {
-        if (!document.getElementById("moduleActionLink")) return;
-
-        var L = window.LeagueSync;
-        var ROSTER_MAX = 6;
-        var activeAccount = null;
-        var activeTeam = null;
-        var moduleActionLink = document.getElementById("moduleActionLink");
-        var statusLabel = document.getElementById("leagueStatusLabel");
-        var teamPanel = document.getElementById("teamPanel");
-        var teamStatus = document.getElementById("teamStatus");
-        var teamDetails = document.getElementById("teamDetails");
-        var rosterList = document.getElementById("teamRoster");
-        var deleteTeamSection = document.getElementById("deleteTeamSection");
-        var deleteTeamBtn = document.getElementById("deleteTeamBtn");
-        var deleteTeamStatus = document.getElementById("deleteTeamStatus");
-
-        var firebaseReady = L.init(LEAGUE_FIREBASE_CONFIG) && LEAGUE_FIREBASE_CONFIG && LEAGUE_FIREBASE_CONFIG.apiKey;
-        if (!firebaseReady) {
-          var b = document.getElementById("banner");
-          b.style.display = "block";
-          b.textContent = "League access is not configured yet.";
-        } else {
-          statusLabel.textContent = "Preparing league dashboard.";
-        }
-
-        function redirectToProfile() {
-          window.location.href =
-            "/account?return=" +
-            encodeURIComponent("SouthEnd_Pickleball_Hub.html");
-        }
-
-        function isRegistered(account) {
-          return !!(account && account.registrationStatus);
-        }
-
-        function isCaptain() {
-          return !!(activeAccount && activeAccount.registrationType === "captain");
-        }
-
-        function setMainAction(account) {
-          activeAccount = account || null;
-          if (isRegistered(account)) {
-            moduleActionLink.textContent = "View Team";
-            moduleActionLink.href = "#teamPanel";
-            document.getElementById("actionCardTitle").textContent = "View Team";
-            document.getElementById("actionCardCopy").textContent = "Your roster, pending invites, and team management.";
-            statusLabel.textContent = "League registration confirmed.";
-            return;
-          }
-          moduleActionLink.textContent = "Register";
-          moduleActionLink.href = "SouthEnd_League_Teams.html";
-          document.getElementById("actionCardTitle").textContent = "Register";
-          document.getElementById("actionCardCopy").textContent = "Team captain registration and solo player placement requests.";
-          statusLabel.textContent = "Registration is available.";
-          teamPanel.style.display = "none";
-        }
-
-        function resolvePlayerName(uid) {
-          return L.getDirectoryEntry(uid)
-            .catch(function () { return null; })
-            .then(function (entry) {
-              if (entry && entry.displayName) return entry.displayName;
-              return L.getUserProfile(uid).catch(function () { return null; });
-            })
-            .then(function (result) {
-              if (typeof result === "string") return result;
-              if (result) {
-                var built = L.buildDisplayName(result);
-                if (built) return built;
-              }
-              var u = L.getCurrentUser();
-              if (u && u.uid === uid) return u.displayName || u.email || "You";
-              return null;
-            });
-        }
-
-        function renderRosterPlayer(name, isCaptainRole) {
-          var chip = document.createElement("div");
-          chip.className = "league-profile-chip";
-          chip.style.display = "flex";
-          chip.style.alignItems = "center";
-          chip.style.gap = "8px";
-          if (isCaptainRole) {
-            var star = document.createElement("span");
-            star.textContent = "\u2605";
-            star.style.cssText = "color:var(--neon);font-size:16px;flex-shrink:0;";
-            star.setAttribute("aria-label", "Captain");
-            chip.appendChild(star);
-          }
-          var nameEl = document.createElement("strong");
-          nameEl.textContent = name;
-          chip.appendChild(nameEl);
-          var roleEl = document.createElement("span");
-          roleEl.textContent = isCaptainRole ? "Captain" : "Player";
-          roleEl.style.cssText = "margin-left:auto;font-size:11px;padding:4px 10px;border-radius:20px;background:rgba(0,255,136,0.08);color:rgba(255,255,255,0.6);letter-spacing:0.06em;text-transform:uppercase;flex-shrink:0;";
-          if (isCaptainRole) roleEl.style.background = "rgba(0,255,136,0.15)";
-          chip.appendChild(roleEl);
-          var li = document.createElement("li");
-          li.appendChild(chip);
-          rosterList.appendChild(li);
-        }
-
-        function renderPendingInvites(invites) {
-          var section = document.getElementById("pendingInvitesSection");
-          var list = document.getElementById("pendingInvitesList");
-          var empty = document.getElementById("pendingInvitesEmpty");
-          list.innerHTML = "";
-          var pending = invites.filter(function (inv) {
-            return inv.data && inv.data.status === "pending";
-          });
-          if (!pending.length) {
-            empty.style.display = "block";
-            section.style.display = "block";
-            return;
-          }
-          empty.style.display = "none";
-          section.style.display = "block";
-          pending.forEach(function (inv) {
-            var chip = document.createElement("div");
-            chip.className = "league-profile-chip";
-            chip.style.display = "flex";
-            chip.style.alignItems = "center";
-            chip.style.gap = "8px";
-            var targetUid = inv.data.toUid;
-            var targetEmail = inv.data.toEmail;
-            var fallback = targetEmail || "Invited player";
-            var nameEl = document.createElement("strong");
-            nameEl.textContent = fallback;
-            if (targetUid) {
-              resolvePlayerName(targetUid).then(function (name) {
-                if (name) nameEl.textContent = name;
-              });
-            }
-            chip.appendChild(nameEl);
-            var cancelBtn = document.createElement("button");
-            cancelBtn.type = "button";
-            cancelBtn.textContent = "Cancel";
-            cancelBtn.style.cssText = "margin-left:auto;font-size:11px;padding:4px 12px;border-radius:20px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.12);cursor:pointer;font-family:Oswald,sans-serif;letter-spacing:0.06em;text-transform:uppercase;flex-shrink:0;transition:border-color 0.15s,color 0.15s;";
-            (function (invId, chipEl, liEl) {
-              cancelBtn.addEventListener("click", function () {
-                cancelBtn.disabled = true;
-                cancelBtn.textContent = "Canceling…";
-                L.cancelInvite(invId, L.getCurrentUser().uid)
-                  .then(function () {
-                    chipEl.style.opacity = "0.4";
-                    cancelBtn.textContent = "Canceled";
-                  })
-                  .catch(function (e) {
-                    cancelBtn.disabled = false;
-                    cancelBtn.textContent = "Cancel";
-                    alert((e && e.message) || "Could not cancel invite.");
-                  });
-              });
-            })(inv.id, chip, null);
-            chip.appendChild(cancelBtn);
-            var li = document.createElement("li");
-            li.appendChild(chip);
-            list.appendChild(li);
-          });
-        }
-
-        function showInviteControls(teamId, teamName, rosterSize) {
-          var section = document.getElementById("inviteSection");
-          if (rosterSize >= ROSTER_MAX || !isCaptain()) {
-            section.style.display = "none";
-            return;
-          }
-          section.style.display = "block";
-          window.LeagueTeamBuilder.init({
-            teamId: teamId,
-            teamName: teamName,
-            searchId: "hubSearch",
-            resultsId: "hubResults",
-            inviteStatusId: "hubInviteStatus",
-            emailInputId: "hubEmailInvite",
-            emailBtnId: "hubEmailInviteBtn",
-            emailStatusId: "hubEmailInviteStatus",
-          });
-        }
-
-        function showDeleteTeamControls(team) {
-          if (!deleteTeamSection) return;
-          if (!isCaptain() || !team || team.captainUid !== (L.getCurrentUser() && L.getCurrentUser().uid)) {
-            deleteTeamSection.style.display = "none";
-            return;
-          }
-          deleteTeamSection.style.display = "block";
-          deleteTeamStatus.textContent = "";
-        }
-
-        function setDivisionDisplay(teamOrAccount) {
-          var el = document.getElementById("teamDivision");
-          if (!el || !teamOrAccount) {
-            if (el) el.style.display = "none";
-            return;
-          }
-          var label = teamOrAccount.divisionLabel;
-          var sched =
-            teamOrAccount.divisionSchedule ||
-            (teamOrAccount.divisionDay && teamOrAccount.divisionTime
-              ? teamOrAccount.divisionDay + " · " + teamOrAccount.divisionTime
-              : "");
-          if (label) {
-            el.textContent = "Division: " + label + (sched ? " · " + sched : "");
-            el.style.display = "block";
-          } else {
-            el.textContent = "";
-            el.style.display = "none";
-          }
-        }
-
-        function loadTeam() {
-          teamPanel.style.display = "block";
-          teamDetails.style.display = "none";
-          rosterList.innerHTML = "";
-          var teamDivisionEl = document.getElementById("teamDivision");
-          if (teamDivisionEl) {
-            teamDivisionEl.textContent = "";
-            teamDivisionEl.style.display = "none";
-          }
-          if (!activeAccount || !activeAccount.teamId) {
-            if (activeAccount && activeAccount.registrationType === "solo" && activeAccount.registrationStatus) {
-              teamDetails.style.display = "block";
-              document.getElementById("teamNameDisplay").textContent = "Signed up solo";
-              document.getElementById("teamMeta").textContent = activeAccount.feeLabel || "";
-              setDivisionDisplay(activeAccount);
-              teamStatus.textContent = "";
-              document.getElementById("pendingInvitesSection").style.display = "none";
-              document.getElementById("inviteSection").style.display = "none";
-              deleteTeamSection.style.display = "none";
-              return;
-            }
-            teamStatus.textContent = activeAccount && activeAccount.registrationType === "solo"
-              ? "You're signed up solo. We'll pair you with a team when a spot is available."
-              : "You're signed up. Team details will appear here soon.";
-            deleteTeamSection.style.display = "none";
-            return;
-          }
-          teamStatus.textContent = "Loading your team…";
-          L.getTeam(activeAccount.teamId)
-            .then(function (team) {
-              if (!team) throw new Error("Team not found.");
-              activeTeam = team;
-              document.getElementById("teamNameDisplay").textContent = team.name || "Your team";
-              document.getElementById("teamMeta").textContent = team.feeLabel || "";
-              setDivisionDisplay(team);
-              var roster = [{ uid: team.captainUid, role: "Captain" }];
-              Object.keys(team.roster || {}).forEach(function (uid) {
-                if (uid !== team.captainUid) roster.push({ uid: uid, role: "Player" });
-              });
-              var spotsLeft = Math.max(0, ROSTER_MAX - roster.length);
-              document.getElementById("rosterCount").textContent =
-                roster.length + " of " + ROSTER_MAX + " roster spots filled" +
-                (spotsLeft > 0 && isCaptain() ? " · " + spotsLeft + " open" : "");
-              teamStatus.textContent = "";
-              teamDetails.style.display = "block";
-              return Promise.all(
-                roster.map(function (row) {
-                  return resolvePlayerName(row.uid)
-                    .then(function (name) {
-                      renderRosterPlayer(name || "Unnamed player", row.role === "Captain");
-                    });
-                })
-              ).then(function () {
-                if (isCaptain()) {
-                  return L.listInvitesFromCaptain(L.getCurrentUser().uid)
-                    .then(function (invites) {
-                      renderPendingInvites(invites);
-                      showInviteControls(activeAccount.teamId, team.name, roster.length);
-                      showDeleteTeamControls(team);
-                    })
-                    .catch(function () {
-                      showInviteControls(activeAccount.teamId, team.name, roster.length);
-                      showDeleteTeamControls(team);
-                    });
-                }
-                showDeleteTeamControls(team);
-              });
-            })
-            .catch(function (err) {
-              teamStatus.textContent = (err && err.message) || "Team details are not available yet.";
-            });
-        }
-
-        deleteTeamBtn.addEventListener("click", function () {
-          var u = L.getCurrentUser();
-          var expected = activeTeam && activeTeam.name ? activeTeam.name : "";
-          if (!u || !activeAccount || !activeAccount.teamId || !activeTeam || !isCaptain()) {
-            deleteTeamStatus.textContent = "Only the team captain can delete this team.";
-            return;
-          }
-          var typed = window.prompt(
-            "Type the team name exactly to delete this team:\n\n" + expected
-          );
-          if (typed === null) return;
-          typed = typed.trim();
-          if (!expected || typed !== expected) {
-            deleteTeamStatus.textContent = "Type the team name exactly to confirm deletion.";
-            return;
-          }
-          deleteTeamBtn.disabled = true;
-          deleteTeamStatus.textContent = "Deleting team...";
-          L.deleteTeamAsCaptain(activeAccount.teamId, u.uid, expected)
-            .then(function () {
-              activeAccount = null;
-              activeTeam = null;
-              deleteTeamStatus.textContent = "Team deleted.";
-              teamPanel.style.display = "none";
-              setMainAction(null);
-            })
-            .catch(function (err) {
-              deleteTeamBtn.disabled = false;
-              deleteTeamStatus.textContent = (err && err.message) || "Could not delete team.";
-            });
-        });
-
-        moduleActionLink.addEventListener("click", function (e) {
-          if (!isRegistered(activeAccount)) return;
-          e.preventDefault();
-          loadTeam();
-        });
-
-        if (!firebaseReady) return;
-
-        L.onAuth(function (u) {
-          if (!u) {
-            activeAccount = null;
-            statusLabel.textContent = "Opening your Pickleball profile...";
-            teamPanel.style.display = "none";
-            redirectToProfile();
-            return;
-          }
-          statusLabel.textContent = "Preparing your league dashboard.";
-          L.syncProfileToDirectory(u.uid);
-          L.getLeagueAccount(u.uid)
-            .then(setMainAction)
-            .catch(function () {
-              setMainAction(null);
-              statusLabel.textContent = "League dashboard ready.";
+              applyHeroCta(null);
             });
         });
       })();

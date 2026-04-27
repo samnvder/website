@@ -95,6 +95,11 @@ describe('database.rules.json', () => {
   it('locks admin_uids writes (admin status provisioned via Firebase Console only)', () => {
     const data = JSON.parse(fs.readFileSync(RULES_PATH, 'utf8'));
     const adminUids = data.rules.openplay_se.admin_uids;
+    assert.match(
+      adminUids['.read'],
+      /admin_uids/,
+      'admins must be able to read the admin UID map for staff-only tools'
+    );
     assert.strictEqual(
       adminUids.$uid['.write'],
       false,
@@ -196,6 +201,17 @@ describe('database.rules.json', () => {
     assert.ok(o.board_messages['.indexOn'].includes('ts'));
     assert.ok(o.league_invites['.indexOn'].includes('toUid'));
     assert.ok(o.league_teams['.indexOn'].includes('captainUid'));
+  });
+
+  it('allows league admins to read the league account collection', () => {
+    const data = JSON.parse(fs.readFileSync(RULES_PATH, 'utf8'));
+    const leagueAccount = data.rules.openplay_se.league_account;
+
+    assert.match(
+      leagueAccount['.read'],
+      /admin_uids/,
+      'league admin dashboard reads league_account as a collection'
+    );
   });
 
   it('keeps League Play open to signed-in accounts without module_access assignment', () => {

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <base href="/league-play/" />
-    <meta charset="utf-8" />
+<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>League — Rules &amp; Schedule Overview</title>
     <link rel="icon" type="image/jpeg" href="../favicon.jpg">
@@ -22,7 +22,7 @@
       </div>
       <a
         class="league-header-profile"
-        href="../advanced-open-play/staging/SouthEnd_OpenPlay_Account.html?return=SouthEnd_Pickleball_Hub.html"
+        href="../SouthEnd_OpenPlay_Account.html?return=SouthEnd_Pickleball_Hub.html"
         aria-label="Open main Pickleball profile and account (same as Open Play)"
       >
         <svg class="league-header-profile__icon" viewBox="0 0 24 24" aria-hidden="true"
@@ -32,10 +32,10 @@
       </a>
     </div>
     <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav></nav>
-    <script src="js/pickleball-hub-nav.js"></script>
+    <script src="js/pickleball-hub-nav.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
     <nav class="se-site-nav" aria-label="League play">
       <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_League_Overview.html" aria-current="page">Overview</a>
-      <a class="se-site-nav-link" href="SouthEnd_League_Account.html">Account</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Schedule.html">Schedule</a>
       <a class="se-site-nav-link" href="SouthEnd_League_Teams.html">Register</a>
       <a class="se-site-nav-link" href="SouthEnd_League_Invites.html">Invites</a>
     </nav>
@@ -47,48 +47,26 @@
           South End Pickleball League uses structured doubles match play, division-based scheduling, online results,
           standings, and playoff seeding.
         </p>
+        <div class="league-hero-actions">
+          <a class="btn league-overview-cta" id="leagueOverviewCta" href="SouthEnd_League_Teams.html">Register</a>
+        </div>
       </section>
 
-      <div class="league-content-grid">
-        <section class="league-card">
-          <h2>League fees</h2>
-          <ul>
-            <li>The fee is due in full at registration or by the established deadline.</li>
-            <li><strong>$250</strong> for teams with any non-member.</li>
-            <li><strong>$200</strong> for teams with all members.</li>
-            <li><strong>$75</strong> for solo non-member registration.</li>
-            <li><strong>$50</strong> for solo member registration.</li>
-          </ul>
-        </section>
-
-        <section class="league-card">
-          <h2>Weekly schedule</h2>
-          <table class="league-table">
-            <thead>
-              <tr>
-                <th>Day</th>
-                <th>Time</th>
-                <th>Activity</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>Monday</td><td>10:00 AM - 12:00 PM</td><td>3.0 women's</td></tr>
-              <tr><td>Saturday</td><td>2:00 PM - 4:00 PM</td><td>3.0 mixed</td></tr>
-              <tr><td>Tuesday</td><td>10:00 AM - 12:00 PM</td><td>3.5 women's</td></tr>
-              <tr><td>Saturday</td><td>4:00 PM - 6:00 PM</td><td>3.5 mixed</td></tr>
-              <tr><td>Sunday</td><td>2:00 PM - 4:00 PM</td><td>3.5 men's</td></tr>
-              <tr><td>Wednesday</td><td>10:00 AM - 12:00 PM</td><td>4.0 women's</td></tr>
-              <tr><td>Friday</td><td>5:00 PM - 7:00 PM</td><td>4.0 mixed</td></tr>
-              <tr><td>Sunday</td><td>4:00 PM - 6:00 PM</td><td>4.0 men's</td></tr>
-              <tr><td>Friday</td><td>7:00 PM - 9:00 PM</td><td>Open (5.0+)</td></tr>
-            </tbody>
-          </table>
-        </section>
-      </div>
+      <section class="league-card">
+        <h2>League fees</h2>
+        <ul>
+          <li>The fee is due in full at registration or by the established deadline.</li>
+          <li><strong>$250</strong> for teams with any non-member.</li>
+          <li><strong>$200</strong> for teams with all members.</li>
+          <li><strong>$75</strong> for solo non-member registration.</li>
+          <li><strong>$50</strong> for solo member registration.</li>
+        </ul>
+      </section>
 
       <section class="league-card">
         <h2>League play structure</h2>
         <ul>
+          <li>6-week league with a one week break followed by playoffs.</li>
           <li>Round robin doubles format.</li>
           <li>Each team plays two opponents per week: six games total per league day, one league day per week per division.</li>
           <li>Teams may stay together or swap players after each game within a match.</li>
@@ -162,19 +140,84 @@
       data-share-context="league"
       aria-label="Invite friends to league play"
     ></footer>
-    <script src="/js/pickleball-invite-share.js"></script>
+    <script src="../js/pickleball-invite-share.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="js/league-firebase-config.js"></script>
-    <script src="js/south-end-league-sync.js?v=20260426-adminsingle"></script>
+    <script src="js/league-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="js/south-end-league-sync.js?v=20260426-league-flow&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="../js/openplay-firebase-config.js"></script>
+    <script src="../js/south-end-openplay-sync.js"></script>
+    <script src="../js/openplay-profile-panel.js?v=20260426-leagueprofile"></script>
     <script>
       (function () {
         var L = window.LeagueSync;
-        if (!L || !window.LEAGUE_FIREBASE_CONFIG) return;
+        var overviewCta = document.getElementById("leagueOverviewCta");
+        function paymentUrlFor(amount, type) {
+          return "SouthEnd_League_Payment.html?amount=" +
+            encodeURIComponent(String(Math.max(0, Number(amount) || 0))) +
+            "&type=" + encodeURIComponent(type || "");
+        }
+        function applyRegisterCta() {
+          if (!overviewCta) return;
+          overviewCta.textContent = "Register";
+          overviewCta.href = "SouthEnd_League_Teams.html";
+        }
+        function applyFinalizeCta(amount, type) {
+          if (!overviewCta) return;
+          overviewCta.textContent = "Finalize registration";
+          overviewCta.href = paymentUrlFor(amount, type);
+        }
+        function applyOverviewCta(user, account) {
+          if (!overviewCta) return;
+          if (!account || !account.registrationStatus) {
+            applyRegisterCta();
+            return Promise.resolve();
+          }
+          if (!account.teamId) {
+            if (account.adminMarkedPaid === true) {
+              overviewCta.textContent = "Registration status";
+              overviewCta.href = "SouthEnd_League_Teams.html";
+              return Promise.resolve();
+            }
+            applyFinalizeCta(account.feeAmount || 0, "solo");
+            return Promise.resolve();
+          }
+          return L.getTeam(account.teamId).then(function (team) {
+            var isCaptain = !!(team && user && team.captainUid === user.uid);
+            if (isCaptain && team.adminMarkedPaid !== true) {
+              applyFinalizeCta(team.allMembers ? 200 : 250, "captain");
+              return;
+            }
+            overviewCta.textContent = "View Team";
+            overviewCta.href = "SouthEnd_League_Teams.html";
+          }).catch(function () {
+            overviewCta.textContent = "View Team";
+            overviewCta.href = "SouthEnd_League_Teams.html";
+          });
+        }
+        if (!L || !window.LEAGUE_FIREBASE_CONFIG) {
+          applyRegisterCta();
+          return;
+        }
         var config = window.LEAGUE_FIREBASE_CONFIG;
-        if (!L.init(config) || !config.apiKey) return;
-        L.onAuth(function () {});
+        if (!L.init(config) || !config.apiKey) {
+          applyRegisterCta();
+          return;
+        }
+        L.onAuth(function (user) {
+          if (!user) {
+            applyRegisterCta();
+            return;
+          }
+          L.getLeagueAccount(user.uid)
+            .then(function (account) {
+              return applyOverviewCta(user, account);
+            })
+            .catch(function () {
+              applyRegisterCta();
+            });
+        });
       })();
     </script>
   </body>

@@ -58,24 +58,65 @@
     return d.day + " · " + d.time;
   }
 
+  /** local-page mirror: use sibling HTML files. Production: Hosting rewrites /account and /admin. */
+  function isOpenPlayLocalMirror() {
+    try {
+      var p = global.location && global.location.pathname ? String(global.location.pathname) : "";
+      return p.indexOf("/local-page/") !== -1 || p.indexOf("testing/local-page") !== -1;
+    } catch (e) {
+      return false;
+    }
+  }
+
   function adminHubHref() {
-    return "/admin";
+    return isOpenPlayLocalMirror() ? "../SouthEnd_Admin_Hub.html" : "/admin";
+  }
+
+  function mainPickleballAccountHrefWithReturn(returnHtml) {
+    var ret = encodeURIComponent(returnHtml || "SouthEnd_Pickleball_Hub.html");
+    if (isOpenPlayLocalMirror()) {
+      return "../SouthEnd_OpenPlay_Account.html?return=" + ret;
+    }
+    return "/account?return=" + ret;
+  }
+
+  function mainPickleballAccountHref() {
+    return mainPickleballAccountHrefWithReturn("SouthEnd_Pickleball_Hub.html");
+  }
+
+  function patchLeagueHeaderProfileHrefs() {
+    if (!global.document) return;
+    var url = mainPickleballAccountHref();
+    var nodes = global.document.querySelectorAll("a.league-header-profile");
+    for (var i = 0; i < nodes.length; i++) {
+      nodes[i].setAttribute("href", url);
+    }
+  }
+
+  function loadLeagueAdminUidFlag(uid) {
+    return rtdb()
+      .ref(NS + "/admin_uids/" + uid)
+      .once("value")
+      .then(function (snap) {
+        return snap.val() === true;
+      })
+      .catch(function () {
+        return false;
+      });
   }
 
   function ensureAdminNavLink() {
-    var nav = global.document && global.document.querySelector(".se-site-nav");
+    var nav = global.document && global.document.querySelector("nav[data-se-hub-nav]");
     if (!nav) return null;
     var link = global.document.getElementById("league-admin-nav-link");
     if (!link) {
       link = global.document.createElement("a");
       link.id = "league-admin-nav-link";
-      link.textContent = "Admin";
       nav.appendChild(link);
     }
     link.className = "se-site-nav-link se-site-nav-link--admin hidden";
     link.href = adminHubHref();
     link.textContent = "Admin";
-    nav.appendChild(link);
     return link;
   }
 
@@ -86,7 +127,6 @@
     if (!link) {
       link = global.document.createElement("a");
       link.id = "league-admin-mobile-link";
-      link.textContent = "Admin";
       var profile = header.querySelector(".league-header-profile");
       if (profile && profile.parentNode === header) {
         header.insertBefore(link, profile);
@@ -100,13 +140,6 @@
     return link;
   }
 
-  function setLeagueAdminNavVisible(on) {
-    var link = global.document && global.document.getElementById("league-admin-nav-link");
-    if (link && link.parentNode) link.parentNode.removeChild(link);
-    var mobileLink = global.document && global.document.getElementById("league-admin-mobile-link");
-    if (mobileLink && mobileLink.parentNode) mobileLink.parentNode.removeChild(mobileLink);
-  }
-
   function leagueRegisterLinks() {
     if (!global.document) return [];
     return Array.prototype.slice.call(
@@ -114,31 +147,123 @@
     );
   }
 
-  function setLeagueRegisterNavVisible(on) {
-    leagueRegisterLinks().forEach(function (link) {
-      link.hidden = !on;
-      link.setAttribute("aria-hidden", on ? "false" : "true");
-      link.tabIndex = on ? 0 : -1;
+  function leagueInvitesLinks() {
+    if (!global.document) return [];
+    return Array.prototype.slice.call(
+      global.document.querySelectorAll(
+        'nav[aria-label="League play"] a[href="SouthEnd_League_Invites.html"]'
+      )
+    );
+  }
+
+  /** True once league_account has any registration or an assigned team. */
+  function leagueAccountIsCommitted(account) {
+    if (!account) return false;
+    return !!(account.registrationStatus || account.teamId);
+  }
+
+  function applyLeagueRegisterNav(account) {
+    var links = leagueRegisterLinks();
+    links.forEach(function (link) {
+      link.hidden = false;
+      var onTeam = !!(account && account.teamId);
+      var committed = leagueAccountIsCommitted(account);
+      if (onTeam) {
+        link.textContent = "View Team";
+        link.href = "SouthEnd_League_Teams.html";
+        link.setAttribute("aria-hidden", "false");
+        link.tabIndex = 0;
+        return;
+      }
+      if (committed) {
+        link.hidden = true;
+        link.setAttribute("aria-hidden", "true");
+        link.tabIndex = -1;
+        return;
+      }
+      link.textContent = "Register";
+      link.href = "SouthEnd_League_Teams.html";
+      link.setAttribute("aria-hidden", "false");
+      link.tabIndex = 0;
     });
   }
 
   function decorateLeagueRegisterNav(user) {
-    setLeagueRegisterNavVisible(true);
-    if (!user || !user.uid) return;
+    var links = leagueRegisterLinks();
+    if (!user || !user.uid) {
+      links.forEach(function (link) {
+        link.hidden = false;
+        link.textContent = "Register";
+        link.href = "SouthEnd_League_Teams.html";
+        link.setAttribute("aria-hidden", "false");
+        link.tabIndex = 0;
+      });
+      return;
+    }
+    rtdb()
+      .ref(NS + "/league_account/" + user.uid)
+      .once("value")
+      .then(function (snap) {
+        applyLeagueRegisterNav(snap.val());
+      })
+      .catch(function () {
+        links.forEach(function (link) {
+          link.hidden = false;
+          link.textContent = "Register";
+          link.href = "SouthEnd_League_Teams.html";
+        });
+      });
+  }
+
+  function decorateLeagueInvitesNav(user) {
+    var links = leagueInvitesLinks();
+    if (!user || !user.uid) {
+      links.forEach(function (l) {
+        l.hidden = false;
+        l.setAttribute("aria-hidden", "false");
+        l.tabIndex = 0;
+      });
+      return;
+    }
     rtdb()
       .ref(NS + "/league_account/" + user.uid)
       .once("value")
       .then(function (snap) {
         var account = snap.val();
-        setLeagueRegisterNavVisible(!(account && account.registrationStatus));
+        var onTeam = !!(account && account.teamId);
+        links.forEach(function (l) {
+          l.hidden = onTeam;
+          l.setAttribute("aria-hidden", onTeam ? "true" : "false");
+          l.tabIndex = onTeam ? -1 : 0;
+        });
       })
       .catch(function () {
-        setLeagueRegisterNavVisible(true);
+        links.forEach(function (l) {
+          l.hidden = false;
+          l.setAttribute("aria-hidden", "false");
+          l.tabIndex = 0;
+        });
       });
   }
 
   function decorateLeagueAdminNav(user) {
-    setLeagueAdminNavVisible(false);
+    var navLink = ensureAdminNavLink();
+    var mobileLink = ensureMobileAdminLink();
+    if (!user || !user.uid) {
+      if (navLink) navLink.classList.add("hidden");
+      if (mobileLink) mobileLink.classList.add("hidden");
+      return;
+    }
+    loadLeagueAdminUidFlag(user.uid).then(function (isAdmin) {
+      if (navLink) {
+        navLink.classList.toggle("hidden", !isAdmin);
+        navLink.href = adminHubHref();
+      }
+      if (mobileLink) {
+        mobileLink.classList.toggle("hidden", !isAdmin);
+        mobileLink.href = adminHubHref();
+      }
+    });
   }
 
   var LeagueSync = {
@@ -175,11 +300,26 @@
     },
 
     onAuth: function (cb) {
+      patchLeagueHeaderProfileHrefs();
       return global.firebase.auth().onAuthStateChanged(function (user) {
+        patchLeagueHeaderProfileHrefs();
         decorateLeagueRegisterNav(user);
+        decorateLeagueInvitesNav(user);
         decorateLeagueAdminNav(user);
         cb(user);
       });
+    },
+
+    leagueAccountIsCommitted: leagueAccountIsCommitted,
+    isOpenPlayLocalMirror: isOpenPlayLocalMirror,
+    adminHubHref: adminHubHref,
+    mainPickleballAccountHrefWithReturn: mainPickleballAccountHrefWithReturn,
+    mainPickleballAccountHref: mainPickleballAccountHref,
+    redirectToMainPickleballAccount: function () {
+      global.location.href = mainPickleballAccountHref();
+    },
+    redirectToMainPickleballAccountWithReturn: function (returnHtml) {
+      global.location.href = mainPickleballAccountHrefWithReturn(returnHtml);
     },
 
     getCurrentUser: function () {
@@ -347,6 +487,23 @@
         .ref(NS + "/league_teams/" + teamId)
         .once("value")
         .then(function (s) { return s.val(); });
+    },
+
+    /**
+     * Listen for team changes (e.g. staff marking payment) — returns an unsubscribe.
+     */
+    subscribeTeam: function (teamId, onValue) {
+      if (!teamId) {
+        return function () {};
+      }
+      var r = rtdb().ref(NS + "/league_teams/" + teamId);
+      function handler(snap) {
+        onValue(snap.val() || null);
+      }
+      r.on("value", handler);
+      return function () {
+        r.off("value", handler);
+      };
     },
 
     addPlayerToRoster: function (teamId, memberUid) {
@@ -659,37 +816,15 @@
     global.document.head.appendChild(script);
   }
 
-  function openSharedProfileMenu() {
-    loadSharedProfilePanel();
-    var tries = 0;
-    function clickWhenReady() {
-      var btn = global.document.querySelector(".se-openplay-profile-btn");
-      if (btn && btn.offsetParent !== null) {
-        btn.click();
-        return;
-      }
-      tries += 1;
-      if (tries < 30) global.setTimeout(clickWhenReady, 100);
-    }
-    clickWhenReady();
-  }
-
-  function interceptLegacyProfileLink() {
-    global.document.addEventListener("click", function (e) {
-      var link = e.target && e.target.closest ? e.target.closest(".league-header-profile") : null;
-      if (!link) return;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      openSharedProfileMenu();
-    }, true);
-  }
-
   if (global.document) {
-    interceptLegacyProfileLink();
-    if (global.document.readyState === "loading") {
-      global.document.addEventListener("DOMContentLoaded", loadSharedProfilePanel);
-    } else {
+    function onDomReady() {
+      patchLeagueHeaderProfileHrefs();
       loadSharedProfilePanel();
+    }
+    if (global.document.readyState === "loading") {
+      global.document.addEventListener("DOMContentLoaded", onDomReady);
+    } else {
+      onDomReady();
     }
   }
 })(window);

@@ -1,0 +1,27 @@
+---
+description: Pickleball local development has one source of truth: the local test site
+globs: "Programs/Pickleball/**"
+alwaysApply: false
+---
+
+# Pickleball Local Single Source
+
+## Law
+
+When building or debugging Pickleball program pages locally, treat:
+
+`Programs/Pickleball/advanced-open-play/testing/local-page/`
+
+as the single local source of truth.
+
+## Required Pattern
+
+- Edit the `testing/local-page/` file that matches the page being previewed.
+- Do not mirror, copy, sync, promote, or overwrite local-page from staging/live/root folders unless Sam explicitly asks for that exact operation.
+- `npm run local-test` must only serve the local-page site. It must not rewrite files.
+- `npm run local-test:sync` must not copy staging/live into local-page.
+- If a requested page exists in multiple Pickleball trees, ask or infer from the browser path. For localhost previews under `/testing/local-page/`, work only in `testing/local-page/`.
+
+## Deployment
+
+Production or staging propagation is a separate explicit task. Do not update staging/live/root copies just because local-page changed.
