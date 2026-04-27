@@ -1,0 +1,38 @@
+---
+description: Pickleball auth source of truth - no inline sign-in panels on program pages
+globs: "Programs/Pickleball/**/*.html,Programs/Pickleball/**/*.js"
+alwaysApply: false
+---
+
+# Pickleball Auth Source Of Truth
+
+## Law
+
+Do not add page-specific sign-in, create-account, password, or sign-out panels to Pickleball program pages.
+
+League/Open Play cross-module auth flows must resolve to the central Pickleball hub, not to a module-specific League, Open Play, RSVP, invite, or account subpage.
+
+## Required Pattern
+
+- The shared Pickleball profile/account page is the only place for account authentication UI.
+- Pages that need a user session must redirect to the shared profile/account page with a `return` target.
+- After auth, the user should return to the intended destination and see content, not another auth card. For same-module Open Play flows this may be the original page; for League/Open Play cross-module flows it must be the central hub.
+- For League Play or other cross-module profile/account entry points, use `SouthEnd_Pickleball_Hub.html` as the `return` target.
+- Treat any `return` target under `../../league-play/` or matching `SouthEnd_League_*.html` as `SouthEnd_Pickleball_Hub.html`.
+
+## Applies To
+
+- League pages under `Programs/Pickleball/league-play/**`.
+- Open Play, league, message board, and future Pickleball modules under `Programs/Pickleball/**`.
+
+## Exceptions
+
+- The canonical Pickleball account/profile page and its environment mirrors may own the actual sign-in/create-account UI.
+- Firebase auth scripts and auth state checks are allowed when they support redirects, session checks, or signed-in data loading.
+
+## Do Not Reintroduce
+
+- Inline cards titled `Sign in`, `Member access`, or `Create an account or sign in`.
+- Email/password forms on module pages.
+- Local `Sign out` buttons on module pages unless the page is the shared account/profile page.
+- `return=../../league-play/...` or `return=SouthEnd_League_*.html` on Pickleball profile/account links.

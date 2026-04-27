@@ -3,7 +3,7 @@
 const assert = require('assert');
 const { describe, it } = require('node:test');
 const path = require('path');
-const helpers = require(path.join(__dirname, '..', '..', 'live', 'js', 'openplay-rsvp-helpers.js'));
+const helpers = require(path.join(__dirname, '..', '..', '..', 'live', 'js', 'openplay-rsvp-helpers.js'));
 
 describe('requiresAccessCard', () => {
   it('is true only when member is yes', () => {

@@ -7,7 +7,12 @@ const path = require('path');
 
 /** This program’s root: Programs/Pickleball/advanced-open-play/ */
 const PROGRAM_ROOT = path.join(__dirname, '..');
-const MODE_FILE = path.join(PROGRAM_ROOT, 'openplay-mode.json');
+/** Programs/Pickleball/ (sibling of advanced-open-play; production live/ lives here) */
+const PICKLEBALL_PROGRAM_ROOT = path.join(PROGRAM_ROOT, '..');
+/** Override for unit tests: path to a temp mode JSON (absolute or relative to cwd). */
+const MODE_FILE = process.env.OPENPLAY_MODE_FILE
+  ? path.resolve(process.env.OPENPLAY_MODE_FILE)
+  : path.join(PROGRAM_ROOT, 'openplay-mode.json');
 
 const DEFAULTS = {
   activeTree: 'staging',
@@ -40,25 +45,50 @@ function getActiveTreeName() {
 /** Absolute path to active HTML/JS source (staging or live). */
 function getActiveSourceDir() {
   const name = getActiveTreeName();
-  return path.join(PROGRAM_ROOT, name);
+  if (name === 'live') {
+    return path.join(PICKLEBALL_PROGRAM_ROOT, 'live');
+  }
+  return path.join(PROGRAM_ROOT, 'staging');
 }
 
-/** Absolute path to production deploy tree (always live/). */
+/** Absolute path to production deploy tree (Programs/Pickleball/live/). */
 function getProductionSourceDir() {
-  return path.join(PROGRAM_ROOT, 'live');
+  return path.join(PICKLEBALL_PROGRAM_ROOT, 'live');
 }
 
 function modeFilePath() {
   return MODE_FILE;
 }
 
+/**
+ * Merge updates into openplay-mode.json and write normalized values.
+ * @param {Partial<{ activeTree: string, allowProductionHostingDeploy: boolean }>} updates
+ */
+function writeMode(updates) {
+  const p = modeFilePath();
+  let cur = { ...DEFAULTS };
+  try {
+    if (fs.existsSync(p)) {
+      cur = { ...cur, ...JSON.parse(fs.readFileSync(p, 'utf8')) };
+    }
+  } catch (e) {
+    console.warn('[openplay-mode] writeMode read failed, using defaults:', e.message);
+  }
+  Object.assign(cur, updates);
+  cur.activeTree = cur.activeTree === 'live' ? 'live' : 'staging';
+  cur.allowProductionHostingDeploy = !!cur.allowProductionHostingDeploy;
+  fs.writeFileSync(p, JSON.stringify(cur, null, 2) + '\n', 'utf8');
+}
+
 module.exports = {
   readMode,
+  writeMode,
   getActiveTreeName,
   getActiveSourceDir,
   getProductionSourceDir,
   modeFilePath,
   PROGRAM_ROOT,
+  PICKLEBALL_PROGRAM_ROOT,
   /** @deprecated use PROGRAM_ROOT */
   PICKLEBALL_ROOT: PROGRAM_ROOT,
   DEFAULTS,

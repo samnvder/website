@@ -9,9 +9,9 @@ All rule files live **here** — `.cursor/rules/*.mdc` — so they are easy to f
 | File | Purpose |
 |------|---------|
 | `test-build-commands.mdc` | **Always on** — Law 0: test/build steps → copy-pasteable terminal blocks; no throwaway command files |
-| `local-test.mdc` | `npm run local-test` — mirror active tree into root `local-page/` + `testing/local-page/`, serve port **3456** |
+| `local-test.mdc` | `npm run local-test` — mirror active tree into `Programs/Pickleball/advanced-open-play/testing/local-page/`, serve port **3456** |
 | `environment-mode-switching.mdc` | **`@command-environment-mode`** — deterministic project + mode switching via `resolve-project-mode.js` registry |
-| `command-openplay-sync-from-live.mdc` | **`@command-openplay-sync-from-live`** — align `staging/` + `local-page/` mirrors with `live/` while preserving per-folder Firebase config |
+| `command-openplay-sync-from-live.mdc` | **`@command-openplay-sync-from-live`** — align `staging/` + `advanced-open-play/testing/local-page/` with `live/` while preserving per-folder Firebase config |
 | `pricing-change.mdc` | **`@pricing-change`** — gated canonical pricing change flow (dry-run, backup, validate, audit, review, then deploy confirmation) |
 | `staging-live-deployment-pattern.mdc` | Open Play staging vs `live/` trees, mode file, deploy guards |
 | `openplay-mode.mdc` | Same pattern, scoped to `Programs/Pickleball/**` |
@@ -29,6 +29,8 @@ Scoped for site work; many rules use `!**/Dev/central/**` in globs where applica
 | `header-subheader-centering.mdc` | Header/subheader centering, viewport parity |
 | `dynamic-image-carousel.mdc` | Carousel pattern, source-of-truth workflow |
 | `pickleball-carousel-source-of-truth.mdc` | Pickleball carousel config |
+| `pickleball-auth-source-of-truth.mdc` | Pickleball auth law — no inline sign-in panels on module pages |
+| `pickleball-user-facing-copy.mdc` | Pickleball copy law — player-facing language, no admin/process wording |
 | `Creative-Mode.mdc` | Creative copy — "The Council" principles |
 
 ---

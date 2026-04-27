@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<title>League Play Admin - South End</title>
+<link rel="icon" type="image/jpeg" href="favicon.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1628;--navy-lt:#152342;--electric:#a855f7;--neon:#00ff88;--ink:#0a0a1a;--red:#ff6b6b;--muted:rgba(255,255,255,.55);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:radial-gradient(1200px 600px at 10% -10%,rgba(168,85,247,.12),transparent),var(--navy);color:#fff;min-height:100vh;}
+.header{background:var(--navy-lt);padding:18px 28px 14px;border-bottom:3px solid var(--neon);}
+.hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--neon);margin-bottom:3px;}
+.hdr-title{font-family:'Oswald',sans-serif;font-size:24px;color:#fff;letter-spacing:1px;text-transform:uppercase;line-height:1;}
+.hdr-title span{color:var(--neon);}
+.hdr-sub{font-size:9px;color:rgba(255,255,255,.65);margin-top:3px;max-width:62ch;line-height:1.45;}
+.se-site-nav{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:10px 28px 12px;background:rgba(5,12,28,.85);border-bottom:1px solid rgba(0,255,136,.22);}
+.se-site-nav-link{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55);text-decoration:none;padding:8px 14px;border-radius:6px;border:1px solid transparent;transition:color .15s,border-color .15s,background .15s;}
+.se-site-nav-link:hover{color:var(--neon);background:rgba(0,255,136,.08);}
+.se-site-nav-link--active{color:var(--ink);background:var(--neon);border-color:rgba(0,255,136,.45);box-shadow:0 0 20px rgba(0,255,136,.25);}
+.sub-nav{display:flex;flex-wrap:wrap;gap:8px;padding:12px 28px;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(0,255,136,.12);}
+.sub-nav a{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);text-decoration:none;padding:6px 12px;border-radius:6px;}
+.sub-nav a:hover{color:var(--neon);}
+.sub-nav a.active{color:var(--ink);background:rgba(0,255,136,.85);}
+.body-wrap{max-width:1100px;margin:0 auto;padding:22px 20px 56px;}
+.top-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+.status{font-size:12px;color:rgba(255,255,255,.82);} .status strong{color:#fff;}
+.subtle-nav-link{font-size:11px;color:rgba(255,255,255,.5);text-decoration:none;} .subtle-nav-link:hover{color:var(--electric);text-decoration:underline;}
+.panel{background:rgba(0,255,136,.04);border:1.5px solid rgba(0,255,136,.16);border-radius:14px;padding:18px;margin-bottom:18px;}
+.panel h2{font-family:'Oswald',sans-serif;font-size:15px;letter-spacing:.5px;text-transform:uppercase;color:#fff;margin-bottom:12px;}
+.hint{font-size:11px;color:rgba(255,255,255,.45);line-height:1.45;margin-top:8px;}
+.division-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.div-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.2);cursor:pointer;font-size:12px;color:rgba(255,255,255,.85);}
+.div-chip input{accent-color:var(--neon);}
+.div-chip.on{border-color:rgba(0,255,136,.45);background:rgba(0,255,136,.1);}
+.quick-filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.qf{padding:8px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.85);cursor:pointer;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.06em;text-transform:uppercase;}
+.qf:hover{border-color:var(--neon);color:var(--neon);}
+.qf.on{background:rgba(0,255,136,.15);border-color:var(--neon);color:var(--neon);}
+.btn{padding:8px 14px;border-radius:8px;border:none;cursor:pointer;font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;}
+.btn-neon{background:var(--neon);color:var(--ink);} .btn-neon:disabled{opacity:.45;cursor:not-allowed;}
+.btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);}
+.btn-danger{background:rgba(255,107,107,.15);color:var(--red);border:1px solid rgba(255,107,107,.35);}
+.search-box{width:100%;max-width:320px;padding:10px 12px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:8px;color:#fff;font-size:13px;}
+.search-box:focus{border-color:var(--neon);outline:none;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th,td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;}
+th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--neon);}
+.team-grid{display:grid;gap:14px;}
+.team-card{border:1.5px solid rgba(0,255,136,.2);border-radius:12px;padding:16px;background:rgba(0,0,0,.18);}
+.team-card h3{font-family:'Oswald',sans-serif;font-size:18px;color:#fff;margin-bottom:8px;}
+.team-meta{font-size:12px;color:var(--muted);margin-bottom:12px;}
+.field-row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:10px;}
+.field-row label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);display:block;margin-bottom:4px;}
+.field-row input[type=text],.field-row select{padding:8px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;min-width:180px;}
+.field-row select option{background:#fff;color:var(--ink);}
+.roster-list,.invite-list{list-style:none;margin:8px 0;padding:0;}
+.roster-list li,.invite-list li{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.05);margin-bottom:6px;font-size:12px;}
+.assign-box{margin-top:12px;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.2);}
+.assign-results{max-height:200px;overflow:auto;margin-top:8px;}
+.assign-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px;border-bottom:1px solid rgba(255,255,255,.06);font-size:12px;}
+.msg{margin-top:10px;font-size:12px;color:var(--muted);} .msg.ok{color:var(--neon);} .msg.err{color:var(--red);}
+.hidden{display:none!important;}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:9px;font-weight:700;text-transform:uppercase;background:rgba(255,255,255,.1);color:var(--muted);}
+.pill-pending{color:var(--neon);background:rgba(0,255,136,.12);}
+.message-board-fab{
+  position:fixed;right:18px;bottom:18px;z-index:90;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.22);
+  background:linear-gradient(135deg,var(--neon,#00ff88),#34d399);color:var(--ink,#050a12);
+  font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;
+  box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 26px rgba(0,255,136,.25);transition:transform .15s,filter .15s,box-shadow .15s;
+}
+.message-board-fab:hover{filter:brightness(1.06);transform:translateY(-1px);box-shadow:0 12px 32px rgba(0,0,0,.4),0 0 30px rgba(0,255,136,.32);}
+.message-board-fab:focus-visible{outline:2px solid #fff;outline-offset:3px;}
+@media(max-width:520px){.message-board-fab{right:14px;bottom:14px;padding:12px 14px;font-size:12px;}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+  <div class="hdr-title">League <span>Play Admin</span></div>
+  <div class="hdr-sub">Staff-only: team management, weekly matchups and scores, solo players, invites, and roster tools.</div>
+</div>
+<nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav data-se-hide-message-board="1">
+  <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
+  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_League_Play.html" aria-current="page">League admin</a>
+</nav>
+<script src="pickleball-hub-nav.js?v=20260426nav"></script>
+<div class="sub-nav" aria-label="League admin sections">
+  <a href="#team-management" class="active" data-section="teams">Team management</a>
+  <a href="#schedule-scores" data-section="scores">Schedule &amp; scores</a>
+</div>
+
+<div class="body-wrap">
+  <div class="top-row">
+    <div class="status" id="auth-status">Checking admin access...</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+      <button type="button" class="btn btn-ghost hidden" id="btn-refresh">Reload data</button>
+    </div>
+  </div>
+  <p class="hint" id="load-hint">Loading league data requires admin access and deployed database rules.</p>
+
+  <div id="main-admin" class="hidden">
+  <div id="admin-section-teams">
+    <section class="panel" id="panel-filters">
+      <h2>Filters</h2>
+      <p class="hint">Division toggles: leave all unchecked to show every division. With any checked, teams match <strong>any</strong> selected division.</p>
+      <div class="division-grid" id="division-toggles"></div>
+      <div class="quick-filters">
+        <button type="button" class="qf on" data-qf="all">All teams</button>
+        <button type="button" class="qf" data-qf="solo">Solo signups only</button>
+        <button type="button" class="qf" data-qf="pending_invites">Teams w/ pending invites</button>
+        <button type="button" class="qf" data-qf="open_spots">Teams w/ open roster spots</button>
+      </div>
+      <input type="search" class="search-box" id="team-search" placeholder="Search team name or captain..." autocomplete="off">
+    </section>
+
+    <section class="panel hidden" id="panel-solo">
+      <h2>Solo signups</h2>
+      <div style="overflow:auto;">
+        <table>
+          <thead><tr><th>Player</th><th>Email</th><th>UID</th><th>Division</th><th>Fee</th><th>Paid?</th></tr></thead>
+          <tbody id="solo-tbody"></tbody>
+        </table>
+      </div>
+      <p class="hint" id="solo-empty" style="display:none;">No solo registrations in filtered view.</p>
+    </section>
+
+    <section class="panel" id="panel-teams">
+      <h2 id="team-management">Teams</h2>
+      <div class="team-grid" id="teams-host"></div>
+      <p class="hint" id="teams-empty" style="display:none;">No teams match the current filters.</p>
+    </section>
+  </div>
+
+  <div id="admin-section-scores" class="hidden">
+    <section class="panel" id="panel-scores" aria-labelledby="scheduleScoresHeading">
+      <h2 id="scheduleScoresHeading">Schedule &amp; scores</h2>
+      <p class="hint">
+        Add matchups by week, enter scores, and mark <strong>Final</strong> when the match is complete. Public standings
+        (League &rarr; Standings) update from this data. New rows require
+        <strong>deployed</strong> rules that include <code>openplay_se/league_games</code>.
+      </p>
+      <div class="field-row" style="margin-bottom:12px;align-items:center;">
+        <div>
+          <label for="league-admin-week">Week</label>
+          <select id="league-admin-week" class="search-box" style="min-width:120px;">
+            <option value="1">Week 1</option>
+            <option value="2">Week 2</option>
+            <option value="3">Week 3</option>
+            <option value="4">Week 4</option>
+            <option value="5">Week 5</option>
+            <option value="6">Week 6</option>
+            <option value="7">Week 7</option>
+            <option value="8">Week 8</option>
+            <option value="9">Playoffs 1</option>
+            <option value="10">Playoffs 2</option>
+          </select>
+        </div>
+      </div>
+      <h3 style="font-size:13px;margin:0 0 8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);">Add matchup</h3>
+      <div class="field-row" style="margin-bottom:8px;">
+        <div>
+          <label for="league-add-division">Division</label>
+          <select id="league-add-division" class="search-box">
+            <option value="3.0">3.0</option>
+            <option value="3.5">3.5</option>
+            <option value="4.0">4.0</option>
+            <option value="open">Open (5.0+)</option>
+          </select>
+        </div>
+        <div>
+          <label for="league-add-draw">Draw</label>
+          <select id="league-add-draw" class="search-box">
+            <option value="womens">Women's</option>
+            <option value="mens">Men's</option>
+            <option value="mixed">Mixed</option>
+          </select>
+        </div>
+        <div>
+          <label for="league-add-home">Home</label>
+          <input type="text" id="league-add-home" class="search-box" placeholder="Home team" autocomplete="off" />
+        </div>
+        <div>
+          <label for="league-add-away">Away</label>
+          <input type="text" id="league-add-away" class="search-box" placeholder="Away team" autocomplete="off" />
+        </div>
+        <div style="align-self:flex-end;">
+          <button type="button" class="btn btn-neon" id="league-add-btn">Add matchup</button>
+        </div>
+      </div>
+      <p class="msg" id="league-games-msg" style="margin:8px 0;"></p>
+      <h3 style="font-size:13px;margin:16px 0 8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);">This week’s games</h3>
+      <div style="overflow:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Division</th>
+              <th>Draw</th>
+              <th>Home</th>
+              <th>Away</th>
+              <th>H</th>
+              <th>A</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="league-games-tbody"></tbody>
+        </table>
+      </div>
+      <p class="hint" id="league-games-empty" style="display:none;">No matchups for this week yet. Add a row above.</p>
+    </section>
+  </div>
+  </div>
+</div>
+
+<script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/league-admin-games.js"></script>
+<script>
+(function () {
+  'use strict';
+  var NS = 'openplay_se';
+  var ROSTER_MAX = 6;
+  var authDone = false;
+
+  var DIVISIONS = [
+    { id: '3.0-womens', label: "3.0 - Women's", day: 'Monday', time: '10:00 AM - 12:00 PM' },
+    { id: '3.0-mixed', label: '3.0 - Mixed (co-ed)', day: 'Saturday', time: '2:00 PM - 4:00 PM' },
+    { id: '3.5-womens', label: "3.5 - Women's", day: 'Tuesday', time: '10:00 AM - 12:00 PM' },
+    { id: '3.5-mixed', label: '3.5 - Mixed (co-ed)', day: 'Saturday', time: '4:00 PM - 6:00 PM' },
+    { id: '3.5-mens', label: "3.5 - Men's", day: 'Sunday', time: '2:00 PM - 4:00 PM' },
+    { id: '4.0-womens', label: "4.0 - Women's", day: 'Wednesday', time: '10:00 AM - 12:00 PM' },
+    { id: '4.0-mixed', label: '4.0 - Mixed (co-ed)', day: 'Friday', time: '5:00 PM - 7:00 PM' },
+    { id: '4.0-mens', label: "4.0 - Men's", day: 'Sunday', time: '4:00 PM - 6:00 PM' },
+    { id: 'open-play-mixed', label: 'Open (5.0+)', day: 'Friday', time: '7:00 PM - 9:00 PM' },
+  ];
+
+  var CACHE = {
+    accounts: {},
+    teams: {},
+    invites: [],
+    directory: {},
+    profiles: {},
+  };
+
+  var selectedDivisions = {};
+  var quickFilter = 'all';
+  var teamSearchQ = '';
+
+  function esc(s) {
+    var d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+
+  function getDivisionById(id) {
+    for (var i = 0; i < DIVISIONS.length; i++) {
+      if (DIVISIONS[i].id === id) return DIVISIONS[i];
+    }
+    return null;
+  }
+
+  function formatDivisionSchedule(d) {
+    return d ? d.day + ' - ' + d.time : '';
+  }
+
+  function feeLabelForAllMembers(allMembers) {
+    return allMembers ? '$200 - team is all members' : '$250 - team has any non-member';
+  }
+
+  function accountReturnHref() {
+    var page = 'SouthEnd_Admin_League_Play.html';
+    try {
+      var seg = (window.location.pathname || '').split('/').filter(Boolean).pop();
+      if (seg && /\.html?$/i.test(seg)) page = seg;
+    } catch (e) {}
+    return 'SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent(page);
+  }
+
+  function db() {
+    return SEOpenPlay.getFirebaseDb();
+  }
+
+  function ts() {
+    return window.firebase && window.firebase.database ? window.firebase.database.ServerValue.TIMESTAMP : Date.now();
+  }
+
+  function rosterCount(team) {
+    if (!team) return 0;
+    var cap = team.captainUid;
+    var r = team.roster || {};
+    var set = {};
+    Object.keys(r).forEach(function (k) { set[k] = true; });
+    if (cap) set[cap] = true;
+    return Object.keys(set).length;
+  }
+
+  function divisionFilterPass(divisionId) {
+    var any = false;
+    for (var k in selectedDivisions) {
+      if (selectedDivisions[k]) { any = true; break; }
+    }
+    if (!any) return true;
+    return !!(divisionId && selectedDivisions[divisionId]);
+  }
+
+  function buildDisplayName(profile) {
+    if (!profile) return '';
+    var first = String(profile.firstName || '').trim();
+    var last = String(profile.lastName || '').trim();
+    if (first || last) return [first, last].filter(Boolean).join(' ');
+    return profile.displayName || profile.name || '';
+  }
+
+  function profileEmail(p) {
+    return String((p && (p.email || p.authEmail || p.userEmail || p.emailAddress || p.contactEmail)) || '').trim();
+  }
+
+  function displayNameForUid(uid) {
+    var dir = CACHE.directory[uid];
+    if (dir && dir.displayName) return dir.displayName;
+    var prof = CACHE.profiles[uid];
+    var n = buildDisplayName(prof);
+    if (n) return n;
+    return uid.slice(0, 8) + '...';
+  }
+
+  function invitesForTeam(teamId) {
+    return CACHE.invites.filter(function (row) {
+      return row.data && row.data.teamId === teamId;
+    });
+  }
+
+  function pendingInviteCount(teamId) {
+    return invitesForTeam(teamId).filter(function (r) {
+      return r.data.status === 'pending';
+    }).length;
+  }
+
+  function showLoadError(e) {
+    var msg = (e && e.message) || 'League data could not be loaded.';
+    document.getElementById('load-hint').textContent =
+      'Could not load league data: ' + msg + ' Check that database rules are deployed and this account is an admin.';
+  }
+
+  function loadAllData() {
+    var d = db();
+    if (!d) return Promise.reject(new Error('No database'));
+    return Promise.all([
+      d.ref(NS + '/league_account').once('value'),
+      d.ref(NS + '/league_teams').once('value'),
+      d.ref(NS + '/league_invites').once('value'),
+      d.ref(NS + '/league_directory').once('value'),
+      d.ref(NS + '/user_profiles').once('value'),
+    ]).then(function (snaps) {
+      CACHE.accounts = snaps[0].val() || {};
+      CACHE.teams = snaps[1].val() || {};
+      var invRaw = snaps[2].val() || {};
+      CACHE.invites = Object.keys(invRaw).map(function (id) {
+        return { id: id, data: invRaw[id] };
+      });
+      CACHE.directory = snaps[3].val() || {};
+      CACHE.profiles = snaps[4].val() || {};
+      document.getElementById('load-hint').textContent = 'Use division toggles and quick filters. Deploy updated database rules for full listing.';
+    });
+  }
+
+  function renderDivisionToggles() {
+    var host = document.getElementById('division-toggles');
+    host.innerHTML = '';
+    DIVISIONS.forEach(function (d) {
+      var lab = document.createElement('label');
+      lab.className = 'div-chip' + (selectedDivisions[d.id] ? ' on' : '');
+      var inp = document.createElement('input');
+      inp.type = 'checkbox';
+      inp.checked = !!selectedDivisions[d.id];
+      inp.setAttribute('data-div-id', d.id);
+      var span = document.createElement('span');
+      span.textContent = d.label;
+      lab.appendChild(inp);
+      lab.appendChild(span);
+      inp.addEventListener('change', function () {
+        selectedDivisions[d.id] = inp.checked;
+        lab.classList.toggle('on', inp.checked);
+        render();
+      });
+      host.appendChild(lab);
+    });
+  }
+
+  function renderQuickFilters() {
+    document.querySelectorAll('.qf').forEach(function (b) {
+      b.classList.toggle('on', b.getAttribute('data-qf') === quickFilter);
+    });
+  }
+
+  function soloRows() {
+    var rows = [];
+    Object.keys(CACHE.accounts).forEach(function (uid) {
+      var a = CACHE.accounts[uid];
+      if (!a || a.registrationType !== 'solo' || !a.registrationStatus) return;
+      if (!divisionFilterPass(a.divisionId)) return;
+      rows.push({ uid: uid, a: a });
+    });
+    return rows;
+  }
+
+  function teamRowsFiltered() {
+    var q = (teamSearchQ || '').toLowerCase().trim();
+    return Object.keys(CACHE.teams).map(function (teamId) {
+      return { teamId: teamId, team: CACHE.teams[teamId] };
+    }).filter(function (row) {
+      var t = row.team;
+      if (!t) return false;
+      if (!divisionFilterPass(t.divisionId)) return false;
+      if (quickFilter === 'pending_invites' && pendingInviteCount(row.teamId) === 0) return false;
+      if (quickFilter === 'open_spots' && rosterCount(t) >= ROSTER_MAX) return false;
+      if (q) {
+        var name = String(t.name || '').toLowerCase();
+        var capName = displayNameForUid(t.captainUid || '').toLowerCase();
+        var capUid = String(t.captainUid || '').toLowerCase();
+        if (name.indexOf(q) === -1 && capName.indexOf(q) === -1 && capUid.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+  }
+
+  function renderSolo() {
+    var panel = document.getElementById('panel-solo');
+    var tbody = document.getElementById('solo-tbody');
+    var empty = document.getElementById('solo-empty');
+    if (quickFilter !== 'solo') {
+      panel.classList.add('hidden');
+      return;
+    }
+    panel.classList.remove('hidden');
+    var rows = soloRows();
+    tbody.innerHTML = '';
+    if (!rows.length) {
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    rows.forEach(function (r) {
+      var prof = CACHE.profiles[r.uid] || {};
+      var email = profileEmail(prof) || '-';
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + esc(displayNameForUid(r.uid)) + '</td>' +
+        '<td>' + esc(email) + '</td>' +
+        '<td style="font-size:10px;font-family:monospace">' + esc(r.uid) + '</td>' +
+        '<td>' + esc(r.a.divisionLabel || r.a.divisionId || '-') + '</td>' +
+        '<td>' + esc(r.a.feeLabel || '-') + '</td>' +
+        '<td><label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">' +
+        '<input type="checkbox" data-solo-paid="' + esc(r.uid) + '"' + (r.a.adminMarkedPaid ? ' checked' : '') + '> ' +
+        '<span>Paid?</span></label></td>';
+      tbody.appendChild(tr);
+    });
+    tbody.querySelectorAll('[data-solo-paid]').forEach(function (chk) {
+      chk.addEventListener('change', function () {
+        setAdminSoloPaymentStatus(chk.getAttribute('data-solo-paid'), chk.checked);
+      });
+    });
+  }
+
+  function saveTeam(teamId) {
+    var t = CACHE.teams[teamId];
+    if (!t) return;
+    var nameEl = document.getElementById('team-name-' + teamId);
+    var divEl = document.getElementById('team-div-' + teamId);
+    var memEl = document.getElementById('team-members-' + teamId);
+    var msg = document.getElementById('team-msg-' + teamId);
+    var name = nameEl ? nameEl.value.trim() : t.name;
+    var divId = divEl ? divEl.value : t.divisionId;
+    var allMembers = memEl ? !!memEl.checked : !!t.allMembers;
+    var div = getDivisionById(divId);
+    if (!div) {
+      msg.textContent = 'Invalid division.';
+      msg.className = 'msg err';
+      return;
+    }
+    var sched = formatDivisionSchedule(div);
+    var updates = {
+      name: name,
+      divisionId: div.id,
+      divisionLabel: div.label,
+      divisionDay: div.day,
+      divisionTime: div.time,
+      divisionSchedule: sched,
+      allMembers: allMembers,
+      feeLabel: feeLabelForAllMembers(allMembers),
+      updatedAt: ts(),
+    };
+    db().ref(NS + '/league_teams/' + teamId).update(updates).then(function () {
+      msg.textContent = 'Team saved.';
+      msg.className = 'msg ok';
+      return loadAllData();
+    }).then(render).catch(function (e) {
+      msg.textContent = (e && e.message) || 'Save failed.';
+      msg.className = 'msg err';
+    });
+  }
+
+  function setAdminTeamPaymentStatus(teamId, paid) {
+    var user = window.firebase && window.firebase.auth && window.firebase.auth().currentUser;
+    var patch = { updatedAt: ts() };
+    if (paid) {
+      patch.adminMarkedPaid = true;
+      patch.adminMarkedPaidAt = Date.now();
+      patch.adminMarkedPaidBy = user ? user.uid : null;
+    } else {
+      patch.adminMarkedPaid = false;
+      patch.adminMarkedPaidAt = null;
+      patch.adminMarkedPaidBy = null;
+    }
+    return db().ref(NS + '/league_teams/' + teamId).update(patch).then(function () {
+      return loadAllData();
+    }).then(render).catch(function (e) {
+      alert((e && e.message) || 'Could not update payment status.');
+    });
+  }
+
+  function setAdminSoloPaymentStatus(uid, paid) {
+    var user = window.firebase && window.firebase.auth && window.firebase.auth().currentUser;
+    var patch = { updatedAt: ts() };
+    if (paid) {
+      patch.adminMarkedPaid = true;
+      patch.adminMarkedPaidAt = Date.now();
+      patch.adminMarkedPaidBy = user ? user.uid : null;
+    } else {
+      patch.adminMarkedPaid = false;
+      patch.adminMarkedPaidAt = null;
+      patch.adminMarkedPaidBy = null;
+    }
+    return db().ref(NS + '/league_account/' + uid).update(patch).then(function () {
+      return loadAllData();
+    }).then(render).catch(function (e) {
+      alert((e && e.message) || 'Could not update solo payment status.');
+    });
+  }
+
+  function removePlayer(teamId, memberUid) {
+    var team = CACHE.teams[teamId];
+    if (!team || memberUid === team.captainUid) {
+      alert('Cannot remove the captain from the roster here.');
+      return;
+    }
+    if (!confirm('Remove this player from the team and return them to solo signup in this division?')) return;
+    var updates = {};
+    updates[NS + '/league_teams/' + teamId + '/roster/' + memberUid] = null;
+    updates[NS + '/league_account/' + memberUid] = {
+      teamId: null,
+      registrationType: 'solo',
+      registrationStatus: 'registered',
+      divisionId: team.divisionId,
+      divisionLabel: team.divisionLabel,
+      divisionDay: team.divisionDay,
+      divisionTime: team.divisionTime,
+      divisionSchedule: team.divisionSchedule,
+      updatedAt: ts(),
+    };
+    db().ref().update(updates).then(function () {
+      return loadAllData();
+    }).then(render).catch(function (e) {
+      alert((e && e.message) || 'Remove failed.');
+    });
+  }
+
+  function assignPlayer(teamId, memberUid) {
+    var team = CACHE.teams[teamId];
+    if (!team) return;
+    if (memberUid === team.captainUid) {
+      alert('Player is already the captain.');
+      return;
+    }
+    if (rosterCount(team) >= ROSTER_MAX) {
+      alert('Roster is full (max ' + ROSTER_MAX + ').');
+      return;
+    }
+    var acc = CACHE.accounts[memberUid];
+    if (acc && acc.teamId && acc.teamId !== teamId) {
+      if (!confirm('This player is on another team. Move them to this team?')) return;
+      var prev = acc.teamId;
+      var u = {};
+      u[NS + '/league_teams/' + prev + '/roster/' + memberUid] = null;
+      return db().ref().update(u).then(function () {
+        return doAssign(teamId, memberUid, team);
+      });
+    }
+    return doAssign(teamId, memberUid, team);
+  }
+
+  function doAssign(teamId, memberUid, team) {
+    var updates = {};
+    updates[NS + '/league_teams/' + teamId + '/roster/' + memberUid] = {
+      joinedAt: Date.now(),
+      role: 'player',
+    };
+    updates[NS + '/league_account/' + memberUid] = {
+      registrationType: 'team_member',
+      registrationStatus: 'registered',
+      teamId: teamId,
+      divisionId: team.divisionId,
+      divisionLabel: team.divisionLabel,
+      divisionDay: team.divisionDay,
+      divisionTime: team.divisionTime,
+      divisionSchedule: team.divisionSchedule,
+      updatedAt: ts(),
+    };
+    return db().ref().update(updates).then(function () {
+      return loadAllData();
+    }).then(render).catch(function (e) {
+      alert((e && e.message) || 'Assign failed.');
+    });
+  }
+
+  function cancelInvite(inviteId) {
+    if (!confirm('Cancel this invite?')) return;
+    db().ref(NS + '/league_invites/' + inviteId).update({
+      status: 'canceled',
+      canceledAt: ts(),
+    }).then(function () {
+      return loadAllData();
+    }).then(render).catch(function (e) {
+      alert((e && e.message) || 'Cancel failed.');
+    });
+  }
+
+  function deleteTeam(teamId) {
+    var team = CACHE.teams[teamId];
+    if (!team) return;
+    var teamName = team.name || teamId;
+    var typed = prompt('Type the team name exactly to delete this team:\n\n' + teamName);
+    if (typed === null) return;
+    if (typed.trim() !== teamName) {
+      alert('Team name did not match. Nothing was deleted.');
+      return;
+    }
+    var updates = {};
+    updates[NS + '/league_teams/' + teamId] = null;
+    Object.keys(CACHE.accounts).forEach(function (uid) {
+      var acct = CACHE.accounts[uid];
+      if (acct && acct.teamId === teamId) {
+        updates[NS + '/league_account/' + uid] = null;
+      }
+    });
+    if (team.captainUid) {
+      updates[NS + '/league_account/' + team.captainUid] = null;
+    }
+    Object.keys(team.roster || {}).forEach(function (uid) {
+      updates[NS + '/league_account/' + uid] = null;
+    });
+    invitesForTeam(teamId).forEach(function (inv) {
+      updates[NS + '/league_invites/' + inv.id] = null;
+    });
+    db().ref().update(updates).then(function () {
+      return loadAllData();
+    }).then(render).catch(function (e) {
+      alert((e && e.message) || 'Delete failed.');
+    });
+  }
+
+  function renderAssignSearch(teamId) {
+    var input = document.getElementById('assign-q-' + teamId);
+    var host = document.getElementById('assign-res-' + teamId);
+    if (!input || !host) return;
+    var q = input.value.toLowerCase().trim();
+    host.innerHTML = '';
+    if (q.length < 2) {
+      host.innerHTML = '<p class="hint">Type at least 2 characters to search directory and solo players.</p>';
+      return;
+    }
+    var team = CACHE.teams[teamId];
+    var cap = team.captainUid;
+    var roster = team.roster || {};
+    var candidates = [];
+    Object.keys(CACHE.directory).forEach(function (uid) {
+      if (uid === cap || roster[uid]) return;
+      var e = CACHE.directory[uid];
+      var name = (e.displayName || '').toLowerCase();
+      var nk = (e.nameKey || '').toLowerCase();
+      if (name.indexOf(q) === -1 && nk.indexOf(q) === -1) return;
+      candidates.push({ uid: uid, label: e.displayName || uid, kind: 'directory' });
+    });
+    soloRows().forEach(function (r) {
+      if (r.uid === cap || roster[r.uid]) return;
+      var prof = CACHE.profiles[r.uid] || {};
+      var name = displayNameForUid(r.uid).toLowerCase();
+      var email = profileEmail(prof).toLowerCase();
+      if (name.indexOf(q) === -1 && email.indexOf(q) === -1 && r.uid.toLowerCase().indexOf(q) === -1) return;
+      candidates.push({ uid: r.uid, label: displayNameForUid(r.uid) + ' (solo)', kind: 'solo' });
+    });
+    if (!candidates.length) {
+      host.innerHTML = '<p class="hint">No matches.</p>';
+      return;
+    }
+    candidates.slice(0, 25).forEach(function (c) {
+      var row = document.createElement('div');
+      row.className = 'assign-row';
+      row.innerHTML = '<span>' + esc(c.label) + ' <span class="pill">' + esc(c.kind) + '</span></span>';
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn btn-neon';
+      btn.textContent = 'Add';
+      btn.addEventListener('click', function () {
+        assignPlayer(teamId, c.uid);
+      });
+      row.appendChild(btn);
+      host.appendChild(row);
+    });
+  }
+
+  function renderTeams() {
+    var host = document.getElementById('teams-host');
+    var empty = document.getElementById('teams-empty');
+    host.innerHTML = '';
+    if (quickFilter === 'solo') {
+      empty.style.display = 'none';
+      host.innerHTML = '<p class="hint">Switch quick filter to a team view to list teams.</p>';
+      return;
+    }
+    var rows = teamRowsFiltered();
+    if (!rows.length) {
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    rows.forEach(function (row) {
+      var teamId = row.teamId;
+      var t = row.team;
+      var cap = t.captainUid;
+      var invites = invitesForTeam(teamId);
+      var card = document.createElement('div');
+      card.className = 'team-card';
+      card.id = 'card-' + teamId;
+
+      var divOpts = DIVISIONS.map(function (d) {
+        return '<option value="' + esc(d.id) + '"' + (t.divisionId === d.id ? ' selected' : '') + '>' + esc(d.label) + '</option>';
+      }).join('');
+
+      var roster = t.roster || {};
+      var uids = Object.keys(roster);
+      if (cap && uids.indexOf(cap) === -1) uids = [cap].concat(uids);
+      var rosterHtml = uids.map(function (uid) {
+        var isCap = uid === cap;
+        return '<li><span>' + esc(displayNameForUid(uid)) + (isCap ? ' <span class="pill">Captain</span>' : '') + '</span>' +
+          (isCap ? '' : '<button type="button" class="btn btn-danger" data-remove="' + esc(uid) + '">Remove</button>') +
+          '</li>';
+      }).join('');
+
+      var invHtml = invites.map(function (inv) {
+        var st = inv.data.status || '-';
+        var pend = st === 'pending';
+        var tgt = inv.data.toEmail || inv.data.toUid || '-';
+        return '<li><span>' + esc(String(tgt)) + ' <span class="pill' + (pend ? ' pill-pending' : '') + '">' + esc(st) + '</span></span>' +
+          (pend ? '<button type="button" class="btn btn-ghost" data-cancel-inv="' + esc(inv.id) + '">Cancel</button>' : '') +
+          '</li>';
+      }).join('');
+      if (!invHtml) invHtml = '<li><span class="hint">No invites recorded for this team.</span></li>';
+
+      card.innerHTML =
+        '<h3>' + esc(t.name || teamId) + '</h3>' +
+        '<div class="team-meta">Team ID: <code style="font-size:11px">' + esc(teamId) + '</code> - Roster: ' + rosterCount(t) + ' / ' + ROSTER_MAX +
+        (pendingInviteCount(teamId) ? ' - Pending invites: ' + pendingInviteCount(teamId) : '') +
+        (t.adminMarkedPaid ? ' <span class="pill" style="background:rgba(0,255,136,.2);color:var(--neon)">Payment recorded</span>' : '') +
+        '</div>' +
+        '<p class="hint" style="margin:0 0 10px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;">' +
+        '<label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">' +
+        '<input type="checkbox" id="admin-paid-' + teamId + '"' + (t.adminMarkedPaid ? ' checked' : '') + '> ' +
+        '<span>Paid?</span></label>' +
+        '<label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">' +
+        '<input type="checkbox" id="team-members-' + teamId + '"' + (t.allMembers ? ' checked' : '') + '> ' +
+        '<span>All Member Team?</span></label></p>' +
+        '<div class="field-row">' +
+        '<div><label>Team name</label><input type="text" id="team-name-' + teamId + '" value="' + esc(t.name || '') + '"></div>' +
+        '<div><label>Division</label><select id="team-div-' + teamId + '">' + divOpts + '</select></div>' +
+        '<button type="button" class="btn btn-neon" data-save-team="' + esc(teamId) + '">Save team</button>' +
+        '<button type="button" class="btn btn-danger" data-delete-team="' + esc(teamId) + '">Delete team</button>' +
+        '</div>' +
+        '<p class="msg" id="team-msg-' + teamId + '"></p>' +
+        '<strong style="font-size:12px;text-transform:uppercase;color:var(--muted);">Roster</strong>' +
+        '<ul class="roster-list">' + rosterHtml + '</ul>' +
+        '<strong style="font-size:12px;text-transform:uppercase;color:var(--muted);">Invites</strong>' +
+        '<ul class="invite-list">' + invHtml + '</ul>' +
+        '<div class="assign-box">' +
+        '<strong style="font-size:12px;">Assign player</strong>' +
+        '<p class="hint">Search by name or email (directory + solo signups).</p>' +
+        '<input type="search" class="search-box" id="assign-q-' + teamId + '" placeholder="Search...">' +
+        '<div class="assign-results" id="assign-res-' + teamId + '"></div>' +
+        '</div>';
+
+      card.querySelector('[data-save-team="' + teamId + '"]').addEventListener('click', function () {
+        saveTeam(teamId);
+      });
+      card.querySelector('[data-delete-team="' + teamId + '"]').addEventListener('click', function () {
+        deleteTeam(teamId);
+      });
+      card.querySelectorAll('[data-remove]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          removePlayer(teamId, btn.getAttribute('data-remove'));
+        });
+      });
+      card.querySelectorAll('[data-cancel-inv]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          cancelInvite(btn.getAttribute('data-cancel-inv'));
+        });
+      });
+      var aq = card.querySelector('#assign-q-' + teamId);
+      if (aq) {
+        aq.addEventListener('input', function () {
+          renderAssignSearch(teamId);
+        });
+      }
+      var apChk = card.querySelector('#admin-paid-' + teamId);
+      if (apChk) {
+        apChk.addEventListener('change', function () {
+          setAdminTeamPaymentStatus(teamId, apChk.checked);
+        });
+      }
+      host.appendChild(card);
+    });
+  }
+
+  function render() {
+    renderQuickFilters();
+    renderSolo();
+    renderTeams();
+  }
+
+  function initQuickFilters() {
+    document.querySelectorAll('.qf').forEach(function (b) {
+      b.addEventListener('click', function () {
+        quickFilter = b.getAttribute('data-qf');
+        render();
+      });
+    });
+  }
+
+  function initAuth() {
+    if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()) {
+      document.getElementById('auth-status').textContent = 'Firebase not configured.';
+      return Promise.reject();
+    }
+    return SEOpenPlay.initFirebase().then(function () {
+      return new Promise(function (resolve, reject) {
+        var pending = false;
+        SEOpenPlay.onAuthStateChanged(function (user) {
+          if (authDone) return;
+          if (!user) {
+            authDone = true;
+            window.location.replace(accountReturnHref());
+            reject();
+            return;
+          }
+          if (pending) return;
+          pending = true;
+          SEOpenPlay.loadAdminUidFlag(user.uid).then(function (ok) {
+            pending = false;
+            if (authDone) return;
+            if (!ok) {
+              authDone = true;
+              document.getElementById('auth-status').innerHTML = 'Admin access required for <strong>' + esc(user.email || '') + '</strong>.';
+              reject();
+              return;
+            }
+            authDone = true;
+            document.getElementById('auth-status').innerHTML = 'Signed in as <strong>' + esc(user.email || '') + '</strong>.';
+            resolve(user);
+          });
+        });
+      });
+    });
+  }
+
+  document.getElementById('btn-refresh').addEventListener('click', function () {
+    loadAllData().then(render).catch(function (e) {
+      showLoadError(e);
+      alert((e && e.message) || 'Reload failed.');
+    });
+  });
+
+  document.getElementById('team-search').addEventListener('input', function () {
+    teamSearchQ = this.value;
+    render();
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initQuickFilters();
+    renderDivisionToggles();
+    initAuth().then(function () {
+      document.getElementById('main-admin').classList.remove('hidden');
+      document.getElementById('btn-refresh').classList.remove('hidden');
+      return loadAllData();
+    }).then(function () {
+      render();
+      if (window.LeagueAdminGames && typeof window.LeagueAdminGames.startAfterAuth === 'function') {
+        window.LeagueAdminGames.startAfterAuth();
+      }
+    }).catch(function (e) {
+      if (e) showLoadError(e);
+    });
+  });
+})();
+</script>
+
+<a class="message-board-fab" href="SouthEnd_Message_Board.html" aria-label="Open Message Board">Message Board</a>
+</body>
+</html>

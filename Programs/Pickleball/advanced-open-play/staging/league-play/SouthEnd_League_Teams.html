@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>League — Register</title>
+    <link rel="icon" type="image/jpeg" href="../favicon.jpg">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/south-end-league.css" />
+  </head>
+  <body class="league-page">
+    <a class="league-skip" href="#main">Skip to content</a>
+    <div class="header" role="banner">
+      <div>
+        <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+        <div class="hdr-title">LEAGUE <span>REGISTER</span></div>
+        <div class="hdr-sub">Build a team as captain, or sign up solo and we'll pair you up.</div>
+      </div>
+      <div class="league-header-actions">
+        <a
+          class="league-header-notify"
+          id="league-header-notify"
+          href="#notifications"
+          aria-label="Notifications"
+        >
+          <svg
+            class="league-header-notify__icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M10 20h4a2 2 0 0 1-4 0"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span class="league-header-notify__badge" id="league-header-notify-badge" hidden aria-hidden="true"></span>
+        </a>
+        <a
+          class="league-header-profile"
+          href="../SouthEnd_OpenPlay_Account.html?return=SouthEnd_League_Teams.html"
+          aria-label="Open main Pickleball profile and account (same as Open Play)"
+        >
+          <svg class="league-header-profile__icon" viewBox="0 0 24 24" aria-hidden="true"
+            ><circle cx="12" cy="8" r="3.5" /><path d="M5.5 20.5v-1.2A5.2 5.2 0 0 1 10.7 14h2.6a5.2 5.2 0 0 1 5.2 5.2v1.2"
+          /></svg>
+          Sign in
+        </a>
+      </div>
+    </div>
+    <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav></nav>
+    <script src="js/pickleball-hub-nav.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <nav class="se-site-nav" aria-label="League play">
+      <a class="se-site-nav-link" href="SouthEnd_League_Overview.html">Overview</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Schedule.html">Schedule</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Standings.html">Standings</a>
+      <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_League_Teams.html" aria-current="page">Register</a>
+    </nav>
+    <main id="main" class="league-wrap" tabindex="-1">
+      <div id="banner" class="league-card" style="display: none" role="status"></div>
+
+      <div class="league-card" id="createCard" style="display: none; opacity: 0.5" aria-disabled="true">
+        <h2>Registration form</h2>
+        <form id="teamForm">
+          <div id="captainTeamNameField">
+            <label for="teamName">Team name</label>
+            <input id="teamName" type="text" required autocomplete="off" />
+          </div>
+
+          <fieldset class="league-choice-group">
+            <legend>Registration type</legend>
+            <label class="league-choice">
+              <input type="radio" name="registrationType" value="captain" checked />
+              <span>
+                <strong>Captain / team registration</strong>
+                <small>Create a team now, then add teammates below.</small>
+              </span>
+            </label>
+            <label class="league-choice">
+              <input type="radio" name="registrationType" value="solo" />
+              <span>
+                <strong>Sign up solo</strong>
+                <small>We'll pair you with a team when a spot is available.</small>
+              </span>
+            </label>
+          </fieldset>
+
+          <fieldset class="league-choice-group" id="divisionGroup">
+            <legend>Division</legend>
+            <p class="help" style="margin-top: 0">Choose the league division you are registering for. Your weekly session is one day per week.</p>
+            <div id="divisionChoices" class="league-division-grid" role="radiogroup" aria-label="League division"></div>
+            <div id="divisionScheduleHint" class="league-division-schedule-hint" role="status" aria-live="polite"></div>
+          </fieldset>
+
+          <div id="captainFields">
+            <label class="league-fee-toggle">
+              <input type="checkbox" id="allMembers" />
+              <span>
+                <strong>All-member roster</strong>
+                <small>$200 team fee. Leave off if any player is a non-member.</small>
+              </span>
+            </label>
+            <p id="feeHint" class="help"></p>
+          </div>
+          <div id="soloFields" class="league-solo-note" hidden>
+            <strong>Sign up solo</strong>
+            <p>We'll pair you with a team when a spot is available.</p>
+            <div class="league-fee-summary" id="soloFeeSummary">
+              <strong>Solo player fee</strong>
+              <span id="soloFeeHint">Loading profile fee...</span>
+            </div>
+          </div>
+          <fieldset class="league-choice-group">
+            <legend>Requirements</legend>
+            <label class="league-check league-check--required">
+              <input type="checkbox" id="acceptPaddles" required />
+              <span>All players will use USAP-approved paddles during league play<span class="league-required-inline" aria-hidden="true">*</span></span>
+            </label>
+            <label class="league-check league-check--required">
+              <input type="checkbox" id="acceptAge" required />
+              <span>All players are 18+ (or have parent/guardian approval)<span class="league-required-inline" aria-hidden="true">*</span></span>
+            </label>
+          </fieldset>
+          <fieldset class="league-choice-group league-agreement-block">
+            <legend>Agreements</legend>
+            <label class="league-check league-check--required">
+              <input type="checkbox" id="acceptTerms" required />
+              <span>
+                I reviewed and accept the
+                <a href="SouthEnd_League_Overview.html" target="_blank" rel="noopener">League Play rules, schedule, and terms</a>
+                <span class="league-required-inline" aria-hidden="true">*</span>
+              </span>
+            </label>
+          </fieldset>
+          <div class="league-form-actions">
+            <button type="submit" class="btn" id="createBtn" disabled>Create team</button>
+          </div>
+        </form>
+        <p id="teamStatus" class="help" style="min-height: 1.2rem" role="status"></p>
+      </div>
+
+      <div id="playerTeamCard" class="league-card" style="display: none" hidden>
+        <h2>Your Roster</h2>
+        <p><strong id="playerTeamName"></strong></p>
+        <p id="playerTeamDivision" class="help"></p>
+        <ul id="playerRosterList" class="league-profile-list"></ul>
+      </div>
+
+      <div class="league-card" id="inviteCard" style="display: none">
+        <h2>Add teammates</h2>
+        <p id="captainRegistrationStatus" class="league-registration-status league-registration-status--captain" role="status" aria-live="polite"></p>
+        <p id="inviteLockStatus" class="help" role="status">Create your team above to start inviting players.</p>
+        <p>
+          <strong>Your team:</strong>
+          <span id="teamNameDisplay"></span>
+        </p>
+        <label for="q">Search by name</label>
+        <input id="q" type="search" placeholder="Type a first or last name" disabled />
+        <ul id="results" class="league-lookup" aria-live="polite"></ul>
+        <p id="invStatus" class="help" role="status"></p>
+        <div class="league-divider">Or invite by email</div>
+        <label for="emailInvite">Player email</label>
+        <input id="emailInvite" type="email" placeholder="player@example.com" disabled />
+        <p>
+          <button type="button" class="btn btn--secondary" id="emailInviteBtn" disabled>Send email invite</button>
+        </p>
+        <p id="emailInviteStatus" class="help" role="status"></p>
+        <p class="league-payment-row" id="leaguePaymentCtaRow">
+          <a class="btn" id="leaguePaymentBtn" href="#" aria-disabled="true">Proceed to Payment</a>
+          <span class="league-payment-amount" id="leaguePaymentAmount" aria-live="polite"></span>
+        </p>
+        <p id="adminPaymentRecorded" class="help" style="display: none" role="status" hidden>
+          League staff have recorded your team payment. The PayPal link is hidden. Contact the front desk with questions.
+        </p>
+        <p id="paymentStatus" class="help" role="status">Create your team to see the payment link.</p>
+      </div>
+
+      <div id="soloRegisteredCard" class="league-card" style="display: none" hidden>
+        <h2>Solo registration</h2>
+        <p id="soloRegistrationStatus" class="league-registration-status league-registration-status--solo" role="status" aria-live="polite"></p>
+        <p>You're signed up as a solo player. League staff will place you on a team when a spot opens and when payment is made.</p>
+        <p id="soloPaymentRecorded" class="help" style="display: none" role="status" hidden>
+          League staff have recorded your solo payment. No PayPal payment is due.
+        </p>
+        <p class="league-hero-actions">
+          <a class="btn btn--secondary" href="SouthEnd_League_Overview.html">League overview</a>
+          <a class="btn" id="soloPaymentBtn" href="SouthEnd_League_Payment.html">Payment</a>
+        </p>
+      </div>
+
+      <div id="deleteTeamSection" class="league-card" style="display: none" hidden>
+        <h2>Danger zone</h2>
+        <p>
+          Only the team captain can delete the team. This removes the team and clears league records for roster
+          players tied to this team.
+        </p>
+        <button type="button" class="btn btn--danger" id="deleteTeamBtn">Delete team…</button>
+        <p id="deleteTeamStatus" class="help" role="status"></p>
+      </div>
+    </main>
+    <footer
+      class="pickleball-share-footer"
+      data-pickleball-share
+      data-share-context="league"
+      aria-label="Invite friends to league play"
+    ></footer>
+    <script src="../js/pickleball-invite-share.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="js/league-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="js/south-end-league-sync.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="../js/openplay-firebase-config.js"></script>
+    <script src="../js/south-end-openplay-sync.js"></script>
+    <script src="../js/openplay-profile-panel.js?v=20260427-admin-hub"></script>
+    <script src="js/league-team-builder.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script>
+      (function () {
+        var L = window.LeagueSync;
+        if (!L.init(LEAGUE_FIREBASE_CONFIG) || !LEAGUE_FIREBASE_CONFIG || !LEAGUE_FIREBASE_CONFIG.apiKey) {
+          var b = document.getElementById("banner");
+          b.style.display = "block";
+          b.textContent = "Set js/league-firebase-config.js (copy from the example) before registering.";
+        }
+        var divisionChoices = document.getElementById("divisionChoices");
+        var divisionScheduleHint = document.getElementById("divisionScheduleHint");
+        var divisionCategories = [
+          { id: "mens", label: "Men's" },
+          { id: "womens", label: "Women's" },
+          { id: "coed", label: "Co-ed" },
+        ];
+        var divisionColumns = {};
+        divisionCategories.forEach(function (category) {
+          var col = document.createElement("div");
+          col.className = "league-division-column";
+          var heading = document.createElement("h3");
+          heading.className = "league-division-column__title";
+          heading.textContent = category.label;
+          var choices = document.createElement("div");
+          choices.className = "league-division-column__choices";
+          col.appendChild(heading);
+          col.appendChild(choices);
+          divisionColumns[category.id] = choices;
+          divisionChoices.appendChild(col);
+        });
+        L.DIVISIONS.forEach(function (d) {
+          var lab = document.createElement("label");
+          lab.className = "league-choice league-choice--division";
+          var inp = document.createElement("input");
+          inp.type = "radio";
+          inp.name = "leagueDivision";
+          inp.value = d.id;
+          inp.required = true;
+          var span = document.createElement("span");
+          var strong = document.createElement("strong");
+          strong.textContent = d.label;
+          var small = document.createElement("small");
+          small.textContent = L.formatDivisionSchedule(d);
+          span.appendChild(strong);
+          span.appendChild(small);
+          lab.appendChild(inp);
+          lab.appendChild(span);
+          inp.addEventListener("change", function () {
+            updateDivisionHint();
+            refreshCreateBtnState();
+          });
+          (divisionColumns[d.category] || divisionChoices).appendChild(lab);
+        });
+        function getSelectedDivisionId() {
+          var c = document.querySelector("input[name=leagueDivision]:checked");
+          return c ? c.value : "";
+        }
+        function updateDivisionHint() {
+          var div = L.getDivisionById(getSelectedDivisionId());
+          if (!div) {
+            divisionScheduleHint.textContent =
+              "Select a division to confirm your weekly session day and time.";
+            return;
+          }
+          divisionScheduleHint.innerHTML =
+            "<strong>Your weekly session:</strong> " +
+            div.label +
+            " · " +
+            L.formatDivisionSchedule(div);
+        }
+        updateDivisionHint();
+        function refreshCreateBtnState() {
+          var atCh = document.getElementById("acceptTerms");
+          var paddlesCh = document.getElementById("acceptPaddles");
+          var ageCh = document.getElementById("acceptAge");
+          var btn = document.getElementById("createBtn");
+          if (btn) {
+            btn.disabled = !(
+              atCh &&
+              atCh.checked &&
+              paddlesCh &&
+              paddlesCh.checked &&
+              ageCh &&
+              ageCh.checked &&
+              getSelectedDivisionId()
+            );
+          }
+        }
+        var createCard = document.getElementById("createCard");
+        var createBtn = document.getElementById("createBtn");
+        var captainTeamNameField = document.getElementById("captainTeamNameField");
+        var captainFields = document.getElementById("captainFields");
+        var soloFields = document.getElementById("soloFields");
+        var teamName = document.getElementById("teamName");
+        var inviteCard = document.getElementById("inviteCard");
+        var soloIsMember = false;
+        var currentLeagueAccount = null;
+        var createdTeamName = "";
+        function formatUsd(amount) {
+          return "$" + String(Math.max(0, Number(amount) || 0));
+        }
+        function leaguePaymentPageUrlFor(amount, registrationType) {
+          var amt = Math.max(0, Number(amount) || 0);
+          return "SouthEnd_League_Payment.html?amount=" + encodeURIComponent(String(amt)) +
+            "&type=" + encodeURIComponent(registrationType || getRegistrationType());
+        }
+        function leagueFeeAmountFor(registrationType) {
+          if (registrationType === "solo") return soloIsMember ? 50 : 75;
+          return document.getElementById("allMembers").checked ? 200 : 250;
+        }
+        function setLeaguePaymentAmountText(amount) {
+          var paymentAmount = document.getElementById("leaguePaymentAmount");
+          if (paymentAmount) paymentAmount.textContent = amount ? formatUsd(amount) : "";
+        }
+        function setLeaguePaymentCta(amount, registrationType) {
+          var paymentBtn = document.getElementById("leaguePaymentBtn");
+          var paymentStatus = document.getElementById("paymentStatus");
+          var ctaRow = document.getElementById("leaguePaymentCtaRow");
+          var adminNote = document.getElementById("adminPaymentRecorded");
+          if (!paymentBtn || !paymentStatus) return;
+          if (ctaRow) {
+            ctaRow.style.display = "";
+            ctaRow.removeAttribute("hidden");
+          }
+          if (adminNote) {
+            adminNote.style.display = "none";
+            adminNote.hidden = true;
+          }
+          var feeAmount = Math.max(0, Number(amount) || 0);
+          paymentBtn.textContent = "Proceed to Payment";
+          paymentBtn.setAttribute("data-payment-amount", String(feeAmount));
+          setLeaguePaymentAmountText(feeAmount);
+          paymentBtn.href = leaguePaymentPageUrlFor(feeAmount, registrationType);
+          paymentBtn.removeAttribute("target");
+          paymentBtn.removeAttribute("rel");
+          paymentBtn.setAttribute("aria-disabled", feeAmount > 0 ? "false" : "true");
+          paymentStatus.textContent = feeAmount > 0
+            ? "Review your payment before opening PayPal."
+            : "Create your team to see the payment link.";
+        }
+        function applyCaptainPaymentUI(team) {
+          var ctaRow = document.getElementById("leaguePaymentCtaRow");
+          var adminNote = document.getElementById("adminPaymentRecorded");
+          var paymentStatus = document.getElementById("paymentStatus");
+          var captainRegStatus = document.getElementById("captainRegistrationStatus");
+          if (!team) return;
+          if (team.adminMarkedPaid === true) {
+            if (captainRegStatus) {
+              captainRegStatus.textContent = "Registration: Payment recorded (staff marked paid).";
+            }
+            if (ctaRow) {
+              ctaRow.style.display = "none";
+              ctaRow.setAttribute("hidden", "true");
+            }
+            if (adminNote) {
+              adminNote.style.display = "block";
+              adminNote.hidden = false;
+            }
+            if (paymentStatus) paymentStatus.textContent = "";
+          } else {
+            if (captainRegStatus) {
+              captainRegStatus.textContent =
+                "Registration: Payment pending — use Proceed to Payment when your roster is ready.";
+            }
+            if (ctaRow) {
+              ctaRow.style.display = "";
+              ctaRow.removeAttribute("hidden");
+            }
+            if (adminNote) {
+              adminNote.style.display = "none";
+              adminNote.hidden = true;
+            }
+            setLeaguePaymentCta(captainFeeAmount(team), "captain");
+          }
+        }
+        function getRegistrationType() {
+          var checked = document.querySelector("input[name=registrationType]:checked");
+          return checked ? checked.value : "captain";
+        }
+        function syncRegistrationMode() {
+          var isSolo = getRegistrationType() === "solo";
+          captainTeamNameField.hidden = isSolo;
+          captainFields.hidden = isSolo;
+          soloFields.hidden = !isSolo;
+          teamName.required = !isSolo;
+          teamName.disabled = isSolo;
+          createBtn.textContent = isSolo ? "Register solo" : "Create team";
+          setLeaguePaymentAmountText(isSolo ? 0 : leagueFeeAmountFor("captain"));
+          if (inviteCard) inviteCard.style.display = isSolo ? "none" : "block";
+        }
+        function refreshFeeHint() {
+          var all = document.getElementById("allMembers").checked;
+          document.getElementById("feeHint").textContent = L.feeLabelForAllMembers(all);
+          if (getRegistrationType() === "captain") setLeaguePaymentAmountText(leagueFeeAmountFor("captain"));
+        }
+        function refreshSoloFeeHint() {
+          document.getElementById("soloFeeHint").textContent =
+            (soloIsMember ? "Member Fee" : "Non-Member Fee") + " — " + L.soloFeeLabelForMember(soloIsMember).split(" — ")[0];
+        }
+        document.getElementById("allMembers").addEventListener("change", refreshFeeHint);
+        document.getElementById("leaguePaymentBtn").addEventListener("click", function (e) {
+          if (this.getAttribute("aria-disabled") !== "true") return;
+          e.preventDefault();
+          var amount = this.getAttribute("data-payment-amount");
+          document.getElementById("paymentStatus").textContent =
+            amount ? "Payment link coming soon." : "Create your team to see the payment link.";
+        });
+        refreshFeeHint();
+        refreshSoloFeeHint();
+        document.querySelectorAll("input[name=registrationType]").forEach(function (radio) {
+          radio.addEventListener("change", syncRegistrationMode);
+        });
+        syncRegistrationMode();
+
+        function setCreateEnabled(on) {
+          createCard.style.opacity = on ? "1" : "0.5";
+          createCard.setAttribute("aria-disabled", on ? "false" : "true");
+        }
+        function redirectToProfile() {
+          L.redirectToMainPickleballAccount();
+        }
+        var soloRegisteredCard = document.getElementById("soloRegisteredCard");
+        var playerTeamCard = document.getElementById("playerTeamCard");
+        var deleteTeamSection = document.getElementById("deleteTeamSection");
+        var deleteTeamBtn = document.getElementById("deleteTeamBtn");
+        var deleteTeamStatus = document.getElementById("deleteTeamStatus");
+        var activeTeamForDelete = null;
+        var leagueTeamUnsub = null;
+
+        function clearLeagueTeamListener() {
+          if (leagueTeamUnsub) {
+            leagueTeamUnsub();
+            leagueTeamUnsub = null;
+          }
+        }
+
+        function captainFeeAmount(team) {
+          return team && team.allMembers ? 200 : 250;
+        }
+
+        function hideRegisteredCards() {
+          clearLeagueTeamListener();
+          if (soloRegisteredCard) {
+            soloRegisteredCard.style.display = "none";
+            soloRegisteredCard.hidden = true;
+          }
+          if (playerTeamCard) {
+            playerTeamCard.style.display = "none";
+            playerTeamCard.hidden = true;
+          }
+          if (deleteTeamSection) {
+            deleteTeamSection.style.display = "none";
+            deleteTeamSection.hidden = true;
+          }
+        }
+
+        function resolvePlayerName(uid) {
+          return L.getDirectoryEntry(uid)
+            .catch(function () {
+              return null;
+            })
+            .then(function (entry) {
+              if (entry && entry.displayName) return entry.displayName;
+              return L.getUserProfile(uid).catch(function () {
+                return null;
+              });
+            })
+            .then(function (result) {
+              if (typeof result === "string") return result;
+              if (result) {
+                var built = L.buildDisplayName(result);
+                if (built) return built;
+              }
+              var cur = L.getCurrentUser();
+              if (cur && cur.uid === uid) return cur.displayName || cur.email || "You";
+              return "Player";
+            });
+        }
+
+        function renderTeamRoster(team) {
+          if (playerTeamCard) {
+            playerTeamCard.hidden = false;
+            playerTeamCard.style.display = "block";
+          }
+          document.getElementById("playerTeamName").textContent = team.name || "Your team";
+          var divLine =
+            (team.divisionLabel || "") +
+            (team.divisionSchedule ? " · " + team.divisionSchedule : "");
+          document.getElementById("playerTeamDivision").textContent = divLine || "";
+          var list = document.getElementById("playerRosterList");
+          list.innerHTML = "";
+          var roster = [{ uid: team.captainUid, cap: true }];
+          Object.keys(team.roster || {}).forEach(function (ruid) {
+            if (ruid !== team.captainUid) roster.push({ uid: ruid, cap: false });
+          });
+          return Promise.all(
+            roster.map(function (row) {
+              return resolvePlayerName(row.uid).then(function (name) {
+                var li = document.createElement("li");
+                var chip = document.createElement("div");
+                chip.className = "league-profile-chip league-roster-chip";
+                var playerName = document.createElement("span");
+                playerName.textContent = name || row.uid;
+                chip.appendChild(playerName);
+                if (row.cap) {
+                  var badge = document.createElement("span");
+                  badge.className = "league-roster-captain-badge";
+                  badge.textContent = "★ Captain";
+                  chip.appendChild(badge);
+                }
+                li.appendChild(chip);
+                list.appendChild(li);
+              });
+            })
+          );
+        }
+
+        function loadCaptainTeamUI(acct, team) {
+          clearLeagueTeamListener();
+          hideRegisteredCards();
+          activeTeamForDelete = team;
+          createCard.style.display = "none";
+          renderTeamRoster(team);
+          var inv = document.getElementById("inviteCard");
+          if (inv) inv.style.display = "block";
+          document.getElementById("inviteLockStatus").textContent =
+            "Search for players by name or send an email invite.";
+          document.getElementById("teamNameDisplay").textContent = team.name || "Your team";
+          document.getElementById("q").disabled = false;
+          document.getElementById("emailInvite").disabled = false;
+          document.getElementById("emailInviteBtn").disabled = false;
+          applyCaptainPaymentUI(team);
+          if (acct && acct.teamId) {
+            leagueTeamUnsub = L.subscribeTeam(acct.teamId, function (t) {
+              if (!t) return;
+              renderTeamRoster(t);
+              applyCaptainPaymentUI(t);
+            });
+          }
+          window.LeagueTeamBuilder.init({
+            teamId: acct.teamId,
+            teamName: team.name || "",
+            searchId: "q",
+            resultsId: "results",
+            inviteStatusId: "invStatus",
+            emailInputId: "emailInvite",
+            emailBtnId: "emailInviteBtn",
+            emailStatusId: "emailInviteStatus",
+            statusId: "invStatus",
+          });
+          if (deleteTeamSection) {
+            deleteTeamSection.hidden = false;
+            deleteTeamSection.style.display = "block";
+          }
+          if (deleteTeamStatus) deleteTeamStatus.textContent = "";
+        }
+
+        function loadPlayerTeamUI(acct, team) {
+          clearLeagueTeamListener();
+          hideRegisteredCards();
+          activeTeamForDelete = null;
+          createCard.style.display = "none";
+          var inv = document.getElementById("inviteCard");
+          if (inv) inv.style.display = "none";
+          return renderTeamRoster(team);
+        }
+
+        function showSoloRegistered(acct) {
+          clearLeagueTeamListener();
+          hideRegisteredCards();
+          createCard.style.display = "none";
+          var inv = document.getElementById("inviteCard");
+          if (inv) inv.style.display = "none";
+          var soloPaidNote = document.getElementById("soloPaymentRecorded");
+          var soloPaymentBtn = document.getElementById("soloPaymentBtn");
+          var adminMarkedPaid = !!(acct && acct.adminMarkedPaid === true);
+          if (soloPaidNote) {
+            soloPaidNote.hidden = !adminMarkedPaid;
+            soloPaidNote.style.display = adminMarkedPaid ? "block" : "none";
+          }
+          if (soloPaymentBtn) {
+            soloPaymentBtn.hidden = adminMarkedPaid;
+            soloPaymentBtn.style.display = adminMarkedPaid ? "none" : "";
+            soloPaymentBtn.setAttribute("aria-hidden", adminMarkedPaid ? "true" : "false");
+            soloPaymentBtn.tabIndex = adminMarkedPaid ? -1 : 0;
+            if (!adminMarkedPaid) {
+              soloPaymentBtn.href = leaguePaymentPageUrlFor(
+                acct && acct.feeAmount ? acct.feeAmount : leagueFeeAmountFor("solo"),
+                "solo"
+              );
+            }
+          }
+          var soloRegStatus = document.getElementById("soloRegistrationStatus");
+          if (soloRegStatus) {
+            soloRegStatus.textContent = adminMarkedPaid
+              ? "Registration: Payment recorded (staff marked paid)."
+              : "Registration: Payment pending — complete payment to finalize your solo signup.";
+          }
+          if (soloRegisteredCard) {
+            soloRegisteredCard.hidden = false;
+            soloRegisteredCard.style.display = "block";
+          }
+        }
+
+        L.onAuth(function (u) {
+          var inv = document.getElementById("inviteCard");
+          if (!u) {
+            clearLeagueTeamListener();
+            createCard.style.display = "none";
+            if (inv) inv.style.display = "none";
+            hideRegisteredCards();
+            redirectToProfile();
+            return;
+          }
+          L.syncProfileToDirectory(u.uid);
+          L.getUserProfile(u.uid)
+            .then(function (profile) {
+              soloIsMember = !!(profile && profile.membership === "yes");
+              refreshSoloFeeHint();
+            })
+            .catch(function () {
+              soloIsMember = false;
+              refreshSoloFeeHint();
+            });
+          L.getLeagueAccount(u.uid)
+            .then(function (acct) {
+              currentLeagueAccount = acct || null;
+              if (!acct || !acct.registrationStatus) {
+                hideRegisteredCards();
+                createCard.style.display = "block";
+                if (getRegistrationType() === "captain" && inv) inv.style.display = "block";
+                setCreateEnabled(true);
+                document.getElementById("teamForm").style.display = "block";
+                document.getElementById("teamStatus").textContent = "";
+                if (!acct) return;
+                var atCh = document.getElementById("acceptTerms");
+                if (acct.termsVersion === L.TERMS_VERSION) {
+                  atCh.checked = true;
+                  atCh.disabled = false;
+                }
+                if (acct.registrationType === "solo") {
+                  document.querySelector("input[name=registrationType][value=solo]").checked = true;
+                  syncRegistrationMode();
+                }
+                if (acct.divisionId) {
+                  var divInp = document.querySelector(
+                    'input[name=leagueDivision][value="' + acct.divisionId + '"]'
+                  );
+                  if (divInp) divInp.checked = true;
+                  updateDivisionHint();
+                }
+                refreshCreateBtnState();
+                return;
+              }
+              if (!acct.teamId) {
+                showSoloRegistered(acct);
+                return;
+              }
+              L.getTeam(acct.teamId)
+                .then(function (team) {
+                  if (!team) {
+                    document.getElementById("banner").style.display = "block";
+                    document.getElementById("banner").textContent =
+                      "Team record was not found. If this persists, contact a league admin.";
+                    return;
+                  }
+                  var isCaptain = team.captainUid === u.uid;
+                  if (isCaptain) loadCaptainTeamUI(acct, team);
+                  else loadPlayerTeamUI(acct, team);
+                })
+                .catch(function () {
+                  document.getElementById("banner").style.display = "block";
+                  document.getElementById("banner").textContent = "Could not load your team. Try again shortly.";
+                });
+            });
+        });
+
+        if (deleteTeamBtn) {
+          deleteTeamBtn.addEventListener("click", function () {
+            var usr = L.getCurrentUser();
+            var team = activeTeamForDelete;
+            var expected = team && team.name ? team.name : "";
+            if (!usr || !currentLeagueAccount || !currentLeagueAccount.teamId || !team || team.captainUid !== usr.uid) {
+              if (deleteTeamStatus) {
+                deleteTeamStatus.textContent = "Only the team captain can delete this team.";
+              }
+              return;
+            }
+            var typed = window.prompt(
+              "Type the team name exactly to delete this team:\n\n" + expected
+            );
+            if (typed === null) return;
+            typed = typed.trim();
+            if (!expected || typed !== expected) {
+              if (deleteTeamStatus) {
+                deleteTeamStatus.textContent = "Type the team name exactly to confirm deletion.";
+              }
+              return;
+            }
+            deleteTeamBtn.disabled = true;
+            if (deleteTeamStatus) deleteTeamStatus.textContent = "Deleting team…";
+            L.deleteTeamAsCaptain(currentLeagueAccount.teamId, usr.uid, expected)
+              .then(function () {
+                if (deleteTeamStatus) deleteTeamStatus.textContent = "Team deleted.";
+                window.location.reload();
+              })
+              .catch(function (err) {
+                deleteTeamBtn.disabled = false;
+                if (deleteTeamStatus) {
+                  deleteTeamStatus.textContent = (err && err.message) || "Could not delete team.";
+                }
+              });
+          });
+        }
+        ["acceptPaddles", "acceptAge", "acceptTerms"].forEach(function (id) {
+          document.getElementById(id).addEventListener("change", function () {
+            refreshCreateBtnState();
+          });
+        });
+
+        document.getElementById("teamForm").addEventListener("submit", function (e) {
+          e.preventDefault();
+          var u = L.getCurrentUser();
+          var ts = document.getElementById("teamStatus");
+          if (!u) return;
+          if (!document.getElementById("acceptTerms").checked) {
+            ts.textContent = "Accept the program terms first.";
+            return;
+          }
+          if (!document.getElementById("acceptPaddles").checked || !document.getElementById("acceptAge").checked) {
+            ts.textContent = "Confirm the paddle and age requirements first.";
+            return;
+          }
+          if (!getSelectedDivisionId()) {
+            ts.textContent = "Choose a division.";
+            return;
+          }
+          var registrationType = getRegistrationType();
+          if (currentLeagueAccount && currentLeagueAccount.registrationStatus) {
+            ts.textContent = "You're already signed up for league play.";
+            return;
+          }
+          ts.textContent = registrationType === "solo" ? "Saving solo registration..." : "Creating team...";
+          L.setTermsAccepted(u.uid)
+            .then(function () {
+              var divId = getSelectedDivisionId();
+              if (registrationType === "solo") {
+                return L.saveSoloRegistration(u.uid, soloIsMember, divId);
+              }
+              return L.createTeam(
+                u.uid,
+                teamName.value.trim(),
+                document.getElementById("allMembers").checked,
+                divId
+              );
+            })
+            .then(function (r) {
+              if (registrationType === "solo") {
+                ts.textContent = "You're signed up solo. We'll pair you up.";
+                if (inviteCard) inviteCard.style.display = "none";
+                window.location.href = leaguePaymentPageUrlFor(leagueFeeAmountFor("solo"), "solo");
+                return;
+              }
+              ts.textContent = "Team created — " + r.feeLabel + ".";
+              var tid = r.teamId;
+              createdTeamName = teamName.value.trim();
+              inviteCard.style.display = "block";
+              document.getElementById("inviteLockStatus").textContent = "You can now search for players and send invites.";
+              document.getElementById("teamNameDisplay").textContent = createdTeamName;
+              document.getElementById("q").disabled = false;
+              setLeaguePaymentCta(leagueFeeAmountFor(registrationType), registrationType);
+              document.getElementById("emailInvite").disabled = false;
+              document.getElementById("emailInviteBtn").disabled = false;
+              window.LeagueTeamBuilder.init({
+                teamId: tid,
+                teamName: createdTeamName,
+                searchId: "q",
+                resultsId: "results",
+                inviteStatusId: "invStatus",
+                emailInputId: "emailInvite",
+                emailBtnId: "emailInviteBtn",
+                emailStatusId: "emailInviteStatus",
+                statusId: "invStatus",
+              });
+            })
+            .catch(function (err) {
+              ts.textContent = (err && err.message) || "Registration failed.";
+            });
+        });
+      })();
+    </script>
+  </body>
+</html>

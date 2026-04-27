@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Copy advanced-open-play/live → staging/ and into local test mirrors (same file set as local-test.js).
+ * Copy Programs/Pickleball/live → staging/ and into local test mirrors (same file set as local-test.js).
  * Preserves each destination's Firebase config files so staging/testing projects stay separate from production.
  *
  * Preserved (per destination, if present before sync):
@@ -9,14 +9,15 @@
  */
 const fs = require('fs');
 const path = require('path');
-const { PROGRAM_ROOT } = require('./openplay-resolve-tree.js');
+const { PROGRAM_ROOT, getProductionSourceDir } = require('./openplay-resolve-tree.js');
 
-const LIVE = path.join(PROGRAM_ROOT, 'live');
+const LIVE = getProductionSourceDir();
 const STAGING = path.join(PROGRAM_ROOT, 'staging');
 const ROOT = path.join(PROGRAM_ROOT, '..', '..', '..');
 
 /** Keep in sync with testing/scripts/local-test.js FILES. */
 const FILES = [
+  'SouthEnd_Pickleball_Hub.html',
   'SouthEnd_Session_RSVP.html',
   'SouthEnd_OpenPlay_Account.html',
   'SouthEnd_Message_Board.html',
@@ -35,7 +36,6 @@ const PRESERVE_REL = ['js/openplay-firebase-config.js', 'js/openplay-firebase-co
 
 const OUT_DIRS = [
   path.join(PROGRAM_ROOT, 'testing', 'local-page'),
-  path.join(ROOT, 'local-page'),
 ];
 
 function mkdirp(d) {
@@ -141,7 +141,7 @@ function hubHtml(syncedAt) {
 </head>
 <body>
   <h1>Pickleball · Advanced Open Play <span>local</span></h1>
-  <p class="meta">Synced ${syncedAt} · source: Programs/Pickleball/advanced-open-play/<strong>live</strong>/ (openplay-sync-from-live — Firebase configs preserved per folder)</p>
+  <p class="meta">Synced ${syncedAt} · source: Programs/Pickleball/<strong>live</strong>/ (openplay-sync-from-live — Firebase configs preserved per folder)</p>
   <ul>
     <li><a href="SouthEnd_Session_RSVP.html">RSVP <small>Open Play — reservation form</small></a></li>
     <li><a href="SouthEnd_OpenPlay_Account.html">Account <small>Sign in / create account (then RSVP)</small></a></li>

@@ -59,17 +59,17 @@ Run from **Website/** (repo root). Do NOT invent commands.
 
 After switching, run `npm run resolve-project-mode -- "<path>"` again (or read the mode file directly) to confirm the new `activeMode`. Report to user:
 
-> Mode is now **{activeMode}**. Edit source in `{project root}/{activeMode}/`. Refresh local preview: `npm run local-test:sync`.
+> Mode is now **{activeMode}**. Local preview source remains `Programs/Pickleball/advanced-open-play/testing/local-page/`. Start preview with `npm run local-test`.
 
 ---
 
 ## 5. Sync from live (optional)
 
-If the user wants **staging + local mirrors to match live code** while keeping per-folder Firebase config:
+If the user wants **staging to match live code** while keeping per-folder Firebase config:
 
 1. Confirm project supports it (`syncFromLiveCommand` in JSON).
 2. Run that command (e.g., `npm run openplay:sync-from-live`).
-3. Warn if script logs missing prior Firebase config — user should paste test/staging keys.
+3. Warn if script logs missing prior Firebase config — user should paste staging keys.
 
 ---
 

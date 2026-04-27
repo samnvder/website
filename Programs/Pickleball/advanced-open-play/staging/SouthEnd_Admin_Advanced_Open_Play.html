@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<title>Advanced Open Play Admin - South End</title>
+<link rel="icon" type="image/jpeg" href="favicon.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0a1628;--navy-lt:#152342;--electric:#a855f7;--neon:#00ff88;--ink:#0a0a1a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:radial-gradient(1200px 600px at 10% -10%,rgba(168,85,247,.12),transparent),var(--navy);color:#fff;min-height:100vh;}
+.header{background:var(--navy-lt);padding:18px 28px 14px;border-bottom:3px solid var(--neon);}
+.hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--neon);margin-bottom:3px;}
+.hdr-title{font-family:'Oswald',sans-serif;font-size:24px;color:#fff;letter-spacing:1px;text-transform:uppercase;line-height:1;}
+.hdr-title span{color:var(--neon);}
+.hdr-sub{font-size:9px;color:rgba(255,255,255,.65);margin-top:3px;max-width:62ch;line-height:1.45;}
+.se-site-nav{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:10px 28px 12px;background:rgba(5,12,28,.85);border-bottom:1px solid rgba(0,255,136,.22);}
+.se-site-nav-link{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55);text-decoration:none;padding:8px 14px;border-radius:6px;border:1px solid transparent;transition:color .15s,border-color .15s,background .15s;}
+.se-site-nav-link:hover{color:var(--neon);background:rgba(0,255,136,.08);}
+.se-site-nav-link--active{color:var(--ink);background:var(--neon);border-color:rgba(0,255,136,.45);box-shadow:0 0 20px rgba(0,255,136,.25);}
+.sub-nav{display:flex;flex-wrap:wrap;gap:8px;padding:12px 28px;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(0,255,136,.12);}
+.sub-nav a{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);text-decoration:none;padding:6px 12px;border-radius:6px;}
+.sub-nav a:hover{color:var(--neon);}
+.sub-nav a.active{color:var(--ink);background:rgba(0,255,136,.85);}
+.body-wrap{max-width:920px;margin:0 auto;padding:28px 20px 56px;}
+.top-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+.status{font-size:12px;color:rgba(255,255,255,.82);}
+.status strong{color:#fff;}
+.subtle-nav-link{font-size:11px;color:rgba(255,255,255,.5);text-decoration:none;white-space:nowrap;}
+.subtle-nav-link:hover{color:var(--electric);text-decoration:underline;}
+.lead{font-size:14px;color:rgba(255,255,255,.72);line-height:1.55;margin-bottom:18px;max-width:66ch;}
+.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;}
+@media(max-width:840px){.admin-grid{grid-template-columns:1fr;}}
+.admin-card{display:flex;flex-direction:column;gap:10px;min-height:190px;border:1.5px solid rgba(0,255,136,.22);border-radius:12px;padding:18px;background:rgba(0,0,0,.18);text-decoration:none;color:#fff;}
+.admin-card:hover{border-color:rgba(0,255,136,.45);background:rgba(0,255,136,.06);}
+.admin-kicker{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);}
+.admin-title{font-family:'Oswald',sans-serif;font-size:22px;letter-spacing:.04em;text-transform:uppercase;line-height:1.05;}
+.admin-desc{font-size:13px;color:rgba(255,255,255,.68);line-height:1.45;flex:1;}
+.admin-cta{display:inline-flex;align-items:center;justify-content:center;width:100%;padding:12px 14px;border-radius:6px;font-family:'Oswald',sans-serif;font-size:15px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;background:var(--neon);color:var(--ink);}
+.hidden{display:none!important;}
+.message-board-fab{
+  position:fixed;right:18px;bottom:18px;z-index:90;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.22);
+  background:linear-gradient(135deg,var(--neon,#00ff88),#34d399);color:var(--ink,#050a12);
+  font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;
+  box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 26px rgba(0,255,136,.25);transition:transform .15s,filter .15s,box-shadow .15s;
+}
+.message-board-fab:hover{filter:brightness(1.06);transform:translateY(-1px);box-shadow:0 12px 32px rgba(0,0,0,.4),0 0 30px rgba(0,255,136,.32);}
+.message-board-fab:focus-visible{outline:2px solid #fff;outline-offset:3px;}
+@media(max-width:520px){.message-board-fab{right:14px;bottom:14px;padding:12px 14px;font-size:12px;}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+  <div class="hdr-title">Advanced <span>Open Play Admin</span></div>
+  <div class="hdr-sub">Staff-only Advanced Open Play tools for session registration, check-ins, and activity review.</div>
+</div>
+<nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav data-se-hide-message-board="1">
+  <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
+  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_Advanced_Open_Play.html" aria-current="page">Open Play admin</a>
+</nav>
+<script src="pickleball-hub-nav.js?v=20260426nav"></script>
+<div class="sub-nav" aria-label="Advanced Open Play admin sections">
+  <a href="#signups">Signups</a>
+  <a href="#checkins">Check-ins</a>
+  <a href="#activity">Activity</a>
+</div>
+
+<main class="body-wrap">
+  <div class="top-row">
+    <div class="status" id="auth-status">Checking admin access...</div>
+  </div>
+  <p class="lead">Choose an Advanced Open Play submodule. These tools stay grouped under this parent area.</p>
+
+  <section class="admin-grid hidden" id="admin-grid" aria-label="Advanced Open Play admin submodules">
+    <a class="admin-card" id="signups" href="SouthEnd_Open_Play_Signups.html">
+      <div class="admin-kicker">Registration view</div>
+      <div class="admin-title">Signups</div>
+      <p class="admin-desc">See upcoming session signups by date, identify empty sessions, and invite players by email.</p>
+      <span class="admin-cta">Open signups &rarr;</span>
+    </a>
+    <a class="admin-card" id="checkins" href="SouthEnd_Session_Checkin.html">
+      <div class="admin-kicker">Session operations</div>
+      <div class="admin-title">Check-ins</div>
+      <p class="admin-desc">Run court-side attendance, walk-ins, session lists, cancellations, and staff actions.</p>
+      <span class="admin-cta">Open check-ins &rarr;</span>
+    </a>
+    <a class="admin-card" id="activity" href="SouthEnd_Admin_Activity.html">
+      <div class="admin-kicker">Activity history</div>
+      <div class="admin-title">Activity</div>
+      <p class="admin-desc">Review RSVPs, cancellations, profile changes, waivers, and access events by person or timeline.</p>
+      <span class="admin-cta">Open activity &rarr;</span>
+    </a>
+  </section>
+</main>
+
+<footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
+<script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script>
+function escapeHtml(s) {
+  var d = document.createElement('div');
+  d.textContent = s == null ? '' : String(s);
+  return d.innerHTML;
+}
+
+function accountReturnHref() {
+  return 'SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent('SouthEnd_Admin_Advanced_Open_Play.html');
+}
+
+function initAdvancedOpenPlayAdmin() {
+  var status = document.getElementById('auth-status');
+  var grid = document.getElementById('admin-grid');
+  if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()) {
+    if (status) status.textContent = 'Firebase is not configured. Admin access cannot be checked.';
+    return;
+  }
+  SEOpenPlay.initFirebase().then(function () {
+    SEOpenPlay.onAuthStateChanged(function (user) {
+      if (!user) {
+        window.location.replace(accountReturnHref());
+        return;
+      }
+      if (!SEOpenPlay.loadAdminUidFlag) {
+        if (status) status.textContent = 'Admin access cannot be checked.';
+        return;
+      }
+      SEOpenPlay.loadAdminUidFlag(user.uid).then(function (isAdmin) {
+        if (!isAdmin) {
+          if (status) status.innerHTML = 'Admin access required for <strong>' + escapeHtml(user.email || '') + '</strong>.';
+          if (grid) grid.classList.add('hidden');
+          return;
+        }
+        if (status) status.innerHTML = 'Signed in as <strong>' + escapeHtml(user.email || '') + '</strong>.';
+        if (grid) grid.classList.remove('hidden');
+      });
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initAdvancedOpenPlayAdmin);
+</script>
+
+<a class="message-board-fab" href="SouthEnd_Message_Board.html" aria-label="Open Message Board">Message Board</a>
+</body>
+</html>

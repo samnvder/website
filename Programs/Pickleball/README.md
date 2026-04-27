@@ -5,13 +5,16 @@ This folder holds **multiple program lineups** under one umbrella. They share th
 | Path | Role |
 |------|------|
 | **`advanced-open-play/`** | Advanced Open Play — RSVP, account/calendar hub, staff check-in, deployable static app. **[README →](./advanced-open-play/README.md)** |
+| **`league-play/`** | League Play — account, team creation, captain invites, and local smoke-test docs. **[to-do →](./league-play/to-do.md)** |
+| **`docs/`** | South End Pickleball platform/module documentation. |
 | **`account-creation/`** | Shared Firebase docs (Auth, RTDB, staff UIDs, managing accounts) — applies to all programs. **[README →](./account-creation/README.md)** |
 
-Future programs (e.g. leagues, ladders) can add sibling folders:
+Future programs (e.g. ladders, tournaments) can add sibling folders:
 
 ```
 Programs/Pickleball/
   advanced-open-play/     ← Open Play app
+  league-play/            ← League module
   some-other-program/
   account-creation/       ← shared operational docs
 ```
@@ -39,11 +42,12 @@ Program-specific scripts live in `package.json` at the **Website** root:
 
 | Command | What it does |
 |---------|-------------|
-| `npm test` | Unit tests (RSVP helpers + Firebase rules) |
-| `npm run deploy:openplay` | Deploy `live/` to Firebase Hosting |
+| `npm test` | Unit tests (RSVP helpers + Firebase rules + roll-live helpers) |
+| `npm run roll-live -- --yes` | Promote staging → live, deploy hosting, reset mode (add `--all` for rules, `--dry-run` for Firebase dry run) |
+| `npm run deploy:openplay` | Deploy `Programs/Pickleball/live/` to Firebase Hosting |
 | `npm run deploy:openplay:all` | Deploy Hosting + database rules |
 | `npm run firebase:deploy-rules` | Database rules only |
-| `npm run local-test` | Mirror active tree → `local-page/` + live-server on 3456 |
+| `npm run local-test` | Mirror active Open Play tree → `advanced-open-play/testing/local-page/` + live-server on 3456 |
 | `npm run openplay:promote` | Copy staging → live |
 | `npm run openplay:use-staging` / `openplay:use-live` | Switch active tree |
 

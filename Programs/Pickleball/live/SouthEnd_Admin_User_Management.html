@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<title>User Management — South End Admin</title>
+<link rel="icon" type="image/jpeg" href="favicon.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1628;--navy-lt:#152342;--electric:#a855f7;--neon:#00ff88;--ink:#0a0a1a;--red:#ff6b6b;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:radial-gradient(1200px 600px at 10% -10%,rgba(168,85,247,.12),transparent),var(--navy);color:#fff;min-height:100vh;}
+.header{background:var(--navy-lt);padding:18px 28px 14px;border-bottom:3px solid var(--neon);position:relative;}
+.hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--neon);margin-bottom:3px;}
+.hdr-title{font-family:'Oswald',sans-serif;font-size:24px;color:#fff;letter-spacing:1px;text-transform:uppercase;line-height:1;}
+.hdr-title span{color:var(--neon);}
+.hdr-sub{font-size:9px;color:rgba(255,255,255,.65);margin-top:3px;max-width:64ch;line-height:1.45;}
+.se-site-nav{
+  display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;
+  padding:10px 28px 12px;background:rgba(5,12,28,.85);
+  border-bottom:1px solid rgba(0,255,136,.22);
+}
+.se-site-nav-link{
+  font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.55);text-decoration:none;padding:8px 14px;border-radius:6px;
+  border:1px solid transparent;transition:color .15s,border-color .15s,background .15s;
+}
+.se-site-nav-link:hover{color:var(--neon);background:rgba(0,255,136,.08);}
+.se-site-nav-link--active{
+  color:var(--ink);background:var(--neon);border-color:rgba(0,255,136,.45);
+  box-shadow:0 0 20px rgba(0,255,136,.25);
+}
+.body-wrap{max-width:960px;margin:0 auto;padding:22px 20px 48px;}
+.top-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+.status{font-size:12px;color:rgba(255,255,255,.82);}
+.subtle-nav-link{font-size:11px;color:rgba(255,255,255,.5);text-decoration:none;}
+.subtle-nav-link:hover{color:var(--electric);text-decoration:underline;}
+.lead{font-size:13px;color:rgba(255,255,255,.65);line-height:1.5;margin-bottom:16px;max-width:70ch;}
+.panel{background:rgba(0,255,136,.04);border:1.5px solid rgba(0,255,136,.16);border-radius:14px;padding:18px;margin-bottom:16px;}
+.panel h2{font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:.4px;text-transform:uppercase;margin-bottom:10px;color:var(--neon);}
+.search-box{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid rgba(255,255,255,.12);background:rgba(0,0,0,.2);color:#fff;font-size:14px;}
+.search-box:focus{outline:none;border-color:var(--neon);}
+.user-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px;}
+.user-table th,.user-table td{padding:8px 10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top;}
+.user-table th{color:rgba(255,255,255,.5);font-weight:600;}
+.user-table tr{cursor:pointer;}
+.user-table tr:hover td{background:rgba(0,255,136,.05);}
+.user-table tr.selected td{background:rgba(0,255,136,.1);}
+.user-table .uid{font-family:ui-monospace,Consolas,monospace;font-size:10px;color:rgba(255,255,255,.4);}
+.pill-staff{display:inline-block;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;background:rgba(168,85,247,.2);color:var(--electric);}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;}
+.field label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.5);margin-bottom:4px;}
+.field input,.field select,.field textarea{width:100%;padding:8px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.25);color:#fff;font-size:13px;}
+.field textarea{min-height:64px;resize:vertical;}
+.btn{margin-top:14px;padding:10px 18px;border-radius:8px;border:none;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;background:var(--neon);color:var(--ink);font-weight:700;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.msg{font-size:12px;margin-top:10px;min-height:1.2em;}
+.msg.ok{color:var(--neon);}.msg.err{color:var(--red);}
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+  <div class="hdr-title">User <span>Management</span></div>
+  <div class="hdr-sub">View and edit member profiles (non-admin accounts only). Changes are written to <code>openplay_se/user_profiles</code> and logged to activity.</div>
+</div>
+<nav class="se-site-nav" aria-label="Admin navigation" data-se-hub-nav data-se-hide-message-board="1">
+  <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
+  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_User_Management.html" aria-current="page">User management</a>
+  <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_Module_Access.html">Module access</a>
+</nav>
+<script src="pickleball-hub-nav.js?v=20260426nav"></script>
+
+<main class="body-wrap">
+  <div class="top-row">
+    <div class="status" id="um-status">Checking access…</div>
+  </div>
+  <p class="lead">Select a user to edit. Staff UIDs in <code>openplay_se/admin_uids</code> cannot be changed here—use the Firebase console for those accounts if needed.</p>
+
+  <section class="panel hidden" id="um-list-panel" aria-label="User list">
+    <h2>Directory</h2>
+    <input type="search" class="search-box" id="um-search" placeholder="Filter by name, email, or UID…" autocomplete="off">
+    <div style="overflow:auto;max-height:min(50vh,420px);">
+      <table class="user-table" id="um-table">
+        <thead><tr><th>Name</th><th>Email / UID</th><th>Skill</th></tr></thead>
+        <tbody id="um-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel hidden" id="um-edit-panel" aria-label="Edit user">
+    <h2 id="um-edit-title">Edit profile</h2>
+    <p class="msg" id="um-edit-banner" style="color:rgba(255,255,255,.55)"></p>
+    <form id="um-form" class="hidden">
+      <input type="hidden" id="um-target-uid" value="">
+      <div class="form-grid" style="margin-top:10px">
+        <div class="field"><label>First name</label><input type="text" id="um-first" autocomplete="off" required maxlength="80"></div>
+        <div class="field"><label>Last name</label><input type="text" id="um-last" autocomplete="off" required maxlength="80"></div>
+        <div class="field"><label>Phone</label><input type="tel" id="um-phone" autocomplete="off" required maxlength="40"></div>
+        <div class="field"><label>Email (read-only)</label><input type="text" id="um-email" readonly style="opacity:.8"></div>
+        <div class="field" style="grid-column:1/-1">
+          <label>Skill level</label>
+          <select id="um-skill" required>
+            <option value="">Select…</option>
+            <option value="2.0 Beginner">2.0 (Beginner)</option>
+            <option value="2.5 Upper Beginner">2.5 (Upper Beginner)</option>
+            <option value="3.0 Lower Intermediate">3.0 (Lower Intermediate)</option>
+            <option value="3.5 Intermediate">3.5 (Intermediate)</option>
+            <option value="4.0 Advanced">4.0 (Advanced)</option>
+            <option value="4.5 Upper Advanced">4.5 (Upper Advanced)</option>
+            <option value="5.0 Open">5.0 (Open)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Member</label>
+          <select id="um-member" required>
+            <option value="">Select…</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="field"><label>Member card #</label><input type="text" id="um-card" maxlength="6" placeholder="6 digits" autocomplete="off"></div>
+        <div class="field" style="grid-column:1/-1"><label>How did they hear? (optional)</label><input type="text" id="um-hear" maxlength="120"></div>
+        <div class="field" style="grid-column:1/-1"><label>Notes (optional)</label><textarea id="um-notes" maxlength="500"></textarea></div>
+      </div>
+      <button type="submit" class="btn" id="um-save">Save changes</button>
+    </form>
+    <p class="msg" id="um-form-msg" aria-live="polite"></p>
+  </section>
+</main>
+
+<footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
+<script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script>
+function escapeHtml(s) {
+  var d = document.createElement('div');
+  d.textContent = s == null ? '' : String(s);
+  return d.innerHTML;
+}
+
+var allRows = [];
+var adminUidMap = {};
+var selectedUid = '';
+
+function setMsg(el, text, kind) {
+  if (!el) return;
+  el.textContent = text || '';
+  el.className = 'msg' + (kind ? ' ' + kind : '');
+}
+
+function fullName(p) {
+  p = p || {};
+  return ((p.firstName || '') + ' ' + (p.lastName || '')).trim() || '—';
+}
+
+function renderTable(filter) {
+  var tb = document.getElementById('um-tbody');
+  if (!tb) return;
+  var q = String(filter || '').trim().toLowerCase();
+  tb.innerHTML = '';
+  allRows
+    .filter(function (r) {
+      if (!q) return true;
+      return (
+        String(r.name || '').toLowerCase().indexOf(q) !== -1 ||
+        String(r.email || '').toLowerCase().indexOf(q) !== -1 ||
+        String(r.uid || '').toLowerCase().indexOf(q) !== -1
+      );
+    })
+    .forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.setAttribute('data-uid', r.uid);
+      if (r.uid === selectedUid) tr.className = 'selected';
+      if (r.isAdmin) tr.style.opacity = '0.55';
+      tr.innerHTML =
+        '<td>' + escapeHtml(r.name) + (r.isAdmin ? ' <span class="pill-staff">Staff</span>' : '') + '</td>' +
+        '<td><div>' + escapeHtml(r.email) + '</div><div class="uid">' + escapeHtml(r.uid) + '</div></td>' +
+        '<td>' + escapeHtml(r.skill) + '</td>';
+      tr.addEventListener('click', function () {
+        if (r.isAdmin) {
+          setMsg(document.getElementById('um-form-msg'), 'Cannot edit another staff admin profile from this page.', 'err');
+          return;
+        }
+        selectedUid = r.uid;
+        document.querySelectorAll('#um-tbody tr').forEach(function (x) { x.classList.toggle('selected', x.getAttribute('data-uid') === selectedUid); });
+        openEditor(r.uid);
+      });
+      tb.appendChild(tr);
+    });
+}
+
+function openEditor(uid) {
+  var p = (allRows.find(function (x) { return x.uid === uid; }) || {}).raw;
+  if (!p) {
+    setMsg(document.getElementById('um-form-msg'), 'Profile not found.', 'err');
+    return;
+  }
+  if (adminUidMap[uid]) {
+    setMsg(document.getElementById('um-form-msg'), 'This UID is a staff admin and cannot be edited here.', 'err');
+    return;
+  }
+  document.getElementById('um-edit-title').textContent = 'Edit — ' + fullName(p);
+  document.getElementById('um-target-uid').value = uid;
+  document.getElementById('um-first').value = p.firstName || '';
+  document.getElementById('um-last').value = p.lastName || '';
+  document.getElementById('um-phone').value = p.phone || '';
+  document.getElementById('um-email').value = p.email || '—';
+  var sk = document.getElementById('um-skill');
+  sk.value = p.skill || '';
+  if (p.skill && sk.value !== p.skill) {
+    var o = document.createElement('option');
+    o.value = p.skill;
+    o.textContent = p.skill + ' (legacy)';
+    sk.appendChild(o);
+    sk.value = p.skill;
+  }
+  document.getElementById('um-member').value = p.membership === 'yes' ? 'yes' : p.membership === 'no' ? 'no' : '';
+  document.getElementById('um-card').value = p.memberCard || '';
+  document.getElementById('um-hear').value = p.hear || '';
+  document.getElementById('um-notes').value = p.notes || '';
+  document.getElementById('um-form').classList.remove('hidden');
+  var ep = document.getElementById('um-edit-panel');
+  if (ep) ep.classList.remove('hidden');
+  setMsg(document.getElementById('um-form-msg'), '', '');
+  document.getElementById('um-edit-banner').textContent = 'User UID: ' + uid;
+}
+
+function loadDirectory() {
+  var db = SEOpenPlay.getFirebaseDb && SEOpenPlay.getFirebaseDb();
+  if (!db) return Promise.reject(new Error('No database'));
+  var pPath = SEOpenPlay.USER_PROFILE_PATH;
+  return db
+    .ref(pPath)
+    .once('value')
+    .then(function (snap) {
+      var v = snap.val() || {};
+      allRows = Object.keys(v).map(function (uid) {
+        var p = v[uid] || {};
+        return {
+          uid: uid,
+          raw: p,
+          name: fullName(p),
+          email: String(p.email || '').trim() || '—',
+          skill: p.skill || '—',
+          isAdmin: false,
+        };
+      });
+      allRows.sort(function (a, b) {
+        var al = String(a.name || '').toLowerCase();
+        var bl = String(b.name || '').toLowerCase();
+        if (al < bl) return -1;
+        if (al > bl) return 1;
+        return 0;
+      });
+      adminUidMap = {};
+      return Promise.all(allRows.map(function (row) {
+        return SEOpenPlay.loadAdminUidFlag(row.uid)
+          .then(function (isAdmin) {
+            adminUidMap[row.uid] = isAdmin === true;
+            row.isAdmin = isAdmin === true;
+          })
+          .catch(function () {
+            adminUidMap[row.uid] = false;
+            row.isAdmin = false;
+          });
+      })).then(function () {
+        renderTable(document.getElementById('um-search').value);
+      });
+    });
+}
+
+function initUserManagement() {
+  var status = document.getElementById('um-status');
+  var listPanel = document.getElementById('um-list-panel');
+  if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()) {
+    if (status) status.textContent = 'Firebase is not configured.';
+    return;
+  }
+  SEOpenPlay.initFirebase().then(function () {
+    SEOpenPlay.onAuthStateChanged(function (user) {
+      if (!user) {
+        window.location.replace('SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent('SouthEnd_Admin_User_Management.html'));
+        return;
+      }
+      if (!SEOpenPlay.loadAdminUidFlag) {
+        if (status) status.textContent = 'Admin check unavailable.';
+        return;
+      }
+      SEOpenPlay.loadAdminUidFlag(user.uid).then(function (isAd) {
+        if (!isAd) {
+          if (status) status.innerHTML = 'Admin access required for <strong>' + escapeHtml(user.email || '') + '</strong>.';
+          return;
+        }
+        if (status) status.innerHTML = 'Signed in as <strong>' + escapeHtml(user.email || '') + '</strong>.';
+        if (listPanel) listPanel.classList.remove('hidden');
+        return loadDirectory().catch(function (err) {
+          if (status) status.textContent = (err && err.message) || 'Could not load user directory.';
+        });
+      });
+    });
+  });
+
+  var search = document.getElementById('um-search');
+  if (search) {
+    search.addEventListener('input', function () {
+      renderTable(search.value);
+    });
+  }
+
+  var form = document.getElementById('um-form');
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var targetUid = document.getElementById('um-target-uid').value;
+      if (!targetUid) return;
+      if (adminUidMap[targetUid]) {
+        setMsg(document.getElementById('um-form-msg'), 'Cannot save: target is staff admin.', 'err');
+        return;
+      }
+      var first = document.getElementById('um-first').value.trim();
+      var last = document.getElementById('um-last').value.trim();
+      var phone = document.getElementById('um-phone').value.trim();
+      var skill = document.getElementById('um-skill').value;
+      var membership = document.getElementById('um-member').value;
+      var card = document.getElementById('um-card').value.trim();
+      var hear = document.getElementById('um-hear').value.trim();
+      var notes = document.getElementById('um-notes').value.trim();
+      if (membership === 'yes' && !/^[23][0-9]{5}$/.test(card)) {
+        setMsg(document.getElementById('um-form-msg'), 'Member card must be 6 digits starting with 2 or 3 when member = yes.', 'err');
+        return;
+      }
+      if (membership !== 'yes') card = '';
+      var btn = document.getElementById('um-save');
+      if (btn) btn.disabled = true;
+      setMsg(document.getElementById('um-form-msg'), 'Saving…', '');
+      if (!SEOpenPlay.saveUserProfileAsAdmin) {
+        setMsg(document.getElementById('um-form-msg'), 'saveUserProfileAsAdmin is not available.', 'err');
+        if (btn) btn.disabled = false;
+        return;
+      }
+      SEOpenPlay.saveUserProfileAsAdmin(targetUid, {
+        firstName: first,
+        lastName: last,
+        phone: phone,
+        skill: skill,
+        membership: membership,
+        memberCard: card,
+        hear: hear,
+        notes: notes,
+      })
+        .then(function () {
+          return loadDirectory();
+        })
+        .then(function () {
+          var row = allRows.find(function (x) { return x.uid === targetUid; });
+          if (row) row.raw = Object.assign(row.raw || {}, { firstName: first, lastName: last, phone: phone, skill: skill, membership: membership, memberCard: card, hear: hear, notes: notes });
+          renderTable(document.getElementById('um-search').value);
+          setMsg(document.getElementById('um-form-msg'), 'Saved.', 'ok');
+        })
+        .catch(function (err) {
+          setMsg(document.getElementById('um-form-msg'), (err && err.message) || 'Save failed', 'err');
+        })
+        .finally(function () {
+          if (btn) btn.disabled = false;
+        });
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', initUserManagement);
+</script>
+</body>
+</html>

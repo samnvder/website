@@ -25,11 +25,39 @@ Deployable static app: RSVP, account/calendar hub, session check-in, shared `js/
 
 Admin-only pages/actions require `openplay_se/admin_uids/{uid} === true` in Realtime Database.
 
+## Access flow
+
+```
+1. User signs up (email/password) on SouthEnd_OpenPlay_Account.html
+     → Firebase Auth account created
+     → openplay_se/module_access/{uid} is empty (no access by default)
+
+2. User completes profile (name, phone, skill, waivers)
+     → openplay_se/user_profiles/{uid} populated
+
+3. Admin opens SouthEnd_Admin_Module_Access.html and grants `advanced_open_play`
+     → openplay_se/module_access/{uid}/advanced_open_play/enabled = true
+     → activity entry: module_access_granted
+
+4. User loads SouthEnd_Session_RSVP.html
+     → initRsvpAuthGate() calls SEOpenPlay.hasModuleAccess(uid, 'advanced_open_play')
+     → if false: form is hidden, "Admin approval required" panel shown
+     → if true: RSVP form rendered
+
+5. User submits RSVP
+     → RTDB rule re-validates admin OR module_access enabled
+     → activity entry: registration_created
+```
+
+All access gates are enforced at the **RTDB rule layer** (`database.rules.json`).
+Client-side checks are UX only. Admin status (`admin_uids`) is provisioned
+manually via Firebase Console; the app cannot grant or revoke it.
+
 ## Shared JS modules (`live/js/`)
 
 | File | Role |
 |------|------|
-| `openplay-firebase-config.js` | Firebase project config (API key, Auth domain, RTDB URL; optional legacy email allowlist field) |
+| `openplay-firebase-config.js` | Firebase project config (API key, Auth domain, RTDB URL) |
 | `south-end-openplay-sync.js` | PIN, queue, Firebase init, Auth, profiles, RTDB sync (`subscribeRsvps`, `subscribeMyRsvps`, `pushRsvpToFirebase`, `deleteMyRsvp`, `stableRsvpPlayerId`), activity logging (`openplay_se/activity`) |
 | `openplay-profile-panel.js` | Floating profile icon + modal when signed in |
 | `openplay-rsvp-helpers.js` | Member card validation, session helpers |
@@ -40,14 +68,14 @@ Admin-only pages/actions require `openplay_se/admin_uids/{uid} === true` in Real
 
 | Command | What it does |
 |---------|-------------|
-| `npm run local-test` | Mirror active tree → `local-page/` + live-server on 3456 |
+| `npm run local-test` | Mirror active tree → `testing/local-page/` + live-server on 3456 |
 | `npm run local-test:sync` | Mirror only (no server) |
 | `npm run deploy:openplay` | Guarded Firebase Hosting deploy |
 | `npm run deploy:openplay:all` | Hosting + database rules |
 | `npm run firebase:deploy-rules` | Realtime Database rules only |
 | `npm run openplay:promote` | Copy staging → live |
 | `npm run openplay:bootstrap-staging` | Copy live → staging (full tree, including Firebase config) |
-| `npm run openplay:sync-from-live` | Copy live → staging + `local-page/` test mirrors; **preserves** each folder’s `openplay-firebase-config.js` |
+| `npm run openplay:sync-from-live` | Copy live → staging + `testing/local-page/` test mirror; **preserves** each folder’s `openplay-firebase-config.js` |
 | `npm run openplay:use-staging` | Set active tree to staging |
 | `npm run openplay:use-live` | Set active tree to live |
 | `npm test` | Unit tests (RSVP helpers + Firebase rules) |

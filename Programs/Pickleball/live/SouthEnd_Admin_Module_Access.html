@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<title>Module Access - South End Admin</title>
+<link rel="icon" type="image/jpeg" href="favicon.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0a1628;--navy-lt:#152342;--electric:#a855f7;--neon:#00ff88;--ink:#0a0a1a;
+  --muted:rgba(255,255,255,.55);--red:#ff6b6b;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:radial-gradient(1200px 600px at 10% -10%,rgba(168,85,247,.12),transparent),var(--navy);color:#fff;min-height:100vh;}
+.header{background:var(--navy-lt);padding:18px 28px 14px;border-bottom:3px solid var(--neon);position:relative;}
+.hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--neon);margin-bottom:3px;}
+.hdr-title{font-family:'Oswald',sans-serif;font-size:24px;color:#fff;letter-spacing:1px;text-transform:uppercase;line-height:1;}
+.hdr-title span{color:var(--neon);}
+.hdr-sub{font-size:9px;color:rgba(255,255,255,.65);margin-top:3px;max-width:56ch;line-height:1.45;}
+.se-site-nav{
+  display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;
+  padding:10px 28px 12px;background:rgba(5,12,28,.85);
+  border-bottom:1px solid rgba(0,255,136,.22);
+}
+.se-site-nav-link{
+  font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.55);text-decoration:none;padding:8px 14px;border-radius:6px;
+  border:1px solid transparent;transition:color .15s,border-color .15s,background .15s;
+}
+.se-site-nav-link:hover{color:var(--neon);background:rgba(0,255,136,.08);}
+.se-site-nav-link--active{
+  color:var(--ink);background:var(--neon);border-color:rgba(0,255,136,.45);
+  box-shadow:0 0 20px rgba(0,255,136,.25);
+}
+.body-wrap{max-width:920px;margin:0 auto;padding:22px 20px 48px;}
+.top-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+.status{font-size:12px;color:rgba(255,255,255,.82);}
+.status strong{color:#fff;}
+.subtle-nav-link{font-size:11px;color:rgba(255,255,255,.5);text-decoration:none;white-space:nowrap;}
+.subtle-nav-link:hover{color:var(--electric);text-decoration:underline;}
+.panel{background:rgba(0,255,136,.04);border:1.5px solid rgba(0,255,136,.16);border-radius:14px;padding:18px;box-shadow:0 8px 32px rgba(0,0,0,.2);margin-bottom:18px;}
+.step-label{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.step-num{width:28px;height:28px;border-radius:50%;background:rgba(0,255,136,.14);border:1.5px solid rgba(0,255,136,.35);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;color:var(--neon);flex-shrink:0;}
+.step-title{font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:.5px;text-transform:uppercase;color:#fff;}
+.hint{font-size:11px;color:rgba(255,255,255,.45);line-height:1.45;margin-top:8px;}
+.search-box{width:100%;padding:12px 14px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;font-family:'Barlow',sans-serif;font-size:14px;outline:none;}
+.search-box:focus{border-color:var(--neon);}
+.search-box::placeholder{color:rgba(255,255,255,.35);}
+.people-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.16);}
+.toolbar-title{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.35px;text-transform:uppercase;color:#fff;}
+.toolbar-sub{font-size:11px;color:rgba(255,255,255,.48);margin-top:2px;}
+.select-all{display:flex;align-items:center;gap:10px;font-family:'Oswald',sans-serif;font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:rgba(255,255,255,.85);cursor:pointer;}
+.select-all input,.person-check,.module-check{width:18px;height:18px;accent-color:var(--neon);cursor:pointer;}
+.results{margin-top:14px;display:flex;flex-direction:column;gap:8px;max-height:min(50vh,520px);overflow-y:auto;}
+.person-card{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.1);background:rgba(0,0,0,.18);transition:border-color .15s,background .15s;cursor:pointer;}
+.person-card:focus{outline:2px solid var(--neon);outline-offset:2px;}
+.person-card:focus:not(:focus-visible){outline:none;}
+.person-card:hover{border-color:rgba(0,255,136,.3);background:rgba(0,255,136,.05);}
+.person-card.selected{border-color:rgba(0,255,136,.45);background:rgba(0,255,136,.08);}
+.person-main{min-width:0;flex:1;}
+.person-name{font-family:'Oswald',sans-serif;font-size:14px;color:#fff;letter-spacing:.3px;}
+.person-email{font-size:11px;color:rgba(255,255,255,.55);margin-top:2px;word-break:break-all;}
+.person-uid{font-size:10px;color:rgba(255,255,255,.3);font-family:ui-monospace,'Consolas',monospace;margin-top:2px;}
+.access-pills{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;max-width:260px;}
+.pill{display:inline-block;padding:3px 7px;border-radius:999px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;background:rgba(255,255,255,.08);color:rgba(255,255,255,.55);}
+.pill.on{background:rgba(0,255,136,.15);color:var(--neon);}
+.pill.default-on{background:rgba(255,255,255,.06);color:rgba(255,255,255,.42);border:1px solid rgba(255,255,255,.12);}
+.module-card--default{opacity:.72;border-style:dashed;cursor:default;}
+.module-card--default .module-check{cursor:not-allowed;}
+.person-name--link{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:none;border:none;padding:0;cursor:pointer;border-radius:4px;}
+.person-name--link:hover{color:var(--electric);text-decoration:underline;}
+.person-name--link:focus{outline:2px solid var(--neon);outline-offset:2px;}
+.person-detail-overlay{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
+.person-detail-overlay.hidden{display:none!important;}
+.person-detail-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);}
+.person-detail-dialog{position:relative;z-index:1;width:100%;max-width:520px;max-height:min(88vh,720px);overflow:auto;background:linear-gradient(180deg,var(--navy-lt) 0%,var(--navy) 100%);border:1.5px solid rgba(0,255,136,.35);border-radius:16px;padding:22px 22px 20px;box-shadow:0 24px 80px rgba(0,0,0,.55);}
+.person-detail-close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.25);color:#fff;font-size:22px;line-height:1;cursor:pointer;}
+.person-detail-close:hover{border-color:var(--neon);color:var(--neon);}
+.person-detail-title{font-family:'Oswald',sans-serif;font-size:22px;letter-spacing:.5px;text-transform:uppercase;color:#fff;margin:0 36px 8px 0;line-height:1.2;}
+.person-detail-meta{font-size:12px;color:rgba(255,255,255,.55);line-height:1.5;margin-bottom:18px;word-break:break-all;}
+.person-detail-modules{display:flex;flex-direction:column;gap:10px;}
+.detail-module-row{display:flex;align-items:flex-start;gap:12px;padding:14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.12);background:rgba(0,0,0,.2);}
+.detail-module-row:not(.detail-module-row--default){cursor:pointer;transition:border-color .15s,background .15s;}
+.detail-module-row:not(.detail-module-row--default):hover{border-color:rgba(0,255,136,.35);background:rgba(0,255,136,.06);}
+.detail-module-row:focus{outline:2px solid var(--neon);outline-offset:2px;}
+.detail-module-row:focus:not(:focus-visible){outline:none;}
+.detail-module-row--default{border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.04);opacity:.85;}
+.detail-module-row--default .detail-module-body{opacity:.9;}
+.detail-module-check{flex-shrink:0;width:20px;height:20px;accent-color:var(--neon);margin-top:2px;cursor:pointer;}
+.detail-module-check:disabled{cursor:not-allowed;opacity:.55;}
+.detail-module-name{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.35px;text-transform:uppercase;color:#fff;}
+.detail-module-desc{font-size:11px;color:rgba(255,255,255,.45);line-height:1.4;margin-top:4px;}
+.detail-module-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.4);margin-top:8px;}
+.detail-module-status{font-size:11px;margin-top:10px;min-height:1.2em;color:rgba(255,255,255,.5);}
+.person-detail-danger{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1);}
+.person-detail-danger-copy{font-size:11px;color:rgba(255,255,255,.45);line-height:1.45;margin-bottom:10px;}
+.btn-delete-profile{width:100%;background:rgba(255,107,107,.12);color:var(--red);border:1px solid rgba(255,107,107,.38);}
+.btn-delete-profile:hover:not(:disabled){background:rgba(255,107,107,.22);}
+.no-results,.loading{font-size:12px;color:rgba(255,255,255,.45);padding:16px 0;}
+.module-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;}
+.module-card{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:10px;border:1.5px solid rgba(255,255,255,.1);background:rgba(0,0,0,.18);cursor:pointer;}
+.module-card.selected{border-color:rgba(0,255,136,.45);background:rgba(0,255,136,.08);}
+.module-name{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.4px;text-transform:uppercase;color:#fff;}
+.module-desc{font-size:11px;color:rgba(255,255,255,.45);line-height:1.4;margin-top:3px;}
+.apply-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);}
+.apply-summary{font-size:12px;color:rgba(255,255,255,.68);line-height:1.45;}
+.apply-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.btn{padding:10px 16px;border-radius:8px;border:none;cursor:pointer;font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.btn-grant{background:var(--neon);color:var(--ink);}
+.btn-grant:hover:not(:disabled){filter:brightness(1.05);}
+.btn-revoke{background:rgba(255,107,107,.15);color:var(--red);border:1px solid rgba(255,107,107,.35);}
+.btn-revoke:hover:not(:disabled){background:rgba(255,107,107,.25);}
+.msg{font-size:11px;color:rgba(255,255,255,.55);margin-top:12px;min-height:1.3em;}
+.msg.ok{color:var(--neon);}
+.msg.err{color:var(--red);}
+.progress{margin-top:8px;}
+.progress.hidden{display:none;}
+.progress-bar{height:6px;border-radius:3px;background:rgba(255,255,255,.08);overflow:hidden;}
+.progress-fill{height:100%;border-radius:3px;background:var(--neon);width:0;transition:width .15s;}
+.hidden{display:none!important;}
+@media(max-width:680px){
+  .body-wrap{padding:16px 14px 40px;}
+  .access-pills{display:none;}
+  .person-card{align-items:flex-start;}
+}
+.message-board-fab{
+  position:fixed;right:18px;bottom:18px;z-index:90;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.22);
+  background:linear-gradient(135deg,var(--neon,#00ff88),#34d399);color:var(--ink,#050a12);
+  font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;
+  box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 26px rgba(0,255,136,.25);transition:transform .15s,filter .15s,box-shadow .15s;
+}
+.message-board-fab:hover{filter:brightness(1.06);transform:translateY(-1px);box-shadow:0 12px 32px rgba(0,0,0,.4),0 0 30px rgba(0,255,136,.32);}
+.message-board-fab:focus-visible{outline:2px solid #fff;outline-offset:3px;}
+@media(max-width:520px){.message-board-fab{right:14px;bottom:14px;padding:12px 14px;font-size:12px;}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+    <div class="hdr-title">MODULE <span>ACCESS</span></div>
+    <div class="hdr-sub">Select people, choose submodules, then grant or revoke access in one action.</div>
+  </div>
+</div>
+<nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav data-se-hide-message-board="1">
+  <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
+  <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_User_Management.html">User management</a>
+  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_Module_Access.html" aria-current="page">Module access</a>
+</nav>
+<script src="pickleball-hub-nav.js?v=20260426nav"></script>
+
+<div class="body-wrap">
+  <div class="top-row">
+    <div class="status" id="auth-status">Checking access&hellip;</div>
+  </div>
+
+  <div class="panel">
+    <div class="step-label">
+      <div class="step-num">1</div>
+      <div class="step-title">Select people</div>
+    </div>
+    <input type="text" class="search-box" id="search-input" placeholder="Search by email or name&hellip;" autocomplete="off" disabled>
+    <div class="people-toolbar hidden" id="people-toolbar">
+      <div>
+        <div class="toolbar-title">People</div>
+        <div class="toolbar-sub" id="people-summary">Loading profiles...</div>
+      </div>
+      <label class="select-all">
+        <input type="checkbox" id="select-all-people">
+        <span>Toggle all people</span>
+      </label>
+    </div>
+    <div class="hint" id="search-hint">Loading profiles&hellip;</div>
+    <div class="results" id="results"></div>
+  </div>
+
+  <div class="panel">
+    <div class="step-label">
+      <div class="step-num">2</div>
+      <div class="step-title">Choose submodules</div>
+    </div>
+    <div class="module-grid" id="module-grid"></div>
+    <div class="hint">Add more submodules to the MODULES list in this page as new program areas are ready.</div>
+  </div>
+
+  <div class="panel">
+    <div class="step-label">
+      <div class="step-num">3</div>
+      <div class="step-title">Apply changes</div>
+    </div>
+    <div class="apply-row">
+      <div class="apply-summary" id="apply-summary">Select people and submodules to continue.</div>
+      <div class="apply-actions">
+        <button type="button" class="btn btn-grant" id="grant-selected" disabled>Grant selected</button>
+        <button type="button" class="btn btn-revoke" id="revoke-selected" disabled>Revoke selected</button>
+      </div>
+    </div>
+    <div class="msg" id="action-msg"></div>
+    <div class="progress hidden" id="progress"><div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div></div>
+  </div>
+</div>
+
+<div class="person-detail-overlay hidden" id="person-detail-overlay" aria-hidden="true">
+  <div class="person-detail-backdrop" id="person-detail-backdrop" tabindex="-1"></div>
+  <div class="person-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="person-detail-title">
+    <button type="button" class="person-detail-close" id="person-detail-close" aria-label="Close profile detail">&times;</button>
+    <h2 class="person-detail-title" id="person-detail-title"></h2>
+    <div class="person-detail-meta" id="person-detail-meta"></div>
+    <div class="person-detail-modules" id="person-detail-modules"></div>
+    <div class="detail-module-status" id="person-detail-status"></div>
+    <div class="person-detail-danger">
+      <p class="person-detail-danger-copy">Delete this saved profile and clear assigned module access for this UID. This does not delete the Firebase Auth login.</p>
+      <button type="button" class="btn btn-delete-profile" id="person-detail-delete">Delete profile</button>
+    </div>
+  </div>
+</div>
+
+<footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
+<script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script>
+var MODULES = [
+  {
+    id: 'pickleball_account',
+    name: 'Pickleball account',
+    desc: 'Sign-in, profile, and waivers included for every member (not assigned here).',
+    defaultOn: true,
+  },
+  {
+    id: 'advanced_open_play',
+    name: 'Advanced Open Play',
+    desc: 'RSVP access for advanced-level open play sessions.',
+    defaultOn: false,
+  },
+];
+
+var allProfiles = [];
+var visibleProfiles = [];
+var selectedUids = {};
+var selectedModules = {};
+var accessByUid = {};
+var currentAdminUid = '';
+
+function escapeHtml(s) {
+  if (s == null || s === '') return '';
+  var d = document.createElement('div');
+  d.textContent = String(s);
+  return d.innerHTML;
+}
+
+function fullName(p) {
+  return ((p.firstName || '') + ' ' + (p.lastName || '')).trim() || 'No name';
+}
+
+function profileEmail(p) {
+  p = p || {};
+  return String(p.email || p.authEmail || p.userEmail || p.emailAddress || p.contactEmail || '').trim();
+}
+
+function sortByLastName(list) {
+  return list.slice().sort(function (a, b) {
+    var aLast = String(a.lastName || '').trim().toLowerCase();
+    var bLast = String(b.lastName || '').trim().toLowerCase();
+    if (aLast < bLast) return -1;
+    if (aLast > bLast) return 1;
+    var aFirst = String(a.firstName || '').trim().toLowerCase();
+    var bFirst = String(b.firstName || '').trim().toLowerCase();
+    if (aFirst < bFirst) return -1;
+    if (aFirst > bFirst) return 1;
+    return 0;
+  });
+}
+
+function setMsg(text, cls) {
+  var el = document.getElementById('action-msg');
+  if (!el) return;
+  el.textContent = text || '';
+  el.className = 'msg' + (cls ? ' ' + cls : '');
+}
+
+function setProgress(done, total) {
+  var wrap = document.getElementById('progress');
+  var fill = document.getElementById('progress-fill');
+  if (!wrap || !fill) return;
+  if (!total) {
+    wrap.classList.add('hidden');
+    fill.style.width = '0';
+    return;
+  }
+  wrap.classList.remove('hidden');
+  fill.style.width = Math.round((done / total) * 100) + '%';
+}
+
+function moduleEnabled(uid, moduleId) {
+  var access = accessByUid[uid] || {};
+  return !!(access[moduleId] && access[moduleId].enabled === true);
+}
+
+function moduleDefById(moduleId) {
+  for (var i = 0; i < MODULES.length; i++) {
+    if (MODULES[i].id === moduleId) return MODULES[i];
+  }
+  return null;
+}
+
+function moduleEffectiveOn(uid, mod) {
+  if (mod.defaultOn) return true;
+  return moduleEnabled(uid, mod.id);
+}
+
+function setLocalModuleAccess(uid, moduleId, enabled) {
+  if (!accessByUid[uid]) accessByUid[uid] = {};
+  accessByUid[uid][moduleId] = Object.assign({}, accessByUid[uid][moduleId] || {}, {
+    enabled: enabled === true,
+  });
+}
+
+function selectedUidList() {
+  return Object.keys(selectedUids).filter(function (uid) { return selectedUids[uid]; });
+}
+
+function selectedModuleList() {
+  return Object.keys(selectedModules).filter(function (id) { return selectedModules[id]; });
+}
+
+function updateSummary() {
+  var selectedPeople = selectedUidList().length;
+  var selectedMods = selectedModuleList().length;
+  var total = allProfiles.length;
+  var visible = visibleProfiles.length;
+  var peopleSummary = document.getElementById('people-summary');
+  var applySummary = document.getElementById('apply-summary');
+  var selectAll = document.getElementById('select-all-people');
+  var grant = document.getElementById('grant-selected');
+  var revoke = document.getElementById('revoke-selected');
+  if (peopleSummary) {
+    peopleSummary.textContent = selectedPeople + ' selected. Showing ' + visible + ' of ' + total + ' profiles.';
+  }
+  if (applySummary) {
+    applySummary.textContent = selectedPeople + ' people selected, ' + selectedMods + ' submodules selected.';
+  }
+  if (selectAll) {
+    selectAll.checked = total > 0 && selectedPeople === total;
+    selectAll.indeterminate = selectedPeople > 0 && selectedPeople < total;
+  }
+  var ready = selectedPeople > 0 && selectedMods > 0;
+  if (grant) grant.disabled = !ready;
+  if (revoke) revoke.disabled = !ready;
+}
+
+function renderModules() {
+  var grid = document.getElementById('module-grid');
+  if (!grid) return;
+  grid.innerHTML = MODULES.map(function (mod) {
+    if (mod.defaultOn) {
+      return '<div class="module-card module-card--default" data-module-card="' + escapeHtml(mod.id) + '">' +
+        '<input class="module-check" type="checkbox" checked disabled title="Always on for everyone">' +
+        '<span><span class="module-name">' + escapeHtml(mod.name) + '</span>' +
+        '<span class="module-desc">' + escapeHtml(mod.desc) + '</span>' +
+        '<span class="module-desc" style="margin-top:6px;color:rgba(0,255,136,.55)">Default - not bulk-assigned</span></span></div>';
+    }
+    var selected = selectedModules[mod.id] ? ' selected' : '';
+    var checked = selectedModules[mod.id] ? ' checked' : '';
+    return '<label class="module-card' + selected + '" data-module-card="' + escapeHtml(mod.id) + '">' +
+      '<input class="module-check" type="checkbox" data-module-id="' + escapeHtml(mod.id) + '"' + checked + '>' +
+      '<span><span class="module-name">' + escapeHtml(mod.name) + '</span>' +
+      '<span class="module-desc">' + escapeHtml(mod.desc) + '</span></span></label>';
+  }).join('');
+  grid.querySelectorAll('.module-check:not([disabled])').forEach(function (input) {
+    input.addEventListener('change', function () {
+      selectedModules[input.getAttribute('data-module-id')] = input.checked;
+      renderModules();
+      updateSummary();
+    });
+  });
+}
+
+function filterProfiles() {
+  var q = String((document.getElementById('search-input') || {}).value || '').toLowerCase().trim();
+  if (!q) {
+    visibleProfiles = allProfiles.slice();
+  } else {
+    visibleProfiles = allProfiles.filter(function (p) {
+      var email = profileEmail(p).toLowerCase();
+      var name = fullName(p).toLowerCase();
+      return email.indexOf(q) !== -1 || name.indexOf(q) !== -1;
+    });
+  }
+  renderPeople();
+}
+
+function renderPeople() {
+  var el = document.getElementById('results');
+  if (!el) return;
+  if (!visibleProfiles.length) {
+    el.innerHTML = '<div class="no-results">No profiles match that search.</div>';
+    updateSummary();
+    return;
+  }
+  el.innerHTML = visibleProfiles.map(function (p) {
+    var selected = selectedUids[p.uid] ? ' selected' : '';
+    var checked = selectedUids[p.uid] ? ' checked' : '';
+    var pills = MODULES.map(function (mod) {
+      var on = moduleEffectiveOn(p.uid, mod);
+      var cls = 'pill';
+      if (on) cls += ' on';
+      if (mod.defaultOn && on) cls += ' default-on';
+      return '<span class="' + cls + '">' + escapeHtml(mod.name) + '</span>';
+    }).join('');
+    return '<div class="person-card' + selected + '" data-uid="' + escapeHtml(p.uid) + '" tabindex="0" role="button" aria-pressed="' + (selectedUids[p.uid] ? 'true' : 'false') + '">' +
+      '<input class="person-check" type="checkbox" data-uid="' + escapeHtml(p.uid) + '"' + checked + ' aria-label="Select ' + escapeHtml(fullName(p)) + '">' +
+      '<div class="person-main"><button type="button" class="person-name person-name--link" data-uid="' + escapeHtml(p.uid) + '">' + escapeHtml(fullName(p)) + '</button>' +
+      '<div class="person-email">' + escapeHtml(profileEmail(p) || '-') + '</div>' +
+      '<div class="person-uid">' + escapeHtml(p.uid) + '</div></div>' +
+      '<div class="access-pills">' + pills + '</div></div>';
+  }).join('');
+  el.querySelectorAll('.person-check').forEach(function (input) {
+    input.addEventListener('change', function () {
+      selectedUids[input.getAttribute('data-uid')] = input.checked;
+      renderPeople();
+    });
+  });
+  el.querySelectorAll('.person-name--link').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var uid = btn.getAttribute('data-uid');
+      if (uid) openPersonDetail(uid);
+    });
+  });
+  el.querySelectorAll('.person-card').forEach(function (card) {
+    card.addEventListener('click', function (e) {
+      if (e.target.closest('.person-check') || e.target.closest('.person-name--link')) return;
+      var uid = card.getAttribute('data-uid');
+      if (!uid) return;
+      selectedUids[uid] = !selectedUids[uid];
+      renderPeople();
+    });
+    card.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      var uid = card.getAttribute('data-uid');
+      if (!uid) return;
+      selectedUids[uid] = !selectedUids[uid];
+      renderPeople();
+    });
+  });
+  updateSummary();
+}
+
+var personDetailCurrentUid = null;
+
+function findProfileByUid(uid) {
+  for (var i = 0; i < allProfiles.length; i++) {
+    if (allProfiles[i].uid === uid) return allProfiles[i];
+  }
+  return null;
+}
+
+function closePersonDetail() {
+  var overlay = document.getElementById('person-detail-overlay');
+  if (!overlay) return;
+  overlay.classList.add('hidden');
+  overlay.setAttribute('aria-hidden', 'true');
+  personDetailCurrentUid = null;
+}
+
+function setPersonDetailStatus(text, isErr) {
+  var el = document.getElementById('person-detail-status');
+  if (!el) return;
+  el.textContent = text || '';
+  el.style.color = isErr ? 'var(--red)' : 'rgba(255,255,255,.5)';
+}
+
+function savePersonDetailModule(input, uid, moduleId, enabled) {
+  if (!input || !uid || !moduleId) return;
+  setPersonDetailStatus('Saving...', false);
+  input.disabled = true;
+  SEOpenPlay.setModuleAccess(uid, moduleId, enabled)
+    .then(function () {
+      setLocalModuleAccess(uid, moduleId, enabled);
+      input.checked = enabled;
+      setPersonDetailStatus(enabled ? 'Access granted.' : 'Access revoked.', false);
+      renderPeople();
+    })
+    .catch(function (err) {
+      input.checked = !enabled;
+      setPersonDetailStatus((err && err.message) || 'Could not update access.', true);
+    })
+    .then(function () {
+      input.disabled = false;
+    });
+}
+
+function removeProfileFromLocalState(uid) {
+  allProfiles = allProfiles.filter(function (p) { return p.uid !== uid; });
+  visibleProfiles = visibleProfiles.filter(function (p) { return p.uid !== uid; });
+  delete selectedUids[uid];
+  delete accessByUid[uid];
+}
+
+function deletePersonDetailProfile() {
+  var uid = personDetailCurrentUid;
+  var p = findProfileByUid(uid);
+  if (!uid || !p) return;
+  var name = fullName(p);
+  var email = profileEmail(p);
+  var label = name + (email ? ' (' + email + ')' : '');
+  var btn = document.getElementById('person-detail-delete');
+  var confirmText = 'Delete the saved profile for ' + label + '? This clears module access for this UID, but does not delete their sign-in account.';
+  if (!window.confirm(confirmText)) return;
+  if (uid === currentAdminUid && !window.confirm('This is your own saved profile. Continue deleting it?')) return;
+  if (!window.confirm('This cannot be undone from this page. Delete this profile now?')) return;
+  setPersonDetailStatus('Deleting profile...', false);
+  if (btn) btn.disabled = true;
+  SEOpenPlay.deleteUserProfileAsAdmin(uid)
+    .then(function () {
+      removeProfileFromLocalState(uid);
+      closePersonDetail();
+      filterProfiles();
+      setMsg('Deleted profile for ' + label + '.', 'ok');
+    })
+    .catch(function (err) {
+      setPersonDetailStatus((err && err.message) || 'Could not delete profile.', true);
+    })
+    .then(function () {
+      if (btn) btn.disabled = false;
+    });
+}
+
+function renderPersonDetailModules() {
+  var uid = personDetailCurrentUid;
+  var container = document.getElementById('person-detail-modules');
+  if (!container || !uid) return;
+  container.innerHTML = MODULES.map(function (mod) {
+    if (mod.defaultOn) {
+      return '<div class="detail-module-row detail-module-row--default">' +
+        '<input class="detail-module-check" type="checkbox" checked disabled aria-label="' + escapeHtml(mod.name) + ' (default)">' +
+        '<div class="detail-module-body">' +
+        '<div class="detail-module-name">' + escapeHtml(mod.name) + '</div>' +
+        '<div class="detail-module-desc">' + escapeHtml(mod.desc) + '</div>' +
+        '<div class="detail-module-badge">Default for everyone - not assigned via module access</div></div></div>';
+    }
+    var on = moduleEnabled(uid, mod.id);
+    return '<div class="detail-module-row" data-detail-module="' + escapeHtml(mod.id) + '" tabindex="0" role="button" aria-pressed="' + (on ? 'true' : 'false') + '">' +
+      '<input class="detail-module-check detail-module-toggle" type="checkbox" data-module-id="' + escapeHtml(mod.id) + '"' + (on ? ' checked' : '') + '>' +
+      '<div class="detail-module-body">' +
+      '<div class="detail-module-name">' + escapeHtml(mod.name) + '</div>' +
+      '<div class="detail-module-desc">' + escapeHtml(mod.desc) + '</div></div></div>';
+  }).join('');
+  container.querySelectorAll('.detail-module-toggle').forEach(function (input) {
+    input.addEventListener('click', function (e) {
+      e.stopPropagation();
+    });
+    input.addEventListener('change', function () {
+      var moduleId = input.getAttribute('data-module-id');
+      savePersonDetailModule(input, uid, moduleId, input.checked);
+    });
+  });
+  container.querySelectorAll('.detail-module-row:not(.detail-module-row--default)').forEach(function (row) {
+    row.addEventListener('click', function () {
+      var input = row.querySelector('.detail-module-toggle');
+      if (!input || input.disabled) return;
+      input.checked = !input.checked;
+      row.setAttribute('aria-pressed', input.checked ? 'true' : 'false');
+      savePersonDetailModule(input, uid, input.getAttribute('data-module-id'), input.checked);
+    });
+    row.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      row.click();
+    });
+  });
+}
+
+function openPersonDetail(uid) {
+  var p = findProfileByUid(uid);
+  if (!p) return;
+  personDetailCurrentUid = uid;
+  var overlay = document.getElementById('person-detail-overlay');
+  var title = document.getElementById('person-detail-title');
+  var meta = document.getElementById('person-detail-meta');
+  if (!overlay || !title || !meta) return;
+  title.textContent = fullName(p);
+  meta.innerHTML =
+    '<div><strong>Email</strong> ' + escapeHtml(profileEmail(p) || '-') + '</div>' +
+    '<div style="margin-top:6px"><strong>UID</strong> <code style="font-size:10px;color:rgba(0,255,136,.75)">' + escapeHtml(p.uid) + '</code></div>';
+  setPersonDetailStatus('', false);
+  renderPersonDetailModules();
+  overlay.classList.remove('hidden');
+  overlay.setAttribute('aria-hidden', 'false');
+  var closeBtn = document.getElementById('person-detail-close');
+  if (closeBtn) closeBtn.focus();
+}
+
+function loadAllProfiles() {
+  var db = SEOpenPlay.getFirebaseDb();
+  if (!db) return Promise.reject(new Error('DB unavailable'));
+  return db.ref('openplay_se/user_profiles').once('value').then(function (snap) {
+    var raw = snap.val() || {};
+    allProfiles = sortByLastName(Object.keys(raw).map(function (uid) {
+      var p = raw[uid] || {};
+      p.uid = uid;
+      return p;
+    }));
+    visibleProfiles = allProfiles.slice();
+    return db.ref('openplay_se/rsvps').once('value').then(function (rsvpSnap) {
+      var emailByUid = {};
+      rsvpSnap.forEach(function (child) {
+        var row = child.val() || {};
+        var uid = String(row.firebaseUid || row.uid || '').trim();
+        var email = String(row.email || '').trim();
+        if (uid && email && !emailByUid[uid]) emailByUid[uid] = email;
+      });
+      allProfiles.forEach(function (p) {
+        if (!profileEmail(p) && emailByUid[p.uid]) p.email = emailByUid[p.uid];
+      });
+      visibleProfiles = allProfiles.slice();
+    }).catch(function () {
+      visibleProfiles = allProfiles.slice();
+    });
+  });
+}
+
+function loadAllModuleAccess() {
+  var pending = allProfiles.slice();
+  var batchSize = 8;
+  function nextBatch() {
+    if (!pending.length) return Promise.resolve();
+    var batch = pending.splice(0, batchSize);
+    return Promise.all(batch.map(function (p) {
+      return SEOpenPlay.loadModuleAccess(p.uid).then(function (access) {
+        accessByUid[p.uid] = access || {};
+      }).catch(function () {
+        accessByUid[p.uid] = {};
+      });
+    })).then(nextBatch);
+  }
+  return nextBatch();
+}
+
+function setControlsDisabled(disabled) {
+  document.querySelectorAll('button,input').forEach(function (el) {
+    if (el.id === 'search-input') return;
+    el.disabled = disabled;
+  });
+}
+
+function applyAccess(enabled) {
+  var people = selectedUidList();
+  var modules = selectedModuleList();
+  var jobs = [];
+  people.forEach(function (uid) {
+    modules.forEach(function (moduleId) {
+      var def = moduleDefById(moduleId);
+      if (def && def.defaultOn) return;
+      jobs.push({ uid: uid, moduleId: moduleId });
+    });
+  });
+  if (!jobs.length) return;
+  var verb = enabled ? 'grant' : 'revoke';
+  if (!window.confirm('This will ' + verb + ' ' + jobs.length + ' access change(s) for ' + people.length + ' selected people. Continue?')) return;
+  var done = 0;
+  var failed = 0;
+  var queue = jobs.slice();
+  var batchSize = 5;
+  setControlsDisabled(true);
+  setMsg((enabled ? 'Granting' : 'Revoking') + ' access...', '');
+  setProgress(0, jobs.length);
+
+  function nextBatch() {
+    if (!queue.length) {
+      setProgress(jobs.length, jobs.length);
+      setControlsDisabled(false);
+      renderPeople();
+      updateSummary();
+      var msg = (enabled ? 'Granted' : 'Revoked') + ' ' + (jobs.length - failed) + '/' + jobs.length + ' changes.';
+      if (failed) msg += ' ' + failed + ' failed.';
+      setMsg(msg, failed ? 'err' : 'ok');
+      return;
+    }
+    var batch = queue.splice(0, batchSize);
+    Promise.all(batch.map(function (job) {
+      return SEOpenPlay.setModuleAccess(job.uid, job.moduleId, enabled)
+        .then(function () {
+          setLocalModuleAccess(job.uid, job.moduleId, enabled);
+          done++;
+        })
+        .catch(function () {
+          done++;
+          failed++;
+        });
+    })).then(function () {
+      setProgress(done, jobs.length);
+      setMsg((enabled ? 'Granting' : 'Revoking') + '... ' + done + '/' + jobs.length, '');
+      nextBatch();
+    });
+  }
+
+  nextBatch();
+}
+
+function initPage() {
+  if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()) {
+    document.getElementById('auth-status').textContent = 'Firebase not configured.';
+    return;
+  }
+
+  renderModules();
+  SEOpenPlay.initFirebase().then(function () {
+    SEOpenPlay.onAuthStateChanged(function (user) {
+      if (!user) {
+        document.getElementById('auth-status').innerHTML = 'Sign in required. <a href="SouthEnd_OpenPlay_Account.html" style="color:var(--electric)">Go to account</a>';
+        return;
+      }
+      SEOpenPlay.loadAdminUidFlag(user.uid).then(function (isAdmin) {
+        if (!isAdmin) {
+          document.getElementById('auth-status').textContent = 'Admin access required.';
+          return;
+        }
+        currentAdminUid = user.uid || '';
+        document.getElementById('auth-status').innerHTML = 'Signed in as <strong>' + escapeHtml(user.email || '') + '</strong>';
+        loadAllProfiles().then(function () {
+          document.getElementById('search-hint').textContent = allProfiles.length + ' profiles loaded. Loading access...';
+          return loadAllModuleAccess();
+        }).then(function () {
+          document.getElementById('search-input').disabled = false;
+          document.getElementById('people-toolbar').classList.remove('hidden');
+          document.getElementById('search-hint').textContent = 'Type to filter. Use Toggle all people to select or deselect the full profile list.';
+          filterProfiles();
+        }).catch(function () {
+          document.getElementById('search-hint').textContent = 'Could not load profiles.';
+        });
+      });
+    });
+  });
+
+  document.getElementById('search-input').addEventListener('input', filterProfiles);
+  document.getElementById('select-all-people').addEventListener('change', function () {
+    var people = allProfiles || [];
+    var selectedCount = selectedUidList().length;
+    var selectAll = selectedCount !== people.length;
+    people.forEach(function (p) {
+      selectedUids[p.uid] = selectAll;
+    });
+    renderPeople();
+  });
+  document.getElementById('grant-selected').addEventListener('click', function () {
+    applyAccess(true);
+  });
+  document.getElementById('revoke-selected').addEventListener('click', function () {
+    applyAccess(false);
+  });
+
+  document.getElementById('person-detail-close').addEventListener('click', closePersonDetail);
+  document.getElementById('person-detail-delete').addEventListener('click', deletePersonDetailProfile);
+  document.getElementById('person-detail-backdrop').addEventListener('click', closePersonDetail);
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var overlay = document.getElementById('person-detail-overlay');
+    if (overlay && !overlay.classList.contains('hidden')) closePersonDetail();
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initPage);
+</script>
+
+<a class="message-board-fab" href="SouthEnd_Message_Board.html" aria-label="Open Message Board">Message Board</a>
+</body>
+</html>

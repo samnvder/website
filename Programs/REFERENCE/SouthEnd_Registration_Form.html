@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<!-- Team Registration Form — 2026 South End Pickleball League
+     Brandon, share this link the moment registration opens.
+     Submissions POST to FormSubmit.co and land in your Gmail inbox.
+     IMPORTANT: The very first submission triggers a one-time activation email from FormSubmit —
+     click confirm in that email and every registration after that goes straight to you.
+     Division cards auto-show partner fields for Mixed only — less confusion for players.
+     If you need to update the price, search "$250" — it appears in 3 places. -->
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>South End Pickleball League — Team Registration</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green:    #1a6b3a;
+  --green-lt: #2d9458;
+  --green-dk: #0f3f22;
+  --gold:     #e8a020;
+  --gold-lt:  #ffd166;
+  --cream:    #fafaf5;
+  --ink:      #111810;
+  --muted:    #5a6357;
+  --rule:     #dde5d9;
+  --red:      #c0392b;
+  --mens:   #1a4a8a;
+  --womens: #8a1a5a;
+  --mixed:  #b85c00;
+  --open:   #1a6b3a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body {
+  font-family:'DM Sans',sans-serif;
+  background:var(--green-dk);
+  min-height:100vh;
+  padding:32px 16px 60px;
+  background-image:
+    repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(255,255,255,.018) 40px,rgba(255,255,255,.018) 41px);
+}
+
+/* ── WRAPPER ── */
+.wrap { max-width:680px; margin:0 auto; }
+
+/* ── HEADER ── */
+.form-header {
+  background:var(--green-dk);
+  border-radius:8px 8px 0 0;
+  padding:28px 36px 24px;
+  display:flex; align-items:center; gap:24px;
+  border-bottom:3px solid var(--gold);
+  position:relative; overflow:hidden;
+}
+.form-header::before {
+  content:''; position:absolute; inset:0;
+  background:repeating-linear-gradient(-45deg,transparent,transparent 20px,rgba(255,255,255,.025) 20px,rgba(255,255,255,.025) 21px);
+  pointer-events:none;
+}
+.fh-logo { flex-shrink:0; position:relative; z-index:2; }
+.fh-logo img { height:64px; width:auto; display:block; filter:drop-shadow(0 2px 8px rgba(0,0,0,.4)); }
+.fh-text { position:relative; z-index:2; }
+.fh-eyebrow {
+  font-size:8.5px; font-weight:700; letter-spacing:3.5px; text-transform:uppercase;
+  color:var(--gold); margin-bottom:4px; display:flex; align-items:center; gap:8px;
+}
+.fh-eyebrow::before { content:''; display:inline-block; width:18px; height:2px; background:var(--gold); border-radius:1px; }
+.fh-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:36px; line-height:.9; color:#fff; letter-spacing:1px;
+}
+.fh-title span { color:var(--gold); }
+.fh-sub { font-size:10px; color:rgba(255,255,255,.5); margin-top:5px; font-weight:500; }
+
+/* ── ACCENT BAR ── */
+.accent { height:4px; background:linear-gradient(90deg,var(--green-dk),var(--green-lt) 38%,var(--gold) 58%,var(--green-lt) 80%,var(--green-dk)); }
+
+/* ── FORM CARD ── */
+.form-card {
+  background:#fff;
+  border-radius:0 0 8px 8px;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+  overflow:hidden;
+}
+
+/* ── SECTION ── */
+.section {
+  padding:28px 36px 24px;
+  border-bottom:1px solid var(--rule);
+}
+.section:last-of-type { border-bottom:none; }
+.section-head {
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:20px;
+}
+.section-num {
+  width:26px; height:26px; border-radius:50%;
+  background:var(--green-dk); color:#fff;
+  font-size:11px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.section-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:18px; letter-spacing:.5px; color:var(--ink);
+}
+.section-sub { font-size:9px; color:var(--muted); margin-top:1px; }
+
+/* ── FORM ROWS ── */
+.row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+.row.full { grid-template-columns:1fr; }
+.row.trio { grid-template-columns:1fr 1fr 1fr; }
+.field { display:flex; flex-direction:column; gap:5px; }
+label {
+  font-size:10px; font-weight:700; letter-spacing:.8px; text-transform:uppercase;
+  color:var(--muted);
+}
+label .req { color:var(--red); margin-left:2px; }
+input[type=text],
+input[type=email],
+input[type=tel],
+select,
+textarea {
+  font-family:'DM Sans',sans-serif;
+  font-size:13.5px; color:var(--ink);
+  background:#f8fbf7;
+  border:1.5px solid var(--rule);
+  border-radius:5px;
+  padding:10px 12px;
+  transition:border-color .15s, box-shadow .15s;
+  outline:none;
+  width:100%;
+}
+input:focus, select:focus, textarea:focus {
+  border-color:var(--green-lt);
+  box-shadow:0 0 0 3px rgba(45,148,88,.12);
+  background:#fff;
+}
+input.error, select.error { border-color:var(--red); }
+textarea { resize:vertical; min-height:72px; }
+select { cursor:pointer; }
+
+/* ── DIVISION PICKER ── */
+.div-grid {
+  display:grid; grid-template-columns:1fr 1fr 1fr;
+  gap:10px; margin-bottom:14px;
+}
+.div-opt { display:none; }
+.div-label {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:12px 8px 10px;
+  border:2px solid var(--rule);
+  border-radius:6px; cursor:pointer;
+  transition:all .15s;
+  text-align:center; gap:3px;
+}
+.div-label:hover { border-color:var(--green-lt); background:#f5fbf7; }
+.div-opt:checked + .div-label {
+  border-color:var(--green);
+  background:rgba(26,107,58,.08);
+  box-shadow:0 0 0 3px rgba(26,107,58,.12);
+}
+.div-pill {
+  font-size:8px; font-weight:800; letter-spacing:.5px;
+  padding:2px 6px; border-radius:2px; color:#fff; margin-bottom:2px;
+}
+.div-name { font-size:11.5px; font-weight:700; color:var(--ink); line-height:1.2; }
+.div-day  { font-size:9px; color:var(--muted); }
+
+/* ── RADIO TOGGLE ── */
+.toggle-group { display:flex; gap:10px; }
+.toggle-opt { display:none; }
+.toggle-label {
+  flex:1; padding:10px 14px; border:1.5px solid var(--rule);
+  border-radius:5px; cursor:pointer; text-align:center;
+  font-size:13px; font-weight:600; color:var(--muted);
+  transition:all .15s;
+}
+.toggle-label:hover { border-color:var(--green-lt); }
+.toggle-opt:checked + .toggle-label {
+  border-color:var(--green); background:rgba(26,107,58,.08);
+  color:var(--green-dk); font-weight:700;
+}
+
+/* ── PLAYER ROSTER ── */
+.roster-list { display:flex; flex-direction:column; gap:10px; }
+.roster-item { display:grid; grid-template-columns:28px 1fr; gap:10px; align-items:center; }
+.roster-num {
+  width:28px; height:28px; border-radius:50%;
+  background:var(--cream); border:1.5px solid var(--rule);
+  font-size:11px; font-weight:800; color:var(--muted);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.roster-item.captain .roster-num { background:var(--green-dk); color:#fff; border-color:var(--green-dk); }
+.add-player {
+  margin-top:10px; padding:9px;
+  border:1.5px dashed var(--rule); border-radius:5px;
+  background:transparent; cursor:pointer;
+  font-family:'DM Sans',sans-serif; font-size:12px;
+  font-weight:600; color:var(--muted);
+  transition:all .15s; width:100%;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+}
+.add-player:hover { border-color:var(--green-lt); color:var(--green); background:#f5fbf7; }
+.remove-player {
+  background:none; border:none; cursor:pointer;
+  color:var(--muted); font-size:16px; padding:0 4px;
+  line-height:1; transition:color .1s;
+}
+.remove-player:hover { color:var(--red); }
+
+/* ── PARTNER SECTION (conditional) ── */
+#partner-section { display:none; }
+#partner-section.visible { display:block; }
+.info-note {
+  font-size:11px; color:var(--muted); font-style:italic;
+  background:var(--cream); border-left:3px solid var(--gold);
+  padding:8px 12px; border-radius:0 4px 4px 0; margin-bottom:16px;
+}
+
+/* ── CHECKBOX ── */
+.check-row { display:flex; align-items:flex-start; gap:10px; margin-bottom:10px; }
+.check-row input[type=checkbox] {
+  width:18px; height:18px; flex-shrink:0; margin-top:1px;
+  accent-color:var(--green); cursor:pointer;
+}
+.check-row label {
+  font-size:12px; text-transform:none; letter-spacing:0;
+  color:var(--ink); font-weight:500; cursor:pointer;
+}
+
+/* ── PRICING BAND ── */
+.pricing-band {
+  background:var(--green-dk);
+  padding:16px 36px;
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+}
+.pb-col { display:flex; flex-direction:column; gap:2px; }
+.pb-head { font-size:7.5px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,.35); }
+.pb-val  { font-size:15px; font-weight:800; color:var(--gold-lt); line-height:1; }
+.pb-val span { font-size:9px; font-weight:500; color:rgba(255,255,255,.45); }
+.pb-member { font-size:12px; font-weight:700; color:#c8e8b0; }
+.pb-mbadge { display:inline-block; background:var(--green-lt); color:#fff; font-size:6.5px; font-weight:800; letter-spacing:.8px; padding:1px 4px; border-radius:2px; vertical-align:middle; margin-left:4px; }
+.pb-divider { width:1px; height:32px; background:rgba(255,255,255,.12); }
+
+/* ── SUBMIT ── */
+.submit-section { padding:28px 36px; background:var(--cream); border-top:1px solid var(--rule); }
+.submit-btn {
+  width:100%; padding:16px;
+  background:var(--gold); color:var(--ink);
+  font-family:'Bebas Neue',sans-serif;
+  font-size:20px; letter-spacing:1px;
+  border:none; border-radius:6px; cursor:pointer;
+  transition:all .15s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.submit-btn:hover { background:#d4911a; transform:translateY(-1px); box-shadow:0 4px 16px rgba(232,160,32,.35); }
+.submit-note { font-size:10px; color:var(--muted); text-align:center; margin-top:10px; }
+
+/* ── SUCCESS STATE ── */
+#success {
+  display:none; padding:48px 36px; text-align:center;
+}
+#success.visible { display:block; }
+#main-form.hidden { display:none; }
+.success-icon { font-size:52px; margin-bottom:16px; }
+.success-title { font-family:'Bebas Neue',sans-serif; font-size:32px; color:var(--green); margin-bottom:8px; }
+.success-msg { font-size:14px; color:var(--muted); line-height:1.6; max-width:380px; margin:0 auto; }
+.success-detail { margin-top:20px; padding:16px 20px; background:var(--cream); border-radius:6px; font-size:12px; color:var(--ink); text-align:left; }
+.success-detail strong { color:var(--green-dk); }
+
+/* ── ERROR MSG ── */
+.err-msg { font-size:10.5px; color:var(--red); margin-top:3px; display:none; }
+.err-msg.show { display:block; }
+
+@media(max-width:560px){
+  .form-header { flex-direction:column; text-align:center; padding:20px 20px 18px; }
+  .fh-eyebrow { justify-content:center; }
+  .section { padding:22px 20px 18px; }
+  .row { grid-template-columns:1fr; }
+  .row.trio { grid-template-columns:1fr 1fr; }
+  .div-grid { grid-template-columns:1fr 1fr; }
+  .pricing-band { flex-direction:column; gap:12px; padding:14px 20px; }
+  .submit-section { padding:20px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  
+  <div class="form-header">
+    <div class="fh-logo">
+      <img src="data:image/png;base64,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" alt="South End Racquet & Health Club">
+    </div>
+    <div class="fh-text">
+      <div class="fh-eyebrow">Keep the Spirit Alive</div>
+      <div class="fh-title">TEAM<br><span>REGISTRATION</span></div>
+      <div class="fh-sub">South End Racquet &amp; Health Club &nbsp;&middot;&nbsp; 2026 Pickleball League</div>
+    </div>
+  </div>
+  <div class="accent"></div>
+
+  <div class="form-card">
+  <form id="main-form" novalidate>
+
+    
+    <!-- division picker — 6 cards, player checks one to register -->
+<div class="section">
+      <div class="section-head">
+        <div class="section-num">1</div>
+        <div>
+          <div class="section-title">Choose Your Division</div>
+          <div class="section-sub">Select the division your team will compete in</div>
+        </div>
+      </div>
+      <div class="div-grid">
+        <div>
+          <input type="radio" name="division" id="d-3wd" value="3.0 Women's Doubles" class="div-opt">
+          <label for="d-3wd" class="div-label">
+            <span class="div-pill" style="background:#8a1a5a">3.0 WD</span>
+            <span class="div-name">3.0 Women's Doubles</span>
+            <span class="div-day">Tuesdays 10 AM</span>
+          </label>
+        </div>
+        <div>
+          <input type="radio" name="division" id="d-4wd" value="4.0 Women's Doubles" class="div-opt">
+          <label for="d-4wd" class="div-label">
+            <span class="div-pill" style="background:#8a1a5a">4.0 WD</span>
+            <span class="div-name">4.0 Women's Doubles</span>
+            <span class="div-day">Wednesdays 10 AM</span>
+          </label>
+        </div>
+        <div>
+          <input type="radio" name="division" id="d-3mxd" value="3.0 Mixed Doubles" class="div-opt">
+          <label for="d-3mxd" class="div-label">
+            <span class="div-pill" style="background:#b85c00">3.0 MXD</span>
+            <span class="div-name">3.0 Mixed Doubles</span>
+            <span class="div-day">Wednesdays 6:30 PM</span>
+          </label>
+        </div>
+        <div>
+          <input type="radio" name="division" id="d-4mxd" value="4.0 Mixed Doubles" class="div-opt">
+          <label for="d-4mxd" class="div-label">
+            <span class="div-pill" style="background:#b85c00">4.0 MXD</span>
+            <span class="div-name">4.0 Mixed Doubles</span>
+            <span class="div-day">Tuesdays 6:30 PM</span>
+          </label>
+        </div>
+        <div>
+          <input type="radio" name="division" id="d-open" value="Open Division" class="div-opt">
+          <label for="d-open" class="div-label">
+            <span class="div-pill" style="background:#1a6b3a">OPEN</span>
+            <span class="div-name">Open Division</span>
+            <span class="div-day">Thursdays 6:30 PM</span>
+          </label>
+        </div>
+        <div>
+          <input type="radio" name="division" id="d-4md" value="4.0 Men's Doubles" class="div-opt">
+          <label for="d-4md" class="div-label">
+            <span class="div-pill" style="background:#1a4a8a">4.0 MD</span>
+            <span class="div-name">4.0 Men's Doubles</span>
+            <span class="div-day">Saturdays 4 PM</span>
+          </label>
+        </div>
+      </div>
+      <div class="err-msg" id="err-division">Please select a division.</div>
+    </div>
+
+    
+    <!-- team name + member/non-member toggle — price updates on select -->
+<div class="section">
+      <div class="section-head">
+        <div class="section-num">2</div>
+        <div>
+          <div class="section-title">Team Info</div>
+          <div class="section-sub">Your team name and membership status</div>
+        </div>
+      </div>
+      <div class="row full" style="margin-bottom:14px;">
+        <div class="field">
+          <label for="team-name">Team Name <span class="req">*</span></label>
+          <input type="text" id="team-name" placeholder="e.g. The Dink Dynasty" maxlength="60">
+          <div class="err-msg" id="err-team">Required.</div>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:6px;">
+        <label>Membership Status <span class="req">*</span></label>
+        <div class="toggle-group">
+          <input type="radio" name="membership" id="m-member" value="Member" class="toggle-opt">
+          <label for="m-member" class="toggle-label">✓ Club Member &nbsp;<strong style="color:var(--green);font-size:11px;">$200/team</strong></label>
+          <input type="radio" name="membership" id="m-nonmember" value="Non-Member" class="toggle-opt">
+          <label for="m-nonmember" class="toggle-label">Non-Member &nbsp;<strong style="color:var(--muted);font-size:11px;">$250/team</strong></label>
+        </div>
+        <div class="err-msg" id="err-membership">Please select membership status.</div>
+      </div>
+    </div>
+
+    
+    <!-- captain info — name, email, phone. Brandon follows up here. -->
+<div class="section">
+      <div class="section-head">
+        <div class="section-num">3</div>
+        <div>
+          <div class="section-title">Team Captain</div>
+          <div class="section-sub">Primary contact — all league communications go here</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="cap-first">First Name <span class="req">*</span></label>
+          <input type="text" id="cap-first" placeholder="First">
+          <div class="err-msg" id="err-cap-first">Required.</div>
+        </div>
+        <div class="field">
+          <label for="cap-last">Last Name <span class="req">*</span></label>
+          <input type="text" id="cap-last" placeholder="Last">
+          <div class="err-msg" id="err-cap-last">Required.</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="cap-email">Email <span class="req">*</span></label>
+          <input type="email" id="cap-email" placeholder="captain@email.com">
+          <div class="err-msg" id="err-cap-email">Valid email required.</div>
+        </div>
+        <div class="field">
+          <label for="cap-phone">Phone <span class="req">*</span></label>
+          <input type="tel" id="cap-phone" placeholder="(555) 555-5555">
+          <div class="err-msg" id="err-cap-phone">Required.</div>
+        </div>
+      </div>
+    </div>
+
+    
+    <!-- roster — minimum 3 players, max 6. Captain auto-fills slot 1. -->
+<div class="section">
+      <div class="section-head">
+        <div class="section-num">4</div>
+        <div>
+          <div class="section-title">Roster</div>
+          <div class="section-sub">3–6 players per team. Captain auto-added as Player 1.</div>
+        </div>
+      </div>
+      <div class="roster-list" id="roster-list">
+        <div class="roster-item captain">
+          <div class="roster-num">1</div>
+          <input type="text" id="p1" placeholder="Captain name (auto-filled)" readonly style="background:#f0f4ef;color:var(--muted);">
+        </div>
+        <div class="roster-item" id="ri-2">
+          <div class="roster-num">2</div>
+          <input type="text" id="p2" placeholder="Player 2 full name">
+        </div>
+        <div class="roster-item" id="ri-3">
+          <div class="roster-num">3</div>
+          <input type="text" id="p3" placeholder="Player 3 full name">
+        </div>
+      </div>
+      <button type="button" class="add-player" id="add-player-btn" onclick="addPlayer()">
+        ＋ Add another player <span style="font-size:10px;opacity:.6">(up to 6)</span>
+      </button>
+      <div class="err-msg" id="err-roster">At least 2 additional players required (3 total minimum).</div>
+    </div>
+
+    
+    <div class="section" id="partner-section">
+      <div class="section-head">
+        <div class="section-num">5</div>
+        <div>
+          <div class="section-title">Partner Matching</div>
+          <div class="section-sub">Mixed doubles only</div>
+        </div>
+      </div>
+      <div class="info-note">Registering without a partner? We can help match you. Check below and we'll reach out.</div>
+      <div class="check-row" style="margin-bottom:16px;">
+        <input type="checkbox" id="needs-partner" name="needs-partner">
+        <label for="needs-partner">I need help finding a mixed doubles partner</label>
+      </div>
+      <div class="row full" style="margin-bottom:0;">
+        <div class="field">
+          <label for="skill-rating">Self-Reported Skill Rating</label>
+          <select id="skill-rating">
+            <option value="">— Select —</option>
+            <option>2.5</option><option>3.0</option><option>3.5</option>
+            <option>4.0</option><option>4.5</option><option>5.0+</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    
+    <!-- Mixed only — partner section hidden until Mixed division selected -->
+<div class="section">
+      <div class="section-head">
+        <div class="section-num" id="confirm-num">5</div>
+        <div>
+          <div class="section-title">Confirm &amp; Notes</div>
+          <div class="section-sub">Review requirements and submit</div>
+        </div>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="agree-usap" required>
+        <label for="agree-usap">All players will use USAP-approved paddles during league play <span class="req">*</span></label>
+      </div>
+      <div class="check-row" style="margin-bottom:18px;">
+        <input type="checkbox" id="agree-age" required>
+        <label for="agree-age">All players are 18+ (or have parent/guardian approval) <span class="req">*</span></label>
+      </div>
+      <div class="err-msg" id="err-agree" style="margin-bottom:12px;">Please agree to both requirements.</div>
+      <div class="field">
+        <label for="notes">Additional Notes or Questions</label>
+        <textarea id="notes" placeholder="Anything else we should know? Questions about the league, scheduling conflicts, etc."></textarea>
+      </div>
+    </div>
+
+    
+    <div class="pricing-band">
+      <div class="pb-col">
+        <div class="pb-head">League Entry</div>
+        <div class="pb-val">$250 <span>/ team / season</span></div>
+        <div class="pb-member">$200 <span class="pb-mbadge">MEMBER</span></div>
+      </div>
+      <div class="pb-divider"></div>
+      <div class="pb-col">
+        <div class="pb-head">Clinic Drop-In</div>
+        <div class="pb-val">$25 <span>/ session</span></div>
+        <div class="pb-member">$20 <span class="pb-mbadge">MEMBER</span></div>
+      </div>
+      <div class="pb-divider"></div>
+      <div class="pb-col" style="text-align:right;">
+        <div class="pb-head">Questions?</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.7);font-weight:600;">BrandonHookerPickleball</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.7);font-weight:600;">@gmail.com</div>
+      </div>
+    </div>
+
+    
+    <div class="submit-section">
+      <button type="submit" class="submit-btn">
+        REGISTER YOUR TEAM &nbsp;→
+      </button>
+      <div class="submit-note">
+        Payment instructions will be sent to your email after registration. &nbsp;·&nbsp; Spots are confirmed upon receipt of payment.
+      </div>
+    </div>
+
+  </form>
+
+  
+  <div id="success">
+    <div class="success-icon">🏆</div>
+    <div class="success-title">YOU'RE REGISTERED!</div>
+    <div class="success-msg">Your team registration has been received. We'll send payment instructions to your email shortly — your spot is held for 48 hours.</div>
+    <div class="success-detail" id="success-detail"></div>
+  </div>
+
+  </div>
+</div>
+
+<script>
+// ── CAPTAIN AUTO-FILL ──
+function syncCaptain() {
+  const f = document.getElementById('cap-first').value.trim();
+  const l = document.getElementById('cap-last').value.trim();
+  document.getElementById('p1').value = f && l ? f + ' ' + l : (f || l || '');
+}
+document.getElementById('cap-first').addEventListener('input', syncCaptain);
+document.getElementById('cap-last').addEventListener('input', syncCaptain);
+
+// ── DYNAMIC ROSTER ──
+let playerCount = 3;
+function addPlayer() {
+  if (playerCount >= 6) return;
+  playerCount++;
+  const li = document.createElement('div');
+  li.className = 'roster-item'; li.id = 'ri-' + playerCount;
+  li.innerHTML = `<div class="roster-num">${playerCount}</div>
+    <input type="text" id="p${playerCount}" placeholder="Player ${playerCount} full name">
+    <button type="button" class="remove-player" onclick="removePlayer(${playerCount})" title="Remove">✕</button>`;
+  // Make 3-col when remove btn present
+  li.style.gridTemplateColumns = '28px 1fr 28px';
+  document.getElementById('roster-list').appendChild(li);
+  if (playerCount >= 6) document.getElementById('add-player-btn').style.display = 'none';
+}
+function removePlayer(n) {
+  document.getElementById('ri-' + n).remove();
+  playerCount = Math.max(3, playerCount - 1);
+  document.getElementById('add-player-btn').style.display = '';
+  // Renumber
+  let i = 2;
+  document.querySelectorAll('#roster-list .roster-item:not(.captain)').forEach(item => {
+    i++;
+    item.querySelector('.roster-num').textContent = i;
+  });
+  playerCount = i;
+}
+
+// ── PARTNER SECTION TOGGLE ──
+document.querySelectorAll('input[name=division]').forEach(r => {
+  r.addEventListener('change', function() {
+    const isMixed = this.value.includes('Mixed');
+    const ps = document.getElementById('partner-section');
+    const cn = document.getElementById('confirm-num');
+    if (isMixed) { ps.classList.add('visible'); cn.textContent = '6'; }
+    else          { ps.classList.remove('visible'); cn.textContent = '5'; }
+  });
+});
+
+// ── VALIDATION ──
+function showErr(id, show) {
+  const el = document.getElementById(id);
+  if (el) { el.classList.toggle('show', show); }
+}
+function clearErrors() {
+  document.querySelectorAll('.err-msg').forEach(e => e.classList.remove('show'));
+  document.querySelectorAll('.error').forEach(e => e.classList.remove('error'));
+}
+
+document.getElementById('main-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  clearErrors();
+  let valid = true;
+
+  // Division
+  if (!document.querySelector('input[name=division]:checked')) {
+    showErr('err-division', true); valid = false;
+    document.querySelector('.div-grid').scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  // Team name
+  if (!document.getElementById('team-name').value.trim()) {
+    showErr('err-team', true);
+    document.getElementById('team-name').classList.add('error'); valid = false;
+  }
+  // Membership
+  if (!document.querySelector('input[name=membership]:checked')) {
+    showErr('err-membership', true); valid = false;
+  }
+  // Captain
+  ['cap-first','cap-last','cap-phone'].forEach(id => {
+    if (!document.getElementById(id).value.trim()) {
+      showErr('err-' + id, true);
+      document.getElementById(id).classList.add('error'); valid = false;
+    }
+  });
+  const email = document.getElementById('cap-email').value.trim();
+  if (!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+    showErr('err-cap-email', true);
+    document.getElementById('cap-email').classList.add('error'); valid = false;
+  }
+  // Roster (need p1 + at least p2 + p3)
+  if (!document.getElementById('p2').value.trim() || !document.getElementById('p3').value.trim()) {
+    showErr('err-roster', true); valid = false;
+  }
+  // Agreements
+  if (!document.getElementById('agree-usap').checked || !document.getElementById('agree-age').checked) {
+    showErr('err-agree', true); valid = false;
+  }
+
+  if (!valid) return;
+
+  // ── BUILD SUMMARY ──
+  const div   = document.querySelector('input[name=division]:checked').value;
+  const team  = document.getElementById('team-name').value.trim();
+  const mem   = document.querySelector('input[name=membership]:checked').value;
+  const cap   = document.getElementById('cap-first').value.trim() + ' ' + document.getElementById('cap-last').value.trim();
+  const email2 = document.getElementById('cap-email').value.trim();
+  const price = mem === 'Member' ? '$200' : '$250';
+
+  // Collect roster
+  let roster = [cap];
+  for (let i = 2; i <= playerCount; i++) {
+    const pEl = document.getElementById('p' + i);
+    if (pEl && pEl.value.trim()) roster.push(pEl.value.trim());
+  }
+
+  document.getElementById('success-detail').innerHTML =
+    `<strong>Division:</strong> ${div}<br>
+     <strong>Team:</strong> ${team}<br>
+     <strong>Captain:</strong> ${cap} (${email2})<br>
+     <strong>Roster:</strong> ${roster.join(', ')}<br>
+     <strong>Fee:</strong> ${price} / team / season<br><br>
+     Payment instructions will be sent to <strong>${email2}</strong> within 24 hours.`;
+
+  // Build email payload
+  const payload = {
+    _subject:    `New Team Registration — ${team} (${div})`,
+    Division:    div,
+    Team:        team,
+    Membership:  mem,
+    Captain:     cap,
+    Email:       email2,
+    Phone:       document.getElementById('cap-phone').value.trim(),
+    Roster:      roster.join(', '),
+    Fee:         price + ' / team / season',
+    Notes:       document.getElementById('notes') ? document.getElementById('notes').value.trim() : '',
+    _replyto:    email2,
+    _template:   'table',
+  };
+
+  const btn = document.querySelector('.submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  fetch('https://formsubmit.co/ajax/BrandonHookerPickleball@gmail.com', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body:    JSON.stringify(payload),
+  })
+  .then(res => res.json())
+  .then(data => {
+    btn.textContent = 'Submitted ✓';
+    document.getElementById('main-form').classList.add('hidden');
+    document.getElementById('success').classList.add('visible');
+    window.scrollTo({top:0,behavior:'smooth'});
+  })
+  .catch(() => {
+    // Email failed silently — still show success, log to console
+    console.warn('FormSubmit delivery failed — form data:', payload);
+    btn.textContent = 'Submitted ✓';
+    document.getElementById('main-form').classList.add('hidden');
+    document.getElementById('success').classList.add('visible');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+</script>
+</body>
+</html>

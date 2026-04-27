@@ -11,9 +11,11 @@ Standalone marketing site (HTML, CSS, vanilla JS). Exported from the WebsiteV1 m
 | `Templates/` | Templates |
 | `css/`, `js/`, `media/` | Global assets |
 | `Programs/Pickleball/` | Pickleball programs hub — [README](./Programs/Pickleball/README.md) |
-| `Programs/Pickleball/advanced-open-play/live/` | Advanced Open Play (RSVP, account, check-in) — Firebase Hosting deploy root |
+| `Programs/Pickleball/live/` | Advanced Open Play (RSVP, account, check-in) — Firebase Hosting deploy root |
 | `Programs/Pickleball/advanced-open-play/staging/` | Staging mirror (dev work before promoting to live) |
 | `Programs/Pickleball/advanced-open-play/testing/` | Unit tests + local-test mirror — `npm test` |
+| `Programs/Pickleball/league-play/` | League Play module source — account, team creation, invite inbox |
+| `Programs/Pickleball/docs/South-End-Pickleball-Platform-Statement.md` | South End Pickleball platform / module source of truth |
 | `Programs/Pickleball/account-creation/` | Firebase Auth/RTDB docs, changelog, managing accounts |
 | `scripts/` | Carousel build, convert, scaffold — [README](./scripts/README.md) |
 | `.cursor/rules/` | Cursor rules for this site |
@@ -34,7 +36,7 @@ From `Website/`:
 
 ```bash
 npm test                   # unit tests
-npm run local-test:sync    # mirror active tree → local-page/
+npm run local-test:sync    # mirror active tree → Programs/Pickleball/advanced-open-play/testing/local-page/
 npm run local-test         # mirror + live-server on port 3456
 ```
 
@@ -81,7 +83,7 @@ Some membership and tour pages call Supabase Edge Functions (`check-availability
 
 | File | Purpose |
 |------|---------|
-| `firebase.json` | Hosting public dir (`Programs/Pickleball/advanced-open-play/live`), DB rules path, cache headers |
+| `firebase.json` | Hosting public dir (`Programs/Pickleball/live`), DB rules path, cache headers |
 | `.firebaserc` | Default Firebase project (`pickleball-advanced-open-play`) |
 | `database.rules.json` | Realtime Database security rules (deployed via CLI) |
 | `package.json` | All npm scripts for test, deploy, local-test, carousels |

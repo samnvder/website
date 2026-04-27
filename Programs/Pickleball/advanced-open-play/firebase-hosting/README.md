@@ -5,7 +5,10 @@ This directory only holds **documentation**. The **actual HTML, CSS, and JS** th
 Repo root `firebase.json` sets:
 
 ```json
-"hosting": { "public": "Programs/Pickleball/advanced-open-play/live" }
+"hosting": {
+  "site": "southend-pickleball-central",
+  "public": "Programs/Pickleball/live"
+}
 ```
 
 So **`live/`** is the deploy root (site root on Hosting). There is no separate copy of the app under `firebase-hosting/`.
@@ -14,12 +17,20 @@ So **`live/`** is the deploy root (site root on Hosting). There is no separate c
 
 | Page | URL |
 |------|-----|
-| Account (sign-in / profile / calendar hub) | `https://pickleball-advanced-open-play.web.app/SouthEnd_OpenPlay_Account.html` |
-| RSVP | `https://pickleball-advanced-open-play.web.app/SouthEnd_Session_RSVP.html` |
-| Session check-in (staff) | `https://pickleball-advanced-open-play.web.app/SouthEnd_Session_Checkin.html` |
-| Admin activity (staff admin UID) | `https://pickleball-advanced-open-play.web.app/SouthEnd_Admin_Activity.html` |
+| Central hub | `https://southend-pickleball-central.web.app/` or `/main` |
+| Account (sign-in / profile / calendar hub) | `https://southend-pickleball-central.web.app/advanced-open-play` |
+| RSVP | `https://southend-pickleball-central.web.app/rsvp` |
+| Session check-in (staff) | `https://southend-pickleball-central.web.app/checkin` |
+| Message board | `https://southend-pickleball-central.web.app/message-board` |
+| League Play hub | `https://southend-pickleball-central.web.app/league-play` |
+| League Play account | `https://southend-pickleball-central.web.app/league-play/account` |
+| League Play registration | `https://southend-pickleball-central.web.app/league-play/register` |
+| League Play invites | `https://southend-pickleball-central.web.app/league-play/invites` |
+| Admin hub | `https://southend-pickleball-central.web.app/admin` |
+| Admin activity (staff admin UID) | `https://southend-pickleball-central.web.app/admin/activity` |
+| Admin module access | `https://southend-pickleball-central.web.app/admin/module-access` |
 
-Same paths work on **`https://pickleball-advanced-open-play.firebaseapp.com/...`**.
+Legacy `.html` filenames still work on the same host.
 
 ## Files in `live/`
 
@@ -37,6 +48,17 @@ Admin-only pages/actions require `openplay_se/admin_uids/{uid} === true` in Real
 | `js/openplay-rsvp-helpers.js` | Member card validation, session time helpers |
 | `js/openplay-waiver-modals.js` | Liability + communications consent modals |
 | `js/openplay-testing-env.js` | Testing environment detection |
+| `pickleball-hub-nav.js` | Canonical hub primary nav (injected into `<nav data-se-hub-nav>`) |
+
+## CI: auto-deploy on push to GitHub
+
+Workflow: [`.github/workflows/deploy-openplay-firebase-hosting.yml`](../../../../.github/workflows/deploy-openplay-firebase-hosting.yml).
+
+1. **Repository secret:** `FIREBASE_TOKEN` — create with `firebase login:ci` (Firebase CLI), then add the token under GitHub **Settings → Secrets and variables → Actions**.
+2. **Repository variable:** `OPENPLAY_CI_AUTO_DEPLOY` = `true` — under **Settings → Secrets and variables → Actions → Variables**. If unset or not `true`, the workflow only runs on **manual** dispatch.
+3. Push to **`main`** or **`master`** with changes under `Programs/Pickleball/live/**` (or edits to `firebase.json`, `.firebaserc`, `openplay-mode.json`, or the workflow file) to trigger a deploy.
+
+`openplay-deploy.js` still requires `openplay-mode.json` to allow production hosting (`activeTree: "live"` and `allowProductionHostingDeploy: true`, or use `OPENPLAY_CONFIRM_PRODUCTION=1` locally).
 
 ## Firebase-related surfaces
 

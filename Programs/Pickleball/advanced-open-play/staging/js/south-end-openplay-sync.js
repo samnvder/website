@@ -13,9 +13,49 @@
   var BC_NAME = 'se-openplay-sync';
   var FB_PATH = 'openplay_se/rsvps';
   var USER_PROFILE_PATH = 'openplay_se/user_profiles';
+  var LEAGUE_DIRECTORY_PATH = 'openplay_se/league_directory';
   var ADMIN_UIDS_PATH = 'openplay_se/admin_uids';
+  var ADMIN_SCOPE_PATH = 'openplay_se/admin_scope';
+  var MODULE_ACCESS_PATH = 'openplay_se/module_access';
   var ACTIVITY_PATH = 'openplay_se/activity';
   var BOARD_MESSAGES_PATH = 'openplay_se/board_messages';
+  var BOARD_PROFILES_PATH = 'openplay_se/board_profiles';
+  /** Consolidated per-user projection (profile mirror, access snapshot, stats, league refs). */
+  var USER_AGGREGATE_PATH = 'openplay_se/users';
+  var USER_AGGREGATE_SCHEMA_VERSION = 1;
+  var MODULE_ADVANCED_OPEN_PLAY = 'advanced_open_play';
+  var ADMIN_SCOPE_DEFAULT_POLICY = 'defaults';
+  var ADMIN_SCOPE_DEFAULTS = {
+    league_play: { team_management: true, schedule_scores: true },
+    open_play: { signups: true, checkins: true, activity: true },
+    platform: { module_access: true, user_management: true },
+  };
+
+  /** Display values stored in `user_profiles/{uid}/skill` (and RSVP forms). */
+  var SKILL_LEVEL_OPTION_VALUES = [
+    '2.0 Beginner',
+    '2.5 Upper Beginner',
+    '3.0 Lower Intermediate',
+    '3.5 Intermediate',
+    '4.0 Advanced',
+    '4.5 Upper Advanced',
+    '5.0 Open',
+  ];
+
+  /**
+   * True when stored skill qualifies for Advanced Open Play (4.0+), including legacy labels.
+   */
+  function isAdvancedOpenPlayEligibleSkill(skill) {
+    var v = String(skill == null ? '' : skill).trim();
+    if (!v) return false;
+    if (v === '4.0 Advanced' || v === '4.5 Upper Advanced' || v === '5.0 Open') return true;
+    if (v === 'Advanced 4.0+' || v === 'Open 5.0+') return true;
+    return false;
+  }
+
+  function isAdvancedOpenPlayEligibleProfile(p) {
+    return isAdvancedOpenPlayEligibleSkill(p && p.skill);
+  }
 
   var SE_OPENPLAY_FIREBASE = Object.assign(
     { apiKey: '', authDomain: '', databaseURL: '', projectId: '' },
@@ -179,6 +219,8 @@
       var row = snap.val() || null;
       return ref.remove().then(function () {
         if (!row) return;
+        var rowUid = String((row && row.firebaseUid) || '').trim();
+        if (rowUid) syncUserAggregateFromRsvpDeleted(rowUid, pidStr);
         var nm = splitName(String(row.name || ''));
         return logActivity('registration_cancelled', {
           source: 'rsvp',
@@ -215,6 +257,88 @@
 
   function firebaseConfigured() {
     return !!(SE_OPENPLAY_FIREBASE && SE_OPENPLAY_FIREBASE.apiKey && SE_OPENPLAY_FIREBASE.databaseURL);
+  }
+
+  function currentPathname() {
+    try {
+      return String(global.location && global.location.pathname ? global.location.pathname : '');
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function currentFileName() {
+    var pathname = currentPathname();
+    if (!pathname) return '';
+    var clean = pathname.split('?')[0].split('#')[0];
+    var parts = clean.split('/');
+    return String(parts[parts.length - 1] || '').trim();
+  }
+
+  function isAccountPage() {
+    var name = currentFileName();
+    if (/^SouthEnd_OpenPlay_Account\.html$/i.test(name)) return true;
+    var pathname = currentPathname().toLowerCase();
+    return pathname === '/account' || /\/account\/?$/.test(pathname);
+  }
+
+  function accountHrefForCurrentPath() {
+    var pathname = currentPathname();
+    if (/\/league-play\//i.test(pathname)) return '../SouthEnd_OpenPlay_Account.html';
+    return 'SouthEnd_OpenPlay_Account.html';
+  }
+
+  function signedOutReturnTarget() {
+    var pathname = currentPathname();
+    if (!pathname) return '';
+    var leagueMatch = pathname.match(/\/league-play\/([^/?#]+)$/i);
+    if (leagueMatch && leagueMatch[1]) return 'league-play/' + leagueMatch[1];
+    var name = currentFileName();
+    if (name) return name;
+    return '';
+  }
+
+  /** Access gate: if signed out, force all non-account pages to account/sign-in. */
+  function enforceSignedInAccessGate() {
+    if (isAccountPage()) return;
+
+    function redirectToAccount() {
+      var target = accountHrefForCurrentPath();
+      var ret = signedOutReturnTarget();
+      if (ret) {
+        target += (target.indexOf('?') === -1 ? '?' : '&') + 'return=' + encodeURIComponent(ret);
+      }
+      global.location.replace(target);
+    }
+
+    if (!firebaseConfigured()) {
+      redirectToAccount();
+      return;
+    }
+
+    /**
+     * Wait for IndexedDB/session restore before treating user as signed out.
+     * Then keep watching so sign-out elsewhere still returns to account.
+     */
+    initFirebase().then(function () {
+      if (!firebaseAuth) {
+        redirectToAccount();
+        return;
+      }
+      var ready = firebaseAuth.authStateReady && firebaseAuth.authStateReady();
+      function watch() {
+        firebaseAuth.onAuthStateChanged(function (user) {
+          if (!user) redirectToAccount();
+        });
+      }
+      if (ready && typeof ready.then === 'function') {
+        ready.then(watch).catch(function () {
+          redirectToAccount();
+        });
+      } else {
+        watch();
+      }
+    });
   }
 
   var firebaseReady = false;
@@ -336,6 +460,15 @@
     });
   }
 
+  function accountEmailExists(email) {
+    return initFirebase().then(function () {
+      if (!firebaseAuth) throw new Error('Firebase unavailable');
+      return firebaseAuth.fetchSignInMethodsForEmail(String(email || '').trim()).then(function (methods) {
+        return Array.isArray(methods) && methods.length > 0;
+      });
+    });
+  }
+
   function getCurrentUser() {
     return firebaseAuth ? firebaseAuth.currentUser : null;
   }
@@ -402,6 +535,49 @@
     });
   }
 
+  function buildLeagueDisplayNameFromProfile(p) {
+    p = p || {};
+    var a = String(p.firstName || '').trim();
+    var b = String(p.lastName || '').trim();
+    return [a, b].filter(Boolean).join(' ') || '';
+  }
+
+  function leagueDirectoryNameKey(displayName) {
+    if (!displayName) return '';
+    return String(displayName)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  /**
+   * Keeps League captain lookup in sync with user profile first/last name. Always lists the player
+   * for search (no separate opt-in). Called after profile save.
+   */
+  function syncLeagueDirectoryFromUserProfileUid(uid) {
+    if (!firebaseDb || !uid || !global.firebase) return Promise.resolve();
+    return loadUserProfile(uid).then(function (p) {
+      var displayName = buildLeagueDisplayNameFromProfile(p);
+      var ref = firebaseDb.ref(LEAGUE_DIRECTORY_PATH + '/' + uid);
+      var ts = global.firebase.database.ServerValue.TIMESTAMP;
+      if (!displayName) {
+        return ref.set({
+          displayName: '',
+          nameKey: '',
+          optInForSearch: true,
+          updatedAt: ts,
+        });
+      }
+      return ref.set({
+        displayName: displayName,
+        nameKey: leagueDirectoryNameKey(displayName),
+        optInForSearch: true,
+        updatedAt: ts,
+      });
+    });
+  }
+
   /**
    * Saves profile fields.
    * New fields: add to payload here and to PROFILE_FIELD_DEFS in `openplay-profile-panel.js`.
@@ -412,6 +588,7 @@
     var payload = {
       firstName: (data && data.firstName) || '',
       lastName: (data && data.lastName) || '',
+      email: String((getCurrentUser() && getCurrentUser().email) || (data && data.email) || ''),
       phone: (data && data.phone) || '',
       skill: (data && data.skill) || '',
       membership: (data && data.membership) || '',
@@ -424,31 +601,39 @@
       waiversAcknowledgedAt: global.firebase.database.ServerValue.TIMESTAMP,
       updatedAt: global.firebase.database.ServerValue.TIMESTAMP,
     };
-    return ref.update(payload).then(function () {
-      var changed = [
-        'firstName',
-        'lastName',
-        'phone',
-        'skill',
-        'membership',
-        'memberCard',
-        'hear',
-        'notes',
-        'waiverLiabilityAccepted',
-        'waiverCommunicationAccepted',
-      ];
-      return logActivity('profile_saved', {
-        source: 'account',
-        targetUid: String(uid),
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        changedFields: changed,
-        waiverLiabilityAccepted: payload.waiverLiabilityAccepted,
-        waiverCommunicationAccepted: payload.waiverCommunicationAccepted,
-        rsvpWaiversSchema: payload.rsvpWaiversSchema,
-        details: 'Full profile save',
+    return ref
+      .update(payload)
+      .then(function () {
+        return syncLeagueDirectoryFromUserProfileUid(uid);
+      })
+      .then(function () {
+        return syncUserAggregateFromProfile(uid);
+      })
+      .then(function () {
+        var changed = [
+          'firstName',
+          'lastName',
+          'phone',
+          'skill',
+          'membership',
+          'memberCard',
+          'hear',
+          'notes',
+          'waiverLiabilityAccepted',
+          'waiverCommunicationAccepted',
+        ];
+        return logActivity('profile_saved', {
+          source: 'account',
+          targetUid: String(uid),
+          firstName: payload.firstName,
+          lastName: payload.lastName,
+          changedFields: changed,
+          waiverLiabilityAccepted: payload.waiverLiabilityAccepted,
+          waiverCommunicationAccepted: payload.waiverCommunicationAccepted,
+          rsvpWaiversSchema: payload.rsvpWaiversSchema,
+          details: 'Full profile save',
+        });
       });
-    });
   }
 
   /**
@@ -461,12 +646,21 @@
       if (!firebaseDb || !global.firebase) return Promise.reject(new Error('Not ready'));
       var ref = firebaseDb.ref(USER_PROFILE_PATH + '/' + uid);
       var o = Object.assign({}, patch, {
+        email: String((getCurrentUser() && getCurrentUser().email) || patch.email || ''),
         updatedAt: global.firebase.database.ServerValue.TIMESTAMP,
       });
       if (patch.waiverLiabilityAccepted === true || patch.waiverCommunicationAccepted === true) {
         o.waiversAcknowledgedAt = global.firebase.database.ServerValue.TIMESTAMP;
       }
-      return ref.update(o).then(function () {
+      return ref
+        .update(o)
+        .then(function () {
+          return syncLeagueDirectoryFromUserProfileUid(uid);
+        })
+        .then(function () {
+          return syncUserAggregateFromProfile(uid);
+        })
+        .then(function () {
         var changed = Object.keys(patch).filter(function (k) {
           return k !== 'updatedAt' && k !== 'waiversAcknowledgedAt';
         });
@@ -539,6 +733,126 @@
       });
   }
 
+  function loadUserAggregate(uid) {
+    if (!firebaseDb || !uid) return Promise.resolve(null);
+    return firebaseDb
+      .ref(USER_AGGREGATE_PATH + '/' + uid)
+      .once('value')
+      .then(function (snap) {
+        return snap.val() || null;
+      });
+  }
+
+  function buildAggregateProfileMirror(p) {
+    p = p || {};
+    return {
+      firstName: String(p.firstName || ''),
+      lastName: String(p.lastName || ''),
+      email: String(p.email || ''),
+      phone: String(p.phone || ''),
+      skill: String(p.skill || ''),
+      membership: String(p.membership || ''),
+      memberCard: String(p.memberCard || ''),
+      waiverLiabilityAccepted: !!p.waiverLiabilityAccepted,
+      waiverCommunicationAccepted: !!p.waiverCommunicationAccepted,
+      rsvpWaiversSchema: String(p.rsvpWaiversSchema || ''),
+    };
+  }
+
+  function syncUserAggregateFromProfile(uid) {
+    if (!firebaseDb || !uid || !global.firebase) return Promise.resolve();
+    return Promise.all([
+      loadUserProfile(uid),
+      loadAdminUidFlag(uid),
+      loadAdminScope(uid),
+      loadModuleAccess(uid),
+    ])
+      .then(function (results) {
+        var p = results[0];
+        var isAdmin = results[1];
+        var adminScope = results[2] || {};
+        var modules = results[3] || {};
+        var ts = global.firebase.database.ServerValue.TIMESTAMP;
+        return Promise.all([
+          syncBoardProfileFromProfile(uid, p, isAdmin),
+          firebaseDb.ref(USER_AGGREGATE_PATH + '/' + uid).update({
+          schemaVersion: USER_AGGREGATE_SCHEMA_VERSION,
+          updatedAt: ts,
+          profile: buildAggregateProfileMirror(p),
+          access: {
+            isAdmin: !!isAdmin,
+            adminScope: adminScope,
+            modules: modules,
+          },
+          }),
+        ]);
+      })
+      .catch(function () {});
+  }
+
+  function syncUserAggregateFromRsvp(uid, row) {
+    if (!firebaseDb || !uid || !global.firebase) return Promise.resolve();
+    row = row || {};
+    var ts = global.firebase.database.ServerValue.TIMESTAMP;
+    return firebaseDb
+      .ref(USER_AGGREGATE_PATH + '/' + uid)
+      .update({
+        schemaVersion: USER_AGGREGATE_SCHEMA_VERSION,
+        updatedAt: ts,
+        'stats/lastRsvpPid': String(row.pid || ''),
+        'stats/lastRsvpSession': String(row.session || ''),
+        'stats/lastRsvpAt': ts,
+      })
+      .catch(function () {});
+  }
+
+  function syncUserAggregateFromRsvpDeleted(uid, pid) {
+    if (!firebaseDb || !uid || !global.firebase) return Promise.resolve();
+    var ts = global.firebase.database.ServerValue.TIMESTAMP;
+    return firebaseDb
+      .ref(USER_AGGREGATE_PATH + '/' + uid)
+      .update({
+        schemaVersion: USER_AGGREGATE_SCHEMA_VERSION,
+        updatedAt: ts,
+        'stats/lastRsvpCancelledPid': String(pid || ''),
+        'stats/lastRsvpCancelledAt': ts,
+      })
+      .catch(function () {});
+  }
+
+  function syncUserAggregateBoardPost(uid) {
+    if (!firebaseDb || !uid || !global.firebase) return Promise.resolve();
+    var ts = global.firebase.database.ServerValue.TIMESTAMP;
+    return firebaseDb
+      .ref(USER_AGGREGATE_PATH + '/' + uid)
+      .update({
+        schemaVersion: USER_AGGREGATE_SCHEMA_VERSION,
+        updatedAt: ts,
+        'stats/lastBoardPostAt': ts,
+      })
+      .catch(function () {});
+  }
+
+  /**
+   * @param {string} uid
+   * @param {Object} delta — optional: teamId, inviteId, registrationStatus, registrationType, rosterRole
+   */
+  function syncUserAggregateFromLeague(uid, delta) {
+    if (!firebaseDb || !uid || !global.firebase) return Promise.resolve();
+    delta = delta || {};
+    var ts = global.firebase.database.ServerValue.TIMESTAMP;
+    var patch = {
+      schemaVersion: USER_AGGREGATE_SCHEMA_VERSION,
+      updatedAt: ts,
+    };
+    if (delta.teamId != null) patch['refs/leagueTeamId'] = String(delta.teamId);
+    if (delta.inviteId != null) patch['refs/lastLeagueInviteId'] = String(delta.inviteId);
+    if (delta.registrationStatus != null) patch['refs/leagueRegistrationStatus'] = String(delta.registrationStatus);
+    if (delta.registrationType != null) patch['refs/leagueRegistrationType'] = String(delta.registrationType);
+    if (delta.rosterRole != null) patch['refs/leagueRosterRole'] = String(delta.rosterRole);
+    return firebaseDb.ref(USER_AGGREGATE_PATH + '/' + uid).update(patch).catch(function () {});
+  }
+
   var WAIVERS_SCHEMA_CURRENT = '2';
 
   /** Same rule on account + RSVP: required registration fields + electronic waivers on file (schema v2). */
@@ -572,6 +886,8 @@
         var existed = snap.exists();
         return ref.update(copy).then(function () {
           var nm = splitName(String(copy.name || ''));
+          var uid = String(copy.firebaseUid || '').trim();
+          if (uid) syncUserAggregateFromRsvp(uid, copy);
           return logActivity(existed ? 'registration_updated' : 'registration_created', {
             source: 'rsvp',
             targetUid: String(copy.firebaseUid || ''),
@@ -648,25 +964,23 @@
     } catch (e) {}
   }
 
-  /**
-   * Legacy email allowlist helper from openplay-firebase-config.js.
-   * Current admin-only pages use openplay_se/admin_uids/{uid} in RTDB.
-   */
-  function isStaffEmailAllowed(user) {
-    var cfg =
-      (typeof window !== 'undefined' && window.SE_OPENPLAY_FIREBASE) || global.SE_OPENPLAY_FIREBASE || {};
-    var allow = Array.isArray(cfg.staffEmails) ? cfg.staffEmails : [];
-    if (!user || !user.email) return false;
-    var email = String(user.email).trim().toLowerCase();
-    if (!allow.length) return false;
-    for (var i = 0; i < allow.length; i++) {
-      if (String(allow[i] || '').trim().toLowerCase() === email) return true;
-    }
-    return false;
+  var boardMessagesRef = null;
+  var boardProfilesRef = null;
+
+  function displayBoardNameFromProfile(p) {
+    return buildLeagueDisplayNameFromProfile(p) || 'Member';
   }
 
-  /** True if openplay_se/admin_uids/{uid} === true (set in Firebase Console). */
-  var boardMessagesRef = null;
+  function syncBoardProfileFromProfile(uid, p, isAdmin) {
+    if (!firebaseDb || !uid || !global.firebase) return Promise.resolve();
+    p = p || {};
+    return firebaseDb.ref(BOARD_PROFILES_PATH + '/' + uid).update({
+      displayName: displayBoardNameFromProfile(p),
+      skill: String(p.skill || ''),
+      isStaffAdmin: !!isAdmin,
+      updatedAt: global.firebase.database.ServerValue.TIMESTAMP,
+    }).catch(function () {});
+  }
 
   function subscribeBoardMessages(callback) {
     if (!firebaseConfigured() || typeof callback !== 'function') return Promise.resolve();
@@ -675,6 +989,23 @@
       if (boardMessagesRef) {
         boardMessagesRef.off();
         boardMessagesRef = null;
+      }
+      if (boardProfilesRef) {
+        boardProfilesRef.off();
+        boardProfilesRef = null;
+      }
+      var messageList = [];
+      var profiles = {};
+      function emit() {
+        callback(messageList.map(function (row) {
+          var p = row && row.uid ? profiles[String(row.uid)] : null;
+          if (!p) return row;
+          return Object.assign({}, row, {
+            authorName: p.displayName || row.authorName || 'Member',
+            skill: p.skill || row.skill || '',
+            isStaffAdmin: p.isStaffAdmin === true,
+          });
+        }));
       }
       boardMessagesRef = firebaseDb.ref(BOARD_MESSAGES_PATH);
       boardMessagesRef.on('value', function (snap) {
@@ -693,7 +1024,13 @@
             return (b.ts || 0) - (a.ts || 0);
           });
         }
-        callback(list);
+        messageList = list;
+        emit();
+      });
+      boardProfilesRef = firebaseDb.ref(BOARD_PROFILES_PATH);
+      boardProfilesRef.on('value', function (snap) {
+        profiles = snap.val() || {};
+        emit();
       });
     });
   }
@@ -702,6 +1039,10 @@
     if (boardMessagesRef && firebaseDb) {
       boardMessagesRef.off();
       boardMessagesRef = null;
+    }
+    if (boardProfilesRef && firebaseDb) {
+      boardProfilesRef.off();
+      boardProfilesRef = null;
     }
   }
 
@@ -721,13 +1062,66 @@
         var skill = String(prof.skill || '').trim();
         var ref = firebaseDb.ref(BOARD_MESSAGES_PATH).push();
         return loadAdminUidFlag(u.uid).then(function (isAdmin) {
-          return ref.set({
+          return syncBoardProfileFromProfile(u.uid, prof, isAdmin).then(function () {
+            return ref.set({
             uid: u.uid,
             authorName: name,
             skill: skill,
             text: trimmed,
             isStaffAdmin: !!isAdmin,
             ts: global.firebase.database.ServerValue.TIMESTAMP,
+            });
+          }).then(function () {
+            syncUserAggregateBoardPost(u.uid);
+          });
+        });
+      });
+    });
+  }
+
+  // Auto-posts a "signed up for …" entry to the board when an RSVP is confirmed.
+  // Same schema as pushBoardMessage; adds kind:'rsvp_log' so the board UI can
+  // style it differently from user-authored chat.
+  function pushBoardRsvpLog(sessionLabels) {
+    var u = getCurrentUser();
+    if (!u) return Promise.reject(new Error('Sign in required'));
+    var labels = [];
+    if (Array.isArray(sessionLabels)) {
+      sessionLabels.forEach(function (s) {
+        var t = String(s == null ? '' : s).trim();
+        if (t) labels.push(t);
+      });
+    }
+    if (!labels.length) return Promise.resolve(null);
+    var text;
+    if (labels.length === 1) {
+      text = '🎾 Signed up for ' + labels[0];
+    } else {
+      text = '🎾 Signed up for ' + labels.length + ' sessions: ' + labels.join('; ');
+    }
+    if (text.length > 500) text = text.substring(0, 497) + '…';
+    return initFirebase().then(function () {
+      if (!firebaseDb || !global.firebase) return Promise.reject(new Error('Not ready'));
+      return loadUserProfile(u.uid).then(function (p) {
+        var prof = p || {};
+        var first = String(prof.firstName || '').trim();
+        var last = String(prof.lastName || '').trim();
+        var name = (first + ' ' + last).trim() || String(u.email || 'Member');
+        var skill = String(prof.skill || '').trim();
+        return loadAdminUidFlag(u.uid).then(function (isAdmin) {
+          var ref = firebaseDb.ref(BOARD_MESSAGES_PATH).push();
+          return syncBoardProfileFromProfile(u.uid, prof, isAdmin).then(function () {
+            return ref.set({
+            uid: u.uid,
+            authorName: name,
+            skill: skill,
+            text: text,
+            kind: 'rsvp_log',
+            isStaffAdmin: !!isAdmin,
+            ts: global.firebase.database.ServerValue.TIMESTAMP,
+            });
+          }).then(function () {
+            syncUserAggregateBoardPost(u.uid);
           });
         });
       });
@@ -788,8 +1182,12 @@
       var ref = firebaseDb.ref(BOARD_MESSAGES_PATH + '/' + String(messageId));
       return ref.once('value').then(function (snap) {
         var row = snap.val();
-        if (!row || String(row.uid) !== u.uid) return Promise.reject(new Error('Not allowed'));
-        return ref.remove();
+        if (!row) return Promise.reject(new Error('Not found'));
+        if (String(row.uid) === u.uid) return ref.remove();
+        return loadAdminUidFlag(u.uid).then(function (isAdmin) {
+          if (!isAdmin) return Promise.reject(new Error('Not allowed'));
+          return ref.remove();
+        });
       });
     });
   }
@@ -811,6 +1209,269 @@
       });
   }
 
+  /**
+   * Admin scope data contract:
+   * openplay_se/admin_scope/{uid}/{moduleKey}/{subModuleKey}: true|{enabled:true}
+   * Missing scope follows ADMIN_SCOPE_DEFAULT_POLICY ('defaults' => known submodules granted).
+   */
+  function normalizeAdminScope(raw) {
+    var out = {};
+    if (!raw || typeof raw !== 'object') return out;
+    Object.keys(raw).forEach(function (moduleKey) {
+      var moduleNode = raw[moduleKey];
+      if (!moduleNode || typeof moduleNode !== 'object') return;
+      var modOut = {};
+      Object.keys(moduleNode).forEach(function (subModuleKey) {
+        var val = moduleNode[subModuleKey];
+        var on = val === true || (val && typeof val === 'object' && val.enabled === true);
+        if (on) modOut[subModuleKey] = true;
+      });
+      if (Object.keys(modOut).length) out[String(moduleKey)] = modOut;
+    });
+    return out;
+  }
+
+  function cloneAdminScope(scope) {
+    return normalizeAdminScope(JSON.parse(JSON.stringify(scope || {})));
+  }
+
+  function applyAdminScopeDefaults(scope) {
+    var normalized = normalizeAdminScope(scope || {});
+    if (ADMIN_SCOPE_DEFAULT_POLICY !== 'defaults') return normalized;
+    var merged = cloneAdminScope(ADMIN_SCOPE_DEFAULTS);
+    Object.keys(normalized).forEach(function (moduleKey) {
+      if (!merged[moduleKey]) merged[moduleKey] = {};
+      Object.keys(normalized[moduleKey] || {}).forEach(function (subModuleKey) {
+        merged[moduleKey][subModuleKey] = true;
+      });
+    });
+    return merged;
+  }
+
+  function loadAdminScope(uid) {
+    if (!firebaseConfigured() || !uid) return Promise.resolve({});
+    return initFirebase()
+      .then(function () {
+        if (!firebaseDb) return {};
+        return firebaseDb
+          .ref(ADMIN_SCOPE_PATH + '/' + uid)
+          .once('value')
+          .then(function (snap) {
+            return applyAdminScopeDefaults(snap.val() || {});
+          });
+      })
+      .catch(function () {
+        return applyAdminScopeDefaults({});
+      });
+  }
+
+  function isAdminScopeEnabled(scope, moduleKey, subModuleKey) {
+    if (!moduleKey || !subModuleKey) return false;
+    var s = scope && typeof scope === 'object' ? scope : {};
+    return !!(s[moduleKey] && s[moduleKey][subModuleKey] === true);
+  }
+
+  function hasAnyAdminScopeForModule(scope, moduleKey) {
+    if (!moduleKey) return false;
+    var s = scope && typeof scope === 'object' ? scope : {};
+    return !!(s[moduleKey] && Object.keys(s[moduleKey]).length);
+  }
+
+  function hasAnyAdminScope(scope) {
+    var s = scope && typeof scope === 'object' ? scope : {};
+    return Object.keys(s).some(function (moduleKey) {
+      return hasAnyAdminScopeForModule(s, moduleKey);
+    });
+  }
+
+  function normalizeModuleId(moduleId) {
+    return String(moduleId || MODULE_ADVANCED_OPEN_PLAY).trim() || MODULE_ADVANCED_OPEN_PLAY;
+  }
+
+  function loadModuleAccess(uid) {
+    if (!firebaseConfigured() || !uid) return Promise.resolve({});
+    return initFirebase()
+      .then(function () {
+        if (!firebaseDb) return {};
+        return firebaseDb
+          .ref(MODULE_ACCESS_PATH + '/' + uid)
+          .once('value')
+          .then(function (snap) {
+            return snap.val() || {};
+          });
+      })
+      .catch(function () {
+        return {};
+      });
+  }
+
+  function hasModuleAccess(uid, moduleId) {
+    var id = normalizeModuleId(moduleId);
+    if (!firebaseConfigured() || !uid) return Promise.resolve(false);
+    return loadAdminUidFlag(uid).then(function (isAdmin) {
+      if (isAdmin) return true;
+      if (id === MODULE_ADVANCED_OPEN_PLAY) {
+        return loadUserProfile(uid).then(function (p) {
+          return isAdvancedOpenPlayEligibleProfile(p);
+        });
+      }
+      return loadModuleAccess(uid).then(function (access) {
+        return !!(access && access[id] && access[id].enabled === true);
+      });
+    });
+  }
+
+  function setModuleAccess(targetUid, moduleId, enabled) {
+    var id = normalizeModuleId(moduleId);
+    if (!targetUid) return Promise.reject(new Error('Missing user UID'));
+    return initFirebase().then(function () {
+      if (!firebaseDb || !global.firebase) return Promise.reject(new Error('Not ready'));
+      var u = getCurrentUser();
+      if (!u) return Promise.reject(new Error('Admin sign-in required'));
+      return loadAdminUidFlag(u.uid).then(function (isAdmin) {
+        if (!isAdmin) return Promise.reject(new Error('Admin access required'));
+        var payload = {
+          enabled: enabled === true,
+          assignedBy: u.uid,
+          assignedAt: global.firebase.database.ServerValue.TIMESTAMP,
+        };
+        return firebaseDb
+          .ref(MODULE_ACCESS_PATH + '/' + targetUid + '/' + id)
+          .set(payload)
+          .then(function () {
+            return logActivity(enabled === true ? 'module_access_granted' : 'module_access_revoked', {
+              source: 'account',
+              targetUid: String(targetUid),
+              details: id,
+            });
+          })
+          .then(function () {
+            return syncUserAggregateFromProfile(targetUid);
+          })
+          .then(function () {
+            return payload;
+          });
+      });
+    });
+  }
+
+  function deleteUserProfileAsAdmin(targetUid) {
+    if (!targetUid) return Promise.reject(new Error('Missing user UID'));
+    return initFirebase().then(function () {
+      if (!firebaseDb || !global.firebase) return Promise.reject(new Error('Not ready'));
+      var u = getCurrentUser();
+      if (!u) return Promise.reject(new Error('Admin sign-in required'));
+      return loadAdminUidFlag(u.uid).then(function (isAdmin) {
+        if (!isAdmin) return Promise.reject(new Error('Admin access required'));
+        var profileRef = firebaseDb.ref(USER_PROFILE_PATH + '/' + targetUid);
+        return profileRef.once('value').then(function (snap) {
+          var profile = snap.val() || {};
+          var targetEmail = String(profile.email || profile.authEmail || profile.userEmail || profile.emailAddress || profile.contactEmail || '').trim();
+          return firebaseDb
+            .ref(MODULE_ACCESS_PATH + '/' + targetUid)
+            .remove()
+            .then(function () {
+              return profileRef.remove();
+            })
+            .then(function () {
+              return firebaseDb.ref(USER_AGGREGATE_PATH + '/' + targetUid).remove();
+            })
+            .then(function () {
+              return logActivity('profile_deleted', {
+                source: 'account',
+                targetUid: String(targetUid),
+                targetEmail: targetEmail,
+                firstName: String(profile.firstName || ''),
+                lastName: String(profile.lastName || ''),
+                details: 'Admin deleted profile and module access',
+              });
+            })
+            .then(function () {
+              return true;
+            });
+        });
+      });
+    });
+  }
+
+  /**
+   * Admin: merge-update another user's profile. Target must not be a staff admin.
+   * Used by User Management and similar tools.
+   */
+  function saveUserProfileAsAdmin(targetUid, patch) {
+    if (!targetUid || !patch || typeof patch !== 'object') {
+      return Promise.reject(new Error('Invalid patch'));
+    }
+    return initFirebase().then(function () {
+      if (!firebaseDb || !global.firebase) return Promise.reject(new Error('Not ready'));
+      var u = getCurrentUser();
+      if (!u) return Promise.reject(new Error('Admin sign-in required'));
+      return loadAdminUidFlag(u.uid).then(function (isAdmin) {
+        if (!isAdmin) return Promise.reject(new Error('Admin access required'));
+        return loadAdminUidFlag(targetUid).then(function (targetIsAdmin) {
+          if (targetIsAdmin) return Promise.reject(new Error('Cannot edit another admin profile'));
+          var o = Object.assign({}, patch, {
+            updatedAt: global.firebase.database.ServerValue.TIMESTAMP,
+          });
+          return firebaseDb
+            .ref(USER_PROFILE_PATH + '/' + targetUid)
+            .update(o)
+            .then(function () {
+              return syncLeagueDirectoryFromUserProfileUid(targetUid);
+            })
+            .then(function () {
+              return syncUserAggregateFromProfile(targetUid);
+            })
+            .then(function () {
+              return loadUserProfile(targetUid);
+            })
+            .then(function (pAfter) {
+              var p = pAfter || {};
+              var changed = Object.keys(patch).filter(function (k) {
+                return k !== 'updatedAt' && k !== 'waiversAcknowledgedAt';
+              });
+              return logActivity('profile_updated', {
+                source: 'user_management',
+                targetUid: String(targetUid),
+                firstName: String(p.firstName || ''),
+                lastName: String(p.lastName || ''),
+                changedFields: changed,
+                waiverLiabilityAccepted: p.waiverLiabilityAccepted,
+                waiverCommunicationAccepted: p.waiverCommunicationAccepted,
+                rsvpWaiversSchema: p.rsvpWaiversSchema,
+                details: 'Admin profile update',
+              }).then(function () {
+                return pAfter;
+              });
+            });
+        });
+      });
+    });
+  }
+
+  function loadUserProfileByEmail(email) {
+    var target = String(email || '').trim();
+    if (!firebaseConfigured() || !target) return Promise.resolve(null);
+    return initFirebase()
+      .then(function () {
+        if (!firebaseDb) return null;
+        return firebaseDb
+          .ref(USER_PROFILE_PATH)
+          .orderByChild('email')
+          .equalTo(target)
+          .once('value')
+          .then(function (snap) {
+            var rows = snap.val() || {};
+            var uid = Object.keys(rows)[0];
+            if (!uid) return null;
+            return Object.assign({ uid: uid }, rows[uid] || {});
+          });
+      })
+      .catch(function () {
+        return null;
+      });
+  }
+
   global.SEOpenPlay = {
     PIN_KEY: PIN_KEY,
     PENDING_KEY: PENDING_KEY,
@@ -818,8 +1479,15 @@
     FB_PATH: FB_PATH,
     USER_PROFILE_PATH: USER_PROFILE_PATH,
     ADMIN_UIDS_PATH: ADMIN_UIDS_PATH,
+    ADMIN_SCOPE_PATH: ADMIN_SCOPE_PATH,
+    ADMIN_SCOPE_DEFAULT_POLICY: ADMIN_SCOPE_DEFAULT_POLICY,
+    ADMIN_SCOPE_DEFAULTS: ADMIN_SCOPE_DEFAULTS,
+    MODULE_ACCESS_PATH: MODULE_ACCESS_PATH,
+    MODULE_ADVANCED_OPEN_PLAY: MODULE_ADVANCED_OPEN_PLAY,
     ACTIVITY_PATH: ACTIVITY_PATH,
     BOARD_MESSAGES_PATH: BOARD_MESSAGES_PATH,
+    USER_AGGREGATE_PATH: USER_AGGREGATE_PATH,
+    USER_AGGREGATE_SCHEMA_VERSION: USER_AGGREGATE_SCHEMA_VERSION,
     migratePin: migratePin,
     getPin: getPin,
     setPin: setPin,
@@ -850,18 +1518,40 @@
     signInEmail: signInEmail,
     signOutUser: signOutUser,
     sendPasswordReset: sendPasswordReset,
+    accountEmailExists: accountEmailExists,
     getCurrentUser: getCurrentUser,
     saveUserProfile: saveUserProfile,
     saveUserProfilePatch: saveUserProfilePatch,
     loadUserProfile: loadUserProfile,
+    loadUserAggregate: loadUserAggregate,
+    syncUserAggregateFromProfile: syncUserAggregateFromProfile,
+    syncUserAggregateFromRsvp: syncUserAggregateFromRsvp,
+    syncUserAggregateFromRsvpDeleted: syncUserAggregateFromRsvpDeleted,
+    syncUserAggregateBoardPost: syncUserAggregateBoardPost,
+    syncUserAggregateFromLeague: syncUserAggregateFromLeague,
     logActivity: logActivity,
     isProfileComplete: isProfileComplete,
-    isStaffEmailAllowed: isStaffEmailAllowed,
     loadAdminUidFlag: loadAdminUidFlag,
+    normalizeAdminScope: normalizeAdminScope,
+    loadAdminScope: loadAdminScope,
+    isAdminScopeEnabled: isAdminScopeEnabled,
+    hasAnyAdminScopeForModule: hasAnyAdminScopeForModule,
+    hasAnyAdminScope: hasAnyAdminScope,
+    loadModuleAccess: loadModuleAccess,
+    hasModuleAccess: hasModuleAccess,
+    setModuleAccess: setModuleAccess,
+    SKILL_LEVEL_OPTION_VALUES: SKILL_LEVEL_OPTION_VALUES,
+    isAdvancedOpenPlayEligibleSkill: isAdvancedOpenPlayEligibleSkill,
+    isAdvancedOpenPlayEligibleProfile: isAdvancedOpenPlayEligibleProfile,
+    saveUserProfileAsAdmin: saveUserProfileAsAdmin,
+    deleteUserProfileAsAdmin: deleteUserProfileAsAdmin,
+    loadUserProfileByEmail: loadUserProfileByEmail,
     subscribeBoardMessages: subscribeBoardMessages,
     unsubscribeBoardMessages: unsubscribeBoardMessages,
     pushBoardMessage: pushBoardMessage,
     pushBoardRsvpLog: pushBoardRsvpLog,
     deleteBoardMessage: deleteBoardMessage,
   };
+
+  enforceSignedInAccessGate();
 })(typeof window !== 'undefined' ? window : this);

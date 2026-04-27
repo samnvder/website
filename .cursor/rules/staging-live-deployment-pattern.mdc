@@ -1,5 +1,5 @@
 ---
-description: Staging vs live deployment pattern (Open Play implementation) with mode file, deploy guards, and local-test source.
+description: Staging vs live deployment pattern (Open Play implementation) with local-page as local source.
 globs:
   - "**/*"
 alwaysApply: false
@@ -13,14 +13,15 @@ Use this as a reusable pattern for future app modules that need safe promotion f
 
 | Folder | Role |
 |--------|------|
-| **`Programs/Pickleball/advanced-open-play/staging/`** | Default **edit target** while building - does **not** deploy by itself. |
-| **`Programs/Pickleball/advanced-open-play/live/`** | **Firebase Hosting** deploy root (`firebase.json` `hosting.public`). |
+| **`Programs/Pickleball/advanced-open-play/testing/local-page/`** | Default **local edit target** while building and previewing locally. |
+| **`Programs/Pickleball/advanced-open-play/staging/`** | Separate staging tree; use only when explicitly working on staging/promotion. |
+| **`Programs/Pickleball/live/`** | **Firebase Hosting** deploy root (`firebase.json` `hosting.public`). |
 
 ## Mode file
 
 **`Programs/Pickleball/advanced-open-play/openplay-mode.json`** (committed):
 
-- **`activeTree`**: `"staging"` \| `"live"` - which folder **`npm run local-test`** mirrors from.
+- **`activeTree`**: `"staging"` \| `"live"` - deploy/promotion mode only; **`npm run local-test` does not mirror from it**.
 - **`allowProductionHostingDeploy`**: `true` \| `false` - must be `true` to run **`npm run deploy:openplay`** (unless `OPENPLAY_CONFIRM_PRODUCTION=1`).
 
 Default in repo: **`staging`** + **`allowProductionHostingDeploy: false`**.
@@ -30,19 +31,21 @@ Default in repo: **`staging`** + **`allowProductionHostingDeploy: false`**.
 - Keep the same two-tree model: editable `staging/` and deployable `live/`.
 - Keep a committed mode file with an active tree switch and a production deploy guard flag.
 - Require explicit confirmation env vars for promotion/deploy actions.
-- Keep local preview tooling pointed at the currently active tree.
+- Keep local preview tooling pointed at `testing/local-page/`.
 - If a future app uses different file names/commands, follow the same guardrail behavior with app-specific names.
 
 ## Commands (from `Website/`)
 
 | Command | Action |
 |---------|--------|
-| `npm run openplay:use-staging` | Set `activeTree` -> `staging` (local-test uses `staging/`). |
-| `npm run openplay:use-live` | Set `activeTree` -> `live` (local-test uses `live/`). |
+| `npm run openplay:use-staging` | Set `activeTree` -> `staging` for deploy/promotion guards. |
+| `npm run openplay:use-live` | Set `activeTree` -> `live` for deploy/promotion guards. |
 | `npm run openplay:bootstrap-staging` | Replace `staging/` with a full copy of `live/` (init or reset), including Firebase config. |
-| `npm run openplay:sync-from-live` | Copy `live/` → `staging/` + local `local-page/` mirrors **preserving** each folder’s `js/openplay-firebase-config.js` (and `.example.js`). See **`command-openplay-sync-from-live.mdc`**. |
+| `npm run openplay:sync-from-live` | Copy `live/` -> `staging/` only when explicitly requested. Do not overwrite `testing/local-page/`. |
 | `npm run openplay:promote` | Copy `staging/` -> `live/` with **`OPENPLAY_CONFIRM_PROMOTE=1`** (overwrites `live/`). |
-| `npm run local-test` / `local-test:sync` | Mirror **active** tree -> gitignored `local-page/`. |
+| **`npm run roll-live -- --yes`** | **Roll live:** promote staging → live, deploy hosting, then reset `openplay-mode.json` to safe dev defaults (`staging` + `allowProductionHostingDeploy: false`). Add **`--all`** for hosting + database rules (like `deploy:openplay:all`). Add **`--dry-run`** to pass Firebase **`deploy --dry-run`** (still runs promote; validates CLI/project). Confirmation: **`--yes`** or env **`OPENPLAY_CONFIRM_ROLL_LIVE`** = **`1`**, **`true`**, or **`yes`**. |
+| `npm run local-test` | Serve `advanced-open-play/testing/local-page/` directly. |
+| `npm run local-test:sync` | Guard only; no file copy. |
 | `npm run deploy:openplay` / `deploy:openplay:all` | Run guarded Firebase deploy (hosting + optional rules). |
 
 ## Deploy guard
@@ -58,6 +61,6 @@ Default in repo: **`staging`** + **`allowProductionHostingDeploy: false`**.
 
 ## Typical workflow
 
-1. Edit **`advanced-open-play/staging/`** (or `openplay:bootstrap-staging` from `live`).
-2. **`npm run local-test`** - mirrors `staging/` to `local-page/`.
-3. When ready: **`OPENPLAY_CONFIRM_PROMOTE=1 npm run openplay:promote`** (or set env in Windows), then set **`openplay-mode.json`** to **`activeTree: "live"`** and **`allowProductionHostingDeploy: true`**, then **`npm run deploy:openplay`**.
+1. Edit **`advanced-open-play/testing/local-page/`** for local preview work.
+2. **`npm run local-test`** - serves the local-page site directly.
+3. Propagate to staging/live only when Sam explicitly asks for that separate deployment task.

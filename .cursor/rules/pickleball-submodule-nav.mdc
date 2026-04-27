@@ -1,0 +1,17 @@
+---
+description: Pickleball sub-module navigation must look visually secondary to primary hub navigation.
+globs:
+  - "Programs/Pickleball/**/*.html"
+  - "Programs/Pickleball/**/*.css"
+  - "Programs/Pickleball/**/*.js"
+alwaysApply: false
+---
+
+# Pickleball Sub-Module Navigation
+
+When adding a sub-module menu under the main Pickleball hub nav, style it as a derivative/secondary navigation, not as another primary tab row.
+
+- Keep the primary hub nav visually dominant.
+- Give sub-module navs a distinct secondary treatment: smaller/inset spacing, softer background or tint, subtler buttons, and a clear module label when useful.
+- Use a specific class or accessible selector such as `aria-label="League play"` so the sub-menu style does not unintentionally affect the primary hub nav.
+- Apply the pattern consistently across mirrored Pickleball trees (`advanced-open-play/staging`, `live`, and shared `league-play` copies when present).

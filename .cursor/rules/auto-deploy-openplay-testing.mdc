@@ -1,26 +1,26 @@
 ---
-description: Universal — after Open Play live/testing changes, sync mirrors, test, and deploy Firebase Hosting (testing site).
+description: Manual Open Play deployment checklist; local-page is never auto-synced or deployed.
 globs: []
-alwaysApply: true
+alwaysApply: false
 ---
 
-# Auto-deploy Open Play (testing + hosted site)
+# Open Play Deployment Checklist
 
 ## Scope
 
-Applies whenever **`Programs/Pickleball/advanced-open-play/live/`** (deployed HTML/JS) or **`Programs/Pickleball/advanced-open-play/testing/`** (unit tests, `local-test.js`, mirrors) is edited.
+Use only when Sam explicitly asks to deploy Open Play.
 
 ## Agent must run (from `Website/` = repo root)
 
-1. **`npm run local-test:sync`** — refresh `local-page/` mirrors so local QA matches `live/`.
+1. **Do not run `npm run local-test:sync` to copy files.** Local-page is independent.
 2. **`npm test`** — must pass before deploy.
-3. **`npm run deploy:openplay`** — push **`Programs/Pickleball/advanced-open-play/live`** to **Firebase Hosting** (`firebase.json` → `hosting.public`). This updates the **hosted URL** (e.g. `*.web.app` / custom domain for project `pickleball-advanced-open-play`).
+3. **`npm run deploy:openplay`** — push **`Programs/Pickleball/live`** to **Firebase Hosting** (`firebase.json` → `hosting.public`). This updates the **hosted URL** (e.g. `*.web.app` / custom domain for project `pickleball-advanced-open-play`).
 
 If deploy fails (auth): run **`firebase login`** once locally, or configure CI secret **`FIREBASE_TOKEN`** from **`firebase login:ci`**.
 
-## CI (no manual step after push)
+## CI (optional auto-deploy on push)
 
-On push to **`main`** / **`master`**, **`.github/workflows/deploy-openplay-firebase-hosting.yml`** runs **`firebase deploy --only hosting`** when the paths above change. Requires **`FIREBASE_TOKEN`** in GitHub repo **Settings → Secrets**.
+Workflow **`.github/workflows/deploy-openplay-firebase-hosting.yml`** runs on **`workflow_dispatch`** always, and on push to **`main`/`master`** only when repo variable **`OPENPLAY_CI_AUTO_DEPLOY`** is **`true`**. Requires GitHub Actions secret **`FIREBASE_TOKEN`** (`firebase login:ci`). See **`Programs/Pickleball/advanced-open-play/firebase-hosting/README.md`** (section **CI: auto-deploy on push**).
 
 ## Not auto here
 
@@ -28,4 +28,4 @@ On push to **`main`** / **`master`**, **`.github/workflows/deploy-openplay-fireb
 
 ## Do not deploy
 
-Gitignored mirrors (`local-page/`, `testing/local-page/`) — generated only; **Hosting serves `live/`** per `firebase.json`.
+`Programs/Pickleball/advanced-open-play/testing/local-page/` — local test source only; **Hosting serves `live/`** per `firebase.json`.

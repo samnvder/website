@@ -1,0 +1,29 @@
+---
+description: Pickleball user-facing copy must read like player-facing product copy, not admin or implementation notes
+globs: "Programs/Pickleball/**/*.html,Programs/Pickleball/**/*.js"
+alwaysApply: false
+---
+
+# Pickleball User-Facing Copy
+
+## Law
+
+User-facing Pickleball pages must speak to players, captains, and members in plain language. Do not expose admin, database, implementation, or workflow wording in UI copy.
+
+## Required Pattern
+
+- Write from the user's point of view: what they can do, what happens next, and why it matters.
+- Prefer short, confident product copy over explanations of hidden mechanics.
+- If a new label, helper line, or status message is uncertain, ask Sam what it should say and offer 2-3 sensible options based on the program premise.
+- Keep admin/process words out of player screens unless the screen is explicitly staff/admin-only.
+
+## Avoid In Player UI
+
+- `registrationStatus`, `UID`, `Firebase`, `module access`, `directory`, `profile setup`, `team assignment`, `teammate section is hidden`, `saved as`.
+- Explaining implementation details like hidden fields, database state, sync steps, or account flags.
+
+## Better Examples
+
+- Instead of `Solo registration. The teammate section is hidden for solo players.` use `Sign up solo and we'll pair you up.`
+- Instead of `No team assignment yet.` use `We'll pair you with a team when a spot is available.`
+- Instead of `Sync accepted players to roster.` use `Add accepted players to team.`

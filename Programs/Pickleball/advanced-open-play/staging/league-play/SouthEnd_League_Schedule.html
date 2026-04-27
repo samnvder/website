@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>League — Weekly Schedule</title>
+    <link rel="icon" type="image/jpeg" href="../favicon.jpg">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/south-end-league.css" />
+  </head>
+  <body class="league-page">
+    <a class="league-skip" href="#main">Skip to content</a>
+    <div class="header" role="banner">
+      <div>
+        <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+        <div class="hdr-title">LEAGUE <span>SCHEDULE</span></div>
+        <div class="hdr-sub">Weekly division blocks for South End Pickleball League.</div>
+      </div>
+      <div class="league-header-actions">
+        <a
+          class="league-header-notify"
+          id="league-header-notify"
+          href="#notifications"
+          aria-label="Notifications"
+        >
+          <svg
+            class="league-header-notify__icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M10 20h4a2 2 0 0 1-4 0"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span class="league-header-notify__badge" id="league-header-notify-badge" hidden aria-hidden="true"></span>
+        </a>
+        <a
+          class="league-header-profile"
+          href="../SouthEnd_OpenPlay_Account.html?return=SouthEnd_League_Schedule.html"
+          aria-label="Open main Pickleball profile and account (same as Open Play)"
+        >
+          <svg class="league-header-profile__icon" viewBox="0 0 24 24" aria-hidden="true"
+            ><circle cx="12" cy="8" r="3.5" /><path d="M5.5 20.5v-1.2A5.2 5.2 0 0 1 10.7 14h2.6a5.2 5.2 0 0 1 5.2 5.2v1.2"
+          /></svg>
+          Sign in
+        </a>
+      </div>
+    </div>
+    <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav></nav>
+    <script src="js/pickleball-hub-nav.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <nav class="se-site-nav" aria-label="League play">
+      <a class="se-site-nav-link" href="SouthEnd_League_Overview.html">Overview</a>
+      <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_League_Schedule.html" aria-current="page">Schedule</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Standings.html">Standings</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Teams.html">Register</a>
+    </nav>
+    <main id="main" class="league-wrap league-wrap--schedule" tabindex="-1">
+      <section class="league-schedule-poster" aria-labelledby="scheduleHeading">
+        <div class="league-schedule-accent"></div>
+        <header class="league-schedule-header">
+          <div class="league-schedule-brand">
+            <div class="league-schedule-mark" aria-hidden="true">SE</div>
+            <div>
+              <div class="league-schedule-eyebrow">Keep the Spirit Alive</div>
+              <h1 id="scheduleHeading">Pickleball <span>League</span></h1>
+              <p>South End Racquet &amp; Health Club · 2026 Season</p>
+            </div>
+          </div>
+          <div class="league-schedule-legend" aria-label="Schedule key">
+            <div class="league-schedule-legend-title">Key</div>
+            <div class="league-schedule-legend-grid">
+              <span><i class="league-dot league-dot--womens"></i>Women's</span>
+              <span><i class="league-dot league-dot--mens"></i>Men's</span>
+              <span><i class="league-dot league-dot--mixed"></i>Mixed</span>
+              <span><i class="league-dot league-dot--open"></i>Open</span>
+            </div>
+          </div>
+        </header>
+
+        <div class="league-schedule-register">
+          <div>
+            <strong>Season format</strong>
+            <span>6-week league with a one week break followed by playoffs.</span>
+          </div>
+        </div>
+
+        <div class="league-schedule-board" aria-label="Weekly visual schedule">
+          <div class="league-schedule-corner" aria-hidden="true"></div>
+          <div class="league-schedule-day league-schedule-day--active">Mon<span>Monday</span></div>
+          <div class="league-schedule-day league-schedule-day--active">Tue<span>Tuesday</span></div>
+          <div class="league-schedule-day league-schedule-day--active">Wed<span>Wednesday</span></div>
+          <div class="league-schedule-day">Thu<span>Thursday</span></div>
+          <div class="league-schedule-day league-schedule-day--active">Fri<span>Friday</span></div>
+          <div class="league-schedule-day league-schedule-day--active league-schedule-day--weekend">Sat<span>Saturday</span></div>
+          <div class="league-schedule-day league-schedule-day--active league-schedule-day--weekend">Sun<span>Sunday</span></div>
+
+          <div class="league-schedule-time">10AM</div>
+          <div class="league-schedule-slot">
+            <article class="league-schedule-event league-schedule-event--womens">
+              <span>League Match</span>
+              <strong>3.0 Women's</strong>
+              <em>10:00 AM - 12:00 PM</em>
+              <b>3.0 W</b>
+            </article>
+          </div>
+          <div class="league-schedule-slot">
+            <article class="league-schedule-event league-schedule-event--womens">
+              <span>League Match</span>
+              <strong>3.5 Women's</strong>
+              <em>10:00 AM - 12:00 PM</em>
+              <b>3.5 W</b>
+            </article>
+          </div>
+          <div class="league-schedule-slot">
+            <article class="league-schedule-event league-schedule-event--womens">
+              <span>League Match</span>
+              <strong>4.0 Women's</strong>
+              <em>10:00 AM - 12:00 PM</em>
+              <b>4.0 W</b>
+            </article>
+          </div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot league-schedule-slot--weekend"></div>
+          <div class="league-schedule-slot league-schedule-slot--weekend"></div>
+
+          <div class="league-schedule-time">2PM</div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot league-schedule-slot--weekend">
+            <article class="league-schedule-event league-schedule-event--mixed">
+              <span>League Match</span>
+              <strong>3.0 Mixed</strong>
+              <em>2:00 - 4:00 PM</em>
+              <b>3.0 MX</b>
+            </article>
+          </div>
+          <div class="league-schedule-slot league-schedule-slot--weekend">
+            <article class="league-schedule-event league-schedule-event--mens">
+              <span>League Match</span>
+              <strong>3.5 Men's</strong>
+              <em>2:00 - 4:00 PM</em>
+              <b>3.5 M</b>
+            </article>
+          </div>
+
+          <div class="league-schedule-time">4PM</div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot league-schedule-slot--weekend">
+            <article class="league-schedule-event league-schedule-event--mixed">
+              <span>League Match</span>
+              <strong>3.5 Mixed</strong>
+              <em>4:00 - 6:00 PM</em>
+              <b>3.5 MX</b>
+            </article>
+          </div>
+          <div class="league-schedule-slot league-schedule-slot--weekend">
+            <article class="league-schedule-event league-schedule-event--mens">
+              <span>League Match</span>
+              <strong>4.0 Men's</strong>
+              <em>4:00 - 6:00 PM</em>
+              <b>4.0 M</b>
+            </article>
+          </div>
+
+          <div class="league-schedule-time">5PM</div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot">
+            <article class="league-schedule-event league-schedule-event--mixed">
+              <span>League Match</span>
+              <strong>4.0 Mixed</strong>
+              <em>5:00 - 7:00 PM</em>
+              <b>4.0 MX</b>
+            </article>
+          </div>
+          <div class="league-schedule-slot league-schedule-slot--weekend"></div>
+          <div class="league-schedule-slot league-schedule-slot--weekend"></div>
+
+          <div class="league-schedule-time">7PM</div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot"></div>
+          <div class="league-schedule-slot">
+            <article class="league-schedule-event league-schedule-event--open">
+              <span>League Match</span>
+              <strong>Open (5.0+)</strong>
+              <em>7:00 - 9:00 PM</em>
+              <b>OPEN</b>
+            </article>
+          </div>
+          <div class="league-schedule-slot league-schedule-slot--weekend"></div>
+          <div class="league-schedule-slot league-schedule-slot--weekend"></div>
+        </div>
+
+        <div class="league-schedule-register" id="leagueScheduleRegisterCta">
+          <div>
+            <strong>Ready to play?</strong>
+            <span>Choose one weekly division block when you register.</span>
+          </div>
+          <a class="btn" href="SouthEnd_League_Teams.html">Register</a>
+        </div>
+      </section>
+
+    </main>
+    <footer
+      class="pickleball-share-footer"
+      data-pickleball-share
+      data-share-context="league"
+      aria-label="Invite friends to league play"
+    ></footer>
+    <script src="../js/pickleball-invite-share.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="js/league-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="js/south-end-league-sync.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="../js/openplay-firebase-config.js"></script>
+    <script src="../js/south-end-openplay-sync.js"></script>
+    <script src="../js/openplay-profile-panel.js?v=20260427-admin-hub"></script>
+    <script>
+      (function () {
+        var L = window.LeagueSync;
+        var registerCta = document.getElementById("leagueScheduleRegisterCta");
+        if (!L || !window.LEAGUE_FIREBASE_CONFIG) return;
+        var config = window.LEAGUE_FIREBASE_CONFIG;
+        if (!L.init(config) || !config.apiKey) return;
+        L.onAuth(function (user) {
+          if (!registerCta || !user) return;
+          L.getLeagueAccount(user.uid)
+            .then(function (account) {
+              if (L.leagueAccountIsCommitted(account)) {
+                registerCta.hidden = true;
+                registerCta.style.display = "none";
+              }
+            })
+            .catch(function () {});
+        });
+      })();
+    </script>
+  </body>
+</html>
