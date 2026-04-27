@@ -38,6 +38,8 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 }
 .body-wrap{max-width:520px;margin:0 auto;padding:28px 20px 48px;}
 .body-wrap.body-wrap--wide{max-width:720px;}
+body.account-calendar-view .page-lead,
+body.account-calendar-view #auth-panel{display:none!important;}
 .page-lead{font-size:13px;color:rgba(255,255,255,.72);line-height:1.55;margin-bottom:18px;}
 .page-lead a{color:var(--electric);}
 .auth-panel{
@@ -287,6 +289,8 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 }
 .cal-day--empty{border-color:transparent;background:transparent;min-height:88px;}
 .cal-day--muted{opacity:.35;}
+.cal-day--bookable{cursor:pointer;border-color:rgba(0,255,136,.2);}
+.cal-day--bookable:hover{background:rgba(0,255,136,.07);border-color:rgba(0,255,136,.38);}
 .cal-day-num{font-size:11px;font-weight:700;color:rgba(255,255,255,.55);line-height:1;}
 .cal-day--today .cal-day-num{color:var(--neon);}
 .cal-day-events{display:flex;flex-direction:column;gap:4px;flex:1;min-height:0;}
@@ -301,6 +305,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 }
 .cal-ev-cancel:hover{filter:brightness(1.1);}
 .cal-open{
+  display:block;
   margin-top:4px;
   font-size:10px;
   line-height:1.25;
@@ -312,7 +317,10 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
   letter-spacing:.04em;
   color:rgba(225,255,240,.95);
   font-weight:700;
+  text-decoration:none;
+  cursor:pointer;
 }
+.cal-open:hover{filter:brightness(1.1);}
 .cal-unparsed{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1);}
 .cal-unparsed-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:8px;}
 .hub-actions{display:flex;flex-direction:column;gap:10px;margin-top:20px;}
@@ -384,7 +392,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
       <div class="auth-actions">
         <button type="button" class="auth-btn auth-btn-primary" id="auth-primary-btn">Sign in</button>
         <button type="button" class="auth-btn auth-btn-secondary" id="auth-toggle-mode">Create account instead</button>
-        <button type="button" class="auth-btn auth-btn-secondary" id="auth-forgot">Forgot password?</button>
+        <a class="auth-btn auth-btn-secondary" id="auth-forgot" href="SouthEnd_Forgot_Password.html">Forgot password?</a>
       </div>
       <div class="auth-msg" id="auth-msg" role="status"></div>
     </div>
@@ -504,8 +512,6 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 
   <div id="acc-toast" style="display:none;position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#1db954;color:#fff;padding:10px 24px;border-radius:8px;font-weight:600;z-index:9999;box-shadow:0 4px 14px rgba(0,0,0,.25);transition:opacity .3s;pointer-events:none;"></div>
   <div class="account-hub-panel hidden" id="account-hub-panel">
-    <div class="auth-title">Advanced Open Play home</div>
-    <p class="hub-lead" id="hub-user-line">Your Advanced Open Play schedule appears below.</p>
     <div class="module-grid" aria-label="Available pickleball modules">
       <div class="module-card module-card--locked hidden" id="module-card-advanced-open-play-locked">
         <div class="module-kicker">Admin approval required</div>
@@ -527,6 +533,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
     </div>
     <div class="hub-actions">
       <a class="cta-primary" id="hub-cta-rsvp" href="SouthEnd_Session_RSVP.html">Book sessions</a>
+      <button type="button" class="cta-staff" id="cta-manage-rsvps">Manage RSVPs</button>
       <a class="cta-staff hidden" id="hub-cta-checkin" href="SouthEnd_Session_Checkin.html">Check-ins</a>
       <a class="cta-staff hidden" id="hub-cta-activity" href="SouthEnd_Admin_Hub.html">Admin hub</a>
     </div>
@@ -548,6 +555,16 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
     </div>
   </div>
 
+</div>
+
+<div id="manage-rsvp-modal" class="waiver-modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="manage-rsvp-modal-title">
+  <div class="waiver-modal-box" role="document">
+    <div class="waiver-modal-head">
+      <h2 id="manage-rsvp-modal-title">Your RSVPs</h2>
+      <button type="button" class="waiver-modal-close" id="manage-rsvp-modal-close" aria-label="Close">x</button>
+    </div>
+    <div class="waiver-modal-scroll" id="manage-rsvp-list"></div>
+  </div>
 </div>
 
 <!-- Full-text waiver modals (same copy as RSVP) -->
@@ -628,7 +645,7 @@ body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-heigh
 <script src="js/openplay-rsvp-helpers.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script src="js/openplay-waiver-modals.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script src="js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/openplay-profile-panel.js?v=20260426-routing2&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script>
 function getReturnRsvpHref() {
   try {
@@ -1092,11 +1109,15 @@ function updateHubModuleVisibility() {
     if (locked) locked.classList.add('hidden');
     if (schedule) schedule.classList.add('hidden');
     if (rsvpCta) rsvpCta.classList.add('hidden');
+    var manageCtaHidden = document.getElementById('cta-manage-rsvps');
+    if (manageCtaHidden) manageCtaHidden.classList.add('hidden');
   } else {
     if (unlocked) unlocked.classList.toggle('hidden', !canOpenPlay);
     if (locked) locked.classList.toggle('hidden', canOpenPlay);
     if (schedule) schedule.classList.toggle('hidden', !canOpenPlay);
     if (rsvpCta) rsvpCta.classList.toggle('hidden', !canOpenPlay);
+    var manageCta = document.getElementById('cta-manage-rsvps');
+    if (manageCta) manageCta.classList.toggle('hidden', !canOpenPlay);
   }
   if (adminPanel) adminPanel.classList.toggle('hidden', !accountIsAdmin);
   updateAccountCtaState();
@@ -1120,7 +1141,8 @@ function loadAccountAccessState(user) {
 
 function updateAccountCtaState() {
   var hubCta = document.getElementById('hub-cta-rsvp');
-  if (!hubCta) return;
+  var manageCta = document.getElementById('cta-manage-rsvps');
+  if (!hubCta && !manageCta) return;
   syncAccountCtaRsvpHref();
   var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
   function setDisabled(el, on) {
@@ -1130,10 +1152,12 @@ function updateAccountCtaState() {
   }
   if (!u) {
     setDisabled(hubCta, true);
+    setDisabled(manageCta, true);
     return;
   }
   var block = !accountHasAdvancedOpenPlay() || !accProfileComplete() || !accountProfileSynced;
   setDisabled(hubCta, block);
+  setDisabled(manageCta, block);
 }
 
 function loadAccountFormFromProfile(p) {
@@ -1204,6 +1228,17 @@ function setAccountViewMode(mode) {
     if (accountViewMode === 'hub') hubEditTop.classList.remove('hidden');
     else hubEditTop.classList.add('hidden');
   }
+  syncAccountIntroVisibility();
+}
+
+function syncAccountIntroVisibility() {
+  var pageLead = document.querySelector('.page-lead');
+  var authPanel = document.getElementById('auth-panel');
+  var hasUser = !!(SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser());
+  var hideIntro = hasUser && accountViewMode === 'hub';
+  if (document.body) document.body.classList.toggle('account-calendar-view', hideIntro);
+  if (pageLead) pageLead.classList.toggle('hidden', hideIntro);
+  if (authPanel) authPanel.classList.toggle('hidden', hideIntro);
 }
 
 function renderAccountHubUserLine(user, p) {
@@ -1353,6 +1388,11 @@ function normalizeSessionKey(s) {
     .toLowerCase();
 }
 
+function getRsvpSessionHref(sessionLabel) {
+  var label = String(sessionLabel || '').trim();
+  return label ? 'SouthEnd_Session_RSVP.html?session=' + encodeURIComponent(label) : 'SouthEnd_Session_RSVP.html';
+}
+
 function abbrevSlotName(slot) {
   if (!slot) return '';
   var s = String(slot).trim();
@@ -1443,10 +1483,20 @@ function renderAccountRsvpCalendar() {
     var isToday = cellDate.getTime() === today.getTime();
     var isPast = cellDate.getTime() < today.getTime();
     var rows = byDay[dk] || [];
+    var openSlots = [];
+    if (!isPast) {
+      var openList = openByDay[dk] || [];
+      var bookedMap = userBookedByDay[dk] || {};
+      openSlots = openList.filter(function (sessLabel) {
+        return !bookedMap[normalizeSessionKey(sessLabel)];
+      });
+    }
     var dayCls = 'cal-day';
     if (isToday) dayCls += ' cal-day--today';
     if (isPast && !isToday) dayCls += ' cal-day--muted';
-    html += '<div class="' + dayCls + '" role="gridcell">';
+    if (openSlots.length) dayCls += ' cal-day--bookable';
+    var dayHref = openSlots.length ? getRsvpSessionHref(openSlots[0]).replace(/"/g, '&quot;') : '';
+    html += '<div class="' + dayCls + '" role="gridcell"' + (dayHref ? ' data-rsvp-href="' + dayHref + '"' : '') + '>';
     html += '<div class="cal-day-num">' + day + '</div>';
     html += '<div class="cal-day-events">';
     rows.forEach(function (r) {
@@ -1460,21 +1510,22 @@ function renderAccountRsvpCalendar() {
       }
       html += '</div>';
     });
-    if (!isPast) {
-      var openList = openByDay[dk] || [];
-      var bookedMap = userBookedByDay[dk] || {};
-      var openSlots = openList.filter(function (sessLabel) {
-        return !bookedMap[normalizeSessionKey(sessLabel)];
+    if (openSlots.length) {
+      openSlots.forEach(function (sessLabel) {
+        var href = getRsvpSessionHref(sessLabel).replace(/"/g, '&quot;');
+        html += '<a class="cal-open" href="' + href + '" aria-label="Book ' + escapeHtml(sessLabel) + '">' + escapeHtml(abbrevSessionLabelCalendar(sessLabel)) + '<br>Available</a>';
       });
-      if (openSlots.length) {
-        openSlots.forEach(function (sessLabel) {
-          html += '<div class="cal-open">' + escapeHtml(abbrevSessionLabelCalendar(sessLabel)) + '<br>Available</div>';
-        });
-      }
     }
     html += '</div></div>';
   }
   grid.innerHTML = html;
+  grid.querySelectorAll('.cal-day--bookable').forEach(function (dayEl) {
+    dayEl.addEventListener('click', function (e) {
+      if (e.target && e.target.closest && e.target.closest('a,button')) return;
+      var href = dayEl.getAttribute('data-rsvp-href');
+      if (href) window.location.href = href;
+    });
+  });
   grid.querySelectorAll('.cal-ev-cancel').forEach(function (btn) {
     btn.addEventListener('click', function () {
       cancelAccountRsvpFromModal(btn.getAttribute('data-pid'));
@@ -1516,6 +1567,73 @@ function renderAccountRsvpCalendar() {
   }
 }
 
+function accountManageableRsvpRows() {
+  var today = pacificNowDate();
+  today.setHours(0, 0, 0, 0);
+  var seen = {};
+  return (accountMyRsvpRows || []).filter(function (r) {
+    var key = String(r.pid || '') || normalizeSessionKey(r.session);
+    if (key && seen[key]) return false;
+    if (key) seen[key] = true;
+    var d = parseSessionToDate(r.session);
+    return !d || d.getTime() >= today.getTime();
+  });
+}
+
+function renderManageRsvpList() {
+  var list = document.getElementById('manage-rsvp-list');
+  if (!list) return;
+  var rows = accountManageableRsvpRows();
+  if (!rows.length) {
+    list.innerHTML = '<p class="manage-rsvp-empty">No active RSVPs yet. Pick an available session on the calendar to book.</p>';
+    return;
+  }
+  list.innerHTML = rows
+    .map(function (r) {
+      var pidRaw = String(r.pid || '');
+      var pidAttr = pidRaw.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+      return (
+        '<div class="manage-rsvp-row">' +
+        '<div class="manage-rsvp-row-main"><strong>' +
+        escapeHtml(r.session || 'Session') +
+        '</strong><span class="manage-rsvp-pid">Player ID: ' +
+        escapeHtml(pidRaw || 'Pending') +
+        '</span></div>' +
+        '<button type="button" class="manage-rsvp-cancel" data-pid="' +
+        pidAttr +
+        '"' +
+        (pidRaw ? '' : ' disabled') +
+        '>Cancel</button></div>'
+      );
+    })
+    .join('');
+  list.querySelectorAll('.manage-rsvp-cancel').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      cancelAccountRsvpFromModal(btn.getAttribute('data-pid'));
+    });
+  });
+}
+
+function renderManageRsvpListIfOpen() {
+  var m = document.getElementById('manage-rsvp-modal');
+  if (m && m.classList.contains('open')) renderManageRsvpList();
+}
+
+function openManageRsvpModal() {
+  var m = document.getElementById('manage-rsvp-modal');
+  if (!m) return;
+  m.classList.add('open');
+  m.setAttribute('aria-hidden', 'false');
+  renderManageRsvpList();
+}
+
+function closeManageRsvpModal() {
+  var m = document.getElementById('manage-rsvp-modal');
+  if (!m) return;
+  m.classList.remove('open');
+  m.setAttribute('aria-hidden', 'true');
+}
+
 function cancelAccountRsvpFromModal(pid) {
   if (!pid || typeof SEOpenPlay === 'undefined' || !SEOpenPlay.deleteMyRsvp) return;
   if (!window.confirm('Cancel this RSVP? You can book again later if space is available.')) return;
@@ -1525,6 +1643,8 @@ function cancelAccountRsvpFromModal(pid) {
     })
     .then(function () {
       showAccToast('RSVP cancelled.');
+      renderAccountRsvpCalendar();
+      renderManageRsvpListIfOpen();
     })
     .catch(function (err) {
       window.alert('Could not cancel. ' + (err && err.message ? err.message : 'Try again.'));
@@ -1576,9 +1696,20 @@ function initAccountPage() {
     });
   });
 
-  document.getElementById('auth-forgot').addEventListener('click', function () {
-    openForgotPasswordModal();
+  document.getElementById('auth-forgot').addEventListener('click', function (e) {
+    e.preventDefault();
+    var email = (document.getElementById('auth-email').value || '').trim();
+    var base = forgotPasswordHref();
+    window.location.href = email ? base + '?email=' + encodeURIComponent(email) : base;
   });
+
+  function forgotPasswordHref() {
+    var path = String(window.location && window.location.pathname ? window.location.pathname : '').replace(/\\/g, '/');
+    if (path.indexOf('/Programs/') !== -1 || path.indexOf('/advanced-open-play/staging/') !== -1 || path.indexOf('/advanced-open-play/live/') !== -1) {
+      return 'SouthEnd_Forgot_Password.html';
+    }
+    return '/forgot-password';
+  }
 
   function fpShowMsg(text, kind) {
     var el = document.getElementById('fp-msg');
@@ -1719,6 +1850,23 @@ function initAccountPage() {
     });
   }
   wireRsvpCtaClick(document.getElementById('hub-cta-rsvp'));
+  var manageRsvpsCta = document.getElementById('cta-manage-rsvps');
+  if (manageRsvpsCta) {
+    manageRsvpsCta.addEventListener('click', function () {
+      if (manageRsvpsCta.classList.contains('cta-disabled')) return;
+      setAccountViewMode('hub');
+      renderAccountRsvpCalendar();
+      openManageRsvpModal();
+    });
+  }
+  var manageClose = document.getElementById('manage-rsvp-modal-close');
+  var manageModal = document.getElementById('manage-rsvp-modal');
+  if (manageClose) manageClose.addEventListener('click', closeManageRsvpModal);
+  if (manageModal) {
+    manageModal.addEventListener('click', function (e) {
+      if (e.target === manageModal) closeManageRsvpModal();
+    });
+  }
   wireModuleAdminPanel();
 
   var hubEdit = document.getElementById('hub-edit-profile');
@@ -1801,10 +1949,12 @@ function initAccountPage() {
           SEOpenPlay.subscribeMyRsvps(user.uid, function (list) {
             accountMyRsvpRows = list || [];
             renderAccountRsvpCalendar();
+            renderManageRsvpListIfOpen();
           }, user.email || '');
         } else {
           accountMyRsvpRows = [];
           renderAccountRsvpCalendar();
+          renderManageRsvpListIfOpen();
         }
         SEOpenPlay.loadUserProfile(user.uid).then(function (p) {
           loadAccountFormFromProfile(p);
@@ -1845,6 +1995,8 @@ function initAccountPage() {
       var backHubEl = document.getElementById('acc-back-to-hub');
       if (backHubEl) backHubEl.classList.add('hidden');
       accountViewMode = 'edit';
+      if (document.body) document.body.classList.remove('account-calendar-view');
+      syncAccountIntroVisibility();
     }
   });
 }

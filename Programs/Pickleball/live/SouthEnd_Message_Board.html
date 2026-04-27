@@ -4,157 +4,155 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<title>Message Board — South End Open Play</title>
+<title>Message Board — South End Pickleball</title>
 <link rel="icon" type="image/jpeg" href="favicon.jpg">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
-  --navy:#0a1628;--navy-lt:#152342;
-  --neon:#00ff88;--neon-dim:rgba(0,255,136,.1);--neon-glow:rgba(0,255,136,.28);
-  --cyan:#22d3ee;--magenta:#e879f9;
-  --ink:#050a12;
+  --green:#1a6b3a;--green-lt:#2d9458;--green-dk:#0f3f22;
+  --gold:#e8a020;--gold-lt:#ffd166;--cream:#fafaf5;
+  --ink:#111810;--muted:#5a6357;--rule:#dde5d9;--red:#c0392b;
+  --neon:var(--gold);--navy-lt:var(--green-dk);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Barlow',sans-serif;background:var(--ink);color:#fff;min-height:100vh;
-  background-image:
-    radial-gradient(ellipse 100% 60% at 50% -15%,rgba(34,211,238,.14),transparent 55%),
-    radial-gradient(ellipse 80% 50% at 100% 50%,rgba(232,121,249,.06),transparent 45%),
-    linear-gradient(180deg,#050a14 0%,var(--navy) 35%,#0a1628 100%);
+body{font-family:"DM Sans",sans-serif;background:var(--green-dk);color:var(--ink);min-height:100vh;padding:24px 16px 118px;
+  background-image:repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(255,255,255,.018) 40px,rgba(255,255,255,.018) 41px);
 }
-body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  opacity:.35;
-  background-image:
-    linear-gradient(rgba(0,255,200,.04) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,255,200,.04) 1px,transparent 1px);
-  background-size:24px 24px;
-}
-.header{background:var(--navy-lt);padding:18px 28px 14px;border-bottom:3px solid var(--neon);position:relative;}
-.hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--neon);margin-bottom:3px;}
-.hdr-title{font-family:'Oswald',sans-serif;font-size:22px;color:#fff;letter-spacing:2px;text-transform:uppercase;line-height:1;}
-.hdr-title span{color:var(--cyan);text-shadow:0 0 24px rgba(34,211,238,.5);}
-.hdr-sub{font-size:9px;color:rgba(255,255,255,.62);margin-top:4px;letter-spacing:.08em;}
+.header{max-width:760px;margin:0 auto;background:var(--green-dk);padding:22px 28px 18px;border-bottom:3px solid var(--gold);border-radius:8px 8px 0 0;position:relative;overflow:hidden;}
+.header::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 20px,rgba(255,255,255,.025) 20px,rgba(255,255,255,.025) 21px);pointer-events:none;}
+.header>div{position:relative;z-index:1;}
+.hdr-eyebrow{font-size:8.5px;font-weight:700;letter-spacing:3.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+.hdr-eyebrow::before{content:"";display:inline-block;width:18px;height:2px;background:var(--gold);border-radius:1px;}
+.hdr-title{font-family:"Bebas Neue",sans-serif;font-size:36px;color:#fff;letter-spacing:1px;line-height:.95;}
+.hdr-title span{color:var(--gold);}
+.hdr-sub{font-size:10px;color:rgba(255,255,255,.5);margin-top:5px;font-weight:500;line-height:1.45;}
 .se-site-nav{
   display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;
-  padding:10px 28px 12px;background:rgba(5,12,28,.88);
-  border-bottom:1px solid rgba(0,255,136,.22);position:relative;
+  max-width:760px;margin:0 auto;padding:10px 24px 12px;background:#fff;
+  border-left:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);position:relative;
 }
 .se-site-nav-link{
-  font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-  color:rgba(255,255,255,.55);text-decoration:none;padding:8px 14px;border-radius:6px;
-  border:1px solid transparent;transition:color .15s,border-color .15s,background .15s,box-shadow .15s;
+  font-family:"Bebas Neue",sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;padding:8px 14px;border-radius:6px;
+  border:1.5px solid var(--rule);background:#fff;transition:color .15s,border-color .15s,background .15s,box-shadow .15s;
 }
-.se-site-nav-link:hover{color:var(--neon);background:rgba(0,255,136,.08);}
+.se-site-nav-link:hover{color:var(--green);border-color:var(--green-lt);background:rgba(26,107,58,.06);}
 .se-site-nav-link--active{
-  color:var(--ink);background:linear-gradient(135deg,var(--neon),#34d399);
-  border-color:rgba(0,255,136,.5);box-shadow:0 0 22px var(--neon-glow);
+  color:var(--ink);background:var(--gold);border-color:var(--gold);box-shadow:0 4px 16px rgba(232,160,32,.25);
 }
-.body-wrap{max-width:640px;margin:0 auto;padding:24px 20px 100px;position:relative;}
+.se-site-nav-link--admin{margin-left:auto;color:var(--green-dk);border-color:var(--green-lt);background:rgba(45,148,88,.12);}
+.se-site-nav-link--admin:hover{background:rgba(45,148,88,.2);}
+.se-site-nav-link--admin.se-site-nav-link--active,.se-site-nav-link--admin[aria-current="page"]{color:var(--ink);background:var(--gold);border-color:var(--gold);}
+.body-wrap{max-width:760px;margin:0 auto;padding:28px 24px 126px;background:#fff;border-left:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);border-radius:0 0 8px 8px;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;}
 .board-holo{
-  font-size:10px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;
-  color:rgba(34,211,238,.85);margin-bottom:14px;display:flex;align-items:center;gap:10px;
+  font-family:"Bebas Neue",sans-serif;font-size:13px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--green);margin-bottom:10px;display:flex;align-items:center;gap:10px;
 }
 .board-holo::before,.board-holo::after{
-  content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(34,211,238,.45),transparent);
+  content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--rule),transparent);
 }
-.board-lead{font-size:13px;color:rgba(255,255,255,.68);line-height:1.5;margin-bottom:20px;}
+.board-lead{font-size:14px;color:var(--muted);line-height:1.55;margin-bottom:20px;}
 .board-feed{display:flex;flex-direction:column;gap:12px;}
 .board-card{
-  position:relative;background:rgba(10,22,42,.72);
-  border:1px solid rgba(0,255,200,.18);border-radius:10px;padding:14px 16px;
-  box-shadow:0 4px 24px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.04);
-  backdrop-filter:blur(8px);transition:border-color .2s,box-shadow .2s;
+  position:relative;background:#fff;
+  border:1.5px solid var(--rule);border-radius:8px;padding:14px 16px;
+  box-shadow:0 4px 18px rgba(15,63,34,.07);transition:border-color .2s,box-shadow .2s,background .2s;
 }
-.board-card:hover{border-color:rgba(0,255,200,.35);box-shadow:0 0 28px rgba(0,255,200,.08);}
+.board-card:hover{border-color:var(--green-lt);box-shadow:0 8px 24px rgba(15,63,34,.11);}
 .board-card-pulse{
   position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:2px;
-  background:linear-gradient(180deg,var(--cyan),var(--neon));opacity:.75;
+  background:var(--gold);opacity:.9;
 }
 .board-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:8px;}
 .board-author{
-  font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:.04em;color:#fff;
+  font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:.04em;
   background:none;border:none;padding:0;cursor:pointer;text-align:left;
-  color:var(--neon);text-decoration:underline;text-underline-offset:3px;
+  color:var(--green);text-decoration:underline;text-underline-offset:3px;
   display:inline-flex;align-items:center;gap:6px;max-width:100%;
 }
-.board-author:hover{color:var(--cyan);}
+.board-author:hover{color:var(--green-dk);}
 .board-admin-star{
   flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;
   width:1.15em;height:1.15em;font-size:13px;line-height:1;color:#fbbf24;
-  text-shadow:0 0 10px rgba(251,191,36,.65);text-decoration:none;filter:drop-shadow(0 0 4px rgba(251,191,36,.4));
+  text-decoration:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.18));
 }
-.board-skill{font-size:10px;color:rgba(232,121,249,.95);letter-spacing:.08em;text-transform:uppercase;}
-.board-time{font-size:10px;color:rgba(255,255,255,.4);margin-left:auto;}
-.board-text{font-size:14px;line-height:1.5;color:rgba(255,255,255,.9);word-break:break-word;}
+.board-skill{font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;}
+.board-time{font-size:10px;color:var(--muted);margin-left:auto;}
+.board-text{font-size:14px;line-height:1.55;color:var(--ink);word-break:break-word;}
 .board-del{
-  margin-top:10px;font-size:10px;color:rgba(255,100,100,.85);background:none;border:none;
-  cursor:pointer;text-transform:uppercase;letter-spacing:.1em;padding:4px 0;
+  margin-left:8px;font-size:10px;color:var(--red);background:#fff;border:1px solid rgba(192,57,43,.3);
+  border-radius:999px;cursor:pointer;text-transform:uppercase;letter-spacing:.1em;padding:3px 8px;
 }
-.board-del:hover{color:#ff6b6b;}
+.board-del:hover{color:#8f241b;border-color:var(--red);background:rgba(192,57,43,.06);}
 .board-card--rsvp-log{
-  border-color:rgba(0,255,136,.38);
-  background:linear-gradient(180deg,rgba(0,255,136,.07),rgba(10,22,42,.72));
+  border-color:rgba(45,148,88,.35);
+  background:linear-gradient(180deg,rgba(26,107,58,.05),#fff);
 }
-.board-card--rsvp-log:hover{border-color:rgba(0,255,136,.55);box-shadow:0 0 28px rgba(0,255,136,.14);}
-.board-card--rsvp-log .board-card-pulse{background:linear-gradient(180deg,var(--neon),#34d399);opacity:.95;}
+.board-card--rsvp-log:hover{border-color:var(--green-lt);box-shadow:0 8px 24px rgba(15,63,34,.12);}
+.board-card--rsvp-log .board-card-pulse{background:var(--green-lt);opacity:.95;}
 .board-rsvp-pill{
-  font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.25em;text-transform:uppercase;
-  color:var(--ink);background:var(--neon);padding:3px 8px;border-radius:4px;font-weight:700;
+  font-family:"Bebas Neue",sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink);background:var(--gold);padding:3px 8px;border-radius:4px;font-weight:400;
   align-self:center;
 }
 .board-empty{
-  text-align:center;padding:36px 20px;color:rgba(255,255,255,.45);font-size:13px;
-  border:1px dashed rgba(0,255,200,.2);border-radius:10px;
+  text-align:center;padding:36px 20px;color:var(--muted);font-size:13px;
+  border:1.5px dashed var(--rule);border-radius:8px;background:var(--cream);
 }
 .board-compose-wrap{
   position:fixed;left:0;right:0;bottom:0;z-index:50;
-  padding:12px 16px 18px;background:linear-gradient(180deg,transparent,rgba(5,10,20,.94) 30%);
-  border-top:1px solid rgba(0,255,200,.15);
+  padding:12px 16px 18px;background:rgba(250,250,245,.96);
+  border-top:1px solid var(--rule);box-shadow:0 -12px 34px rgba(15,63,34,.14);
 }
-.board-compose-inner{max-width:640px;margin:0 auto;display:flex;gap:10px;align-items:flex-end;}
+.board-compose-inner{max-width:760px;margin:0 auto;display:flex;gap:10px;align-items:flex-end;}
 .board-compose-inner textarea{
   flex:1;min-height:52px;max-height:120px;padding:12px 14px;border-radius:8px;
-  border:1px solid rgba(0,255,200,.3);background:rgba(8,18,36,.9);color:#fff;font-family:'Barlow',sans-serif;
+  border:1.5px solid var(--rule);background:#fff;color:var(--ink);font-family:"DM Sans",sans-serif;
   font-size:14px;resize:vertical;outline:none;
 }
-.board-compose-inner textarea:focus{border-color:var(--neon);box-shadow:0 0 16px rgba(0,255,136,.12);}
+.board-compose-inner textarea:focus{border-color:var(--green-lt);box-shadow:0 0 0 3px rgba(45,148,88,.12);}
 .board-send{
   flex-shrink:0;padding:12px 18px;border:none;border-radius:8px;cursor:pointer;
-  font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.12em;text-transform:uppercase;
-  background:linear-gradient(135deg,var(--neon),#34d399);color:var(--ink);font-weight:700;
+  font-family:"Bebas Neue",sans-serif;font-size:14px;letter-spacing:.12em;text-transform:uppercase;
+  background:var(--gold);color:var(--ink);font-weight:400;
 }
 .board-send:disabled{opacity:.45;cursor:not-allowed;}
-.board-msg{font-size:12px;margin-top:8px;text-align:center;color:rgba(255,200,200,.85);}
+.board-msg{font-size:12px;margin-top:8px;text-align:center;color:var(--red);}
 .board-gate{
-  position:fixed;inset:0;z-index:100;background:var(--ink);display:flex;align-items:center;justify-content:center;
+  position:fixed;inset:0;z-index:100;background:var(--green-dk);display:flex;align-items:center;justify-content:center;
   padding:24px;text-align:center;
 }
 .board-gate.hidden{display:none!important;}
-.board-gate a{color:var(--cyan);}
-.board-gate-loading-title{font-family:'Oswald',sans-serif;font-size:18px;color:var(--neon);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px;}
+.board-gate a{color:var(--green);}
+.board-gate-loading-title{font-family:"Bebas Neue",sans-serif;font-size:22px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px;}
 .board-gate-loading-sub{font-size:13px;color:rgba(255,255,255,.65);line-height:1.5;max-width:360px;margin:0 auto;}
 .profile-modal{
-  position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.82);display:none;
+  position:fixed;inset:0;z-index:200;background:rgba(17,24,16,.65);display:none;
   align-items:center;justify-content:center;padding:20px;
 }
 .profile-modal.open{display:flex;}
 .profile-modal-card{
-  max-width:400px;width:100%;background:#111e35;border:2px solid rgba(0,255,200,.35);
-  border-radius:12px;padding:20px;position:relative;box-shadow:0 0 40px rgba(0,255,200,.12);
+  max-width:400px;width:100%;background:#fff;border:2px solid var(--rule);
+  border-radius:12px;padding:20px;position:relative;box-shadow:0 18px 50px rgba(0,0,0,.2);
 }
 .profile-modal-close{
-  position:absolute;right:12px;top:8px;background:none;border:none;color:rgba(255,255,255,.55);
+  position:absolute;right:12px;top:8px;background:none;border:none;color:var(--muted);
   font-size:24px;cursor:pointer;line-height:1;
 }
-.profile-modal-title{font-family:'Oswald',sans-serif;font-size:17px;color:var(--neon);text-transform:uppercase;margin-bottom:12px;}
-.profile-modal-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:13px;}
-.profile-modal-lbl{color:rgba(255,255,255,.5);font-size:10px;text-transform:uppercase;letter-spacing:.08em;}
-.profile-modal-val{color:#fff;text-align:right;word-break:break-word;}
+.profile-modal-title{font-family:"Bebas Neue",sans-serif;font-size:22px;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;}
+.profile-modal-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--rule);font-size:13px;}
+.profile-modal-lbl{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;}
+.profile-modal-val{color:var(--ink);text-align:right;word-break:break-word;}
 .profile-modal-val--name{display:inline-flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;}
-.profile-modal-note{font-size:11px;color:rgba(255,255,255,.55);margin-top:14px;line-height:1.45;}
-.profile-modal-note a{color:var(--cyan);}
+.profile-modal-note{font-size:11px;color:var(--muted);margin-top:14px;line-height:1.45;}
+.profile-modal-note a{color:var(--green);}
 .hidden{display:none!important;}
 @media(max-width:520px){
+  body{padding:0 0 118px;}
+  .header{border-radius:0;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));}
+  .se-site-nav{padding-left:16px;padding-right:16px;}
+  .se-site-nav-link--admin{margin-left:0;}
+  .body-wrap{border-left:0;border-right:0;border-radius:0;padding:22px 16px 126px;}
   .board-time{width:100%;margin-left:0;}
   .board-compose-inner{flex-direction:column;align-items:stretch;}
   .board-send{width:100%;}
@@ -175,7 +173,7 @@ body::before{
   </div>
   <div id="board-gate-nofb" class="hidden">
     <p class="hdr-title" style="margin-bottom:10px;">SETUP <span>NEEDED</span></p>
-    <p class="board-lead" style="max-width:360px;margin:0 auto 16px;">Add Firebase in <code style="font-size:11px;color:rgba(0,255,200,.85);">js/openplay-firebase-config.js</code> and reload.</p>
+    <p class="board-lead" style="max-width:360px;margin:0 auto 16px;">Add Firebase in <code style="font-size:11px;color:var(--gold);">js/openplay-firebase-config.js</code> and reload.</p>
     <a class="se-site-nav-link se-site-nav-link--active" style="display:inline-block;" href="SouthEnd_OpenPlay_Account.html">Open Play account →</a>
   </div>
 </div>
@@ -184,16 +182,16 @@ body::before{
 <div class="header">
   <div>
     <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
-    <div class="hdr-title">OPEN <span>PLAY</span> · UPLINK</div>
-    <div class="hdr-sub">Community channel · Signed-in members</div>
+    <div class="hdr-title">Pickleball <span>Message Board</span></div>
+    <div class="hdr-sub">Community updates, carpool asks, and rally invites for signed-in members.</div>
   </div>
 </div>
 <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav></nav>
 <script src="pickleball-hub-nav.js"></script>
 
 <div class="body-wrap">
-  <div class="board-holo">Live feed</div>
-  <p class="board-lead">Share quick updates, carpool asks, or rally invites. Tap a name to open a profile card (display name and skill from when the message was sent).</p>
+  <div class="board-holo">Community feed</div>
+  <p class="board-lead">Share quick updates, carpool asks, or rally invites. Tap a name to open a profile card.</p>
   <div id="board-feed" class="board-feed"></div>
   <p id="board-status" class="board-msg" role="status"></p>
 </div>
@@ -212,8 +210,6 @@ body::before{
     <div class="profile-modal-title" id="profile-modal-title">Player</div>
     <div class="profile-modal-row"><span class="profile-modal-lbl">Display</span><span class="profile-modal-val profile-modal-val--name" id="pm-name-wrap"><span id="pm-name">—</span><span id="pm-admin-star" class="board-admin-star hidden" title="Open Play staff admin" role="img" aria-label="">★</span></span></div>
     <div class="profile-modal-row"><span class="profile-modal-lbl">Skill</span><span class="profile-modal-val" id="pm-skill">—</span></div>
-    <p class="profile-modal-note hidden" id="pm-self">This is you. Edit your full profile on the <a href="SouthEnd_OpenPlay_Account.html?return=SouthEnd_Message_Board.html">account page</a>.</p>
-    <p class="profile-modal-note" id="pm-other">Names and skill levels are saved with each message. They are not live-linked to account edits.</p>
   </div>
 </div>
 
@@ -221,7 +217,7 @@ body::before{
 <script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script src="js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/openplay-profile-panel.js?v=20260426-routing2&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script>
 (function () {
   var SE = window.SEOpenPlay;
@@ -236,6 +232,7 @@ body::before{
   var gateSignin = document.getElementById('board-gate-signin');
   var gateNofb = document.getElementById('board-gate-nofb');
   var currentUid = null;
+  var currentIsAdmin = false;
 
   function showGateLoading() {
     if (gateLoading) gateLoading.classList.remove('hidden');
@@ -291,11 +288,6 @@ body::before{
     pmStar.classList.toggle('hidden', !row.isStaffAdmin);
     pmStar.setAttribute('aria-label', row.isStaffAdmin ? 'Open Play staff admin' : '');
     document.getElementById('pm-skill').textContent = row.skill || '—';
-    var selfNote = document.getElementById('pm-self');
-    var otherNote = document.getElementById('pm-other');
-    var isSelf = currentUid && String(row.uid) === String(currentUid);
-    selfNote.classList.toggle('hidden', !isSelf);
-    otherNote.classList.toggle('hidden', !!isSelf);
     modal.classList.add('open');
   }
 
@@ -314,7 +306,7 @@ body::before{
   function setStatus(msg, isErr) {
     if (!statusEl) return;
     statusEl.textContent = msg || '';
-    statusEl.style.color = isErr ? 'rgba(255,160,160,.9)' : 'rgba(0,255,200,.75)';
+    statusEl.style.color = isErr ? 'var(--red)' : 'var(--green)';
   }
 
   function render(list) {
@@ -366,10 +358,26 @@ body::before{
       time.className = 'board-time';
       time.textContent = formatTime(row.ts);
 
+      var del = null;
+      if (currentUid && (currentIsAdmin || String(row.uid) === String(currentUid))) {
+        del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'board-del';
+        del.textContent = 'Delete';
+        del.setAttribute('aria-label', 'Delete message from ' + (row.authorName || 'member'));
+        del.addEventListener('click', function () {
+          if (!confirm('Remove this message?')) return;
+          SE.deleteBoardMessage(row.id).catch(function () {
+            setStatus('Could not delete. Try again.', true);
+          });
+        });
+      }
+
       meta.appendChild(authorBtn);
       if (row.skill) meta.appendChild(skill);
       if (rsvpPill) meta.appendChild(rsvpPill);
       meta.appendChild(time);
+      if (del) meta.appendChild(del);
 
       var text = document.createElement('div');
       text.className = 'board-text';
@@ -377,20 +385,6 @@ body::before{
 
       card.appendChild(meta);
       card.appendChild(text);
-
-      if (!isRsvpLog && currentUid && String(row.uid) === String(currentUid)) {
-        var del = document.createElement('button');
-        del.type = 'button';
-        del.className = 'board-del';
-        del.textContent = 'Delete my message';
-        del.addEventListener('click', function () {
-          if (!confirm('Remove this message?')) return;
-          SE.deleteBoardMessage(row.id).catch(function () {
-            setStatus('Could not delete. Try again.', true);
-          });
-        });
-        card.appendChild(del);
-      }
 
       feed.appendChild(card);
     });
@@ -427,6 +421,7 @@ body::before{
       SE.onAuthStateChanged(function (user) {
         SE.unsubscribeBoardMessages();
         currentUid = user ? user.uid : null;
+        currentIsAdmin = false;
         if (!user) {
           app.classList.add('hidden');
           showGateNeedSignIn(
@@ -442,9 +437,19 @@ body::before{
         if (gateNofb) gateNofb.classList.add('hidden');
         gate.classList.add('hidden');
         app.classList.remove('hidden');
-        SE.subscribeBoardMessages(function (list) {
-          render(list);
-        });
+        var adminPromise = SE.loadAdminUidFlag ? SE.loadAdminUidFlag(user.uid) : Promise.resolve(false);
+        adminPromise
+          .then(function (isAdmin) {
+            currentIsAdmin = !!isAdmin;
+          })
+          .catch(function () {
+            currentIsAdmin = false;
+          })
+          .then(function () {
+            SE.subscribeBoardMessages(function (list) {
+              render(list);
+            });
+          });
       });
     })
     .catch(function () {

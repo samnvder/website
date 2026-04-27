@@ -83,7 +83,7 @@
         btn.textContent = "Sending…";
         L.createInvite(u.uid, teamId, targetUid, null)
           .then(function (inviteId) {
-            setStatus(inviteStatus, "Invite sent! The player will see it on their Invites page.");
+            setStatus(inviteStatus, "Invite sent! The player will see it in their notifications (bell by their profile).");
             btn.disabled = false;
             btn.textContent = "Cancel invite";
             btn.className = "btn btn--secondary";
@@ -111,8 +111,8 @@
       }
 
       function buildInviteUrl(inviteId) {
-        var path = window.location.pathname.replace(/[^/]*$/, "SouthEnd_League_Invites.html");
-        return window.location.origin + path + "?invite=" + encodeURIComponent(inviteId);
+        var path = window.location.pathname.replace(/[^/]*$/, "SouthEnd_League_Overview.html");
+        return window.location.origin + path + "?notifications=1&invite=" + encodeURIComponent(inviteId);
       }
 
       function openInviteEmail(toEmail, inviteId) {

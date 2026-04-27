@@ -79,7 +79,9 @@ function transformLeagueHtmlForCentralHost(s) {
 }
 
 function copyLeagueStaticToLive() {
-  const srcRoot = path.join(PROGRAM_ROOT, '..', 'league-play');
+  const stagingLeagueRoot = path.join(PROGRAM_ROOT, 'staging', 'league-play');
+  const legacyLeagueRoot = path.join(PROGRAM_ROOT, '..', 'league-play');
+  const srcRoot = fs.existsSync(stagingLeagueRoot) ? stagingLeagueRoot : legacyLeagueRoot;
   const destRoot = path.join(PROGRAM_ROOT, '..', 'live', 'league-play');
   if (!fs.existsSync(srcRoot)) {
     console.warn('[roll-live] League Play source not found; skipping /league-play mirror:', srcRoot);

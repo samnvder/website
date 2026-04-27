@@ -2,124 +2,238 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f3f22">
 <script src="js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <title>Admin Hub - South End Pickleball</title>
 <link rel="icon" type="image/jpeg" href="favicon.jpg">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
-  --navy:#0a1628;--navy-lt:#152342;--electric:#a855f7;--neon:#00ff88;--ink:#0a0a1a;
+  --green:#1a6b3a;
+  --green-lt:#2d9458;
+  --green-dk:#0f3f22;
+  --gold:#e8a020;
+  --cream:#fafaf5;
+  --ink:#111810;
+  --muted:#5a6357;
+  --rule:#dde5d9;
+  --panel:#fff;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Barlow',sans-serif;background:radial-gradient(1200px 600px at 10% -10%,rgba(168,85,247,.12),transparent),var(--navy);color:#fff;min-height:100vh;}
-.header{background:var(--navy-lt);padding:18px 28px 14px;border-bottom:3px solid var(--neon);}
-.hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--neon);margin-bottom:3px;}
-.hdr-title{font-family:'Oswald',sans-serif;font-size:24px;color:#fff;letter-spacing:1px;text-transform:uppercase;line-height:1;}
-.hdr-title span{color:var(--neon);}
-.hdr-sub{font-size:9px;color:rgba(255,255,255,.65);margin-top:3px;max-width:56ch;line-height:1.45;}
-.se-site-nav{
-  display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;
-  padding:10px 28px 12px;background:rgba(5,12,28,.85);
-  border-bottom:1px solid rgba(0,255,136,.22);
+body.admin-hub-season{
+  min-height:100vh;
+  min-height:100dvh;
+  font-family:"DM Sans",sans-serif;
+  color:var(--ink);
+  background:var(--green-dk);
+  background-image:repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(255,255,255,.018) 40px,rgba(255,255,255,.018) 41px);
 }
-.se-site-nav-link{
-  font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-  color:rgba(255,255,255,.55);text-decoration:none;padding:8px 14px;border-radius:6px;
-  border:1px solid transparent;transition:color .15s,border-color .15s,background .15s;
+.page-shell{
+  width:min(100%,880px);
+  margin:0 auto;
+  padding:24px 16px 48px;
 }
-.se-site-nav-link:hover{color:var(--neon);background:rgba(0,255,136,.08);}
-.se-site-nav-link--active{
-  color:var(--ink);background:var(--neon);border-color:rgba(0,255,136,.45);
-  box-shadow:0 0 20px rgba(0,255,136,.25);
+.header{
+  position:relative;
+  overflow:hidden;
+  padding:22px 28px 18px;
+  background:var(--green-dk);
+  border-bottom:3px solid var(--gold);
+  border-radius:10px 10px 0 0;
 }
-.body-wrap{max-width:920px;margin:0 auto;padding:28px 20px 56px;}
-.top-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
-.status{font-size:12px;color:rgba(255,255,255,.82);}
-.status strong{color:#fff;}
-.subtle-nav-link{font-size:11px;color:rgba(255,255,255,.5);text-decoration:none;white-space:nowrap;}
-.subtle-nav-link:hover{color:var(--electric);text-decoration:underline;}
-.lead{font-size:14px;color:rgba(255,255,255,.72);line-height:1.55;margin-bottom:18px;max-width:66ch;}
-.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;}
-@media(max-width:840px){.admin-grid{grid-template-columns:1fr;}}
-.admin-card{
-  display:flex;flex-direction:column;gap:10px;min-height:210px;
-  border:1.5px solid rgba(0,255,136,.22);border-radius:12px;padding:18px;
-  background:rgba(0,0,0,.18);text-decoration:none;color:#fff;
+.header::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(-45deg,transparent,transparent 20px,rgba(255,255,255,.025) 20px,rgba(255,255,255,.025) 21px);
+  pointer-events:none;
 }
-.admin-card:hover{border-color:rgba(0,255,136,.45);background:rgba(0,255,136,.06);}
-.admin-kicker{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);}
-.admin-title{font-family:'Oswald',sans-serif;font-size:22px;letter-spacing:.04em;text-transform:uppercase;line-height:1.05;}
-.admin-desc{font-size:13px;color:rgba(255,255,255,.68);line-height:1.45;flex:1;}
-.admin-cta{
-  display:inline-flex;align-items:center;justify-content:center;width:100%;
-  padding:12px 14px;border-radius:6px;font-family:'Oswald',sans-serif;font-size:15px;
-  letter-spacing:.06em;text-transform:uppercase;font-weight:700;background:var(--neon);color:var(--ink);
+.header>*{position:relative;z-index:1;}
+.hdr-eyebrow{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:4px;
+  color:var(--gold);
+  font-size:8.5px;
+  font-weight:700;
+  letter-spacing:3.5px;
+  text-transform:uppercase;
+}
+.hdr-eyebrow::before{
+  content:"";
+  width:18px;
+  height:2px;
+  background:var(--gold);
+  border-radius:2px;
+}
+.hdr-title{
+  font-family:"Bebas Neue",sans-serif;
+  font-size:36px;
+  line-height:.95;
+  color:#fff;
+  letter-spacing:1px;
+}
+.hdr-title span{color:var(--gold);}
+.hdr-sub{
+  max-width:42rem;
+  margin-top:6px;
+  color:rgba(255,255,255,.62);
+  font-size:11px;
+  line-height:1.45;
+}
+.admin-page-nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 10px;
+  align-items:center;
+  padding:10px 24px 12px;
+  background:var(--panel);
+  border-left:1px solid var(--rule);
+  border-right:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);
+}
+.admin-page-nav__link{
+  min-height:42px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:9px 13px;
+  border:1.5px solid var(--rule);
+  border-radius:8px;
+  background:#fff;
+  color:var(--muted);
+  font-family:"Bebas Neue",sans-serif;
+  font-size:12px;
+  letter-spacing:.1em;
+  text-decoration:none;
+  text-transform:uppercase;
+}
+.admin-page-nav__link:hover{
+  color:var(--green);
+  border-color:var(--green-lt);
+  background:rgba(26,107,58,.06);
+}
+.admin-page-nav__link--active{
+  color:var(--ink);
+  background:var(--gold);
+  border-color:var(--gold);
+  box-shadow:0 4px 14px rgba(232,160,32,.22);
+}
+.admin-page-nav__link.hidden{display:none!important;}
+.admin-page-nav__group-label{
+  flex:0 0 100%;
+  margin:6px 0 -2px;
+  color:var(--green-dk);
+  font-family:"Bebas Neue",sans-serif;
+  font-size:14px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.body-wrap{
+  padding:28px 24px 34px;
+  background:#fff;
+  border-left:1px solid var(--rule);
+  border-right:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);
+  border-radius:0 0 10px 10px;
+  box-shadow:0 20px 60px rgba(0,0,0,.18);
+}
+.status{
+  margin-bottom:14px;
+  color:var(--muted);
+  font-size:13px;
+}
+.status strong{color:var(--ink);}
+.lead{
+  max-width:62ch;
+  margin-bottom:22px;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.55;
+}
+.empty-state{
+  margin-top:26px;
+  padding:18px;
+  border:1px solid var(--rule);
+  border-radius:16px;
+  background:var(--cream);
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.5;
 }
 .hidden{display:none!important;}
-.message-board-fab{
-  position:fixed;right:18px;bottom:18px;z-index:90;display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:13px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.22);
-  background:linear-gradient(135deg,var(--neon,#00ff88),#34d399);color:var(--ink,#050a12);
-  font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;
-  box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 26px rgba(0,255,136,.25);transition:transform .15s,filter .15s,box-shadow .15s;
+@media(max-width:680px){
+  .page-shell{padding:0;}
+  .header{border-radius:0;padding:18px max(16px,env(safe-area-inset-right)) 14px max(16px,env(safe-area-inset-left));}
+  .hdr-title{font-size:30px;}
+  .admin-page-nav{padding-inline:max(12px,env(safe-area-inset-left));}
+  .admin-page-nav__link{flex:1 1 calc(50% - 10px);}
+  .body-wrap{
+    min-height:calc(100dvh - 146px);
+    padding:22px max(16px,env(safe-area-inset-right)) 28px max(16px,env(safe-area-inset-left));
+    border-radius:0;
+  }
 }
-.message-board-fab:hover{filter:brightness(1.06);transform:translateY(-1px);box-shadow:0 12px 32px rgba(0,0,0,.4),0 0 30px rgba(0,255,136,.32);}
-.message-board-fab:focus-visible{outline:2px solid #fff;outline-offset:3px;}
-@media(max-width:520px){.message-board-fab{right:14px;bottom:14px;padding:12px 14px;font-size:12px;}}
 </style>
 </head>
-<body>
-<div class="header">
-  <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
-  <div class="hdr-title">Admin <span>Hub</span></div>
-  <div class="hdr-sub">Staff-only controls for pickleball operations and module access.</div>
-</div>
-<nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav>
-  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_Hub.html" aria-current="page">Admin</a>
-</nav>
-<script src="pickleball-hub-nav.js"></script>
+<body class="admin-hub-season">
+<div class="page-shell">
+  <header class="header">
+    <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+    <div class="hdr-title">Admin <span>Hub</span></div>
+    <div class="hdr-sub">Staff tools for pickleball operations and access. Choose the page you need from the categorized admin menu.</div>
+  </header>
+  <nav class="admin-page-nav" aria-label="Admin page selector" id="admin-page-nav">
+    <a class="admin-page-nav__link" data-hub-home-link href="SouthEnd_Pickleball_Hub.html">Pickleball hub</a>
+  </nav>
 
-<main class="body-wrap">
-  <div class="top-row">
+  <main class="body-wrap">
     <div class="status" id="auth-status">Checking admin access...</div>
-  </div>
-  <p class="lead">Choose a parent admin area. Each area opens its own staff tools for accounts assigned in <code>openplay_se/admin_uids</code>.</p>
+    <p class="lead">Choose any admin page from the scoped, categorized pills above.</p>
 
-  <section class="admin-grid hidden" id="admin-grid" aria-label="Admin modules">
-    <a class="admin-card" href="SouthEnd_Admin_League_Play.html">
-      <div class="admin-kicker">League program</div>
-      <div class="admin-title">League Play</div>
-      <p class="admin-desc">Team management, solo signups, invites, roster assignment, and division filters for league play.</p>
-      <span class="admin-cta">Open league admin &rarr;</span>
-    </a>
-    <a class="admin-card" href="SouthEnd_Admin_Advanced_Open_Play.html">
-      <div class="admin-kicker">Program operations</div>
-      <div class="admin-title">Advanced Open Play</div>
-      <p class="admin-desc">Session signups, court-side check-ins, and activity history for Advanced Open Play.</p>
-      <span class="admin-cta">Open open play admin &rarr;</span>
-    </a>
-    <a class="admin-card" href="SouthEnd_Admin_Module_Access.html">
-      <div class="admin-kicker">Access control</div>
-      <div class="admin-title">Module Access</div>
-      <p class="admin-desc">Assign or revoke protected pickleball modules for members after they create or save their account.</p>
-      <span class="admin-cta">Open access &rarr;</span>
-    </a>
-    <a class="admin-card" href="SouthEnd_Admin_User_Management.html">
-      <div class="admin-kicker">Profiles</div>
-      <div class="admin-title">User Management</div>
-      <p class="admin-desc">View members and update saved profile data (name, contact, member card, and skill level) for non-admin accounts.</p>
-      <span class="admin-cta">Open user management &rarr;</span>
-    </a>
-  </section>
-</main>
+    <div class="empty-state hidden" id="empty-state">No scoped admin pages are assigned to this account yet.</div>
+  </main>
+</div>
 
 <footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
 <script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script src="js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/openplay-profile-panel.js?v=20260426-routing2&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script>
+var ADMIN_GROUPS = [
+  {
+    key: 'league_play',
+    title: 'League play',
+    desc: 'Teams, rosters, schedules, and scores.',
+    items: [
+      { key: 'team_management', label: 'League teams', href: 'SouthEnd_Admin_League_Play.html?module=league_play#team-management', slug: '/admin/league-play/teams' },
+      { key: 'schedule_scores', label: 'Schedule & scores', href: 'SouthEnd_Admin_League_Play.html?module=league_play#schedule-scores', slug: '/admin/league-play/schedule' }
+    ]
+  },
+  {
+    key: 'open_play',
+    title: 'Advanced Open Play',
+    desc: 'Signups, check-ins, and activity.',
+    items: [
+      { key: 'signups', label: 'Open Play signups', href: 'SouthEnd_Admin_Advanced_Open_Play.html?module=open_play#signups', slug: '/admin/open-play/signups' },
+      { key: 'checkins', label: 'Open Play check-ins', href: 'SouthEnd_Admin_Advanced_Open_Play.html?module=open_play#checkins', slug: '/admin/open-play/check-ins' },
+      { key: 'activity', label: 'Open Play activity', href: 'SouthEnd_Admin_Activity.html?module=open_play', slug: '/admin/open-play/activity' }
+    ]
+  },
+  {
+    key: 'platform',
+    title: 'General',
+    desc: 'Access controls and member profile tools.',
+    items: [
+      { key: 'module_access', label: 'Module access', href: 'SouthEnd_Admin_Module_Access.html?module=platform', slug: '/admin/module-access' },
+      { key: 'user_management', label: 'User management', href: 'SouthEnd_Admin_User_Management.html?module=platform', slug: '/admin/user-management' }
+    ]
+  }
+];
+
 function escapeHtml(s) {
   var d = document.createElement('div');
   d.textContent = s == null ? '' : String(s);
@@ -130,9 +244,52 @@ function accountReturnHref() {
   return 'SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent('SouthEnd_Admin_Hub.html');
 }
 
+function scopedGroups(scope) {
+  return ADMIN_GROUPS.map(function (group) {
+    var items = group.items.filter(function (item) {
+      return !!(scope && scope[group.key] && scope[group.key][item.key] === true);
+    });
+    return {
+      key: group.key,
+      title: group.title,
+      desc: group.desc,
+      items: items
+    };
+  }).filter(function (group) {
+    return group.items.length > 0;
+  });
+}
+
+function renderAdminPageNav(groups) {
+  var nav = document.getElementById('admin-page-nav');
+  if (!nav) return;
+  var html = '<a class="admin-page-nav__link" data-hub-home-link href="' + escapeHtml(pickleballHubHref()) + '">Pickleball hub</a>';
+  groups.forEach(function (group) {
+    html += '<div class="admin-page-nav__group-label">' + escapeHtml(group.title) + '</div>';
+    html += group.items.map(function (item) {
+      return '<a class="admin-page-nav__link" href="' + escapeHtml(item.href) + '">' + escapeHtml(item.label) + '</a>';
+    }).join('');
+  });
+  nav.innerHTML = html;
+}
+
+function pickleballHubHref() {
+  var path = String(window.location && window.location.pathname ? window.location.pathname : '').replace(/\\/g, '/');
+  if (path.indexOf('/Programs/') !== -1 || path.indexOf('/advanced-open-play/staging/') !== -1 || path.indexOf('/advanced-open-play/live/') !== -1) {
+    return 'SouthEnd_Pickleball_Hub.html';
+  }
+  return '/hub';
+}
+
+function patchHubHomeLinks() {
+  document.querySelectorAll('[data-hub-home-link]').forEach(function (link) {
+    link.setAttribute('href', pickleballHubHref());
+  });
+}
+
 function initAdminHub() {
   var status = document.getElementById('auth-status');
-  var grid = document.getElementById('admin-grid');
+  var empty = document.getElementById('empty-state');
   if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()) {
     if (status) status.textContent = 'Firebase is not configured. Admin access cannot be checked.';
     return;
@@ -150,19 +307,31 @@ function initAdminHub() {
       SEOpenPlay.loadAdminUidFlag(user.uid).then(function (isAdmin) {
         if (!isAdmin) {
           if (status) status.innerHTML = 'Admin access required for <strong>' + escapeHtml(user.email || '') + '</strong>.';
-          if (grid) grid.classList.add('hidden');
+          if (empty) empty.classList.add('hidden');
           return;
         }
-        if (status) status.innerHTML = 'Signed in as <strong>' + escapeHtml(user.email || '') + '</strong>.';
-        if (grid) grid.classList.remove('hidden');
+        var scopePromise = SEOpenPlay.loadAdminScope ? SEOpenPlay.loadAdminScope(user.uid) : Promise.resolve({});
+        scopePromise.then(function (scope) {
+          var groups = scopedGroups(scope || {});
+          if (status) status.innerHTML = 'Signed in as <strong>' + escapeHtml(user.email || '') + '</strong>.';
+          if (!groups.length) {
+            if (empty) empty.classList.remove('hidden');
+            return;
+          }
+          renderAdminPageNav(groups);
+          if (empty) empty.classList.add('hidden');
+        }).catch(function () {
+          if (status) status.innerHTML = 'Signed in as <strong>' + escapeHtml(user.email || '') + '</strong>. Could not load admin scope.';
+        });
       });
     });
   });
 }
 
-document.addEventListener('DOMContentLoaded', initAdminHub);
+document.addEventListener('DOMContentLoaded', function () {
+  patchHubHomeLinks();
+  initAdminHub();
+});
 </script>
-
-<a class="message-board-fab" href="SouthEnd_Message_Board.html" aria-label="Open Message Board">Message Board</a>
 </body>
 </html>

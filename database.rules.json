@@ -17,6 +17,18 @@
           ".write": false
         }
       },
+      "admin_scope": {
+        "$uid": {
+          ".read": "auth != null && (auth.uid === $uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
+          ".write": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
+          "$moduleKey": {
+            ".write": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
+            "$subModuleKey": {
+              ".write": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true"
+            }
+          }
+        }
+      },
       "module_access": {
         "$uid": {
           ".read": "auth != null && (auth.uid === $uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
@@ -52,7 +64,14 @@
         ".indexOn": ["ts", "uid"],
         ".read": "auth != null",
         "$msgId": {
-          ".write": "auth != null && ((!data.exists() && newData.exists() && newData.child('uid').val() === auth.uid && newData.child('isStaffAdmin').val() == (root.child('openplay_se/admin_uids/' + auth.uid).val() == true)) || (data.exists() && data.child('uid').val() === auth.uid && !newData.exists()))"
+          ".write": "auth != null && ((!data.exists() && newData.exists() && newData.child('uid').val() === auth.uid && newData.child('isStaffAdmin').val() == (root.child('openplay_se/admin_uids/' + auth.uid).val() == true)) || (data.exists() && !newData.exists() && (data.child('uid').val() === auth.uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)))"
+        }
+      },
+      "board_profiles": {
+        ".read": "auth != null",
+        "$uid": {
+          ".write": "auth != null && (auth.uid === $uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
+          ".validate": "!newData.exists() || (newData.hasChildren(['displayName', 'skill', 'isStaffAdmin']) && newData.child('displayName').isString() && newData.child('skill').isString() && newData.child('isStaffAdmin').isBoolean() && newData.child('isStaffAdmin').val() == (root.child('openplay_se/admin_uids/' + $uid).val() == true))"
         }
       },
       "league_account": {
@@ -77,6 +96,16 @@
           ".write": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (!data.exists() && newData.exists() && newData.child('fromUid').val() === auth.uid && newData.child('status').val() === 'pending' && newData.hasChildren(['fromUid', 'teamId', 'status', 'createdAt']) && ((newData.child('toUid').exists() && newData.child('toUid').val() !== newData.child('fromUid').val()) || (newData.child('toEmail').exists() && newData.child('toEmail').isString()))) || (data.exists() && newData.exists() && data.child('fromUid').val() === newData.child('fromUid').val() && data.child('teamId').val() === newData.child('teamId').val() && data.child('status').val() === 'pending' && (newData.child('status').val() === 'accepted' || newData.child('status').val() === 'declined') && ((data.child('toUid').exists() && data.child('toUid').val() === auth.uid && data.child('toUid').val() === newData.child('toUid').val()) || (!data.child('toUid').exists() && data.child('toEmail').val() === auth.token.email && newData.child('toUid').val() === auth.uid))) || (data.exists() && newData.exists() && data.child('fromUid').val() === auth.uid && data.child('fromUid').val() === newData.child('fromUid').val() && newData.child('status').val() === 'canceled') || (data.exists() && !newData.exists() && data.child('fromUid').val() === auth.uid))"
         }
       },
+      "user_notifications": {
+        "$uid": {
+          ".indexOn": ["createdAt", "state", "type", "sourceType"],
+          ".read": "auth != null && (auth.uid === $uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
+          "$notificationId": {
+            ".write": "auth != null && (!data.exists() && !newData.exists() || auth.uid === $uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (!data.exists() && newData.exists() && newData.child('schemaVersion').val() === 1 && newData.child('recipientUid').val() === $uid && newData.child('actorUid').val() === auth.uid && newData.child('type').val() === 'league_team_invite' && newData.child('sourceType').val() === 'league_invite' && newData.child('sourceId').val() === $notificationId && root.child('openplay_se/league_invites/' + $notificationId + '/fromUid').val() === auth.uid && root.child('openplay_se/league_invites/' + $notificationId + '/toUid').val() === $uid) || (data.exists() && newData.exists() && data.child('sourceType').val() === 'league_invite' && data.child('sourceId').val() === $notificationId && root.child('openplay_se/league_invites/' + $notificationId + '/fromUid').val() === auth.uid && root.child('openplay_se/league_invites/' + $notificationId + '/status').val() === 'canceled' && newData.child('state').val() === 'resolved') || (data.exists() && !newData.exists() && data.child('sourceType').val() === 'league_invite' && data.child('sourceId').val() === $notificationId && root.child('openplay_se/league_invites/' + $notificationId + '/fromUid').val() === auth.uid))",
+            ".validate": "!newData.exists() || (newData.child('schemaVersion').val() === 1 && newData.child('recipientUid').val() === $uid)"
+          }
+        }
+      },
       "league_teams": {
         ".indexOn": ["captainUid"],
         ".read": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (query.orderByChild === 'captainUid' && query.equalTo === auth.uid))",
@@ -89,6 +118,14 @@
               ".write": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || root.child('openplay_se/league_teams/' + $teamId + '/captainUid').val() === auth.uid )"
             }
           }
+        }
+      },
+      "league_games": {
+        ".read": "auth != null",
+        ".indexOn": ["weekKey", "divisionKey", "draw"],
+        "$gameId": {
+          ".write": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
+          ".validate": "!newData.exists() || !newData.hasChild('schemaVersion') || newData.child('schemaVersion').val() === 1"
         }
       }
     }

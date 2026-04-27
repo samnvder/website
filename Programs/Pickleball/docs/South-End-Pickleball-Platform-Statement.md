@@ -41,7 +41,7 @@
 - **Account required** to create a team, invite players, and accept invites.  
 - **Team captains** create teams; only users with **existing accounts** can be invited. Invites are **not** auto-accepted—players accept or decline.  
 - **League fee and format** copy is shown on the team-creation path; the **table of contents / full waiver and TOC** is versioned; acceptances are stored per user.  
-- **Data** under `openplay_se/` includes: `league_account`, `league_directory`, `league_invites`, `league_teams` (with `roster/{uid}`). Inbox behavior is implemented as **invites** queried by `toUid` (no separate `league_inboxes` node). See `database.rules.json` and `Programs/Pickleball/league-play/js/south-end-league-sync.js` for the exact contract.
+- **Data** under `openplay_se/` includes: `league_account`, `league_directory`, `league_invites`, `league_teams` (with `roster/{uid}`), and `user_notifications/{uid}` for the profile bell/feed. Team invites remain the source of truth in `league_invites`; notification rows are the user-facing feed that can also hold future private-game, tournament, and general updates. See `database.rules.json` and `Programs/Pickleball/league-play/js/south-end-league-sync.js` for the exact contract.
 
 ## Realtime Database — module layout (submodules)
 
@@ -54,6 +54,7 @@
    - **Shared (all modules):** `admin_uids`, `module_access`, `user_profiles`, `activity`, `board_messages`.
    - **Advanced Open Play:** `rsvps` (access gated by `advanced_open_play` in rules).
    - **League Play:** `league_account`, `league_directory`, `league_invites`, `league_teams`.
+   - **Shared notifications:** `user_notifications/{uid}` for bell/feed items across league and future programs.
 
 **When to add a literal nest** (e.g. `openplay_se/modules/league/teams`): only if you want a cleaner console tree and are willing to **migrate** existing data and update every rule + client path. Do that **before** production data or in a planned migration—not because the system “requires” it.
 

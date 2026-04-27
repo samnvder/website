@@ -19,10 +19,14 @@ describe('database.rules.json', () => {
     assert.ok(data.rules.openplay_se.user_profiles.$uid, 'must define user_profiles/$uid');
     assert.ok(data.rules.openplay_se.admin_uids, 'must define openplay_se/admin_uids');
     assert.ok(data.rules.openplay_se.admin_uids.$uid, 'must define admin_uids/$uid');
+    assert.ok(data.rules.openplay_se.admin_scope, 'must define openplay_se/admin_scope');
+    assert.ok(data.rules.openplay_se.admin_scope.$uid, 'must define admin_scope/$uid');
     assert.ok(data.rules.openplay_se.module_access, 'must define openplay_se/module_access');
     assert.ok(data.rules.openplay_se.module_access.$uid, 'must define module_access/$uid');
     assert.ok(data.rules.openplay_se.users, 'must define openplay_se/users');
     assert.ok(data.rules.openplay_se.users.$uid, 'must define users/$uid');
+    assert.ok(data.rules.openplay_se.league_games, 'must define openplay_se/league_games');
+    assert.ok(data.rules.openplay_se.league_games.$gameId, 'must define league_games/$gameId');
   });
 
   it('keeps module access admin-assigned and self-readable', () => {
@@ -49,6 +53,38 @@ describe('database.rules.json', () => {
       moduleAccess.$uid.$moduleId['.write'],
       /auth\.uid === \$uid/,
       'users must not grant module access to themselves'
+    );
+  });
+
+  it('keeps admin scope admin-assigned and self-readable', () => {
+    const raw = fs.readFileSync(RULES_PATH, 'utf8');
+    const data = JSON.parse(raw);
+    const adminScope = data.rules.openplay_se.admin_scope;
+
+    assert.match(
+      adminScope.$uid['.read'],
+      /auth\.uid === \$uid/,
+      'users must be able to read their own admin scope rows'
+    );
+    assert.match(
+      adminScope.$uid['.read'],
+      /admin_uids/,
+      'admins must be able to read admin scope rows'
+    );
+    assert.match(
+      adminScope.$uid['.write'],
+      /admin_uids/,
+      'only admins should write admin scope rows'
+    );
+    assert.match(
+      adminScope.$uid.$moduleKey.$subModuleKey['.write'],
+      /admin_uids/,
+      'nested admin scope writes must require admin status'
+    );
+    assert.doesNotMatch(
+      adminScope.$uid['.write'],
+      /auth\.uid === \$uid/,
+      'users must not be able to self-assign admin scope'
     );
   });
 
@@ -223,6 +259,8 @@ describe('database.rules.json', () => {
     assert.ok(o.activity['.indexOn'].includes('ts'));
     assert.ok(o.board_messages['.indexOn'].includes('ts'));
     assert.ok(o.league_invites['.indexOn'].includes('toUid'));
+    assert.ok(o.user_notifications.$uid['.indexOn'].includes('createdAt'));
+    assert.ok(o.user_notifications.$uid['.indexOn'].includes('state'));
     assert.ok(o.league_teams['.indexOn'].includes('captainUid'));
   });
 
@@ -234,6 +272,33 @@ describe('database.rules.json', () => {
       leagueAccount['.read'],
       /admin_uids/,
       'league admin dashboard reads league_account as a collection'
+    );
+  });
+
+  it('scopes user notification feeds to the recipient and matching invite sources', () => {
+    const data = JSON.parse(fs.readFileSync(RULES_PATH, 'utf8'));
+    const notifications = data.rules.openplay_se.user_notifications;
+    const node = notifications.$uid.$notificationId;
+
+    assert.match(
+      notifications.$uid['.read'],
+      /auth\.uid === \$uid/,
+      'users must be able to read their own notifications'
+    );
+    assert.match(
+      node['.write'],
+      /recipientUid.*\$uid/,
+      'notification creates must target the notification owner'
+    );
+    assert.match(
+      node['.write'],
+      /league_invites/,
+      'invite notification writes must be backed by a league invite'
+    );
+    assert.match(
+      node['.validate'],
+      /schemaVersion/,
+      'notification records must declare a schema version'
     );
   });
 

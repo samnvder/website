@@ -81,7 +81,7 @@
   }
 
   function adminHubHref() {
-    return isOpenPlayLocalMirror() ? "../SouthEnd_Admin_Hub.html" : "/admin";
+    return isOpenPlayLocalMirror() ? "../SouthEnd_Admin_Hub.html" : "/admin?v=20260427-admin-hub";
   }
 
   function mainPickleballAccountHrefWithReturn(returnHtml) {
@@ -160,12 +160,7 @@
   }
 
   function leagueInvitesLinks() {
-    if (!global.document) return [];
-    return Array.prototype.slice.call(
-      global.document.querySelectorAll(
-        'nav[aria-label="League play"] a[href="SouthEnd_League_Invites.html"]'
-      )
-    );
+    return [];
   }
 
   /** True once league_account has any registration or an assigned team. */

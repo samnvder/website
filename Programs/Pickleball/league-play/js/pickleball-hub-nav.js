@@ -137,7 +137,9 @@
     return '<a ' + attrs + '>' + esc(label) + '</a>';
   }
 
-  function buildCore(ctx, active) {
+  function buildCore(ctx, active, options) {
+    options = options || {};
+    var hideBoard = !!options.hideBoard;
     var p = pathsFor(ctx);
     var order = [
       ['hub', p.hub, 'Hub'],
@@ -147,6 +149,7 @@
     ];
     return order
       .filter(function (row) {
+        if (hideBoard && row[0] === 'board') return false;
         return row[0] !== 'openplay' || openPlayAccessState === 'allowed';
       })
       .map(function (row) {
@@ -205,6 +208,7 @@
       s.id = 'se-hub-nav-hub-styles';
       s.textContent =
         '.se-site-nav-link--hub{font-weight:600;}' +
+        'a.se-site-nav-link--admin{padding:10px 18px;border-radius:999px;font-weight:700;letter-spacing:.12em;}' +
         'a.se-site-nav-link--admin.se-site-nav-link--active,' +
         'a.se-site-nav-link--admin[aria-current="page"]{color:#0a0a1a;}';
       document.head.appendChild(s);
@@ -214,13 +218,21 @@
       var ctx = ctxAttr || detectContext();
       var activeAttr = nav.getAttribute('data-se-hub-active');
       var active = activeAttr || detectActive();
+      var hideBoard =
+        nav.getAttribute('data-se-hide-message-board') === '1' ||
+        nav.getAttribute('data-se-hide-message-board') === 'true';
       var tails = [];
       Array.prototype.slice.call(nav.querySelectorAll('[data-se-hub-tail]')).forEach(function (node) {
         tails.push(node);
         node.remove();
       });
       var hasAdminTail = tails.some(function (n) {
-        return n.id === 'admin-hub-nav-link' || n.id === 'league-admin-nav-link';
+        var href = n.getAttribute('href') || '';
+        return (
+          n.id === 'admin-hub-nav-link' ||
+          n.id === 'league-admin-nav-link' ||
+          (n.hasAttribute('data-se-hub-tail') && /SouthEnd_Admin/i.test(href))
+        );
       });
       if (!hasAdminTail) {
         var adminLink = document.createElement('a');
@@ -231,7 +243,7 @@
         adminLink.textContent = 'Admin';
         tails.push(adminLink);
       }
-      nav.innerHTML = buildCore(ctx, active);
+      nav.innerHTML = buildCore(ctx, active, { hideBoard: hideBoard });
       tails.forEach(function (node) {
         nav.appendChild(node);
       });

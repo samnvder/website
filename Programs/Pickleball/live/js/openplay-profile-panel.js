@@ -15,14 +15,33 @@
   var currentUser = null;
   var currentProfile = null;
   var currentIsAdmin = false;
-  var ADMIN_ITEMS = [
-    { action: 'admin-hub', href: 'SouthEnd_Admin_Hub.html', label: 'Admin Hub' },
-    { action: 'league-admin', href: 'SouthEnd_Admin_League_Play.html', label: 'League Play' },
-    { action: 'user-mgmt', href: 'SouthEnd_Admin_User_Management.html', label: 'User management' },
-    { action: 'signups', href: 'SouthEnd_Open_Play_Signups.html', label: 'Signups' },
-    { action: 'checkin', href: 'SouthEnd_Session_Checkin.html', label: 'Check-ins' },
-    { action: 'activity', href: 'SouthEnd_Admin_Activity.html', label: 'Activity' },
-    { action: 'module-admin', href: 'SouthEnd_Admin_Module_Access.html', label: 'Module access' },
+  var currentAdminScope = {};
+  var notifyBtnEl = null;
+  var notifyBadgeEl = null;
+  var notificationPanelEl = null;
+  var notificationRows = [];
+  var notificationRef = null;
+  var notificationListener = null;
+  var ADMIN_MODULES = [
+    {
+      moduleKey: 'league_play',
+      label: 'League Play',
+      parentHref: 'SouthEnd_Admin_Hub.html',
+      submodules: [
+        { action: 'league-teams', href: 'SouthEnd_Admin_League_Play.html#team-management', label: 'League teams', subModuleKey: 'team_management' },
+        { action: 'league-scores', href: 'SouthEnd_Admin_League_Play.html#schedule-scores', label: 'League schedule & scores', subModuleKey: 'schedule_scores' }
+      ]
+    },
+    {
+      moduleKey: 'open_play',
+      label: 'Advanced Open Play',
+      parentHref: 'SouthEnd_Admin_Hub.html',
+      submodules: [
+        { action: 'signups', href: 'SouthEnd_Open_Play_Signups.html', label: 'Signups', subModuleKey: 'signups' },
+        { action: 'checkin', href: 'SouthEnd_Session_Checkin.html', label: 'Check-ins', subModuleKey: 'checkins' },
+        { action: 'activity', href: 'SouthEnd_Admin_Activity.html', label: 'Activity', subModuleKey: 'activity' }
+      ]
+    }
   ];
 
   function escapeHtml(s) {
@@ -58,6 +77,14 @@
     var prefix = '';
     if (path.indexOf('/testing/local-page/league-play/') !== -1 || /^\/league-play\//i.test(path)) {
       prefix = '../';
+    } else if (
+      path.indexOf('/advanced-open-play/staging/league-play/') !== -1 ||
+      path.indexOf('/advanced-open-play/live/league-play/') !== -1
+    ) {
+      // Same-folder parent as main pickleball-hub-nav (file paths, not Firebase /hub)
+      prefix = '../';
+    } else if (path.indexOf('/advanced-open-play/staging/') !== -1 || path.indexOf('/advanced-open-play/live/') !== -1) {
+      prefix = '';
     } else if (path.indexOf('/testing/local-page/') === -1 && !/^\/(?:SouthEnd_|index\.html|$)/i.test(path)) {
       prefix = '/Programs/Pickleball/advanced-open-play/testing/local-page/';
     }
@@ -75,10 +102,99 @@
     };
   }
 
-  function adminItemsHtml() {
-    return ADMIN_ITEMS.map(function (item) {
-      return '<a class="' + NS + '-menu-item" data-action="' + item.action + '" href="' + liveHref(item.href) + '">' + item.label + '</a>';
+  function appendModuleQuery(href, moduleKey) {
+    var base = String(href || '');
+    var mod = String(moduleKey || '').trim();
+    if (!mod) return base;
+    var hash = '';
+    var hashIdx = base.indexOf('#');
+    if (hashIdx >= 0) {
+      hash = base.slice(hashIdx);
+      base = base.slice(0, hashIdx);
+    }
+    var sep = base.indexOf('?') >= 0 ? '&' : '?';
+    return base + sep + 'module=' + encodeURIComponent(mod) + hash;
+  }
+
+  function inferModuleContextFromPath() {
+    var path = String((global.location && global.location.pathname) || '').toLowerCase();
+    if (path.indexOf('/league-play/') !== -1 || /southend_admin_league_play\.html$/.test(path)) return 'league_play';
+    if (
+      /southend_(?:open_play_signups|session_checkin|admin_activity|admin_advanced_open_play|session_rsvp|pickleball_hub|message_board)\.html$/.test(path)
+      || /southend_openplay_account\.html$/.test(path)
+      || path.indexOf('/hub') !== -1
+      || path.indexOf('/account') !== -1
+    ) {
+      return 'open_play';
+    }
+    return '';
+  }
+
+  function currentAdminContextModule() {
+    try {
+      var raw = String((global.location && global.location.search) || '');
+      var q = new URLSearchParams(raw);
+      var m = String(q.get('module') || '').trim();
+      if (m) return m;
+    } catch (e) {}
+    return inferModuleContextFromPath();
+  }
+
+  function adminHubHrefForContext() {
+    return appendModuleQuery(liveHref('SouthEnd_Admin_Hub.html'), currentAdminContextModule());
+  }
+
+  function hasScopedAdminAccess(moduleKey, subModuleKey) {
+    var SE = global.SEOpenPlay;
+    if (!moduleKey || !subModuleKey) return true;
+    if (SE && typeof SE.isAdminScopeEnabled === 'function') {
+      return SE.isAdminScopeEnabled(currentAdminScope, moduleKey, subModuleKey);
+    }
+    return !!(currentAdminScope && currentAdminScope[moduleKey] && currentAdminScope[moduleKey][subModuleKey] === true);
+  }
+
+  function allowedAdminModules() {
+    return ADMIN_MODULES.map(function (mod) {
+      var children = (mod.submodules || []).filter(function (sub) {
+        return hasScopedAdminAccess(mod.moduleKey, sub.subModuleKey);
+      });
+      return {
+        moduleKey: mod.moduleKey,
+        label: mod.label,
+        parentHref: mod.parentHref,
+        submodules: children
+      };
+    }).filter(function (mod) {
+      return mod.submodules.length > 0;
+    });
+  }
+
+  function renderAdminMenuItems() {
+    if (!anchorEl) return;
+    var toggle = anchorEl.querySelector('[data-action="admin-toggle"]');
+    var sub = anchorEl.querySelector('[data-role="admin-submenu"]');
+    if (!toggle || !sub) return;
+    var modules = allowedAdminModules();
+    sub.innerHTML = modules.map(function (mod) {
+      var parentHref = appendModuleQuery(liveHref(mod.parentHref || 'SouthEnd_Admin_Hub.html'), mod.moduleKey);
+      var childHtml = mod.submodules.map(function (item) {
+        var href = appendModuleQuery(liveHref(item.href), mod.moduleKey);
+        return '<a class="' + NS + '-menu-item ' + NS + '-admin-sub-item" data-action="' + item.action + '" href="' + href + '">' + item.label + '</a>';
+      }).join('');
+      return (
+        '<div class="' + NS + '-admin-module">' +
+          '<a class="' + NS + '-menu-item ' + NS + '-admin-module-head" href="' + parentHref + '">' + mod.label + '</a>' +
+          '<div class="' + NS + '-admin-module-sub">' + childHtml + '</div>' +
+        '</div>'
+      );
     }).join('');
+    toggle.classList.toggle('hidden', modules.length === 0);
+    sub.classList.toggle('hidden', modules.length === 0);
+    toggle.disabled = modules.length === 0;
+    if (modules.length === 0) {
+      toggle.setAttribute('aria-expanded', 'false');
+      sub.classList.remove('open');
+    }
   }
 
   function liveHref(href) {
@@ -89,7 +205,7 @@
       return localRoutes[key] || String(href || '');
     }
     var routes = {
-      SouthEnd_Admin_Hub: '/admin',
+      SouthEnd_Admin_Hub: '/admin?v=20260427-admin-hub',
       SouthEnd_Admin_Activity: '/admin/activity',
       SouthEnd_Admin_Module_Access: '/admin/module-access',
       SouthEnd_OpenPlay_Account: '/account',
@@ -122,14 +238,24 @@
       '.header{position:relative;z-index:10;overflow:visible!important;}' +
       'nav.se-site-nav{position:relative;z-index:1;}' +
       '.' + NS + '-anchor{display:none;align-items:center;gap:8px;z-index:500;}' +
+      '.header.' + NS + '-header-host{--se-profile-action-lane:0px;}' +
       '.header > .' + NS + '-anchor{' +
       'position:absolute;right:18px;top:12px;}' +
       '.topbar-right > .' + NS + '-anchor{' +
       'position:relative;}' +
+      '.' + NS + '-anchor.has-external-notify .' + NS + '-notify{display:none!important;}' +
+      '.' + NS + '-notify{' +
+      'position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:38px;min-height:38px;padding:7px;border-radius:8px;' +
+      'background:rgba(255,255,255,.08);border:1.5px solid color-mix(in srgb,var(--pp-accent) 32%,transparent);color:#fff;cursor:pointer;text-decoration:none;' +
+      '}' +
+      '.' + NS + '-notify:hover{border-color:var(--pp-accent);background:color-mix(in srgb,var(--pp-accent) 12%,transparent);color:#fff;}' +
+      '.' + NS + '-notify-icon{width:21px;height:21px;display:block;}' +
+      '.' + NS + '-notify-badge{position:absolute;top:1px;right:-3px;min-width:18px;height:18px;padding:0 5px;display:inline-flex;align-items:center;justify-content:center;' +
+      'font-family:Barlow,sans-serif;font-size:10px;font-weight:700;line-height:1;color:var(--pp-ink);background:var(--pp-accent);border-radius:99px;box-shadow:0 1px 4px rgba(0,0,0,.35);}' +
       '.' + NS + '-admin-quick{' +
-      'display:none;align-items:center;justify-content:center;min-height:34px;padding:6px 10px;border-radius:8px;' +
+      'display:none;align-items:center;justify-content:center;min-height:48px;padding:12px 24px;border-radius:999px;' +
       'background:var(--pp-accent);border:1.5px solid color-mix(in srgb,var(--pp-accent) 45%,transparent);color:var(--pp-ink);text-decoration:none;' +
-      'font-family:Oswald,sans-serif;font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;' +
+      'font-family:Oswald,sans-serif;font-size:15px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;cursor:pointer;' +
       'box-shadow:0 0 18px color-mix(in srgb,var(--pp-accent) 22%,transparent);}' +
       '.' + NS + '-btn{' +
       'display:flex;align-items:center;gap:8px;min-height:38px;padding:7px 12px;border-radius:8px;' +
@@ -153,8 +279,13 @@
       '.' + NS + '-admin-toggle .chevron{display:inline-block;margin-left:auto;font-size:10px;transition:transform .2s ease;color:rgba(255,255,255,.45);}' +
       '.' + NS + '-admin-toggle[aria-expanded="true"] .chevron{transform:rotate(180deg);}' +
       '.' + NS + '-admin-sub{overflow:hidden;max-height:0;transition:max-height .25s ease;padding-left:10px;border-left:2px solid color-mix(in srgb,var(--pp-accent) 30%,transparent);}' +
-      '.' + NS + '-admin-sub.open{max-height:300px;}' +
+      '.' + NS + '-admin-sub.open{max-height:520px;}' +
       '.' + NS + '-admin-sub .' + NS + '-menu-item{font-size:11px;padding:7px 10px;}' +
+      '.' + NS + '-admin-module{padding:6px 0 4px;}' +
+      '.' + NS + '-admin-module + .' + NS + '-admin-module{border-top:1px solid rgba(255,255,255,.08);}' +
+      '.' + NS + '-admin-module-head{font-family:Oswald,sans-serif;letter-spacing:.06em;text-transform:uppercase;font-size:12px;color:var(--pp-accent)!important;}' +
+      '.' + NS + '-admin-module-sub{padding-left:10px;display:flex;flex-direction:column;gap:2px;}' +
+      '.' + NS + '-admin-sub-item{font-size:11px;color:rgba(255,255,255,.9)!important;}' +
       '.se-site-nav-link--admin{margin-left:auto;color:var(--pp-accent);border-color:color-mix(in srgb,var(--pp-accent) 22%,transparent);}' +
       'a.se-site-nav-link--admin.se-site-nav-link--active,' +
       'a.se-site-nav-link--admin[aria-current="page"]{color:var(--pp-ink);}' +
@@ -180,19 +311,42 @@
       '.' + NS + '-msg{margin-top:10px;font-size:11px;min-height:16px;color:rgba(255,255,255,.72);}' +
       '.' + NS + '-msg.error{color:#ff8a8a;}' +
       '.' + NS + '-msg.ok{color:var(--pp-accent);}' +
+      '.' + NS + '-notify-panel{position:fixed;inset:0;z-index:900;pointer-events:none;}' +
+      '.' + NS + '-notify-panel-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.62);opacity:0;transition:opacity .2s ease;}' +
+      '.' + NS + '-notify-panel-drawer{position:absolute;top:0;right:0;width:min(420px,100%);height:100%;display:flex;flex-direction:column;background:var(--cream,#fafaf5);border-left:1px solid rgba(0,0,0,.12);box-shadow:-12px 0 40px rgba(0,0,0,.28);transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);}' +
+      '.' + NS + '-notify-panel.open{pointer-events:auto;}' +
+      '.' + NS + '-notify-panel.open .' + NS + '-notify-panel-backdrop{opacity:1;}' +
+      '.' + NS + '-notify-panel.open .' + NS + '-notify-panel-drawer{transform:translateX(0);}' +
+      '.' + NS + '-notify-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:24px;background:var(--green-dk,var(--pp-bg));color:#fff;border-bottom:3px solid var(--gold,var(--pp-accent));}' +
+      '.' + NS + '-notify-panel-head h2{margin:0 0 4px;font-family:Oswald,sans-serif;font-size:26px;text-transform:uppercase;letter-spacing:.08em;color:#fff;}' +
+      '.' + NS + '-notify-panel-head p{margin:0;color:rgba(255,255,255,.72);font-size:13px;}' +
+      '.' + NS + '-notify-panel-close{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid rgba(255,255,255,.35);border-radius:8px;background:rgba(0,0,0,.18);color:#fff;font-size:28px;line-height:1;cursor:pointer;}' +
+      '.' + NS + '-notify-panel-body{display:flex;flex-direction:column;gap:16px;padding:24px;overflow-y:auto;}' +
+      '.' + NS + '-notify-empty,.' + NS + '-notify-card{padding:16px;background:#fff;border:1px solid rgba(0,0,0,.12);border-radius:16px;color:var(--muted,#5a6357);box-shadow:0 4px 18px rgba(0,0,0,.06);}' +
+      '.' + NS + '-notify-card{display:flex;flex-direction:column;gap:8px;}' +
+      '.' + NS + '-notify-card h3{margin:0;color:var(--green-dk,var(--pp-ink));font-family:Oswald,sans-serif;font-size:20px;text-transform:uppercase;letter-spacing:.06em;}' +
+      '.' + NS + '-notify-card p{margin:0;color:var(--muted,#5a6357);font-size:14px;}' +
+      '.' + NS + '-notify-card-status{font-weight:700;color:var(--green,var(--pp-accent));}' +
+      '.' + NS + '-notify-card-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}' +
+      '.' + NS + '-notify-card-actions .btn{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 14px;border-radius:8px;border:1px solid var(--green,var(--pp-accent));background:var(--green,var(--pp-accent));color:#fff;text-decoration:none;font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;}' +
+      '.' + NS + '-notify-card-actions .btn--secondary{background:#fff;color:var(--green,var(--pp-accent));}' +
       '@media(max-width:680px){' +
-      '.header > .' + NS + '-anchor{right:10px;top:8px;}' +
-      '.' + NS + '-admin-quick.is-visible{display:inline-flex;}' +
+      '.header.' + NS + '-header-host{--se-profile-action-lane:60px;min-height:clamp(104px,28vw,132px);padding-top:calc(var(--se-profile-action-lane) + env(safe-area-inset-top,0px))!important;}' +
+      '.header.' + NS + '-header-host > .' + NS + '-anchor{right:max(10px,env(safe-area-inset-right));top:10px;}' +
+      '.' + NS + '-admin-quick,' + '.' + NS + '-admin-quick.is-visible{display:none!important;}' +
       '.' + NS + '-btn{min-height:34px;padding:6px 10px;font-size:12px;}' +
       '.' + NS + '-menu{width:240px;top:40px;}' +
-      '.se-site-nav-link--admin{display:none!important;}' +
       '}';
     document.head.appendChild(style);
 
     anchorEl = document.createElement('div');
     anchorEl.className = NS + '-anchor';
     anchorEl.innerHTML =
-      '<a class="' + NS + '-admin-quick" href="' + liveHref('SouthEnd_Admin_Hub.html') + '">Admin</a>' +
+      '<button type="button" class="' + NS + '-admin-quick" aria-haspopup="menu" aria-expanded="false">Admin Modules</button>' +
+      '<button type="button" class="' + NS + '-notify" aria-label="Notifications" aria-haspopup="dialog" aria-expanded="false">' +
+      '<svg class="' + NS + '-notify-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20h4a2 2 0 0 1-4 0"/>' +
+      '</svg><span class="' + NS + '-notify-badge" hidden aria-hidden="true"></span></button>' +
       '<button type="button" class="' + NS + '-btn" aria-expanded="false" aria-haspopup="menu">' +
       '<svg class="' + NS + '-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">' +
       '<path d="M12 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/>' +
@@ -206,18 +360,25 @@
       '<button class="' + NS + '-menu-item" type="button" data-action="view">View profile</button>' +
       '<button class="' + NS + '-menu-item staff hidden ' + NS + '-admin-toggle" type="button" data-action="admin-toggle" aria-expanded="false" style="display:flex;align-items:center;">' +
       'Admin <span class="chevron">&#9662;</span></button>' +
-      '<div class="' + NS + '-admin-sub staff hidden">' +
-      adminItemsHtml() +
-      '</div>' +
+      '<div class="' + NS + '-admin-sub staff hidden" data-role="admin-submenu"></div>' +
       '<div data-pickleball-share data-share-context="pickleball"></div>' +
       '<button class="' + NS + '-menu-item" type="button" data-action="signout">Sign out</button>' +
       '</div>';
     document.body.appendChild(anchorEl);
 
     btnEl = anchorEl.querySelector('.' + NS + '-btn');
+    notifyBtnEl = anchorEl.querySelector('.' + NS + '-notify');
+    notifyBadgeEl = anchorEl.querySelector('.' + NS + '-notify-badge');
     adminQuickEl = anchorEl.querySelector('.' + NS + '-admin-quick');
     menuEl = anchorEl.querySelector('.' + NS + '-menu');
     statusEl = anchorEl.querySelector('.' + NS + '-menu-status');
+
+    if (notifyBtnEl) {
+      notifyBtnEl.addEventListener('click', function (e) {
+        e.preventDefault();
+        openNotificationPanel();
+      });
+    }
 
     modalEl = document.createElement('div');
     modalEl.className = NS + '-modal';
@@ -237,7 +398,32 @@
       }
       var open = menuEl.classList.toggle('open');
       btnEl.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (adminQuickEl) adminQuickEl.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
+
+    if (adminQuickEl) {
+      adminQuickEl.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!currentUser) {
+          global.location.href = getSignInHref();
+          return;
+        }
+        if (!currentIsAdmin) return;
+        var open = !menuEl.classList.contains('open');
+        menuEl.classList.toggle('open', open);
+        btnEl.setAttribute('aria-expanded', open ? 'true' : 'false');
+        adminQuickEl.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open) {
+          var sub = anchorEl.querySelector('.' + NS + '-admin-sub');
+          var toggle = anchorEl.querySelector('[data-action="admin-toggle"]');
+          if (toggle && !toggle.classList.contains('hidden')) {
+            toggle.setAttribute('aria-expanded', 'true');
+            if (sub) sub.classList.add('open');
+          }
+        }
+      });
+    }
 
     anchorEl.querySelector('[data-action="view"]').addEventListener('click', function () {
       closeMenu();
@@ -276,6 +462,7 @@
       if (e.key === 'Escape') {
         closeMenu();
         closeProfileModal();
+        closeNotificationPanel();
       }
     });
   }
@@ -284,11 +471,235 @@
     if (!menuEl || !btnEl) return;
     menuEl.classList.remove('open');
     btnEl.setAttribute('aria-expanded', 'false');
+    if (adminQuickEl) adminQuickEl.setAttribute('aria-expanded', 'false');
   }
 
   function closeProfileModal() {
     if (!modalEl) return;
     modalEl.classList.remove('open');
+  }
+
+  function externalNotificationBells() {
+    return Array.prototype.slice.call(document.querySelectorAll('.league-header-notify'));
+  }
+
+  function allNotificationBadges() {
+    var badges = [];
+    if (notifyBadgeEl) badges.push(notifyBadgeEl);
+    return badges.concat(Array.prototype.slice.call(document.querySelectorAll('.league-header-notify__badge')));
+  }
+
+  function allNotificationButtons() {
+    var buttons = [];
+    if (notifyBtnEl) buttons.push(notifyBtnEl);
+    return buttons.concat(externalNotificationBells());
+  }
+
+  function closeNotificationPanel() {
+    if (!notificationPanelEl) return;
+    notificationPanelEl.classList.remove('open');
+    notificationPanelEl.setAttribute('aria-hidden', 'true');
+    allNotificationButtons().forEach(function (btn) {
+      btn.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  function ensureNotificationPanel() {
+    if (notificationPanelEl) return notificationPanelEl;
+    notificationPanelEl = document.createElement('div');
+    notificationPanelEl.className = NS + '-notify-panel';
+    notificationPanelEl.setAttribute('aria-hidden', 'true');
+    notificationPanelEl.innerHTML =
+      '<div class="' + NS + '-notify-panel-backdrop" data-notification-close></div>' +
+      '<aside class="' + NS + '-notify-panel-drawer" role="dialog" aria-modal="true" aria-labelledby="' + NS + '-notify-title">' +
+      '<div class="' + NS + '-notify-panel-head">' +
+      '<div><h2 id="' + NS + '-notify-title">Notifications</h2><p>Invites and pickleball updates from every module.</p></div>' +
+      '<button type="button" class="' + NS + '-notify-panel-close" data-notification-close aria-label="Close notifications">&times;</button>' +
+      '</div>' +
+      '<div class="' + NS + '-notify-panel-body"></div>' +
+      '</aside>';
+    notificationPanelEl.addEventListener('click', function (e) {
+      if (e.target && e.target.getAttribute('data-notification-close') !== null) {
+        closeNotificationPanel();
+      }
+    });
+    document.body.appendChild(notificationPanelEl);
+    return notificationPanelEl;
+  }
+
+  function renderNotificationEmpty(text) {
+    var panel = ensureNotificationPanel();
+    var body = panel.querySelector('.' + NS + '-notify-panel-body');
+    if (!body) return;
+    body.innerHTML = '<p class="' + NS + '-notify-empty">' + escapeHtml(text) + '</p>';
+  }
+
+  function notificationActionHref(row) {
+    var data = (row && row.data) || {};
+    if (data.actionHref) return data.actionHref;
+    if (data.type === 'league_team_invite' && data.sourceId) {
+      return liveHref('league-play/SouthEnd_League_Teams.html') + '?invite=' + encodeURIComponent(data.sourceId);
+    }
+    return '';
+  }
+
+  function renderNotificationRows() {
+    if (!currentUser) {
+      renderNotificationEmpty('Sign in to see your notifications.');
+      return;
+    }
+    var panel = ensureNotificationPanel();
+    var body = panel.querySelector('.' + NS + '-notify-panel-body');
+    if (!body) return;
+    body.innerHTML = '';
+    if (!notificationRows.length) {
+      renderNotificationEmpty('No notifications yet.');
+      return;
+    }
+    notificationRows.forEach(function (row) {
+      var data = row.data || {};
+      var card = document.createElement('article');
+      card.className = NS + '-notify-card';
+      var title = document.createElement('h3');
+      title.textContent = data.title || (data.type === 'league_team_invite' ? 'Team roster invite' : 'Notification');
+      var copy = document.createElement('p');
+      copy.textContent = data.body || 'Open this update for details.';
+      card.appendChild(title);
+      card.appendChild(copy);
+      if (data.state !== 'pending_action' || data.status !== 'pending') {
+        var status = document.createElement('p');
+        status.className = NS + '-notify-card-status';
+        status.textContent = data.status === 'accepted'
+          ? 'Accepted'
+          : data.status === 'declined'
+            ? 'Declined'
+            : data.status === 'canceled'
+              ? 'Canceled'
+              : 'Resolved';
+        card.appendChild(status);
+      }
+      var href = notificationActionHref(row);
+      var actions = document.createElement('div');
+      actions.className = NS + '-notify-card-actions';
+      if (
+        data.type === 'league_team_invite' &&
+        data.state === 'pending_action' &&
+        data.status === 'pending' &&
+        global.LeagueSync &&
+        typeof global.LeagueSync.acceptOrDeclineInvite === 'function'
+      ) {
+        var accept = document.createElement('button');
+        accept.type = 'button';
+        accept.className = 'btn';
+        accept.textContent = 'Accept';
+        var decline = document.createElement('button');
+        decline.type = 'button';
+        decline.className = 'btn btn--secondary';
+        decline.textContent = 'Decline';
+        function resolveInvite(yes) {
+          accept.disabled = true;
+          decline.disabled = true;
+          global.LeagueSync.acceptOrDeclineInvite(data.sourceId || row.id, currentUser.uid, yes).catch(function (e) {
+            accept.disabled = false;
+            decline.disabled = false;
+            copy.textContent = (e && e.message) || 'Could not update this invite.';
+          });
+        }
+        accept.addEventListener('click', function () { resolveInvite(true); });
+        decline.addEventListener('click', function () { resolveInvite(false); });
+        actions.appendChild(accept);
+        actions.appendChild(decline);
+      } else if (href) {
+        var open = document.createElement('a');
+        open.className = 'btn btn--secondary';
+        open.href = href;
+        open.textContent = 'Open';
+        actions.appendChild(open);
+      }
+      if (actions.children.length) card.appendChild(actions);
+      body.appendChild(card);
+    });
+  }
+
+  function openNotificationPanel() {
+    ensureNotificationPanel();
+    renderNotificationRows();
+    notificationPanelEl.classList.add('open');
+    notificationPanelEl.setAttribute('aria-hidden', 'false');
+    allNotificationButtons().forEach(function (btn) {
+      btn.setAttribute('aria-expanded', 'true');
+    });
+    var closeBtn = notificationPanelEl.querySelector('.' + NS + '-notify-panel-close');
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function updateNotificationBadges(count) {
+    allNotificationBadges().forEach(function (badge) {
+      if (!badge) return;
+      if (count > 0) {
+        badge.textContent = count > 99 ? '99+' : String(count);
+        badge.removeAttribute('hidden');
+        badge.setAttribute('aria-hidden', 'false');
+      } else {
+        badge.textContent = '';
+        badge.setAttribute('hidden', '');
+        badge.setAttribute('aria-hidden', 'true');
+      }
+    });
+    allNotificationButtons().forEach(function (btn) {
+      btn.setAttribute('aria-label', count > 0 ? 'Notifications, ' + count + ' pending' : 'Notifications');
+    });
+  }
+
+  function wireExternalNotificationBells() {
+    if (!anchorEl) return;
+    var external = externalNotificationBells();
+    anchorEl.classList.toggle('has-external-notify', external.length > 0);
+    external.forEach(function (bell) {
+      if (bell.getAttribute('data-global-notification-wired') === '1') return;
+      bell.setAttribute('data-global-notification-wired', '1');
+      bell.setAttribute('aria-haspopup', 'dialog');
+      bell.setAttribute('aria-expanded', 'false');
+      bell.addEventListener('click', function (e) {
+        e.preventDefault();
+        openNotificationPanel();
+      });
+    });
+  }
+
+  function clearNotificationSubscription() {
+    if (notificationRef && notificationListener) {
+      notificationRef.off('value', notificationListener);
+    }
+    notificationRef = null;
+    notificationListener = null;
+    notificationRows = [];
+    updateNotificationBadges(0);
+  }
+
+  function subscribeNotifications(user) {
+    var SE = global.SEOpenPlay;
+    clearNotificationSubscription();
+    if (!user || !user.uid || !SE || !SE.getFirebaseDb) return;
+    var db = SE.getFirebaseDb();
+    if (!db) return;
+    notificationRef = db.ref('openplay_se/user_notifications/' + user.uid).orderByChild('createdAt').limitToLast(50);
+    notificationListener = function (snap) {
+      var rows = [];
+      var pending = 0;
+      snap.forEach(function (c) {
+        var data = c.val();
+        rows.push({ id: c.key, data: data });
+        if (data && (data.state === 'pending_action' || data.state === 'unread')) pending += 1;
+      });
+      rows.sort(function (a, b) {
+        return ((b.data && b.data.createdAt) || 0) - ((a.data && a.data.createdAt) || 0);
+      });
+      notificationRows = rows;
+      updateNotificationBadges(pending);
+      if (notificationPanelEl && notificationPanelEl.classList.contains('open')) renderNotificationRows();
+    };
+    notificationRef.on('value', notificationListener);
   }
 
   function profileValue(v) {
@@ -454,22 +865,32 @@
     var leagueProfile = getStaticLeagueLink();
     if (leagueProfile && leagueProfile.parentNode) {
       leagueProfile.parentNode.insertBefore(anchorEl, leagueProfile.nextSibling);
+      wireExternalNotificationBells();
       return;
     }
     var topbarRight = document.querySelector('.topbar-right');
     if (topbarRight) {
       topbarRight.appendChild(anchorEl);
+      wireExternalNotificationBells();
       return;
     }
     var header = document.querySelector('.header');
     if (header) {
       header.appendChild(anchorEl);
     }
+    wireExternalNotificationBells();
+  }
+
+  function setHeaderActionLane(on) {
+    if (!anchorEl || !anchorEl.parentNode || !anchorEl.parentNode.classList) return;
+    if (!anchorEl.parentNode.classList.contains('header')) return;
+    anchorEl.parentNode.classList.toggle(NS + '-header-host', !!on);
   }
 
   function setVisible(on) {
     if (!anchorEl) return;
     anchorEl.style.display = on ? 'flex' : 'none';
+    setHeaderActionLane(on);
   }
 
   function setStaticLeagueLink(mode) {
@@ -509,13 +930,15 @@
       var map = {
         'overview': 'SouthEnd_League_Overview.html',
         'schedule': 'SouthEnd_League_Schedule.html',
+        'standings': 'SouthEnd_League_Standings.html',
         'register': 'SouthEnd_League_Teams.html',
-        'invites': 'SouthEnd_League_Invites.html',
+        'invites': 'SouthEnd_League_Teams.html',
         'payment': 'SouthEnd_League_Payment.html',
         'southend_league_overview': 'SouthEnd_League_Overview.html',
         'southend_league_schedule': 'SouthEnd_League_Schedule.html',
+        'southend_league_standings': 'SouthEnd_League_Standings.html',
         'southend_league_teams': 'SouthEnd_League_Teams.html',
-        'southend_league_invites': 'SouthEnd_League_Invites.html',
+        'southend_league_invites': 'SouthEnd_League_Teams.html',
         'southend_league_payment': 'SouthEnd_League_Payment.html',
         'southend_league_play_hub': 'SouthEnd_League_Overview.html',
         'league-play': 'SouthEnd_League_Overview.html',
@@ -540,12 +963,20 @@
     if (off) {
       anchorEl.classList.add('is-signed-out');
       anchorEl.style.display = 'none';
+      setHeaderActionLane(false);
       setStaticLeagueLink('sign-in');
+      externalNotificationBells().forEach(function (bell) {
+        bell.style.display = 'none';
+      });
       closeMenu();
     } else {
       anchorEl.classList.remove('is-signed-out');
       anchorEl.style.display = 'flex';
+      setHeaderActionLane(true);
       setStaticLeagueLink('hide');
+      externalNotificationBells().forEach(function (bell) {
+        bell.style.display = '';
+      });
     }
   }
 
@@ -569,12 +1000,12 @@
     if (!link) {
       link = document.createElement('a');
       link.id = 'admin-hub-nav-link';
-      link.href = liveHref('SouthEnd_Admin_Hub.html');
+      link.href = adminHubHrefForContext();
       link.textContent = 'Admin';
       nav.appendChild(link);
     }
     link.classList.add('se-site-nav-link', 'se-site-nav-link--admin', 'hidden');
-    link.setAttribute('href', liveHref('SouthEnd_Admin_Hub.html'));
+    link.setAttribute('href', adminHubHrefForContext());
     link.textContent = 'Admin';
     nav.appendChild(link);
     return link;
@@ -594,7 +1025,6 @@
 
   function setStaffMenuVisible(on) {
     if (!anchorEl) return;
-    if (adminQuickEl) adminQuickEl.classList.toggle('is-visible', !!on);
     anchorEl.querySelectorAll('.staff').forEach(function (el) {
       el.classList.toggle('hidden', !on);
     });
@@ -604,6 +1034,7 @@
       if (sub) sub.classList.remove('open');
       if (toggle) toggle.setAttribute('aria-expanded', 'false');
     }
+    if (on) renderAdminMenuItems();
   }
 
   function refreshMenuStatus() {
@@ -620,6 +1051,8 @@
     if (!anchorEl) return;
     var accountLink = anchorEl.querySelector('[data-action="account"]');
     if (accountLink) accountLink.setAttribute('href', liveHref('SouthEnd_Pickleball_Hub.html'));
+    ensureAdminNavLink();
+    renderAdminMenuItems();
   }
 
   function updateUserState(user) {
@@ -627,12 +1060,14 @@
     currentUser = user || null;
     currentProfile = null;
     currentIsAdmin = false;
+    currentAdminScope = {};
     setVisible(true);
     setSignedOutMode(!currentUser);
     refreshAccountLink();
     refreshMenuStatus();
     setStaffMenuVisible(false);
     setAdminNavVisible(false);
+    subscribeNotifications(currentUser);
     if (!currentUser || !SE) return;
     if (SE.loadUserProfile) {
       SE.loadUserProfile(currentUser.uid).then(function (p) {
@@ -643,8 +1078,26 @@
     if (SE.loadAdminUidFlag) {
       SE.loadAdminUidFlag(currentUser.uid).then(function (ok) {
         currentIsAdmin = !!ok;
-        setStaffMenuVisible(currentIsAdmin);
-        setAdminNavVisible(currentIsAdmin);
+        if (!currentIsAdmin) {
+          currentAdminScope = {};
+          renderAdminMenuItems();
+          setStaffMenuVisible(false);
+          setAdminNavVisible(false);
+          return;
+        }
+        var scopePromise = SE.loadAdminScope ? SE.loadAdminScope(currentUser.uid) : Promise.resolve({});
+        scopePromise
+          .then(function (scope) {
+            currentAdminScope = scope || {};
+          })
+          .catch(function () {
+            currentAdminScope = {};
+          })
+          .then(function () {
+            renderAdminMenuItems();
+            setStaffMenuVisible(true);
+            setAdminNavVisible(true);
+          });
       });
     }
   }
@@ -654,7 +1107,9 @@
     if (!SE || !SE.firebaseConfigured || !SE.firebaseConfigured()) return;
     ensureDom();
     mountAnchor();
+    refreshAccountLink();
     ensureAdminNavLink();
+    renderAdminMenuItems();
     setVisible(true);
     setSignedOutMode(true);
     if (global.PickleballInviteShare && typeof global.PickleballInviteShare.refresh === 'function') {
@@ -665,10 +1120,20 @@
       if (!user) {
         closeMenu();
         closeProfileModal();
+        closeNotificationPanel();
       }
     });
   }
 
+  global.SEOpenPlayNotifications = {
+    syncUser: function (user) {
+      currentUser = user || currentUser;
+      wireExternalNotificationBells();
+      subscribeNotifications(user || null);
+    },
+    open: openNotificationPanel,
+    close: closeNotificationPanel,
+  };
   global.SEOpenPlayProfilePanel = { init: init };
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

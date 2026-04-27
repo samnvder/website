@@ -15,13 +15,21 @@
   var USER_PROFILE_PATH = 'openplay_se/user_profiles';
   var LEAGUE_DIRECTORY_PATH = 'openplay_se/league_directory';
   var ADMIN_UIDS_PATH = 'openplay_se/admin_uids';
+  var ADMIN_SCOPE_PATH = 'openplay_se/admin_scope';
   var MODULE_ACCESS_PATH = 'openplay_se/module_access';
   var ACTIVITY_PATH = 'openplay_se/activity';
   var BOARD_MESSAGES_PATH = 'openplay_se/board_messages';
+  var BOARD_PROFILES_PATH = 'openplay_se/board_profiles';
   /** Consolidated per-user projection (profile mirror, access snapshot, stats, league refs). */
   var USER_AGGREGATE_PATH = 'openplay_se/users';
   var USER_AGGREGATE_SCHEMA_VERSION = 1;
   var MODULE_ADVANCED_OPEN_PLAY = 'advanced_open_play';
+  var ADMIN_SCOPE_DEFAULT_POLICY = 'defaults';
+  var ADMIN_SCOPE_DEFAULTS = {
+    league_play: { team_management: true, schedule_scores: true },
+    open_play: { signups: true, checkins: true, activity: true },
+    platform: { module_access: true, user_management: true },
+  };
 
   /** Display values stored in `user_profiles/{uid}/skill` (and RSVP forms). */
   var SKILL_LEVEL_OPTION_VALUES = [
@@ -452,6 +460,15 @@
     });
   }
 
+  function accountEmailExists(email) {
+    return initFirebase().then(function () {
+      if (!firebaseAuth) throw new Error('Firebase unavailable');
+      return firebaseAuth.fetchSignInMethodsForEmail(String(email || '').trim()).then(function (methods) {
+        return Array.isArray(methods) && methods.length > 0;
+      });
+    });
+  }
+
   function getCurrentUser() {
     return firebaseAuth ? firebaseAuth.currentUser : null;
   }
@@ -747,22 +764,28 @@
     return Promise.all([
       loadUserProfile(uid),
       loadAdminUidFlag(uid),
+      loadAdminScope(uid),
       loadModuleAccess(uid),
     ])
       .then(function (results) {
         var p = results[0];
         var isAdmin = results[1];
-        var modules = results[2] || {};
+        var adminScope = results[2] || {};
+        var modules = results[3] || {};
         var ts = global.firebase.database.ServerValue.TIMESTAMP;
-        return firebaseDb.ref(USER_AGGREGATE_PATH + '/' + uid).update({
+        return Promise.all([
+          syncBoardProfileFromProfile(uid, p, isAdmin),
+          firebaseDb.ref(USER_AGGREGATE_PATH + '/' + uid).update({
           schemaVersion: USER_AGGREGATE_SCHEMA_VERSION,
           updatedAt: ts,
           profile: buildAggregateProfileMirror(p),
           access: {
             isAdmin: !!isAdmin,
+            adminScope: adminScope,
             modules: modules,
           },
-        });
+          }),
+        ]);
       })
       .catch(function () {});
   }
@@ -941,8 +964,23 @@
     } catch (e) {}
   }
 
-  /** True if openplay_se/admin_uids/{uid} === true (set in Firebase Console). */
   var boardMessagesRef = null;
+  var boardProfilesRef = null;
+
+  function displayBoardNameFromProfile(p) {
+    return buildLeagueDisplayNameFromProfile(p) || 'Member';
+  }
+
+  function syncBoardProfileFromProfile(uid, p, isAdmin) {
+    if (!firebaseDb || !uid || !global.firebase) return Promise.resolve();
+    p = p || {};
+    return firebaseDb.ref(BOARD_PROFILES_PATH + '/' + uid).update({
+      displayName: displayBoardNameFromProfile(p),
+      skill: String(p.skill || ''),
+      isStaffAdmin: !!isAdmin,
+      updatedAt: global.firebase.database.ServerValue.TIMESTAMP,
+    }).catch(function () {});
+  }
 
   function subscribeBoardMessages(callback) {
     if (!firebaseConfigured() || typeof callback !== 'function') return Promise.resolve();
@@ -951,6 +989,23 @@
       if (boardMessagesRef) {
         boardMessagesRef.off();
         boardMessagesRef = null;
+      }
+      if (boardProfilesRef) {
+        boardProfilesRef.off();
+        boardProfilesRef = null;
+      }
+      var messageList = [];
+      var profiles = {};
+      function emit() {
+        callback(messageList.map(function (row) {
+          var p = row && row.uid ? profiles[String(row.uid)] : null;
+          if (!p) return row;
+          return Object.assign({}, row, {
+            authorName: p.displayName || row.authorName || 'Member',
+            skill: p.skill || row.skill || '',
+            isStaffAdmin: p.isStaffAdmin === true,
+          });
+        }));
       }
       boardMessagesRef = firebaseDb.ref(BOARD_MESSAGES_PATH);
       boardMessagesRef.on('value', function (snap) {
@@ -969,7 +1024,13 @@
             return (b.ts || 0) - (a.ts || 0);
           });
         }
-        callback(list);
+        messageList = list;
+        emit();
+      });
+      boardProfilesRef = firebaseDb.ref(BOARD_PROFILES_PATH);
+      boardProfilesRef.on('value', function (snap) {
+        profiles = snap.val() || {};
+        emit();
       });
     });
   }
@@ -978,6 +1039,10 @@
     if (boardMessagesRef && firebaseDb) {
       boardMessagesRef.off();
       boardMessagesRef = null;
+    }
+    if (boardProfilesRef && firebaseDb) {
+      boardProfilesRef.off();
+      boardProfilesRef = null;
     }
   }
 
@@ -997,13 +1062,15 @@
         var skill = String(prof.skill || '').trim();
         var ref = firebaseDb.ref(BOARD_MESSAGES_PATH).push();
         return loadAdminUidFlag(u.uid).then(function (isAdmin) {
-          return ref.set({
+          return syncBoardProfileFromProfile(u.uid, prof, isAdmin).then(function () {
+            return ref.set({
             uid: u.uid,
             authorName: name,
             skill: skill,
             text: trimmed,
             isStaffAdmin: !!isAdmin,
             ts: global.firebase.database.ServerValue.TIMESTAMP,
+            });
           }).then(function () {
             syncUserAggregateBoardPost(u.uid);
           });
@@ -1043,7 +1110,8 @@
         var skill = String(prof.skill || '').trim();
         return loadAdminUidFlag(u.uid).then(function (isAdmin) {
           var ref = firebaseDb.ref(BOARD_MESSAGES_PATH).push();
-          return ref.set({
+          return syncBoardProfileFromProfile(u.uid, prof, isAdmin).then(function () {
+            return ref.set({
             uid: u.uid,
             authorName: name,
             skill: skill,
@@ -1051,6 +1119,7 @@
             kind: 'rsvp_log',
             isStaffAdmin: !!isAdmin,
             ts: global.firebase.database.ServerValue.TIMESTAMP,
+            });
           }).then(function () {
             syncUserAggregateBoardPost(u.uid);
           });
@@ -1068,8 +1137,12 @@
       var ref = firebaseDb.ref(BOARD_MESSAGES_PATH + '/' + String(messageId));
       return ref.once('value').then(function (snap) {
         var row = snap.val();
-        if (!row || String(row.uid) !== u.uid) return Promise.reject(new Error('Not allowed'));
-        return ref.remove();
+        if (!row) return Promise.reject(new Error('Not found'));
+        if (String(row.uid) === u.uid) return ref.remove();
+        return loadAdminUidFlag(u.uid).then(function (isAdmin) {
+          if (!isAdmin) return Promise.reject(new Error('Not allowed'));
+          return ref.remove();
+        });
       });
     });
   }
@@ -1089,6 +1162,81 @@
       .catch(function () {
         return false;
       });
+  }
+
+  /**
+   * Admin scope data contract:
+   * openplay_se/admin_scope/{uid}/{moduleKey}/{subModuleKey}: true|{enabled:true}
+   * Missing scope follows ADMIN_SCOPE_DEFAULT_POLICY ('defaults' => known submodules granted).
+   */
+  function normalizeAdminScope(raw) {
+    var out = {};
+    if (!raw || typeof raw !== 'object') return out;
+    Object.keys(raw).forEach(function (moduleKey) {
+      var moduleNode = raw[moduleKey];
+      if (!moduleNode || typeof moduleNode !== 'object') return;
+      var modOut = {};
+      Object.keys(moduleNode).forEach(function (subModuleKey) {
+        var val = moduleNode[subModuleKey];
+        var on = val === true || (val && typeof val === 'object' && val.enabled === true);
+        if (on) modOut[subModuleKey] = true;
+      });
+      if (Object.keys(modOut).length) out[String(moduleKey)] = modOut;
+    });
+    return out;
+  }
+
+  function cloneAdminScope(scope) {
+    return normalizeAdminScope(JSON.parse(JSON.stringify(scope || {})));
+  }
+
+  function applyAdminScopeDefaults(scope) {
+    var normalized = normalizeAdminScope(scope || {});
+    if (ADMIN_SCOPE_DEFAULT_POLICY !== 'defaults') return normalized;
+    var merged = cloneAdminScope(ADMIN_SCOPE_DEFAULTS);
+    Object.keys(normalized).forEach(function (moduleKey) {
+      if (!merged[moduleKey]) merged[moduleKey] = {};
+      Object.keys(normalized[moduleKey] || {}).forEach(function (subModuleKey) {
+        merged[moduleKey][subModuleKey] = true;
+      });
+    });
+    return merged;
+  }
+
+  function loadAdminScope(uid) {
+    if (!firebaseConfigured() || !uid) return Promise.resolve({});
+    return initFirebase()
+      .then(function () {
+        if (!firebaseDb) return {};
+        return firebaseDb
+          .ref(ADMIN_SCOPE_PATH + '/' + uid)
+          .once('value')
+          .then(function (snap) {
+            return applyAdminScopeDefaults(snap.val() || {});
+          });
+      })
+      .catch(function () {
+        return applyAdminScopeDefaults({});
+      });
+  }
+
+  function isAdminScopeEnabled(scope, moduleKey, subModuleKey) {
+    if (!moduleKey || !subModuleKey) return false;
+    var s = scope && typeof scope === 'object' ? scope : {};
+    return !!(s[moduleKey] && s[moduleKey][subModuleKey] === true);
+  }
+
+  function hasAnyAdminScopeForModule(scope, moduleKey) {
+    if (!moduleKey) return false;
+    var s = scope && typeof scope === 'object' ? scope : {};
+    return !!(s[moduleKey] && Object.keys(s[moduleKey]).length);
+  }
+
+  function hasAnyAdminScope(scope) {
+    var s = scope && typeof scope === 'object' ? scope : {};
+    return Object.keys(s).some(function (moduleKey) {
+      return hasAnyAdminScopeForModule(s, moduleKey);
+    });
   }
 
   function normalizeModuleId(moduleId) {
@@ -1286,6 +1434,9 @@
     FB_PATH: FB_PATH,
     USER_PROFILE_PATH: USER_PROFILE_PATH,
     ADMIN_UIDS_PATH: ADMIN_UIDS_PATH,
+    ADMIN_SCOPE_PATH: ADMIN_SCOPE_PATH,
+    ADMIN_SCOPE_DEFAULT_POLICY: ADMIN_SCOPE_DEFAULT_POLICY,
+    ADMIN_SCOPE_DEFAULTS: ADMIN_SCOPE_DEFAULTS,
     MODULE_ACCESS_PATH: MODULE_ACCESS_PATH,
     MODULE_ADVANCED_OPEN_PLAY: MODULE_ADVANCED_OPEN_PLAY,
     ACTIVITY_PATH: ACTIVITY_PATH,
@@ -1322,6 +1473,7 @@
     signInEmail: signInEmail,
     signOutUser: signOutUser,
     sendPasswordReset: sendPasswordReset,
+    accountEmailExists: accountEmailExists,
     getCurrentUser: getCurrentUser,
     saveUserProfile: saveUserProfile,
     saveUserProfilePatch: saveUserProfilePatch,
@@ -1335,6 +1487,11 @@
     logActivity: logActivity,
     isProfileComplete: isProfileComplete,
     loadAdminUidFlag: loadAdminUidFlag,
+    normalizeAdminScope: normalizeAdminScope,
+    loadAdminScope: loadAdminScope,
+    isAdminScopeEnabled: isAdminScopeEnabled,
+    hasAnyAdminScopeForModule: hasAnyAdminScopeForModule,
+    hasAnyAdminScope: hasAnyAdminScope,
     loadModuleAccess: loadModuleAccess,
     hasModuleAccess: hasModuleAccess,
     setModuleAccess: setModuleAccess,

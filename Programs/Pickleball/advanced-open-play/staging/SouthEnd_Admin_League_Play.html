@@ -81,15 +81,16 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
 <div class="header">
   <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
   <div class="hdr-title">League <span>Play Admin</span></div>
-  <div class="hdr-sub">Staff-only league operations. Team management, solo players, invites, and roster tools.</div>
+  <div class="hdr-sub">Staff-only: team management, weekly matchups and scores, solo players, invites, and roster tools.</div>
 </div>
-<nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav>
+<nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav data-se-hide-message-board="1">
   <a data-se-hub-tail class="se-site-nav-link" href="SouthEnd_Admin_Hub.html">Admin hub</a>
   <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_Admin_League_Play.html" aria-current="page">League admin</a>
 </nav>
-<script src="pickleball-hub-nav.js"></script>
+<script src="pickleball-hub-nav.js?v=20260426nav"></script>
 <div class="sub-nav" aria-label="League admin sections">
-  <a href="#team-management" class="active">Team management</a>
+  <a href="#team-management" class="active" data-section="teams">Team management</a>
+  <a href="#schedule-scores" data-section="scores">Schedule &amp; scores</a>
 </div>
 
 <div class="body-wrap">
@@ -102,6 +103,7 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
   <p class="hint" id="load-hint">Loading league data requires admin access and deployed database rules.</p>
 
   <div id="main-admin" class="hidden">
+  <div id="admin-section-teams">
     <section class="panel" id="panel-filters">
       <h2>Filters</h2>
       <p class="hint">Division toggles: leave all unchecked to show every division. With any checked, teams match <strong>any</strong> selected division.</p>
@@ -132,11 +134,92 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
       <p class="hint" id="teams-empty" style="display:none;">No teams match the current filters.</p>
     </section>
   </div>
+
+  <div id="admin-section-scores" class="hidden">
+    <section class="panel" id="panel-scores" aria-labelledby="scheduleScoresHeading">
+      <h2 id="scheduleScoresHeading">Schedule &amp; scores</h2>
+      <p class="hint">
+        Add matchups by week, enter scores, and mark <strong>Final</strong> when the match is complete. Public standings
+        (League &rarr; Standings) update from this data. New rows require
+        <strong>deployed</strong> rules that include <code>openplay_se/league_games</code>.
+      </p>
+      <div class="field-row" style="margin-bottom:12px;align-items:center;">
+        <div>
+          <label for="league-admin-week">Week</label>
+          <select id="league-admin-week" class="search-box" style="min-width:120px;">
+            <option value="1">Week 1</option>
+            <option value="2">Week 2</option>
+            <option value="3">Week 3</option>
+            <option value="4">Week 4</option>
+            <option value="5">Week 5</option>
+            <option value="6">Week 6</option>
+            <option value="7">Week 7</option>
+            <option value="8">Week 8</option>
+            <option value="9">Playoffs 1</option>
+            <option value="10">Playoffs 2</option>
+          </select>
+        </div>
+      </div>
+      <h3 style="font-size:13px;margin:0 0 8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);">Add matchup</h3>
+      <div class="field-row" style="margin-bottom:8px;">
+        <div>
+          <label for="league-add-division">Division</label>
+          <select id="league-add-division" class="search-box">
+            <option value="3.0">3.0</option>
+            <option value="3.5">3.5</option>
+            <option value="4.0">4.0</option>
+            <option value="open">Open (5.0+)</option>
+          </select>
+        </div>
+        <div>
+          <label for="league-add-draw">Draw</label>
+          <select id="league-add-draw" class="search-box">
+            <option value="womens">Women's</option>
+            <option value="mens">Men's</option>
+            <option value="mixed">Mixed</option>
+          </select>
+        </div>
+        <div>
+          <label for="league-add-home">Home</label>
+          <input type="text" id="league-add-home" class="search-box" placeholder="Home team" autocomplete="off" />
+        </div>
+        <div>
+          <label for="league-add-away">Away</label>
+          <input type="text" id="league-add-away" class="search-box" placeholder="Away team" autocomplete="off" />
+        </div>
+        <div style="align-self:flex-end;">
+          <button type="button" class="btn btn-neon" id="league-add-btn">Add matchup</button>
+        </div>
+      </div>
+      <p class="msg" id="league-games-msg" style="margin:8px 0;"></p>
+      <h3 style="font-size:13px;margin:16px 0 8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);">This week’s games</h3>
+      <div style="overflow:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Division</th>
+              <th>Draw</th>
+              <th>Home</th>
+              <th>Away</th>
+              <th>H</th>
+              <th>A</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="league-games-tbody"></tbody>
+        </table>
+      </div>
+      <p class="hint" id="league-games-empty" style="display:none;">No matchups for this week yet. Add a row above.</p>
+    </section>
+  </div>
+  </div>
 </div>
 
 <script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/openplay-profile-panel.js?v=20260426-routing2&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/league-admin-games.js"></script>
 <script>
 (function () {
   'use strict';
@@ -814,6 +897,9 @@ th{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.08em;text-tran
       return loadAllData();
     }).then(function () {
       render();
+      if (window.LeagueAdminGames && typeof window.LeagueAdminGames.startAfterAuth === 'function') {
+        window.LeagueAdminGames.startAfterAuth();
+      }
     }).catch(function (e) {
       if (e) showLoadError(e);
     });

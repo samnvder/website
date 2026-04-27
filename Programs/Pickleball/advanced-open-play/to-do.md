@@ -35,7 +35,9 @@ Single place for backlog, integrations, and follow-ups for **`Programs/Picklebal
 
 ## Backlog (non-Stripe)
 
+- [x] **Standings + league games** — `openplay_se/league_games` in rules; public standings aggregate completed games; staff entry under **League admin → Schedule & scores**. Deploy `database.rules.json` when rules change.
 - [ ] Confirm production **`database.rules.json`** deployed whenever rules change (`npm run firebase:deploy-rules` from repo `Website/`).
+- [ ] Move notification production from client-side mirroring to **Cloud Functions** when private games, tournaments, or push/email delivery are added; keep `openplay_se/user_notifications/{uid}` as the user-facing feed.
 - [ ] Document staff access patterns for **user_profiles** (Console vs future admin tool) if front desk needs read-only waiver view without Firebase Console.
 - [ ] Optional: unify **`staging/`** with **`live/`** after large features (promote script / QA).
 
@@ -45,4 +47,4 @@ Single place for backlog, integrations, and follow-ups for **`Programs/Picklebal
 
 _Add completed items here with a one-line note and optional date._
 
-- _(none yet)_
+- 2026-04-26: Added scalable notification feed baseline for League Play (`user_notifications/{uid}`), with team invite notifications mirrored from invite lifecycle events and the profile-header bell reading the unified feed.

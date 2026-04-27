@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <base href="/league-play/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>League — Standings</title>
+    <link rel="icon" type="image/jpeg" href="../favicon.jpg" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/south-end-league.css" />
+  </head>
+  <body class="league-page">
+    <a class="league-skip" href="#main">Skip to content</a>
+    <div class="header" role="banner">
+      <div>
+        <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+        <div class="hdr-title">LEAGUE <span>STANDINGS</span></div>
+        <div class="hdr-sub">Per-division and per-draw win–loss, updated as results are recorded.</div>
+      </div>
+      <div class="league-header-actions">
+        <a
+          class="league-header-notify"
+          id="league-header-notify"
+          href="#notifications"
+          aria-label="Notifications"
+        >
+          <svg
+            class="league-header-notify__icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M10 20h4a2 2 0 0 1-4 0"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span class="league-header-notify__badge" id="league-header-notify-badge" hidden aria-hidden="true"></span>
+        </a>
+        <a
+          class="league-header-profile"
+          href="../SouthEnd_OpenPlay_Account.html?return=SouthEnd_League_Standings.html"
+          aria-label="Open main Pickleball profile and account (same as Open Play)"
+        >
+          <svg class="league-header-profile__icon" viewBox="0 0 24 24" aria-hidden="true"
+            ><circle cx="12" cy="8" r="3.5" /><path d="M5.5 20.5v-1.2A5.2 5.2 0 0 1 10.7 14h2.6a5.2 5.2 0 0 1 5.2 5.2v1.2"
+          /></svg>
+          Sign in
+        </a>
+      </div>
+    </div>
+    <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav></nav>
+    <script src="js/pickleball-hub-nav.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <nav class="se-site-nav" aria-label="League play">
+      <a class="se-site-nav-link" href="SouthEnd_League_Overview.html">Overview</a>
+      <a class="se-site-nav-link" href="SouthEnd_League_Schedule.html">Schedule</a>
+      <a class="se-site-nav-link se-site-nav-link--active" href="SouthEnd_League_Standings.html" aria-current="page"
+        >Standings</a
+      >
+      <a class="se-site-nav-link" href="SouthEnd_League_Teams.html">Register</a>
+    </nav>
+    <main id="main" class="league-wrap league-wrap--standings" tabindex="-1">
+      <div class="league-standings-herohead">
+        <div class="league-standings-herohead__text">
+          <h1 class="league-standings-title" id="standingsHeading">Standings</h1>
+          <p class="league-standings-lead">
+            Pick a <strong>division</strong> and <strong>draw</strong> to view the table. Data below is
+            <strong>placeholder</strong> until live results are connected.
+          </p>
+        </div>
+        <div class="league-standings-herohead__filters">
+          <div class="league-standings-field">
+            <span class="league-standings-field__label" id="divisionLabel">Division</span>
+            <div
+              class="league-standings-division"
+              id="leagueStandingsDivision"
+              role="tablist"
+              aria-labelledby="divisionLabel"
+            ></div>
+          </div>
+          <div class="league-standings-field">
+            <span class="league-standings-field__label" id="categoryLabel">Draw</span>
+            <div
+              class="league-standings-format"
+              id="leagueStandingsCategory"
+              role="tablist"
+              aria-labelledby="categoryLabel"
+            ></div>
+          </div>
+        </div>
+      </div>
+      <div id="leagueStandingsTable" class="league-standings-body"></div>
+    </main>
+    <footer
+      class="pickleball-share-footer"
+      data-pickleball-share
+      data-share-context="league"
+      aria-label="Invite friends to league play"
+    ></footer>
+    <script src="../js/pickleball-invite-share.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="js/league-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="js/south-end-league-sync.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="../js/openplay-firebase-config.js"></script>
+    <script src="../js/south-end-openplay-sync.js"></script>
+    <script src="../js/openplay-profile-panel.js?v=20260427-admin-hub"></script>
+    <script src="js/league-standings.js"></script>
+  </body>
+</html>

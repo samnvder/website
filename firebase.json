@@ -21,13 +21,14 @@
         { "source": "/signup", "destination": "/SouthEnd_OpenPlay_Account.html" },
         { "source": "/advanced-open-play", "destination": "/SouthEnd_OpenPlay_Account.html" },
         { "source": "/account", "destination": "/SouthEnd_OpenPlay_Account.html" },
+        { "source": "/forgot-password", "destination": "/SouthEnd_Forgot_Password.html" },
         { "source": "/rsvp", "destination": "/SouthEnd_Session_RSVP.html" },
         { "source": "/checkin", "destination": "/SouthEnd_Session_Checkin.html" },
         { "source": "/message-board", "destination": "/SouthEnd_Message_Board.html" },
         { "source": "/league-play", "destination": "/league-play/SouthEnd_League_Overview.html" },
         { "source": "/league-play/", "destination": "/league-play/SouthEnd_League_Overview.html" },
         { "source": "/league-play/register", "destination": "/league-play/SouthEnd_League_Teams.html" },
-        { "source": "/league-play/invites", "destination": "/league-play/SouthEnd_League_Invites.html" },
+        { "source": "/league-play/invites", "destination": "/league-play/SouthEnd_League_Overview.html" },
         { "source": "/league-play/overview", "destination": "/league-play/SouthEnd_League_Overview.html" },
         { "source": "/league-play/schedule", "destination": "/league-play/SouthEnd_League_Schedule.html" },
         { "source": "/admin", "destination": "/SouthEnd_Admin_Hub.html" },
@@ -35,6 +36,78 @@
         { "source": "/admin/module-access", "destination": "/SouthEnd_Admin_Module_Access.html" }
       ],
       "headers": [
+        {
+          "source": "/admin",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "/SouthEnd_Admin_Hub.html",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "/account",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "/SouthEnd_OpenPlay_Account.html",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "/forgot-password",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "/SouthEnd_Forgot_Password.html",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "/SouthEnd_Message_Board.html",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "/message-board",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0, must-revalidate"
+            }
+          ]
+        },
         {
           "source": "/js/openplay-firebase-config.js",
           "headers": [
@@ -55,6 +128,24 @@
         },
         {
           "source": "/js/south-end-openplay-sync.js",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "/league-play/*.html",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, max-age=0, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "/league-play/**",
           "headers": [
             {
               "key": "Cache-Control",

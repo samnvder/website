@@ -624,7 +624,7 @@ button.account-strip-link:hover{text-decoration:underline;}
       <div class="pay-title">Payment</div>
       <div class="pay-num">PayPal</div>
       <div class="pay-sub">Total Due: $0</div>
-      <div class="pay-note" style="grid-column:1/-1;font-size:11px;color:rgba(255,255,255,.5);margin-top:4px;">You'll get the PayPal link on the next screen after you reserve.</div>
+      <div class="pay-note" id="pay-note" style="grid-column:1/-1;font-size:11px;color:rgba(255,255,255,.5);margin-top:4px;">You'll get the PayPal link on the next screen after you reserve.</div>
     </div>
 
     <div class="waiver-block" id="waiver-block">
@@ -788,7 +788,7 @@ button.account-strip-link:hover{text-decoration:underline;}
 <script src="js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script src="js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script src="js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
-<script src="js/openplay-profile-panel.js?v=20260426-routing2&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script src="js/openplay-rsvp-helpers.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script src="js/openplay-waiver-modals.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <script>
@@ -1055,6 +1055,7 @@ function updatePaymentDisplay() {
   if (!payBox) return;
   var payNum = payBox.querySelector('.pay-num');
   var paySub = payBox.querySelector('.pay-sub');
+  var payNote = document.getElementById('pay-note');
   if (!payNum || !paySub) return;
 
   var memberVal = (document.getElementById('p-member') && document.getElementById('p-member').value) || '';
@@ -1065,6 +1066,7 @@ function updatePaymentDisplay() {
     payBox.style.pointerEvents = 'none';
     payNum.textContent = 'No Charge';
     paySub.textContent = pricing.summary;
+    if (payNote) payNote.classList.add('hidden');
     return;
   }
 
@@ -1072,6 +1074,10 @@ function updatePaymentDisplay() {
   payBox.style.pointerEvents = '';
   payNum.textContent = 'PayPal';
   paySub.textContent = pricing.summary;
+  if (payNote) {
+    payNote.textContent = 'You\'ll get the PayPal link on the next screen after you reserve.';
+    payNote.classList.remove('hidden');
+  }
 }
 
 function escapeHtml(s) {
