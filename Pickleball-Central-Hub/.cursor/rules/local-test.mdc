@@ -1,0 +1,59 @@
+---
+description: Pickleball local test site — serve advanced-open-play/testing/local-page directly. Invoke with command-local-test.
+globs: []
+alwaysApply: false
+---
+
+# command-local-test — Quick local QA (Pickleball Advanced Open Play)
+
+> **Invoke:** Type `command-local-test`, `@command-local-test`, or "run local test" for the Open Play local-page site.
+
+---
+
+## Law
+
+`Programs/Pickleball/advanced-open-play/testing/local-page/` is the only local test site source. Do not mirror staging/live into it unless Sam explicitly asks for a copy operation.
+
+## Action
+
+1. From the **Website** folder (`package.json` root), run:
+   ```powershell
+   npm run local-test
+   ```
+   This starts **live-server** on port **3456** and opens `/Programs/Pickleball/advanced-open-play/testing/local-page/index.html`. It does not copy files.
+
+2. **Guard only** (no browser):
+   ```powershell
+   npm run local-test:sync
+   ```
+   This validates the local test site exists. It does not copy files.
+
+---
+
+## What gets served
+
+The existing files under `Programs/Pickleball/advanced-open-play/testing/local-page/`.
+
+---
+
+## Output
+
+| Path | Purpose |
+|------|---------|
+| `Programs/Pickleball/advanced-open-play/testing/local-page/...` | Canonical local test site — **not** for deploy |
+
+Do not regenerate this folder from staging/live during normal local development.
+
+---
+
+## URL (after `npm run local-test`)
+
+Canonical path:
+
+`http://127.0.0.1:3456/Programs/Pickleball/advanced-open-play/testing/local-page/index.html`
+
+---
+
+## Staging vs live (Open Play)
+
+Local preview edits go to **`Programs/Pickleball/advanced-open-play/testing/local-page/`**. Firebase Hosting deploys **`Programs/Pickleball/live/`** only when Sam explicitly asks for production propagation/deploy.

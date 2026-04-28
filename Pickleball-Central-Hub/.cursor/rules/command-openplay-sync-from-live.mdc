@@ -1,0 +1,44 @@
+---
+description: Sync Open Play staging from live without touching the local test site.
+globs: []
+alwaysApply: false
+---
+
+# @command-openplay-sync-from-live
+
+**Triggers:** `@command-openplay-sync-from-live`, `command-openplay-sync-from-live`, `openplay sync from live`, `sync openplay from live`
+
+**Scope:** Pickleball Advanced Open Play only — `Programs/Pickleball/advanced-open-play/`.
+
+## Purpose
+
+When **`Programs/Pickleball/live/`** (production source) is ahead of **`staging/`**, align staging app code without touching the local test site:
+
+- **`staging/`** keeps its existing `js/openplay-firebase-config.js` and `js/openplay-firebase-config.example.js` (if present before the run).
+- **`Programs/Pickleball/advanced-open-play/testing/local-page/`** is not part of this command unless Sam explicitly asks to copy into it.
+
+## Action (agent)
+
+1. From the **Website** repo root, run:
+
+   ```powershell
+   npm run openplay:sync-from-live
+   ```
+
+2. Confirm exit code **0** and verify `testing/local-page/` was not overwritten.
+
+3. If the script warns that a prior `openplay-firebase-config.js` was missing in a folder, tell the user to paste **staging** / **test** Firebase keys into that folder’s `js/openplay-firebase-config.js` — do **not** copy production keys from `live/` for non-production.
+
+## What the script does
+
+| Target | Behavior |
+|--------|----------|
+| `staging/` | Full tree replace from `live/`, then restore preserved Firebase files from **before** the run. |
+| `testing/local-page/` | Do not update. This is the local test source unless Sam explicitly requests a copy operation. |
+
+## Related
+
+- **`npm run openplay:bootstrap-staging`** — replaces `staging/` with a **full** copy of `live/` (including Firebase config). Use only when you want staging to match production keys too.
+- **`npm run local-test`** — serves `testing/local-page/` directly.
+- **`npm run local-test:sync`** — guard only; no file copy.
+- **`staging-live-deployment-pattern.mdc`** — full staging vs live workflow.

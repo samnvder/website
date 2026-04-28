@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>League — Payment | South End Pickleball</title>
+    <meta name="description" content="Complete league registration payment for South End pickleball.">
+    <link rel="icon" type="image/jpeg" href="../favicon.jpg">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/south-end-league.css?v=20260427b" />
+  </head>
+  <body class="league-page">
+    <a class="league-skip" href="#main">Skip to content</a>
+    <div class="header" role="banner">
+      <div>
+        <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+        <div class="hdr-title">LEAGUE <span>PAYMENT</span></div>
+        <div class="hdr-sub">Review your league fee, then open PayPal to complete payment.</div>
+      </div>
+      <div class="league-header-actions">
+        <a
+          class="league-header-notify"
+          id="league-header-notify"
+          href="#notifications"
+          aria-label="Notifications"
+        >
+          <svg
+            class="league-header-notify__icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M10 20h4a2 2 0 0 1-4 0"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span class="league-header-notify__badge" id="league-header-notify-badge" hidden aria-hidden="true"></span>
+        </a>
+        <a
+          class="league-header-profile"
+          href="/open-play/account"
+          aria-label="Open main Pickleball profile and account (same as Open Play)"
+        >
+          <svg class="league-header-profile__icon" viewBox="0 0 24 24" aria-hidden="true"
+            ><circle cx="12" cy="8" r="3.5" /><path d="M5.5 20.5v-1.2A5.2 5.2 0 0 1 10.7 14h2.6a5.2 5.2 0 0 1 5.2 5.2v1.2"
+          /></svg>
+          Sign in
+        </a>
+      </div>
+    </div>
+    <nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav></nav>
+    <script src="js/pickleball-hub-nav.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <nav class="se-site-nav" aria-label="League play">
+      <a class="se-site-nav-link" href="/league-play">Overview</a>
+      <a class="se-site-nav-link" href="/league-play/schedule">Schedule</a>
+      <a class="se-site-nav-link" href="/league-play/standings">Standings</a>
+      <a class="se-site-nav-link" href="/league-play/register">Register</a>
+    </nav>
+    <main id="main" class="league-wrap league-wrap--narrow" tabindex="-1">
+      <section class="league-payment-hero" aria-labelledby="leaguePaymentHeading">
+        <div class="league-payment-hero__title" id="leaguePaymentHeading">Pay with PayPal</div>
+        <div class="league-payment-hero__amount" id="leaguePaymentAmount">Total Due: $0</div>
+        <p class="league-payment-hero__copy" id="leaguePaymentCopy">
+          Complete your South End Pickleball League payment in PayPal.
+        </p>
+        <a
+          class="league-payment-hero__btn"
+          id="leaguePayPalBtn"
+          href="https://www.paypal.com/qrcodes/managed/e99aaef1-4565-4c15-aba7-c7853b9c4aca"
+          target="_blank"
+          rel="noopener"
+        >Open PayPal -></a>
+        <div class="league-payment-hero__hint" id="leaguePaymentHint">Enter this amount manually in PayPal.</div>
+      </section>
+
+      <section class="league-card league-withdraw-card" id="soloWithdrawCard" style="display: none" hidden>
+        <h2>Need to withdraw?</h2>
+        <p>If you signed up solo by mistake, you can withdraw your solo registration before paying. You can register again while league registration is open.</p>
+        <p>
+          <button type="button" class="btn btn--secondary" id="withdrawSoloBtn">Withdraw solo registration</button>
+        </p>
+        <p class="help" id="withdrawSoloStatus" role="status"></p>
+      </section>
+
+      <section class="league-card">
+        <h2>After payment</h2>
+        <p>Keep your PayPal receipt for your records. You can return to your league dashboard for team details and notification updates.</p>
+        <p>
+          <a class="btn" href="/league-play#teamPanel">Back to league dashboard</a>
+        </p>
+      </section>
+    </main>
+    <footer
+      class="pickleball-share-footer"
+      data-pickleball-share
+      data-share-context="league"
+      aria-label="Invite friends to league play"
+    ></footer>
+    <script src="../js/pickleball-invite-share.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="js/league-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="js/south-end-league-sync.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+    <script src="../js/openplay-firebase-config.js"></script>
+    <script src="../js/south-end-openplay-sync.js"></script>
+    <script src="../js/openplay-profile-panel.js?v=20260427-admin-hub"></script>
+    <script>
+      (function () {
+        var L = window.LeagueSync;
+        if (!L || !window.LEAGUE_FIREBASE_CONFIG) return;
+        if (!L.init(window.LEAGUE_FIREBASE_CONFIG) || !window.LEAGUE_FIREBASE_CONFIG.apiKey) return;
+
+        function leaguePaymentReturnTarget() {
+          var p = String(window.location.pathname || '').replace(/\\/g, '/');
+          var q = window.location.search || '';
+          if (/SouthEnd_League_Payment\.html$/i.test(p)) {
+            return 'league-play/SouthEnd_League_Payment.html' + q;
+          }
+          return '/league-play/payment' + q;
+        }
+
+        function fixPaymentPageProfileReturn() {
+          var a = document.querySelector("a.league-header-profile");
+          if (a) {
+            var targ = leaguePaymentReturnTarget();
+            var p = String(window.location.pathname || '').replace(/\\/g, '/');
+            if (/SouthEnd_League_Payment\.html$/i.test(p)) {
+              a.href = '../SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent(targ);
+            } else {
+              a.href = '/open-play/account?return=' + encodeURIComponent(targ);
+            }
+          }
+        }
+        fixPaymentPageProfileReturn();
+
+        var PAYPAL_LINKS = {
+          50: "",
+          75: "",
+          200: "",
+          250: "",
+        };
+        var PAYPAL_FALLBACK_URL = "https://www.paypal.com/qrcodes/managed/e99aaef1-4565-4c15-aba7-c7853b9c4aca";
+        var params = new URLSearchParams(window.location.search);
+        var amount = Math.max(0, Number(params.get("amount")) || 0);
+        var regType = String(params.get("type") || "").toLowerCase();
+        var queryFallbackAmount = amount;
+        var queryFallbackType = regType;
+        var amountEl = document.getElementById("leaguePaymentAmount");
+        var copyEl = document.getElementById("leaguePaymentCopy");
+        var btn = document.getElementById("leaguePayPalBtn");
+        var hint = document.getElementById("leaguePaymentHint");
+        var payHeading = document.getElementById("leaguePaymentHeading");
+        var sub = document.querySelector(".hdr-sub");
+        var soloWithdrawCard = document.getElementById("soloWithdrawCard");
+        var withdrawSoloBtn = document.getElementById("withdrawSoloBtn");
+        var withdrawSoloStatus = document.getElementById("withdrawSoloStatus");
+        var currentUser = null;
+        var pendingAuthRedirect = null;
+        var label = "$" + String(amount);
+        var isKnownLeagueFee = amount === 50 || amount === 75 || amount === 200 || amount === 250;
+        var paymentUrl = PAYPAL_LINKS[amount] || PAYPAL_FALLBACK_URL;
+
+        function captainFeeAmount(team) {
+          return team && team.allMembers ? 200 : 250;
+        }
+
+        function refreshPaymentVars() {
+          label = "$" + String(amount);
+          isKnownLeagueFee = amount === 50 || amount === 75 || amount === 200 || amount === 250;
+          paymentUrl = PAYPAL_LINKS[amount] || PAYPAL_FALLBACK_URL;
+        }
+
+        function initFromQuery() {
+          if (amountEl) amountEl.textContent = "Total Due: " + label;
+          if (copyEl) {
+            copyEl.textContent = regType === "solo"
+              ? "Complete your solo league registration payment in PayPal."
+              : "Complete your team league registration payment in PayPal.";
+          }
+          if (btn) {
+            btn.href = paymentUrl;
+            btn.textContent = amount > 0 ? "Open PayPal (" + label + ") ->" : "Open PayPal ->";
+          }
+          if (hint) {
+            hint.textContent = PAYPAL_LINKS[amount]
+              ? "PayPal will open with this amount."
+              : "Enter this amount manually in PayPal.";
+            if (!isKnownLeagueFee) {
+              hint.textContent = "If this amount looks wrong, return to registration before paying.";
+            }
+          }
+        }
+
+        function setWithdrawStatus(text, isError) {
+          if (!withdrawSoloStatus) return;
+          withdrawSoloStatus.textContent = text || "";
+          withdrawSoloStatus.style.color = isError ? "#b00020" : "#1b5e20";
+        }
+
+        function setSoloWithdrawVisible(show) {
+          if (!soloWithdrawCard) return;
+          soloWithdrawCard.style.display = show ? "" : "none";
+          soloWithdrawCard.hidden = !show;
+        }
+
+        function applySoloWithdrawn() {
+          document.body.classList.add("league-page--solo-withdrawn");
+          setSoloWithdrawVisible(false);
+          if (payHeading) payHeading.textContent = "Solo registration withdrawn";
+          if (sub) sub.textContent = "Your solo league registration has been withdrawn.";
+          if (amountEl) amountEl.textContent = "No payment due";
+          if (copyEl) {
+            copyEl.textContent =
+              "You're no longer signed up as a solo player. Register again when you're ready.";
+          }
+          if (btn) {
+            btn.removeAttribute("href");
+            btn.removeAttribute("target");
+            btn.removeAttribute("rel");
+            btn.setAttribute("hidden", "true");
+            btn.setAttribute("aria-hidden", "true");
+            btn.style.display = "none";
+          }
+          if (hint) hint.textContent = "";
+        }
+
+        function applyStaffTeamPaymentRecorded() {
+          document.body.classList.add("league-page--team-payment-on-file");
+          if (payHeading) payHeading.textContent = "Payment on file";
+          if (sub) sub.textContent = "League staff have recorded a team payment for your squad.";
+          if (amountEl) amountEl.textContent = "No PayPal total due (staff)";
+          if (copyEl) {
+            copyEl.textContent =
+              "League staff marked your team as paid. You do not need to use PayPal on this page unless the club tells you to pay again.";
+          }
+          if (btn) {
+            btn.removeAttribute("href");
+            btn.removeAttribute("target");
+            btn.removeAttribute("rel");
+            btn.setAttribute("hidden", "true");
+            btn.setAttribute("aria-hidden", "true");
+            btn.style.display = "none";
+          }
+          if (hint) hint.textContent = "";
+        }
+
+        function applyStaffSoloPaymentRecorded() {
+          document.body.classList.add("league-page--solo-payment-on-file");
+          if (payHeading) payHeading.textContent = "Payment on file";
+          if (sub) sub.textContent = "League staff have recorded your solo registration payment.";
+          if (amountEl) amountEl.textContent = "No PayPal total due (staff)";
+          if (copyEl) {
+            copyEl.textContent =
+              "League staff marked your solo registration as paid. You do not need to use PayPal on this page unless the club tells you to pay again.";
+          }
+          if (btn) {
+            btn.removeAttribute("href");
+            btn.removeAttribute("target");
+            btn.removeAttribute("rel");
+            btn.setAttribute("hidden", "true");
+            btn.setAttribute("aria-hidden", "true");
+            btn.style.display = "none";
+          }
+          if (hint) hint.textContent = "";
+        }
+
+        initFromQuery();
+
+        function applyTeamMemberNoFee() {
+          document.body.classList.add("league-page--team-member-payment");
+          if (payHeading) payHeading.textContent = "Team fee";
+          if (sub) sub.textContent = "Your captain pays the team registration fee.";
+          if (amountEl) amountEl.textContent = "No team fee due from you";
+          if (copyEl) {
+            copyEl.textContent =
+              "Players on the roster do not pay the team fee here. Contact your captain with payment questions.";
+          }
+          if (btn) {
+            btn.removeAttribute("href");
+            btn.removeAttribute("target");
+            btn.removeAttribute("rel");
+            btn.setAttribute("hidden", "true");
+            btn.setAttribute("aria-hidden", "true");
+            btn.style.display = "none";
+          }
+          if (hint) hint.textContent = "";
+        }
+
+        if (withdrawSoloBtn) {
+          withdrawSoloBtn.addEventListener("click", function () {
+            if (!currentUser) {
+              setWithdrawStatus("Open your league account first.", true);
+              return;
+            }
+            if (!window.confirm("Withdraw your solo league registration? You can register again while registration is open.")) {
+              return;
+            }
+            withdrawSoloBtn.disabled = true;
+            withdrawSoloBtn.textContent = "Withdrawing...";
+            setWithdrawStatus("Withdrawing your solo registration...");
+            L.withdrawSoloRegistration(currentUser.uid)
+              .then(function () {
+                setWithdrawStatus("Your solo registration has been withdrawn.");
+                applySoloWithdrawn();
+              })
+              .catch(function (err) {
+                withdrawSoloBtn.disabled = false;
+                withdrawSoloBtn.textContent = "Withdraw solo registration";
+                setWithdrawStatus(err && err.message ? err.message : "Could not withdraw your solo registration.", true);
+              });
+          });
+        }
+
+        function applySoloWithdrawAndPaidUi(acct) {
+          var isSoloReg = !!(acct && acct.registrationType === "solo" && !acct.teamId);
+          var soloPaid = !!(isSoloReg && acct.adminMarkedPaid === true);
+          setSoloWithdrawVisible(regType === "solo" && isSoloReg && !soloPaid);
+          if (regType === "solo" && soloPaid) {
+            setWithdrawStatus("Contact league staff to change a registration after payment is recorded.", true);
+          }
+        }
+
+        L.onAuth(function (user) {
+          fixPaymentPageProfileReturn();
+          if (pendingAuthRedirect) {
+            clearTimeout(pendingAuthRedirect);
+            pendingAuthRedirect = null;
+          }
+          currentUser = user || null;
+          if (!user) {
+            setSoloWithdrawVisible(false);
+            pendingAuthRedirect = setTimeout(function () {
+              pendingAuthRedirect = null;
+              if (L.getCurrentUser()) return;
+              var p = String(window.location.pathname || '').replace(/\\/g, '/');
+              if (/SouthEnd_League_Payment\.html$/i.test(p)) {
+                window.location.replace('../SouthEnd_OpenPlay_Account.html?return=' + encodeURIComponent(leaguePaymentReturnTarget()));
+              } else {
+                window.location.replace('/open-play/account?return=' + encodeURIComponent(leaguePaymentReturnTarget()));
+              }
+            }, 800);
+            return;
+          }
+          L.getLeagueAccount(user.uid)
+            .then(function (acct) {
+              if (acct && acct.registrationStatus) {
+                if (acct.registrationType === "solo" && !acct.teamId) {
+                  if (acct.adminMarkedPaid === true) {
+                    applyStaffSoloPaymentRecorded();
+                    applySoloWithdrawAndPaidUi(acct);
+                    return null;
+                  }
+                  var sa = Math.max(0, Number(acct.feeAmount) || 0);
+                  if (!sa) sa = acct.isMember ? 50 : 75;
+                  amount = sa;
+                  regType = "solo";
+                  refreshPaymentVars();
+                  initFromQuery();
+                  applySoloWithdrawAndPaidUi(acct);
+                  return null;
+                }
+                if (acct.teamId) {
+                  return L.getTeam(acct.teamId).then(function (team) {
+                    if (!team) {
+                      amount = queryFallbackAmount;
+                      regType = queryFallbackType;
+                      refreshPaymentVars();
+                      initFromQuery();
+                      return;
+                    }
+                    if (team.captainUid === user.uid) {
+                      amount = captainFeeAmount(team);
+                      regType = "captain";
+                      refreshPaymentVars();
+                      initFromQuery();
+                      if (team.adminMarkedPaid === true) {
+                        applyStaffTeamPaymentRecorded();
+                      }
+                    } else {
+                      applyTeamMemberNoFee();
+                    }
+                  });
+                }
+              }
+              amount = queryFallbackAmount;
+              regType = queryFallbackType;
+              refreshPaymentVars();
+              initFromQuery();
+              if (acct) applySoloWithdrawAndPaidUi(acct);
+            })
+            .catch(function () {});
+        });
+      })();
+    </script>
+  </body>
+</html>

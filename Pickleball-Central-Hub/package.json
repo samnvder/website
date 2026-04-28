@@ -1,0 +1,29 @@
+{
+  "name": "southend-pickleball-central",
+  "version": "1.0.0",
+  "description": "South End Pickleball Central Hub — Firebase-hosted pickleball app (Hub, Open Play, League Play, Admin, Message Board). Extracted as standalone repo.",
+  "scripts": {
+    "test": "node --test testing/unit/test-openplay-rsvp.js testing/unit/test-firebase-rules.js testing/unit/test-rating-eligibility.js testing/unit/test-roll-live.js",
+    "firebase:deploy-rules": "npx firebase-tools deploy --only database --non-interactive",
+    "deploy:openplay": "node scripts/openplay-deploy.js --only hosting",
+    "deploy:openplay:all": "node scripts/openplay-deploy.js --only hosting,database",
+    "openplay:use-staging": "node scripts/openplay-switch-tree.js staging",
+    "openplay:use-live": "node scripts/openplay-switch-tree.js live",
+    "openplay:bootstrap-staging": "node scripts/openplay-bootstrap-staging.js",
+    "openplay:sync-from-live": "node scripts/openplay-sync-from-live.js",
+    "openplay:promote": "node scripts/openplay-promote-staging-to-live.js",
+    "roll-live": "node scripts/openplay-roll-live.js",
+    "local-test": "npx live-server --port=3456 --open=/testing/local-page/index.html",
+    "local-test:sync": "node testing/scripts/local-test.js",
+    "summarize": "node scripts/openplay-summarize.js"
+  },
+  "keywords": ["south-end-club", "pickleball", "central-hub", "open-play", "league-play", "firebase"],
+  "author": "South End Club",
+  "license": "ISC",
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "firebase-tools": "^13.0.0",
+    "marked": "^17.0.6",
+    "puppeteer-core": "^24.40.0"
+  }
+}

@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="/js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<title>Open Play Account | South End Pickleball</title>
+<meta name="description" content="Sign in to manage your South End Advanced Open Play profile, waiver, skill level, and bookings.">
+<link rel="icon" type="image/jpeg" href="/favicon.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0a1628;--navy-lt:#152342;
+  --purple-lt:#9333ea;--electric:#a855f7;
+  --neon:#00ff88;--neon-glow:rgba(0,255,136,.25);
+  --ink:#0a0a1a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Barlow',sans-serif;background:var(--navy);color:#fff;min-height:100vh;}
+.header{background:var(--navy-lt);padding:18px 28px 14px;border-bottom:3px solid var(--neon);}
+.hdr-eyebrow{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--neon);margin-bottom:3px;}
+.hdr-title{font-family:'Oswald',sans-serif;font-size:24px;color:#fff;letter-spacing:1px;text-transform:uppercase;line-height:1;}
+.hdr-title span{color:var(--neon);}
+.hdr-sub{font-size:9px;color:rgba(255,255,255,.65);margin-top:3px;}
+.se-site-nav{
+  display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;
+  padding:10px 28px 12px;background:rgba(5,12,28,.85);
+  border-bottom:1px solid rgba(0,255,136,.22);
+}
+.se-site-nav-link{
+  font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.55);text-decoration:none;padding:8px 14px;border-radius:6px;
+  border:1px solid transparent;transition:color .15s,border-color .15s,background .15s;
+}
+.se-site-nav-link:hover{color:var(--neon);background:rgba(0,255,136,.08);}
+.se-site-nav-link--active{
+  color:var(--ink);background:var(--neon);border-color:rgba(0,255,136,.45);
+  box-shadow:0 0 20px rgba(0,255,136,.25);
+}
+.body-wrap{max-width:520px;margin:0 auto;padding:28px 20px 48px;}
+.body-wrap.body-wrap--wide{max-width:720px;}
+body.account-calendar-view .page-lead,
+body.account-calendar-view #auth-panel{display:none!important;}
+.page-lead{font-size:13px;color:rgba(255,255,255,.72);line-height:1.55;margin-bottom:18px;}
+.page-lead a{color:var(--electric);}
+.auth-panel{
+  background:rgba(0,255,136,.06);border:1.5px solid rgba(0,255,136,.2);
+  border-radius:8px;padding:16px 18px;margin-bottom:20px;
+}
+.auth-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:10px;}
+.auth-status{font-size:12px;color:rgba(255,255,255,.75);margin-bottom:12px;line-height:1.45;}
+.auth-status strong{color:rgba(255,255,255,.95);}
+.row{display:grid;gap:12px;margin-bottom:12px;}
+.row-2{grid-template-columns:1fr 1fr;}
+@media(max-width:520px){.row-2{grid-template-columns:1fr;}}
+.field label{display:block;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:4px;}
+.field input{
+  width:100%;padding:10px 13px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:5px;font-family:'Barlow',sans-serif;font-size:13px;color:#fff;outline:none;
+}
+.field input:focus{border-color:var(--neon);}
+.auth-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px;}
+.auth-btn{padding:9px 16px;border:none;border-radius:5px;font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;cursor:pointer;}
+.auth-btn-primary{background:var(--neon);color:var(--ink);}
+.auth-btn-primary:hover{filter:brightness(1.05);}
+.auth-btn-secondary{background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);}
+.auth-btn-secondary:hover{background:rgba(255,255,255,.14);}
+.auth-msg{font-size:11px;margin-top:8px;min-height:1.2em;}
+.auth-msg.err{color:#ff8888;}
+.auth-msg.ok{color:var(--neon);}
+.fp-modal{
+  position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.78);
+  display:none;align-items:center;justify-content:center;padding:18px;
+}
+.fp-modal.open{display:flex;}
+.fp-card{
+  position:relative;width:100%;max-width:420px;max-height:90vh;overflow:auto;
+  background:var(--navy-lt);border:2px solid rgba(0,255,136,.4);border-radius:12px;
+  padding:24px 22px 22px;color:#fff;
+  box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 1px rgba(0,255,136,.08) inset;
+}
+.fp-close{
+  position:absolute;top:10px;right:12px;width:32px;height:32px;border:none;border-radius:8px;
+  background:transparent;color:rgba(255,255,255,.65);font-size:22px;line-height:1;cursor:pointer;
+}
+.fp-close:hover{color:#fff;background:rgba(255,255,255,.08);}
+.fp-eyebrow{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:6px;}
+.fp-title{font-family:'Oswald',sans-serif;font-size:22px;text-transform:uppercase;letter-spacing:.5px;color:#fff;margin-bottom:8px;line-height:1.1;}
+.fp-desc{font-size:13px;color:rgba(255,255,255,.7);line-height:1.5;margin-bottom:16px;}
+.fp-field{margin-bottom:14px;}
+.fp-field label{display:block;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:6px;}
+.fp-field input{
+  width:100%;padding:11px 13px;background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(255,255,255,.14);border-radius:6px;
+  font-family:'Barlow',sans-serif;font-size:14px;color:#fff;outline:none;
+}
+.fp-field input:focus{border-color:var(--neon);}
+.fp-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;}
+.fp-btn{flex:1;min-width:120px;padding:11px 14px;border:none;border-radius:6px;font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;cursor:pointer;}
+.fp-btn-primary{background:var(--neon);color:var(--ink);}
+.fp-btn-primary:hover{filter:brightness(1.05);}
+.fp-btn-primary[disabled]{opacity:.6;cursor:wait;}
+.fp-btn-secondary{background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);}
+.fp-btn-secondary:hover{background:rgba(255,255,255,.16);}
+.fp-msg{margin-top:12px;font-size:12px;line-height:1.5;min-height:1.2em;}
+.fp-msg.err{color:#ff8888;}
+.fp-msg.ok{color:var(--neon);}
+.cta-primary{
+  display:block;width:100%;padding:14px;background:var(--neon);color:var(--ink);font-family:'Oswald',sans-serif;
+  font-size:18px;letter-spacing:.5px;text-transform:uppercase;border:none;border-radius:6px;cursor:pointer;font-weight:700;
+  text-align:center;text-decoration:none;margin-bottom:10px;
+}
+.cta-primary:hover{filter:brightness(1.05);}
+.cta-staff{
+  display:block;width:100%;padding:12px 14px;background:transparent;color:var(--electric);
+  font-family:'Oswald',sans-serif;font-size:15px;letter-spacing:.5px;text-transform:uppercase;
+  border:2px solid rgba(168,85,247,.55);border-radius:6px;cursor:pointer;font-weight:700;
+  text-align:center;text-decoration:none;margin-bottom:0;
+}
+.cta-staff:hover{background:rgba(168,85,247,.12);border-color:var(--electric);}
+.cta-secondary{display:block;text-align:center;font-size:12px;color:rgba(255,255,255,.55);margin-top:8px;}
+.cta-secondary a{color:var(--electric);}
+.hidden{display:none!important;}
+.no-firebase{font-size:12px;color:rgba(255,255,255,.55);line-height:1.5;margin-bottom:16px;}
+.profile-data-panel{
+  background:rgba(0,255,136,.06);border:1.5px solid rgba(0,255,136,.2);
+  border-radius:10px;padding:22px 22px 24px;margin-bottom:24px;
+}
+.account-summary-panel{
+  background:rgba(0,255,136,.06);border:1.5px solid rgba(0,255,136,.2);
+  border-radius:10px;padding:18px 18px 20px;margin-bottom:20px;
+}
+.account-summary-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:8px;}
+.account-summary-sub{font-size:12px;color:rgba(255,255,255,.7);line-height:1.45;margin-bottom:12px;}
+.account-summary-body{font-size:12px;color:rgba(255,255,255,.86);line-height:1.6;}
+.account-summary-line{margin-bottom:6px;}
+.account-summary-line:last-child{margin-bottom:0;}
+.account-summary-line strong{color:rgba(255,255,255,.95);}
+.account-summary-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+.profile-lead{font-size:12px;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:20px;}
+/* Extra air in the "Your information" card only (not auth panel) */
+.profile-data-panel .auth-title{margin-bottom:14px;}
+.profile-data-panel .row.row-1{grid-template-columns:1fr;}
+.profile-data-panel .row{
+  gap:16px;
+  margin-bottom:20px;
+}
+.profile-data-panel > .field{margin-bottom:20px;}
+.profile-data-panel .field label{
+  display:block;
+  margin-bottom:8px;
+  line-height:1.35;
+}
+.profile-data-panel .field input,
+.profile-data-panel .field select,
+.profile-data-panel .field textarea{
+  width:100%;
+  padding:12px 14px;
+  min-height:44px;
+  background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(255,255,255,.1);
+  border-radius:6px;
+  font-family:'Barlow',sans-serif;
+  font-size:13px;
+  color:#fff;
+  outline:none;
+}
+.profile-data-panel .field textarea{
+  min-height:72px;
+  resize:vertical;
+  line-height:1.45;
+}
+.profile-data-panel .field select option{background:var(--navy-lt);}
+.profile-data-panel .field input:focus,
+.profile-data-panel .field select:focus,
+.profile-data-panel .field textarea:focus{border-color:var(--neon);}
+.field input,.field select,.field textarea{
+  width:100%;padding:10px 13px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:5px;font-family:'Barlow',sans-serif;font-size:13px;color:#fff;outline:none;
+}
+.field select option{background:var(--navy-lt);}
+.field textarea{resize:vertical;min-height:52px;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--neon);}
+.err-msg{font-size:10px;color:#ff8888;margin-top:6px;display:none;}
+.err-msg.show{display:block;}
+.field input.error,.field select.error,.field textarea.error{border-color:#ff6666;}
+.acc-email-ro{font-size:14px;color:rgba(255,255,255,.9);padding:12px 2px 4px;line-height:1.45;}
+.req{color:var(--neon);}
+.cta-primary.cta-disabled{opacity:.45;pointer-events:none;cursor:not-allowed;}
+.cta-disabled{opacity:.45;pointer-events:none;cursor:not-allowed;}
+.row-1{grid-template-columns:1fr;}
+.profile-data-panel .profile-save-actions{margin-top:18px;padding-top:4px;}
+.profile-data-panel .profile-save-actions .auth-btn{padding:11px 20px;}
+/* WAIVERS (same behavior as RSVP full mode) */
+.waiver-block{
+  background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.1);
+  border-radius:7px;padding:14px 16px;margin-bottom:20px;font-size:11px;color:rgba(255,255,255,.78);line-height:1.55;
+}
+.waiver-block.waiver-error{border-color:rgba(255,68,68,.45);}
+.waiver-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:10px;}
+.waiver-block .err-msg{margin-top:4px;margin-bottom:8px;}
+.waiver-intro{font-size:11px;color:rgba(255,255,255,.55);margin-bottom:12px;line-height:1.5;}
+.waiver-item{border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px 14px;margin-bottom:12px;background:rgba(255,255,255,.03);}
+.waiver-item.waiver-item--done{border-color:rgba(0,255,136,.25);}
+.waiver-item-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px;}
+.waiver-item-head input[type=checkbox]{width:18px;height:18px;margin-top:2px;accent-color:var(--neon);flex-shrink:0;}
+.waiver-item-head input[type=checkbox]:disabled{opacity:.35;cursor:not-allowed;}
+.waiver-item-label{font-family:'Oswald',sans-serif;font-size:13px;color:#fff;letter-spacing:.3px;text-transform:none;}
+.waiver-item-sum{font-size:10px;color:rgba(255,255,255,.5);line-height:1.45;margin-bottom:10px;}
+.waiver-open-btn{
+  display:inline-block;padding:8px 14px;border-radius:5px;border:1.5px solid var(--neon);background:rgba(0,255,136,.1);
+  color:var(--neon);font-family:'Oswald',sans-serif;font-size:12px;font-weight:700;letter-spacing:.5px;cursor:pointer;
+}
+.waiver-open-btn:hover{background:rgba(0,255,136,.18);}
+.waiver-modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:600;align-items:center;justify-content:center;padding:16px;
+}
+.waiver-modal-overlay.open{display:flex;}
+.waiver-modal-overlay--view-only .waiver-modal-agree{display:none;}
+.waiver-modal-overlay--view-only .waiver-scroll-hint{display:none;}
+.waiver-modal-box{
+  background:#0f1a2e;border:2px solid var(--neon);border-radius:12px;max-width:640px;width:100%;max-height:min(92vh,720px);
+  display:flex;flex-direction:column;box-shadow:0 0 48px rgba(0,255,136,.12);
+}
+.waiver-modal-head{
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.1);
+}
+.waiver-modal-head h2{font-family:'Oswald',sans-serif;font-size:17px;color:var(--neon);text-transform:uppercase;letter-spacing:.5px;margin:0;}
+.waiver-modal-close{
+  background:rgba(255,255,255,.08);border:none;color:#fff;width:36px;height:36px;border-radius:6px;font-size:22px;line-height:1;cursor:pointer;
+}
+.waiver-modal-close:hover{background:rgba(255,255,255,.14);}
+.waiver-modal-scroll{
+  flex:1;overflow-y:auto;padding:16px 18px;font-size:11px;color:rgba(255,255,255,.82);line-height:1.6;-webkit-overflow-scrolling:touch;
+}
+.waiver-modal-scroll h3{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--neon);margin:16px 0 8px;}
+.waiver-modal-scroll h3:first-child{margin-top:0;}
+.waiver-modal-scroll p{margin:0 0 10px;}
+.waiver-modal-footer{flex-shrink:0;padding:12px 16px 16px;border-top:1px solid rgba(255,255,255,.1);}
+.waiver-scroll-hint{font-size:10px;color:rgba(255,255,255,.45);margin:0 0 8px;}
+.waiver-modal-agree{
+  width:100%;padding:12px;border:none;border-radius:6px;background:var(--neon);color:var(--ink);font-family:'Oswald',sans-serif;
+  font-size:15px;font-weight:700;letter-spacing:.5px;cursor:pointer;
+}
+.waiver-modal-agree:disabled{opacity:.4;cursor:not-allowed;}
+.waiver-modal-agree:not(:disabled):hover{filter:brightness(1.06);}
+.manage-rsvp-empty{font-size:12px;color:rgba(255,255,255,.55);margin:0;}
+.manage-rsvp-row{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;
+  padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:12px;color:rgba(255,255,255,.86);
+}
+.manage-rsvp-row:last-child{border-bottom:none;}
+.manage-rsvp-row-main{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1;}
+.manage-rsvp-pid{font-size:10px;color:rgba(255,255,255,.45);font-family:ui-monospace,monospace;}
+.manage-rsvp-cancel{
+  padding:8px 14px;border-radius:5px;border:1px solid rgba(255,100,100,.45);
+  background:rgba(255,80,80,.12);color:#ffb4b4;font-family:'Oswald',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.5px;cursor:pointer;flex-shrink:0;
+}
+.manage-rsvp-cancel:hover{filter:brightness(1.08);}
+#cta-manage-rsvps{margin-bottom:10px;}
+.account-hub-panel{
+  background:rgba(0,255,136,.06);border:1.5px solid rgba(0,255,136,.2);
+  border-radius:10px;padding:18px 16px 22px;margin-bottom:24px;
+}
+.hub-lead{font-size:12px;color:rgba(255,255,255,.65);line-height:1.5;margin-bottom:16px;}
+.cal-nav{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;
+}
+.cal-nav button{
+  width:40px;height:40px;border-radius:8px;border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.08);color:#fff;font-size:22px;line-height:1;cursor:pointer;
+}
+.cal-nav button:hover{background:rgba(255,255,255,.12);}
+#cal-month-label{
+  font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:.5px;text-transform:uppercase;
+  color:var(--neon);margin:0;flex:1;text-align:center;
+}
+.cal-weekdays{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px;
+  font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);
+  text-align:center;
+}
+.cal-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:4px;
+}
+.cal-day{
+  min-height:88px;border-radius:6px;border:1px solid rgba(255,255,255,.08);
+  background:rgba(0,0,0,.15);padding:6px 4px 6px;display:flex;flex-direction:column;gap:4px;
+}
+.cal-day--empty{border-color:transparent;background:transparent;min-height:88px;}
+.cal-day--muted{opacity:.35;}
+.cal-day--bookable{cursor:pointer;border-color:rgba(0,255,136,.2);}
+.cal-day--bookable:hover{background:rgba(0,255,136,.07);border-color:rgba(0,255,136,.38);}
+.cal-day-num{font-size:11px;font-weight:700;color:rgba(255,255,255,.55);line-height:1;}
+.cal-day--today .cal-day-num{color:var(--neon);}
+.cal-day-events{display:flex;flex-direction:column;gap:4px;flex:1;min-height:0;}
+.cal-ev{
+  font-size:9px;line-height:1.25;padding:4px 4px;border-radius:4px;
+  background:rgba(0,255,136,.12);border:1px solid rgba(0,255,136,.25);color:rgba(255,255,255,.92);
+}
+.cal-ev-slot{color:rgba(255,255,255,.55);display:block;font-size:8px;text-transform:uppercase;letter-spacing:.04em;}
+.cal-ev-cancel{
+  margin-top:4px;width:100%;padding:4px 0;border-radius:3px;border:1px solid rgba(255,100,100,.4);
+  background:rgba(255,60,60,.1);color:#ffaaa0;font-size:8px;font-weight:700;cursor:pointer;font-family:'Oswald',sans-serif;
+}
+.cal-ev-cancel:hover{filter:brightness(1.1);}
+.cal-open{
+  display:block;
+  margin-top:4px;
+  font-size:10px;
+  line-height:1.25;
+  padding:5px 5px;
+  border-radius:4px;
+  border:1px solid rgba(0,255,136,.26);
+  background:rgba(0,255,136,.1);
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  color:rgba(225,255,240,.95);
+  font-weight:700;
+  text-decoration:none;
+  cursor:pointer;
+}
+.cal-open:hover{filter:brightness(1.1);}
+.cal-unparsed{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1);}
+.cal-unparsed-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:8px;}
+.hub-actions{display:flex;flex-direction:column;gap:10px;margin-top:20px;}
+.hub-actions .cta-primary{margin-bottom:0;}
+.module-grid{display:grid;gap:12px;margin:16px 0 18px;}
+.module-card{
+  border:1.5px solid rgba(0,255,136,.22);border-radius:10px;padding:14px 14px 16px;
+  background:rgba(0,0,0,.18);
+}
+.module-card--locked{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.04);}
+.module-kicker{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon);margin-bottom:6px;}
+.module-card--locked .module-kicker{color:rgba(255,255,255,.45);}
+.module-title{font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:.04em;text-transform:uppercase;color:#fff;margin-bottom:5px;}
+.module-desc{font-size:12px;color:rgba(255,255,255,.66);line-height:1.45;margin-bottom:12px;}
+.module-card--locked .module-desc{color:rgba(255,255,255,.5);}
+.module-admin-panel{
+  margin-top:18px;padding:16px;border-radius:10px;border:1.5px solid rgba(168,85,247,.35);
+  background:rgba(168,85,247,.08);
+}
+.module-admin-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:end;}
+.module-admin-row .field{margin:0;}
+.module-admin-msg{font-size:11px;color:rgba(255,255,255,.68);line-height:1.45;margin-top:10px;min-height:1.4em;}
+@media(max-width:620px){.module-admin-row{grid-template-columns:1fr;}}
+@media(max-width:400px){
+  .cal-day{min-height:100px;}
+  .cal-ev{font-size:8px;}
+}
+.message-board-fab{
+  position:fixed;right:18px;bottom:18px;z-index:90;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.22);
+  background:linear-gradient(135deg,var(--neon,#00ff88),#34d399);color:var(--ink,#050a12);
+  font-family:'Oswald',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;
+  box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 26px rgba(0,255,136,.25);transition:transform .15s,filter .15s,box-shadow .15s;
+}
+.message-board-fab:hover{filter:brightness(1.06);transform:translateY(-1px);box-shadow:0 12px 32px rgba(0,0,0,.4),0 0 30px rgba(0,255,136,.32);}
+.message-board-fab:focus-visible{outline:2px solid #fff;outline-offset:3px;}
+@media(max-width:520px){.message-board-fab{right:14px;bottom:14px;padding:12px 14px;font-size:12px;}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+    <div class="hdr-title">ADVANCED OPEN <span>PLAY</span></div>
+    <div class="hdr-sub">Module home, RSVP schedule, and account profile.</div>
+  </div>
+</div>
+<nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav></nav>
+<script src="/pickleball-hub-nav.js"></script>
+
+<div class="body-wrap">
+  <p class="page-lead">
+    <strong>Advanced Open Play</strong> is a protected South End pickleball module. Sign in to view your approved access, schedule, and RSVP tools.
+  </p>
+
+  <div id="no-firebase-msg" class="no-firebase hidden">
+    Firebase is not configured in <code>js/openplay-firebase-config.js</code>. Add your project keys to enable sign-in and RSVP.
+  </div>
+
+  <div class="auth-panel hidden" id="auth-panel">
+    <div class="auth-title">Email &amp; password</div>
+    <div class="auth-status" id="auth-status-line">Create an account or sign in.</div>
+    <div id="auth-form-block">
+      <div class="row row-2">
+        <div class="field"><label>Email</label><input type="email" id="auth-email" autocomplete="email" placeholder="you@email.com"></div>
+        <div class="field"><label>Password</label><input type="password" id="auth-password" autocomplete="current-password" placeholder="6+ characters"></div>
+      </div>
+      <div class="auth-actions">
+        <button type="button" class="auth-btn auth-btn-primary" id="auth-primary-btn">Sign in</button>
+        <button type="button" class="auth-btn auth-btn-secondary" id="auth-toggle-mode">Create account instead</button>
+        <a class="auth-btn auth-btn-secondary" id="auth-forgot" href="/forgot-password">Forgot password?</a>
+      </div>
+      <div class="auth-msg" id="auth-msg" role="status"></div>
+    </div>
+    <div id="auth-signed-block" class="hidden">
+      <div class="auth-actions">
+        <button type="button" class="auth-btn auth-btn-secondary" id="auth-signout">Sign out</button>
+        <button type="button" class="auth-btn auth-btn-secondary hidden" id="hub-edit-profile">Edit profile</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="fp-modal" id="fp-modal" role="dialog" aria-modal="true" aria-labelledby="fp-title" aria-hidden="true">
+    <div class="fp-card">
+      <button type="button" class="fp-close" id="fp-close" aria-label="Close">&times;</button>
+      <div class="fp-eyebrow">Reset password</div>
+      <div class="fp-title" id="fp-title">Forgot your password?</div>
+      <p class="fp-desc">Enter the email on your South End account. We&rsquo;ll send a secure reset link from Firebase. Check your spam folder if it doesn&rsquo;t arrive within a minute.</p>
+      <div class="fp-field">
+        <label for="fp-email">Email</label>
+        <input type="email" id="fp-email" autocomplete="email" placeholder="you@email.com" inputmode="email">
+      </div>
+      <div class="fp-actions">
+        <button type="button" class="fp-btn fp-btn-primary" id="fp-send">Send reset link</button>
+        <button type="button" class="fp-btn fp-btn-secondary" id="fp-cancel">Cancel</button>
+      </div>
+      <div class="fp-msg" id="fp-msg" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="profile-data-panel hidden" id="profile-data-panel">
+    <button type="button" class="auth-btn auth-btn-secondary hidden" id="acc-back-to-hub" style="width:100%;margin-bottom:14px;">Back to my schedule</button>
+    <div class="auth-title">Your information</div>
+    <p class="profile-lead">All fields below are required except where noted. Data is stored at <code style="font-size:10px;color:rgba(0,255,136,.7);">openplay_se/user_profiles/{your uid}</code>. Sign the liability and communications agreements below (same flow as RSVP). If you are a member, enter your access card # below so it can auto-fill for future RSVPs.</p>
+    <div class="row row-2">
+      <div class="field"><label>First name <span class="req">*</span></label><input type="text" id="acc-first" autocomplete="given-name" placeholder="First"><div class="err-msg" id="acc-err-first">Required.</div></div>
+      <div class="field"><label>Last name <span class="req">*</span></label><input type="text" id="acc-last" autocomplete="family-name" placeholder="Last"><div class="err-msg" id="acc-err-last">Required.</div></div>
+    </div>
+    <div class="field"><label>Email</label><div id="acc-email-display" class="acc-email-ro">-</div></div>
+    <div class="row row-2">
+      <div class="field"><label>Phone <span class="req">*</span></label><input type="tel" id="acc-phone" autocomplete="tel" placeholder="(555) 555-5555"><div class="err-msg" id="acc-err-phone">Required.</div></div>
+      <div class="field">
+        <label>Skill level <span class="req">*</span></label>
+        <select id="acc-skill">
+          <option value="">Select level...</option>
+          <option value="2.0 Beginner">2.0 (Beginner)</option>
+          <option value="2.5 Upper Beginner">2.5 (Upper Beginner)</option>
+          <option value="3.0 Lower Intermediate">3.0 (Lower Intermediate)</option>
+          <option value="3.5 Intermediate">3.5 (Intermediate)</option>
+          <option value="4.0 Advanced">4.0 (Advanced)</option>
+          <option value="4.5 Upper Advanced">4.5 (Upper Advanced)</option>
+          <option value="5.0 Open">5.0 (Open)</option>
+        </select>
+        <div class="err-msg" id="acc-err-skill">Select a skill level.</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>South End member? <span class="req">*</span></label>
+      <select id="acc-member">
+        <option value="">Select...</option>
+        <option value="yes">Yes - Member</option>
+        <option value="no">No - Guest</option>
+      </select>
+      <div class="err-msg" id="acc-err-member">Required.</div>
+    </div>
+    <div class="row row-1 hidden" id="acc-member-card-row">
+      <div class="field">
+        <label>Member access card # <span class="req">*</span></label>
+        <input type="text" id="acc-member-card" placeholder="e.g. 212345" maxlength="6" pattern="[23][0-9]{5}" autocomplete="off" inputmode="numeric">
+        <div class="err-msg" id="acc-err-member-card">Enter a 6-digit number starting with 2 or 3.</div>
+      </div>
+    </div>
+    <div class="row row-2">
+      <div class="field">
+        <label>How did you hear about us? <span style="color:rgba(255,255,255,.35);font-weight:400;text-transform:none">(optional)</span></label>
+        <select id="acc-hear">
+          <option value="">Select...</option>
+          <option value="Friend / Word of mouth">Friend / Word of mouth</option>
+          <option value="Social media">Social media</option>
+          <option value="South End member">South End member</option>
+          <option value="Google / Search">Google / Search</option>
+          <option value="Walk-in / Drove by">Walk-in / Drove by</option>
+          <option value="Event / Tournament">Event / Tournament</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Notes <span style="color:rgba(255,255,255,.35);font-weight:400;text-transform:none">(optional)</span></label><textarea id="acc-notes" placeholder="Anything we should know."></textarea></div>
+    </div>
+
+    <div class="waiver-block" id="waiver-block">
+      <div class="waiver-title">Agreements &amp; waivers <span class="req" style="color:var(--neon);">*</span></div>
+      <p class="waiver-intro">Open each agreement below, read the full text, and sign electronically. The checkboxes are enabled only after you agree in the pop-up.</p>
+      <div class="waiver-item" id="waiver-item-liability">
+        <div class="waiver-item-head">
+          <input type="checkbox" id="waiver-liability" disabled aria-required="true" aria-describedby="err-waiver-liability">
+          <span class="waiver-item-label">Liability release &amp; assumption of risk</span>
+        </div>
+        <p class="waiver-item-sum">Industry-standard release: assumption of risk, release of claims (including negligence, where permitted by law), medical fitness, indemnity, facility use, media, and related terms. You must read the full document.</p>
+        <button type="button" class="waiver-open-btn" id="waiver-btn-open-liability">Read full text &amp; sign</button>
+        <div class="err-msg" id="err-waiver-liability">Please read and sign the liability waiver to continue.</div>
+      </div>
+      <div class="waiver-item" id="waiver-item-communication">
+        <div class="waiver-item-head">
+          <input type="checkbox" id="waiver-communication" disabled aria-required="true" aria-describedby="err-waiver-communication">
+          <span class="waiver-item-label">Communications consent</span>
+        </div>
+        <p class="waiver-item-sum">Generic club consent for calls, emails, and text messages about programs, reservations, and related updates (with opt-out rights).</p>
+        <button type="button" class="waiver-open-btn" id="waiver-btn-open-communication">Read full text &amp; sign</button>
+        <div class="err-msg" id="err-waiver-communication">Please read and sign the communications consent to continue.</div>
+      </div>
+    </div>
+
+    <div class="auth-actions profile-save-actions">
+      <button type="button" class="auth-btn auth-btn-primary" id="acc-save-profile">Save profile</button>
+    </div>
+    <div class="auth-msg" id="acc-profile-msg" role="status"></div>
+  </div>
+
+  <div id="acc-toast" style="display:none;position:fixed;top:18px;left:50%;transform:translateX(-50%);background:#1db954;color:#fff;padding:10px 24px;border-radius:8px;font-weight:600;z-index:9999;box-shadow:0 4px 14px rgba(0,0,0,.25);transition:opacity .3s;pointer-events:none;"></div>
+  <div class="account-hub-panel hidden" id="account-hub-panel">
+    <div class="module-grid" aria-label="Available pickleball modules">
+      <div class="module-card module-card--locked hidden" id="module-card-advanced-open-play-locked">
+        <div class="module-kicker">Admin approval required</div>
+        <div class="module-title">Advanced Open Play</div>
+        <p class="module-desc">This module is not currently assigned to your account. Contact South End staff if you should have access.</p>
+      </div>
+    </div>
+    <div id="advanced-openplay-schedule" class="hidden">
+      <div class="cal-nav">
+        <button type="button" id="cal-prev" aria-label="Previous month">&lt;</button>
+        <h2 id="cal-month-label"></h2>
+        <button type="button" id="cal-next" aria-label="Next month">&gt;</button>
+      </div>
+      <div class="cal-weekdays" aria-hidden="true">
+        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+      </div>
+      <div class="cal-grid" id="cal-grid" role="grid" aria-label="RSVP calendar"></div>
+      <div id="cal-unparsed" class="cal-unparsed hidden"></div>
+    </div>
+    <div class="hub-actions">
+      <a class="cta-primary" id="hub-cta-rsvp" href="/open-play/book">Book sessions</a>
+      <button type="button" class="cta-staff" id="cta-manage-rsvps">Manage RSVPs</button>
+      <a class="cta-staff hidden" id="hub-cta-checkin" href="/checkin">Check-ins</a>
+      <a class="cta-staff hidden" id="hub-cta-activity" href="/admin">Admin hub</a>
+    </div>
+    <div class="module-admin-panel hidden" id="module-admin-panel">
+      <div class="auth-title">Module access admin</div>
+      <p class="hub-lead">Assign Advanced Open Play access by UID, or by email after that user has saved their profile once.</p>
+      <div class="module-admin-row">
+        <div class="field">
+          <label>User email or UID</label>
+          <input type="text" id="module-admin-target" placeholder="email@example.com or Firebase UID" autocomplete="off">
+        </div>
+        <button type="button" class="auth-btn auth-btn-secondary" id="module-admin-resolve">Find</button>
+        <button type="button" class="auth-btn auth-btn-primary" id="module-admin-grant">Grant</button>
+      </div>
+      <div class="auth-actions" style="margin-top:10px;">
+        <button type="button" class="auth-btn auth-btn-secondary" id="module-admin-revoke">Revoke Advanced Open Play</button>
+      </div>
+      <div class="module-admin-msg" id="module-admin-msg" role="status"></div>
+    </div>
+  </div>
+
+</div>
+
+<div id="manage-rsvp-modal" class="waiver-modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="manage-rsvp-modal-title">
+  <div class="waiver-modal-box" role="document">
+    <div class="waiver-modal-head">
+      <h2 id="manage-rsvp-modal-title">Your RSVPs</h2>
+      <button type="button" class="waiver-modal-close" id="manage-rsvp-modal-close" aria-label="Close">x</button>
+    </div>
+    <div class="waiver-modal-scroll" id="manage-rsvp-list"></div>
+  </div>
+</div>
+
+<!-- Full-text waiver modals (same copy as RSVP) -->
+<div id="waiver-modal-liability" class="waiver-modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="waiver-modal-liability-title">
+  <div class="waiver-modal-box" role="document">
+    <div class="waiver-modal-head">
+      <h2 id="waiver-modal-liability-title">Liability waiver &amp; release</h2>
+      <button type="button" class="waiver-modal-close" id="waiver-modal-liability-close" aria-label="Close">x</button>
+    </div>
+    <div class="waiver-modal-scroll" id="waiver-scroll-liability" tabindex="0">
+      <h3>Please read carefully</h3>
+      <p>By indicating your agreement at the end of this document, you are consenting to assumption of risk, a release of certain legal rights, and other binding terms, except where prohibited by law. If you do not agree, do not participate.</p>
+      <h3>Parties and activities</h3>
+      <p>I wish to participate in or attend pickleball and related athletic, recreational, and conditioning activities, including without limitation open play, leagues, clinics, lessons, tournaments, demonstrations, practice, social events, and use of courts, equipment, parking, walkways, locker rooms, and common areas (collectively, the &quot;Activities&quot;) at or through <strong>South End Racquet &amp; Health Club</strong> (the &quot;Club&quot;). The Club and its affiliates, owners, successors, subsidiaries, officers, directors, managers, members, employees, independent contractors, volunteers, instructors, coaches, referees, agents, sponsoring organizations, and insurers, and the owners and lessors of any premises used for the Activities (collectively, the &quot;Releasees&quot;) are intended third-party beneficiaries of this agreement.</p>
+      <h3>Risks</h3>
+      <p>I understand that the Activities are inherently hazardous. Risks include, without limitation: falls, trips, slips, dives, and collisions; contact or impact with the playing surface, nets, fences, walls, posts, doors, glass, dividers, benches, spectators, staff, or other participants; being struck by a ball, paddle, or other object; equipment failure or misuse; musculoskeletal injuries including sprains, strains, fractures, and concussions; overexertion; dehydration; heat-related illness; cardiac, circulatory, or neurological events; illness or complications from communicable disease; damage to or loss of personal property; and motor vehicle incidents in parking or access areas. Such risks may result in temporary or permanent injury, disability, or death. Releasees cannot eliminate all risks or guarantee safety.</p>
+      <h3>Voluntary assumption of risk</h3>
+      <p>I voluntarily elect to participate in the Activities with knowledge of the risks. I assume all risks, whether known or unknown, foreseeable or unforeseeable, that arise out of or relate to the Activities, my travel to or presence at the Club, the condition of facilities or equipment, or the acts or omissions of other persons, including other participants, spectators, or third parties.</p>
+      <h3>Release, waiver, and covenant not to sue</h3>
+      <p>To the fullest extent permitted by applicable law, I hereby release, acquit, waive, discharge, and covenant not to sue the Releasees from any and all claims, demands, actions, causes of action, judgments, liabilities, losses, or expenses (including attorneys&apos; fees) of any kind, whether known or unknown, arising out of or in any way connected with the Activities, my participation or observation, my use of the Club, or travel to or from the Club, including claims arising from the <strong>negligence, fault, or omissions</strong> of Releasees or others, and including claims for personal injury, illness, death, or property damage. I intend this release to be as broad and inclusive as the law allows. Nothing herein purports to release claims that cannot be released under applicable law (for example, certain claims based on gross negligence or willful misconduct where such limitations apply).</p>
+      <h3>Indemnification</h3>
+      <p>I agree to defend, indemnify, and hold harmless the Releasees from any loss, liability, damage, or cost (including reasonable attorneys&apos; fees) arising out of my participation, my breach of this agreement, my intoxication or use of prohibited substances where applicable, or claims brought by any other person (including a family member or minor) arising out of my conduct or registration.</p>
+      <h3>Medical fitness and insurance</h3>
+      <p>I represent that I am physically and mentally fit to participate and that I will not participate if impaired. I have obtained appropriate medical clearance or I voluntarily assume the risk of participation without it. I understand that Releasees do not provide medical insurance for me. I am solely responsible for any medical, ambulance, or hospital costs, and I am encouraged to maintain health and accident insurance.</p>
+      <h3>Equipment and property</h3>
+      <p>I am responsible for equipment I use or bring. I agree to reimburse the Club for damage to facilities or equipment caused by my reckless, intentional, or grossly negligent conduct.</p>
+      <h3>Emergency care</h3>
+      <p>I consent to emergency first aid, medical treatment, or transport as appropriate. I release Releasees from claims arising from such care except to the extent caused by willful misconduct.</p>
+      <h3>Photo, video, and likeness</h3>
+      <p>I grant the Club a non-exclusive, royalty-free license to capture, reproduce, and use my name, image, voice, and likeness in photographs, audio, or video for operational, promotional, training, or safety purposes, unless I submit a written opt-out where the Club offers one.</p>
+      <h3>Minors</h3>
+      <p>If I register a participant under 18, I am the parent or legal guardian; I enter this agreement on the minor&apos;s behalf; I consent to the minor&apos;s participation; and I agree to indemnify Releasees for claims brought by or on behalf of the minor.</p>
+      <h3>Rules and conduct</h3>
+      <p>I will comply with all posted rules, session director instructions, and staff directions. The Club may refuse or end participation for unsafe or disruptive behavior.</p>
+      <h3>Governing law and severability</h3>
+      <p>This agreement is governed by the laws of the state in which the Club is located, without regard to conflict-of-law principles. If any provision is held invalid, the remainder remains enforceable to the maximum extent permitted.</p>
+      <h3>Electronic signature</h3>
+      <p>I agree that selecting &quot;I have read and agree&quot; in this flow constitutes my electronic signature, that I have accessed and may retain a copy of this agreement, and that this agreement is binding.</p>
+    </div>
+    <div class="waiver-modal-footer">
+      <p class="waiver-scroll-hint" id="waiver-hint-liability">Scroll through the entire agreement to enable the button.</p>
+      <button type="button" class="waiver-modal-agree" id="waiver-agree-liability" disabled>I have read and agree to the above</button>
+    </div>
+  </div>
+</div>
+<div id="waiver-modal-communication" class="waiver-modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="waiver-modal-communication-title">
+  <div class="waiver-modal-box" role="document">
+    <div class="waiver-modal-head">
+      <h2 id="waiver-modal-communication-title">Communications consent</h2>
+      <button type="button" class="waiver-modal-close" id="waiver-modal-communication-close" aria-label="Close">x</button>
+    </div>
+    <div class="waiver-modal-scroll" id="waiver-scroll-communication" tabindex="0">
+      <h3>Please read carefully</h3>
+      <p>This is a <strong>generic club communications consent</strong> for transactional and promotional contact. Your club may customize procedures; consult counsel for compliance with TCPA, CAN-SPAM, and state privacy laws.</p>
+      <h3>Consent to be contacted</h3>
+      <p>By agreeing below, you consent to receive communications from <strong>South End Racquet &amp; Health Club</strong> and its service providers at the email address and telephone number(s) you provide, including via automated telephone dialing systems, prerecorded or artificial voice, SMS/MMS text messages, push notifications (if applicable), and email.</p>
+      <h3>Categories of messages</h3>
+      <p>Communications may include: (a) <strong>operational and transactional</strong> messages, such as reservation confirmations, cancellations, schedule changes, waitlist notices, check-in reminders, payment or billing notices, facility closures, and safety or policy updates; (b) <strong>account and service</strong> messages related to your participation in programs; and (c) where permitted, <strong>marketing or promotional</strong> messages about programs, events, membership offers, surveys, and club news.</p>
+      <h3>No purchase required</h3>
+      <p>Consent to marketing communications is not required to purchase goods or services, where applicable. Message frequency varies. <strong>Carrier message and data rates may apply</strong> for SMS.</p>
+      <h3>How to opt out</h3>
+      <p>You may opt out of promotional emails using the unsubscribe link where provided. You may opt out of promotional texts by following instructions in those messages (for example, replying <strong>STOP</strong>). You may also contact the club front desk to update preferences. Operational messages may continue where necessary to complete transactions or for legal or safety reasons.</p>
+      <h3>Use of contact information</h3>
+      <p>We use contact details to operate programs and communicate with you. We do not sell your personal information to unaffiliated third parties for their independent marketing without consent where required by law. No system is perfectly secure; we use reasonable safeguards.</p>
+      <h3>Electronic signature</h3>
+      <p>Selecting &quot;I have read and agree&quot; constitutes your electronic acceptance of this communications consent.</p>
+    </div>
+    <div class="waiver-modal-footer">
+      <p class="waiver-scroll-hint" id="waiver-hint-communication">Scroll through the entire consent to enable the button.</p>
+      <button type="button" class="waiver-modal-agree" id="waiver-agree-communication" disabled>I have read and agree to the above</button>
+    </div>
+  </div>
+</div>
+
+<footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
+<script src="/js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-rsvp-helpers.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-waiver-modals.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script>
+function getReturnRsvpHref() {
+  return '/open-play/book';
+}
+
+function getAccountReturnParamRaw() {
+  try {
+    var q = new URLSearchParams(window.location.search);
+    return String(q.get('return') || '').trim();
+  } catch (e) {
+    return '';
+  }
+}
+
+function accountReturnIsLeagueModule(raw) {
+  return !!raw && (/^\.\.(?:\/|\\)league-play(?:\/|\\)/i.test(raw) || /^SouthEnd_League_\w+\.html$/i.test(raw));
+}
+
+function getCentralHubHref() {
+  return '/hub';
+}
+
+/** From local-page account root, resolve ?return= to a league-play path so sign-in returns to Invites/Teams/Payment. */
+function resolveLocalLeagueReturnPath(raw) {
+  try {
+    var s = String(raw || '').replace(/\\/g, '/').trim();
+    if (!s) return '';
+    var qIdx = s.indexOf('?');
+    var pathPart = qIdx === -1 ? s : s.slice(0, qIdx);
+    var queryPart = qIdx === -1 ? '' : s.slice(qIdx);
+    if (/^league-play\/SouthEnd_League_/i.test(pathPart)) return pathPart + queryPart;
+    if (/^SouthEnd_League_\w+\.html$/i.test(pathPart)) return 'league-play/' + pathPart + queryPart;
+  } catch (e) {}
+  return '';
+}
+
+function getAccountReturnHref() {
+  var raw = getAccountReturnParamRaw();
+  if (!raw) return '';
+  // Accept trusted clean URL slugs
+  if (/^\/(?:hub|open-play(?:\/[\w\-]*)?|checkin|signups|message-board|league-play(?:\/[\w\-]*)?|admin(?:\/[\w\-]*)?)(?:[?#].*)?$/.test(raw)) return raw;
+  // Legacy filename → clean slug
+  if (/^SouthEnd_Pickleball_Hub\.html$/i.test(raw) || /^\/?(?:main|hub)$/i.test(raw)) return '/hub';
+  if (/^SouthEnd_Session_RSVP\.html$/i.test(raw)) return '/open-play/book';
+  if (/^SouthEnd_Session_Checkin\.html$/i.test(raw)) return '/checkin';
+  if (/^SouthEnd_Open_Play_Signups\.html$/i.test(raw)) return '/signups';
+  if (/^SouthEnd_Message_Board\.html$/i.test(raw)) return '/message-board';
+  if (/^SouthEnd_Admin_Hub\.html$/i.test(raw)) return '/admin';
+  if (/^SouthEnd_Admin_Advanced_Open_Play\.html$/i.test(raw)) return '/admin/open-play';
+  if (/^SouthEnd_Admin_Activity\.html$/i.test(raw)) return '/admin/activity';
+  if (/^SouthEnd_Admin_Module_Access\.html$/i.test(raw)) return '/admin/module-access';
+  if (/^SouthEnd_Admin_League_Play\.html$/i.test(raw)) return '/admin/league-play';
+  if (/^SouthEnd_Admin_User_Management\.html$/i.test(raw)) return '/admin/user-management';
+  // Legacy league relative paths (local dev)
+  var leagueHref = resolveLocalLeagueReturnPath(raw);
+  if (leagueHref) return leagueHref;
+  if (accountReturnIsLeagueModule(raw)) return '/hub';
+  return '';
+}
+
+function accountShouldStayOnAccountPage() {
+  try {
+    var q = new URLSearchParams(window.location.search);
+    if (q.get('section') === 'admin') return true;
+  } catch (e) {}
+  return false;
+}
+
+function redirectAfterAccountReady() {
+  if (accountShouldStayOnAccountPage()) return;
+  var href = getAccountReturnHref() || getCentralHubHref();
+  if (!href || /SouthEnd_OpenPlay_Account\.html/i.test(href)) return;
+  window.location.replace(href);
+}
+
+/** True when ?return= points at check-in (Firebase filenames or WordPress slug). */
+function accountReturnIsCheckin(href) {
+  if (!href) return false;
+  var h = String(href);
+  return /SouthEnd_Session_Checkin\.html|check-ins|checkin/i.test(h);
+}
+
+/** True when ?return= points at admin activity. */
+function accountReturnIsAdminActivity(href) {
+  if (!href) return false;
+  var h = String(href);
+  return /SouthEnd_Admin_(?:Hub|Advanced_Open_Play|Activity)\.html|admin[_\s-]*(?:hub|advanced[_\s-]*open[_\s-]*play|activity)/i.test(h);
+}
+
+function syncAccountCtaRsvpHref() {
+  var href = getReturnRsvpHref();
+  var rawReturn = getAccountReturnParamRaw();
+  var toAdminActivity = accountReturnIsAdminActivity(rawReturn);
+  var hubCta = document.getElementById('hub-cta-rsvp');
+  if (hubCta) {
+    hubCta.href = href;
+    hubCta.textContent = 'Book sessions';
+  }
+  var adminHref = /SouthEnd_Admin_Activity\.html|admin[_\s-]*activity|\/admin\/activity/i.test(rawReturn)
+    ? '/admin/activity'
+    : (/SouthEnd_Admin_Advanced_Open_Play\.html|admin[_\s-]*advanced[_\s-]*open[_\s-]*play|\/admin\/open-play/i.test(rawReturn)
+      ? '/admin/open-play'
+      : '/admin');
+  var hubActivity = document.getElementById('hub-cta-activity');
+  if (hubActivity) {
+    hubActivity.href = adminHref;
+    hubActivity.textContent = toAdminActivity ? 'Back to admin' : 'Admin hub';
+  }
+}
+
+var authMode = 'signin';
+/** True when RTDB has a complete profile, or user just saved - edits clear until Save again. */
+var accountProfileSynced = false;
+var accountViewMode = 'edit';
+var accountMyRsvpRows = [];
+var accountModuleAccess = {};
+var accountIsAdmin = false;
+/** Last loaded profile from RTDB (used for rating-based Advanced Open Play visibility). */
+var currentAccountProfile = null;
+var accountAdminTargetUid = '';
+var accountRedirectAfterAuthFlow = false;
+/** Month shown in the hub calendar (first day of that month). */
+var accountCalendarCursor = new Date(pacificNowDate().getFullYear(), pacificNowDate().getMonth(), 1);
+var SESSION_MONTHS_ACC = {
+  jan: 0, january: 0,
+  feb: 1, february: 1,
+  mar: 2, march: 2,
+  apr: 3, april: 3,
+  may: 4,
+  jun: 5, june: 5,
+  jul: 6, july: 6,
+  aug: 7, august: 7,
+  sep: 8, sept: 8, september: 8,
+  oct: 9, october: 9,
+  nov: 10, november: 10,
+  dec: 11, december: 11,
+};
+// Schedule configuration (same as RSVP page)
+var SCHEDULE_CONFIG_ACC = {
+  slots: [
+    { day: 2, label: 'Tuesday Evening' },
+    { day: 4, label: 'Thursday Evening' },
+  ],
+  weeksToShow: 2,
+  lastSessionEndHour: 21,
+};
+
+function pacificNowAcc() {
+  var parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Los_Angeles',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    hour12: false,
+  }).formatToParts(new Date());
+  var year = parseInt(parts.find(function (p) { return p.type === 'year'; }).value, 10);
+  var month = parseInt(parts.find(function (p) { return p.type === 'month'; }).value, 10);
+  var day = parseInt(parts.find(function (p) { return p.type === 'day'; }).value, 10);
+  var hour = parseInt(parts.find(function (p) { return p.type === 'hour'; }).value, 10);
+  return { year: year, month: month, day: day, hour: hour, dow: new Date(year, month - 1, day).getDay() };
+}
+
+function computeAccountSessions(config) {
+  var now = pacificNowAcc();
+  var slots = config.slots || [];
+  if (!slots.length) return [];
+  
+  var minDay = Math.min.apply(null, slots.map(function (s) { return s.day; }));
+  var maxDay = Math.max.apply(null, slots.map(function (s) { return s.day; }));
+  
+  var rollPast = now.dow > maxDay || (now.dow === maxDay && now.hour >= config.lastSessionEndHour);
+  
+  var anchor = new Date(now.year, now.month - 1, now.day);
+  var currentDow = anchor.getDay();
+  
+  if (rollPast) {
+    // After last session ends, go forward to next week's first session day
+    var daysToAdd = (minDay - currentDow + 7) % 7;
+    if (daysToAdd === 0) daysToAdd = 7;
+    anchor.setDate(anchor.getDate() + daysToAdd);
+  } else if (currentDow < minDay) {
+    // Before week starts (e.g., Monday before Tuesday), go forward to this week's first session
+    var daysToAdd = minDay - currentDow;
+    anchor.setDate(anchor.getDate() + daysToAdd);
+  } else {
+    // During the week (Tue-Thu), go back to this week's first session
+    var daysToSub = currentDow - minDay;
+    anchor.setDate(anchor.getDate() - daysToSub);
+  }
+  
+  var sessions = [];
+  for (var w = 0; w < config.weeksToShow; w++) {
+    var weekStart = new Date(anchor.getTime());
+    weekStart.setDate(weekStart.getDate() + w * 7);
+    
+    slots.forEach(function (slot) {
+      var sessionDate = new Date(weekStart.getTime());
+      var dayOffset = (slot.day - minDay + 7) % 7;
+      sessionDate.setDate(sessionDate.getDate() + dayOffset);
+      
+      var monthName = sessionDate.toLocaleDateString('en-US', { month: 'short' });
+      var dayNum = sessionDate.getDate();
+      var fullLabel = slot.label + ' ' + monthName + ' ' + dayNum;
+      
+      sessions.push(fullLabel);
+    });
+  }
+  
+  return sessions;
+}
+
+var ACCOUNT_OPEN_SESSIONS = computeAccountSessions(SCHEDULE_CONFIG_ACC);
+
+function escapeHtml(s) {
+  if (s == null || s === '') return '';
+  var d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function setAuthModeUI() {
+  var primary = document.getElementById('auth-primary-btn');
+  var toggle = document.getElementById('auth-toggle-mode');
+  var forgot = document.getElementById('auth-forgot');
+  if (!primary || !toggle) return;
+  if (authMode === 'signup') {
+    primary.textContent = 'Create account';
+    toggle.textContent = 'Sign in instead';
+    if (forgot) forgot.classList.add('hidden');
+  } else {
+    primary.textContent = 'Sign in';
+    toggle.textContent = 'Create account instead';
+    if (forgot) forgot.classList.remove('hidden');
+  }
+}
+
+function authShowMsg(text, cls) {
+  var el = document.getElementById('auth-msg');
+  if (!el) return;
+  el.textContent = text || '';
+  el.className = 'auth-msg' + (cls ? ' ' + cls : '');
+}
+
+function accClearErrors() {
+  document.querySelectorAll('.profile-data-panel .err-msg').forEach(function (e) {
+    e.classList.remove('show');
+  });
+  var eph = document.getElementById('acc-err-phone');
+  if (eph) eph.textContent = 'Required.';
+  var emc = document.getElementById('acc-err-member-card');
+  if (emc) emc.textContent = 'Enter a 6-digit number starting with 2 or 3.';
+  ['acc-first', 'acc-last', 'acc-phone', 'acc-skill', 'acc-member', 'acc-member-card'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('error');
+  });
+  var wb = document.getElementById('waiver-block');
+  if (wb) wb.classList.remove('waiver-error');
+}
+
+/** Show member card row when member=yes. */
+function accToggleMemberCard(val, silent) {
+  var row = document.getElementById('acc-member-card-row');
+  var cardInput = document.getElementById('acc-member-card');
+  var err = document.getElementById('acc-err-member-card');
+  if (!row) return;
+  if (val === 'yes') {
+    row.classList.remove('hidden');
+  } else {
+    row.classList.add('hidden');
+    if (cardInput) cardInput.value = '';
+    if (cardInput) cardInput.classList.remove('error');
+    if (err) err.classList.remove('show');
+  }
+  if (!silent) markAccountProfileDirty();
+}
+
+function accProfileComplete() {
+  var f = (document.getElementById('acc-first') && document.getElementById('acc-first').value.trim()) || '';
+  var l = (document.getElementById('acc-last') && document.getElementById('acc-last').value.trim()) || '';
+  var ph = (document.getElementById('acc-phone') && document.getElementById('acc-phone').value.trim()) || '';
+  var sk = document.getElementById('acc-skill') && document.getElementById('acc-skill').value;
+  var mem = document.getElementById('acc-member') && document.getElementById('acc-member').value;
+  var wl = document.getElementById('waiver-liability');
+  var wc = document.getElementById('waiver-communication');
+  if (!(f && l && ph && sk && mem)) return false;
+  if (typeof OpenPlayRsvpHelpers !== 'undefined' && OpenPlayRsvpHelpers.validatePhone) {
+    if (!OpenPlayRsvpHelpers.validatePhone(ph).ok) return false;
+  }
+  if (!wl || !wl.checked || !wc || !wc.checked) return false;
+  if (mem === 'yes' && typeof OpenPlayRsvpHelpers !== 'undefined') {
+    var card = (document.getElementById('acc-member-card') && document.getElementById('acc-member-card').value.trim()) || '';
+    return OpenPlayRsvpHelpers.validateAccessCard('yes', card).ok;
+  }
+  return true;
+}
+
+function accCollectPatch() {
+  var wl = document.getElementById('waiver-liability');
+  var wc = document.getElementById('waiver-communication');
+  var schema =
+    typeof OpenPlayWaiverUI !== 'undefined' && OpenPlayWaiverUI.RSVP_WAIVERS_SCHEMA
+      ? OpenPlayWaiverUI.RSVP_WAIVERS_SCHEMA
+      : '2';
+  return {
+    firstName: document.getElementById('acc-first').value.trim(),
+    lastName: document.getElementById('acc-last').value.trim(),
+    phone: document.getElementById('acc-phone').value.trim(),
+    skill: document.getElementById('acc-skill').value,
+    membership: document.getElementById('acc-member').value,
+    memberCard: (document.getElementById('acc-member-card') && document.getElementById('acc-member-card').value.trim()) || '',
+    hear: document.getElementById('acc-hear').value || '',
+    notes: document.getElementById('acc-notes').value.trim() || '',
+    waiverLiabilityAccepted: !!(wl && wl.checked),
+    waiverCommunicationAccepted: !!(wc && wc.checked),
+    rsvpWaiversSchema: schema,
+  };
+}
+
+function accValidateAndShowErrors() {
+  accClearErrors();
+  var p = accCollectPatch();
+  var ok = true;
+  if (!p.firstName) {
+    document.getElementById('acc-first').classList.add('error');
+    document.getElementById('acc-err-first').classList.add('show');
+    ok = false;
+  }
+  if (!p.lastName) {
+    document.getElementById('acc-last').classList.add('error');
+    document.getElementById('acc-err-last').classList.add('show');
+    ok = false;
+  }
+  var pc =
+    typeof OpenPlayRsvpHelpers !== 'undefined' && OpenPlayRsvpHelpers.validatePhone
+      ? OpenPlayRsvpHelpers.validatePhone(p.phone)
+      : { ok: !!p.phone, message: 'Required.' };
+  if (!pc.ok) {
+    document.getElementById('acc-phone').classList.add('error');
+    var eph = document.getElementById('acc-err-phone');
+    if (eph) {
+      eph.classList.add('show');
+      eph.textContent = pc.message || 'Required.';
+    }
+    ok = false;
+  }
+  if (!p.skill) {
+    document.getElementById('acc-skill').classList.add('error');
+    document.getElementById('acc-err-skill').classList.add('show');
+    ok = false;
+  }
+  if (!p.membership) {
+    document.getElementById('acc-member').classList.add('error');
+    document.getElementById('acc-err-member').classList.add('show');
+    ok = false;
+  }
+  if (p.membership === 'yes' && typeof OpenPlayRsvpHelpers !== 'undefined') {
+    var card = (document.getElementById('acc-member-card') && document.getElementById('acc-member-card').value.trim()) || '';
+    var cc = OpenPlayRsvpHelpers.validateAccessCard('yes', card);
+    if (!cc.ok) {
+      var mic = document.getElementById('acc-member-card');
+      var ecard = document.getElementById('acc-err-member-card');
+      if (mic) mic.classList.add('error');
+      if (ecard) {
+        ecard.classList.add('show');
+        if (cc.message) ecard.textContent = cc.message;
+      }
+      ok = false;
+    }
+  }
+  var wl = document.getElementById('waiver-liability');
+  var wc = document.getElementById('waiver-communication');
+  var wblock = document.getElementById('waiver-block');
+  if (!wl || !wl.checked) {
+    if (document.getElementById('err-waiver-liability')) document.getElementById('err-waiver-liability').classList.add('show');
+    ok = false;
+    if (wblock) wblock.classList.add('waiver-error');
+  }
+  if (!wc || !wc.checked) {
+    if (document.getElementById('err-waiver-communication')) document.getElementById('err-waiver-communication').classList.add('show');
+    ok = false;
+    if (wblock) wblock.classList.add('waiver-error');
+  }
+  return ok;
+}
+
+function accShowProfileMsg(text, cls) {
+  var el = document.getElementById('acc-profile-msg');
+  if (!el) return;
+  el.textContent = text || '';
+  el.className = 'auth-msg' + (cls ? ' ' + cls : '');
+}
+function showAccToast(msg, ms) {
+  var t = document.getElementById('acc-toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.style.display = 'block';
+  t.style.opacity = '1';
+  setTimeout(function () { t.style.opacity = '0'; setTimeout(function () { t.style.display = 'none'; }, 350); }, ms || 2200);
+}
+
+function markAccountProfileDirty() {
+  accountProfileSynced = false;
+  updateAccountCtaState();
+}
+
+/** Admin-only actions use openplay_se/admin_uids/{uid} in RTDB. */
+function updateStaffCheckinButtons(user) {
+  var hub = document.getElementById('hub-cta-checkin');
+  var hubActivity = document.getElementById('hub-cta-activity');
+  if (!hub && !hubActivity) return;
+  function showCheckin(on) {
+    if (hub) hub.classList.toggle('hidden', !on);
+  }
+  function showActivity(on) {
+    if (hubActivity) hubActivity.classList.toggle('hidden', !on);
+  }
+  if (!user || typeof SEOpenPlay === 'undefined') {
+    showCheckin(false);
+    showActivity(false);
+    return;
+  }
+  showCheckin(false);
+  showActivity(false);
+  if (SEOpenPlay.loadAdminUidFlag) {
+    SEOpenPlay.loadAdminUidFlag(user.uid).then(function (ok) {
+      showCheckin(!!ok);
+      showActivity(!!ok);
+    });
+  }
+}
+
+function accountHasAdvancedOpenPlay() {
+  var moduleId =
+    typeof SEOpenPlay !== 'undefined' && SEOpenPlay.MODULE_ADVANCED_OPEN_PLAY
+      ? SEOpenPlay.MODULE_ADVANCED_OPEN_PLAY
+      : 'advanced_open_play';
+  if (accountIsAdmin) return true;
+  if (accountModuleAccess && accountModuleAccess[moduleId] && accountModuleAccess[moduleId].enabled === true) {
+    return true;
+  }
+  return !!(
+    typeof SEOpenPlay !== 'undefined' &&
+    SEOpenPlay.isAdvancedOpenPlayEligibleProfile &&
+    SEOpenPlay.isAdvancedOpenPlayEligibleProfile(currentAccountProfile)
+  );
+}
+
+function updateHubModuleVisibility() {
+  var canOpenPlay = accountHasAdvancedOpenPlay();
+  var unlocked = document.getElementById('module-card-advanced-open-play');
+  var locked = document.getElementById('module-card-advanced-open-play-locked');
+  var schedule = document.getElementById('advanced-openplay-schedule');
+  var adminPanel = document.getElementById('module-admin-panel');
+  var rsvpCta = document.getElementById('hub-cta-rsvp');
+  var aopHideBoth = false;
+  if (!canOpenPlay && typeof SEOpenPlay !== 'undefined' && SEOpenPlay.isAdvancedOpenPlayEligibleSkill) {
+    var rSk = currentAccountProfile && currentAccountProfile.skill ? String(currentAccountProfile.skill).trim() : '';
+    if (rSk && !SEOpenPlay.isAdvancedOpenPlayEligibleSkill(rSk) && !accountIsAdmin) {
+      aopHideBoth = true;
+    }
+  }
+  if (aopHideBoth) {
+    if (unlocked) unlocked.classList.add('hidden');
+    if (locked) locked.classList.add('hidden');
+    if (schedule) schedule.classList.add('hidden');
+    if (rsvpCta) rsvpCta.classList.add('hidden');
+    var manageCtaHidden = document.getElementById('cta-manage-rsvps');
+    if (manageCtaHidden) manageCtaHidden.classList.add('hidden');
+  } else {
+    if (unlocked) unlocked.classList.toggle('hidden', !canOpenPlay);
+    if (locked) locked.classList.toggle('hidden', canOpenPlay);
+    if (schedule) schedule.classList.toggle('hidden', !canOpenPlay);
+    if (rsvpCta) rsvpCta.classList.toggle('hidden', !canOpenPlay);
+    var manageCta = document.getElementById('cta-manage-rsvps');
+    if (manageCta) manageCta.classList.toggle('hidden', !canOpenPlay);
+  }
+  if (adminPanel) adminPanel.classList.toggle('hidden', !accountIsAdmin);
+  updateAccountCtaState();
+}
+
+function loadAccountAccessState(user) {
+  accountModuleAccess = {};
+  accountIsAdmin = false;
+  if (!user || typeof SEOpenPlay === 'undefined') {
+    updateHubModuleVisibility();
+    return Promise.resolve();
+  }
+  var adminPromise = SEOpenPlay.loadAdminUidFlag ? SEOpenPlay.loadAdminUidFlag(user.uid) : Promise.resolve(false);
+  var accessPromise = SEOpenPlay.loadModuleAccess ? SEOpenPlay.loadModuleAccess(user.uid) : Promise.resolve({});
+  return Promise.all([adminPromise, accessPromise]).then(function (res) {
+    accountIsAdmin = !!res[0];
+    accountModuleAccess = res[1] || {};
+    updateHubModuleVisibility();
+  });
+}
+
+function updateAccountCtaState() {
+  var hubCta = document.getElementById('hub-cta-rsvp');
+  var manageCta = document.getElementById('cta-manage-rsvps');
+  if (!hubCta && !manageCta) return;
+  syncAccountCtaRsvpHref();
+  var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
+  function setDisabled(el, on) {
+    if (!el) return;
+    if (on) el.classList.add('cta-disabled');
+    else el.classList.remove('cta-disabled');
+  }
+  if (!u) {
+    setDisabled(hubCta, true);
+    setDisabled(manageCta, true);
+    return;
+  }
+  var block = !accountHasAdvancedOpenPlay() || !accProfileComplete() || !accountProfileSynced;
+  setDisabled(hubCta, block);
+  setDisabled(manageCta, block);
+}
+
+function loadAccountFormFromProfile(p) {
+  if (!p) return;
+  currentAccountProfile = p;
+  if (p.firstName) document.getElementById('acc-first').value = p.firstName;
+  if (p.lastName) document.getElementById('acc-last').value = p.lastName;
+  if (p.phone) document.getElementById('acc-phone').value = p.phone;
+  if (p.skill) {
+    var accSk = document.getElementById('acc-skill');
+    accSk.value = p.skill;
+    if (accSk.value !== p.skill) {
+      var leg = document.createElement('option');
+      leg.value = p.skill;
+      leg.textContent = p.skill + ' (legacy)';
+      accSk.appendChild(leg);
+      accSk.value = p.skill;
+    }
+  }
+  if (p.membership) {
+    document.getElementById('acc-member').value = p.membership;
+    accToggleMemberCard(p.membership, true);
+    if (p.membership === 'yes' && p.memberCard && document.getElementById('acc-member-card')) {
+      document.getElementById('acc-member-card').value = p.memberCard;
+    }
+  } else {
+    accToggleMemberCard('', true);
+  }
+  if (p.hear) document.getElementById('acc-hear').value = p.hear;
+  if (p.notes !== undefined && document.getElementById('acc-notes')) document.getElementById('acc-notes').value = p.notes || '';
+  if (typeof OpenPlayWaiverUI !== 'undefined' && OpenPlayWaiverUI.hydrateAccountWaivers) {
+    OpenPlayWaiverUI.hydrateAccountWaivers(p);
+  }
+}
+
+function setAccountViewMode(mode) {
+  var uCheck = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
+  if (!uCheck) return;
+  accountViewMode = mode === 'hub' ? 'hub' : 'edit';
+  var profilePanel = document.getElementById('profile-data-panel');
+  var hubPanel = document.getElementById('account-hub-panel');
+  var bodyWrap = document.querySelector('.body-wrap');
+  if (accountViewMode === 'hub') {
+    if (profilePanel) profilePanel.classList.add('hidden');
+    if (hubPanel) hubPanel.classList.remove('hidden');
+    if (bodyWrap) bodyWrap.classList.add('body-wrap--wide');
+    var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
+    if (u) {
+      renderAccountHubUserLine(u, {});
+      SEOpenPlay.loadUserProfile(u.uid).then(function (p) {
+        renderAccountHubUserLine(u, p || {});
+      });
+    }
+    renderAccountRsvpCalendar();
+  } else {
+    if (hubPanel) hubPanel.classList.add('hidden');
+    if (profilePanel) profilePanel.classList.remove('hidden');
+    if (bodyWrap) bodyWrap.classList.remove('body-wrap--wide');
+  }
+  var backHub = document.getElementById('acc-back-to-hub');
+  var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
+  if (backHub) {
+    if (accountViewMode === 'edit' && u && accountProfileSynced) backHub.classList.remove('hidden');
+    else backHub.classList.add('hidden');
+  }
+  var hubEditTop = document.getElementById('hub-edit-profile');
+  if (hubEditTop) {
+    if (accountViewMode === 'hub') hubEditTop.classList.remove('hidden');
+    else hubEditTop.classList.add('hidden');
+  }
+  syncAccountIntroVisibility();
+}
+
+function syncAccountIntroVisibility() {
+  var pageLead = document.querySelector('.page-lead');
+  var authPanel = document.getElementById('auth-panel');
+  var hasUser = !!(SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser());
+  var hideIntro = hasUser && accountViewMode === 'hub';
+  if (document.body) document.body.classList.toggle('account-calendar-view', hideIntro);
+  if (pageLead) pageLead.classList.toggle('hidden', hideIntro);
+  if (authPanel) authPanel.classList.toggle('hidden', hideIntro);
+}
+
+function renderAccountHubUserLine(user, p) {
+  var el = document.getElementById('hub-user-line');
+  if (!el || !user) return;
+  var name =
+    p && ((p.firstName || '') + ' ' + (p.lastName || '')).trim()
+      ? ((p.firstName || '') + ' ' + (p.lastName || '')).trim()
+      : '';
+  el.innerHTML =
+    'Signed in as <strong>' +
+    escapeHtml(user.email || '') +
+    '</strong>' +
+    (name ? ' - ' + escapeHtml(name) : '') +
+    '. Your Advanced Open Play schedule appears below.';
+}
+
+function moduleAdminMsg(text, cls) {
+  var el = document.getElementById('module-admin-msg');
+  if (!el) return;
+  el.textContent = text || '';
+  el.style.color = cls === 'err' ? '#ff8888' : cls === 'ok' ? 'var(--neon)' : 'rgba(255,255,255,.68)';
+}
+
+function resolveModuleAdminTarget() {
+  var input = document.getElementById('module-admin-target');
+  var raw = input ? String(input.value || '').trim() : '';
+  accountAdminTargetUid = '';
+  if (!raw) {
+    moduleAdminMsg('Enter a user email or UID.', 'err');
+    return Promise.resolve('');
+  }
+  if (raw.indexOf('@') !== -1 && SEOpenPlay.loadUserProfileByEmail) {
+    moduleAdminMsg('Looking up profile by email...');
+    return SEOpenPlay.loadUserProfileByEmail(raw).then(function (profile) {
+      if (!profile || !profile.uid) {
+        moduleAdminMsg('No saved profile found for that email. Ask the user to sign in and save their profile, or use their Firebase UID.', 'err');
+        return '';
+      }
+      accountAdminTargetUid = profile.uid;
+      moduleAdminMsg('Found ' + raw + ' as UID ' + profile.uid + '.', 'ok');
+      return accountAdminTargetUid;
+    });
+  }
+  accountAdminTargetUid = raw;
+  moduleAdminMsg('Using UID ' + raw + '.', 'ok');
+  return Promise.resolve(accountAdminTargetUid);
+}
+
+function setAdvancedOpenPlayForTarget(enabled) {
+  if (!SEOpenPlay.setModuleAccess) {
+    moduleAdminMsg('Module access helper is unavailable.', 'err');
+    return;
+  }
+  resolveModuleAdminTarget().then(function (uid) {
+    if (!uid) return;
+    moduleAdminMsg((enabled ? 'Granting' : 'Revoking') + ' Advanced Open Play access...');
+    SEOpenPlay.setModuleAccess(uid, SEOpenPlay.MODULE_ADVANCED_OPEN_PLAY || 'advanced_open_play', enabled)
+      .then(function () {
+        moduleAdminMsg((enabled ? 'Granted' : 'Revoked') + ' Advanced Open Play access for ' + uid + '.', 'ok');
+      })
+      .catch(function (err) {
+        moduleAdminMsg((err && err.message) || 'Could not update module access.', 'err');
+      });
+  });
+}
+
+function wireModuleAdminPanel() {
+  var resolveBtn = document.getElementById('module-admin-resolve');
+  var grantBtn = document.getElementById('module-admin-grant');
+  var revokeBtn = document.getElementById('module-admin-revoke');
+  if (resolveBtn) resolveBtn.addEventListener('click', resolveModuleAdminTarget);
+  if (grantBtn) grantBtn.addEventListener('click', function () { setAdvancedOpenPlayForTarget(true); });
+  if (revokeBtn) revokeBtn.addEventListener('click', function () { setAdvancedOpenPlayForTarget(false); });
+}
+
+function pad2(n) {
+  return n < 10 ? '0' + n : String(n);
+}
+
+function pacificNowDate() {
+  // Build a Date from Pacific local wall-clock parts so day/month math stays aligned to PT.
+  var p = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Los_Angeles',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  }).formatToParts(new Date());
+  var y = parseInt(
+    p.filter(function (x) {
+      return x.type === 'year';
+    })[0].value,
+    10
+  );
+  var m = parseInt(
+    p.filter(function (x) {
+      return x.type === 'month';
+    })[0].value,
+    10
+  );
+  var d = parseInt(
+    p.filter(function (x) {
+      return x.type === 'day';
+    })[0].value,
+    10
+  );
+  return new Date(y, m - 1, d);
+}
+
+function normalizeSessionDateToExpectedWeekday(d, expectedDow) {
+  if (!d || typeof expectedDow !== 'number') return d;
+  var normalized = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  var diff = expectedDow - normalized.getDay();
+  if (Math.abs(diff) > 3) diff += diff > 0 ? -7 : 7;
+  normalized.setDate(normalized.getDate() + diff);
+  normalized.setHours(0, 0, 0, 0);
+  return normalized;
+}
+
+function parseSessionToDate(sessionStr) {
+  if (!sessionStr) return null;
+  var s = String(sessionStr).trim().replace(/\s+/g, ' ');
+  var m = s.match(/^((?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s+(?:Morning|Evening|Afternoon))\s+(\w+)\s+(\d+)/i);
+  if (!m) return null;
+  var mon = SESSION_MONTHS_ACC[m[2].toLowerCase()];
+  if (mon === undefined) return null;
+  var day = parseInt(m[3], 10);
+  var pacNow = pacificNowDate();
+  var y = pacNow.getFullYear();
+  var d = new Date(y, mon, day);
+  d.setHours(0, 0, 0, 0);
+  var dowMap = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
+  var expectedDow = dowMap[m[1].trim().split(/\s/)[0].toLowerCase().substring(0, 3)];
+  if (typeof expectedDow === 'number') d = normalizeSessionDateToExpectedWeekday(d, expectedDow);
+  if (d.getTime() < pacNow.getTime() - 14 * 864e5) {
+    d = new Date(y + 1, mon, day);
+    d.setHours(0, 0, 0, 0);
+    if (typeof expectedDow === 'number') d = normalizeSessionDateToExpectedWeekday(d, expectedDow);
+  }
+  return d;
+}
+
+function normalizeSessionKey(s) {
+  return String(s || '')
+    .trim()
+    .replace(/\s+/g, ' ')
+    .toLowerCase();
+}
+
+function getRsvpSessionHref(sessionLabel) {
+  var label = String(sessionLabel || '').trim();
+  return label ? '/open-play/book?session=' + encodeURIComponent(label) : '/open-play/book';
+}
+
+function abbrevSlotName(slot) {
+  if (!slot) return '';
+  var s = String(slot).trim();
+  var dayMap = { monday: 'Mon', tuesday: 'Tue', wednesday: 'Wed', thursday: 'Thu', friday: 'Fri', saturday: 'Sat', sunday: 'Sun' };
+  var timeMap = { morning: 'AM', afternoon: 'PM', evening: 'PM' };
+  var parts = s.split(/\s+/);
+  if (parts.length >= 2) {
+    var dPart = dayMap[parts[0].toLowerCase()] || parts[0].substring(0, 3);
+    var tPart = timeMap[parts[1].toLowerCase()] || parts[1];
+    return dPart + ' ' + tPart;
+  }
+  return s;
+}
+
+function abbrevSessionLabel(full) {
+  if (!full) return '';
+  var m = String(full).match(/^((?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s+(?:Morning|Afternoon|Evening))\s+(.+)$/i);
+  if (!m) return full;
+  return abbrevSlotName(m[1]) + ' - ' + m[2];
+}
+
+function abbrevSessionLabelCalendar(full) {
+  var d = parseSessionToDate(full);
+  if (!d) return abbrevSessionLabel(full);
+  var m = String(full).match(/^((?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s+(?:Morning|Afternoon|Evening))/i);
+  if (!m) return abbrevSessionLabel(full);
+  var slot = abbrevSlotName(m[1]);
+  var mon = d.toLocaleDateString('en-US', { month: 'short' });
+  return slot + ' - ' + mon + ' ' + d.getDate();
+}
+
+function renderAccountRsvpCalendar() {
+  var grid = document.getElementById('cal-grid');
+  var label = document.getElementById('cal-month-label');
+  if (!grid || !label) return;
+  var cur = new Date(accountCalendarCursor.getFullYear(), accountCalendarCursor.getMonth(), 1);
+  var y = cur.getFullYear();
+  var mo = cur.getMonth();
+  label.textContent = cur.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+  var byDay = {};
+  var openByDay = {};
+  var unparsed = [];
+  var userBookedByDay = {};
+  var dedupedRows = [];
+  var seenSessionStr = {};
+  (accountMyRsvpRows || []).forEach(function (r) {
+    var s = String(r.session || '').trim();
+    if (!s) return;
+    var nk = normalizeSessionKey(s);
+    if (seenSessionStr[nk]) return;
+    seenSessionStr[nk] = true;
+    dedupedRows.push(r);
+  });
+  dedupedRows.forEach(function (r) {
+    var sessKey = String(r.session || '').trim();
+    var d = parseSessionToDate(r.session);
+    if (!d) {
+      unparsed.push(r);
+      return;
+    }
+    var dk = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+    if (!byDay[dk]) byDay[dk] = [];
+    byDay[dk].push(r);
+    if (!userBookedByDay[dk]) userBookedByDay[dk] = {};
+    if (sessKey) userBookedByDay[dk][normalizeSessionKey(sessKey)] = true;
+  });
+  ACCOUNT_OPEN_SESSIONS.forEach(function (sessionLabel) {
+    var d = parseSessionToDate(sessionLabel);
+    if (!d) return;
+    var dk = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+    if (!openByDay[dk]) openByDay[dk] = [];
+    openByDay[dk].push(sessionLabel);
+  });
+
+  var firstDow = new Date(y, mo, 1).getDay();
+  var daysInMonth = new Date(y, mo + 1, 0).getDate();
+  var html = '';
+  var i;
+  for (i = 0; i < firstDow; i++) {
+    html += '<div class="cal-day cal-day--empty"></div>';
+  }
+  var today = pacificNowDate();
+  today.setHours(0, 0, 0, 0);
+  for (var day = 1; day <= daysInMonth; day++) {
+    var cellDate = new Date(y, mo, day);
+    var dk = cellDate.getFullYear() + '-' + pad2(cellDate.getMonth() + 1) + '-' + pad2(cellDate.getDate());
+    var isToday = cellDate.getTime() === today.getTime();
+    var isPast = cellDate.getTime() < today.getTime();
+    var rows = byDay[dk] || [];
+    var openSlots = [];
+    if (!isPast) {
+      var openList = openByDay[dk] || [];
+      var bookedMap = userBookedByDay[dk] || {};
+      openSlots = openList.filter(function (sessLabel) {
+        return !bookedMap[normalizeSessionKey(sessLabel)];
+      });
+    }
+    var dayCls = 'cal-day';
+    if (isToday) dayCls += ' cal-day--today';
+    if (isPast && !isToday) dayCls += ' cal-day--muted';
+    if (openSlots.length) dayCls += ' cal-day--bookable';
+    var dayHref = openSlots.length ? getRsvpSessionHref(openSlots[0]).replace(/"/g, '&quot;') : '';
+    html += '<div class="' + dayCls + '" role="gridcell"' + (dayHref ? ' data-rsvp-href="' + dayHref + '"' : '') + '>';
+    html += '<div class="cal-day-num">' + day + '</div>';
+    html += '<div class="cal-day-events">';
+    rows.forEach(function (r) {
+      var slot = abbrevSessionLabelCalendar(r.session);
+      var pidRaw = String(r.pid || '');
+      var pidAttr = pidRaw.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+      html += '<div class="cal-ev">';
+      html += '<span class="cal-ev-slot">' + escapeHtml(slot) + '</span>';
+      if (!isPast) {
+        html += '<button type="button" class="cal-ev-cancel" data-pid="' + pidAttr + '">Cancel</button>';
+      }
+      html += '</div>';
+    });
+    if (openSlots.length) {
+      openSlots.forEach(function (sessLabel) {
+        var href = getRsvpSessionHref(sessLabel).replace(/"/g, '&quot;');
+        html += '<a class="cal-open" href="' + href + '" aria-label="Book ' + escapeHtml(sessLabel) + '">' + escapeHtml(abbrevSessionLabelCalendar(sessLabel)) + '<br>Available</a>';
+      });
+    }
+    html += '</div></div>';
+  }
+  grid.innerHTML = html;
+  grid.querySelectorAll('.cal-day--bookable').forEach(function (dayEl) {
+    dayEl.addEventListener('click', function (e) {
+      if (e.target && e.target.closest && e.target.closest('a,button')) return;
+      var href = dayEl.getAttribute('data-rsvp-href');
+      if (href) window.location.href = href;
+    });
+  });
+  grid.querySelectorAll('.cal-ev-cancel').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      cancelAccountRsvpFromModal(btn.getAttribute('data-pid'));
+    });
+  });
+
+  var unpEl = document.getElementById('cal-unparsed');
+  if (unpEl) {
+    if (!unparsed.length) {
+      unpEl.classList.add('hidden');
+      unpEl.innerHTML = '';
+    } else {
+      unpEl.classList.remove('hidden');
+      unpEl.innerHTML =
+        '<div class="cal-unparsed-title">Other reservations</div>' +
+        unparsed
+          .map(function (r) {
+            var pidRaw = String(r.pid || '');
+            var pidAttr = pidRaw.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+            return (
+              '<div class="manage-rsvp-row">' +
+              '<div class="manage-rsvp-row-main"><strong>' +
+              escapeHtml(r.session || 'Session') +
+              '</strong><span class="manage-rsvp-pid">Player ID: ' +
+              escapeHtml(pidRaw) +
+              '</span></div>' +
+              '<button type="button" class="manage-rsvp-cancel" data-pid="' +
+              pidAttr +
+              '">Cancel</button></div>'
+            );
+          })
+          .join('');
+      unpEl.querySelectorAll('.manage-rsvp-cancel').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          cancelAccountRsvpFromModal(btn.getAttribute('data-pid'));
+        });
+      });
+    }
+  }
+}
+
+function accountManageableRsvpRows() {
+  var today = pacificNowDate();
+  today.setHours(0, 0, 0, 0);
+  var seen = {};
+  return (accountMyRsvpRows || []).filter(function (r) {
+    var key = String(r.pid || '') || normalizeSessionKey(r.session);
+    if (key && seen[key]) return false;
+    if (key) seen[key] = true;
+    var d = parseSessionToDate(r.session);
+    return !d || d.getTime() >= today.getTime();
+  });
+}
+
+function renderManageRsvpList() {
+  var list = document.getElementById('manage-rsvp-list');
+  if (!list) return;
+  var rows = accountManageableRsvpRows();
+  if (!rows.length) {
+    list.innerHTML = '<p class="manage-rsvp-empty">No active RSVPs yet. Pick an available session on the calendar to book.</p>';
+    return;
+  }
+  list.innerHTML = rows
+    .map(function (r) {
+      var pidRaw = String(r.pid || '');
+      var pidAttr = pidRaw.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+      return (
+        '<div class="manage-rsvp-row">' +
+        '<div class="manage-rsvp-row-main"><strong>' +
+        escapeHtml(r.session || 'Session') +
+        '</strong><span class="manage-rsvp-pid">Player ID: ' +
+        escapeHtml(pidRaw || 'Pending') +
+        '</span></div>' +
+        '<button type="button" class="manage-rsvp-cancel" data-pid="' +
+        pidAttr +
+        '"' +
+        (pidRaw ? '' : ' disabled') +
+        '>Cancel</button></div>'
+      );
+    })
+    .join('');
+  list.querySelectorAll('.manage-rsvp-cancel').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      cancelAccountRsvpFromModal(btn.getAttribute('data-pid'));
+    });
+  });
+}
+
+function renderManageRsvpListIfOpen() {
+  var m = document.getElementById('manage-rsvp-modal');
+  if (m && m.classList.contains('open')) renderManageRsvpList();
+}
+
+function openManageRsvpModal() {
+  var m = document.getElementById('manage-rsvp-modal');
+  if (!m) return;
+  m.classList.add('open');
+  m.setAttribute('aria-hidden', 'false');
+  renderManageRsvpList();
+}
+
+function closeManageRsvpModal() {
+  var m = document.getElementById('manage-rsvp-modal');
+  if (!m) return;
+  m.classList.remove('open');
+  m.setAttribute('aria-hidden', 'true');
+}
+
+function cancelAccountRsvpFromModal(pid) {
+  if (!pid || typeof SEOpenPlay === 'undefined' || !SEOpenPlay.deleteMyRsvp) return;
+  if (!window.confirm('Cancel this RSVP? You can book again later if space is available.')) return;
+  SEOpenPlay.initFirebase()
+    .then(function () {
+      return SEOpenPlay.deleteMyRsvp(pid);
+    })
+    .then(function () {
+      showAccToast('RSVP cancelled.');
+      renderAccountRsvpCalendar();
+      renderManageRsvpListIfOpen();
+    })
+    .catch(function (err) {
+      window.alert('Could not cancel. ' + (err && err.message ? err.message : 'Try again.'));
+    });
+}
+
+function initAccountPage() {
+  var noFb = document.getElementById('no-firebase-msg');
+  var panel = document.getElementById('auth-panel');
+  if (!panel || typeof SEOpenPlay === 'undefined') return;
+
+  syncAccountCtaRsvpHref();
+
+  if (!SEOpenPlay.firebaseConfigured()) {
+    if (noFb) {
+      noFb.textContent = typeof sePickleballFirebaseUserMessage === 'function' ? sePickleballFirebaseUserMessage() : 'Unavailable.';
+      if (typeof sePickleballLogFirebase === 'function') sePickleballLogFirebase('Account', 'firebaseConfigured() is false');
+      noFb.classList.remove('hidden');
+    }
+    return;
+  }
+
+  panel.classList.remove('hidden');
+  if (noFb) noFb.classList.add('hidden');
+  setAuthModeUI();
+
+  document.getElementById('auth-toggle-mode').addEventListener('click', function () {
+    authMode = authMode === 'signin' ? 'signup' : 'signin';
+    setAuthModeUI();
+    authShowMsg('');
+  });
+
+  document.getElementById('auth-primary-btn').addEventListener('click', function () {
+    authShowMsg('');
+    var email = (document.getElementById('auth-email').value || '').trim();
+    var pw = document.getElementById('auth-password').value || '';
+    if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+      authShowMsg('Enter a valid email.', 'err');
+      return;
+    }
+    if (pw.length < 6) {
+      authShowMsg('Password must be at least 6 characters.', 'err');
+      return;
+    }
+    accountRedirectAfterAuthFlow = true;
+    var p = authMode === 'signup' ? SEOpenPlay.signUpEmail(email, pw) : SEOpenPlay.signInEmail(email, pw);
+    p.then(function () {
+      authShowMsg(authMode === 'signup' ? 'Account created. You are signed in.' : 'Signed in.', 'ok');
+      document.getElementById('auth-password').value = '';
+    }).catch(function (err) {
+      accountRedirectAfterAuthFlow = false;
+      authShowMsg((err && err.message) || 'Something went wrong.', 'err');
+    });
+  });
+
+  document.getElementById('auth-forgot').addEventListener('click', function (e) {
+    e.preventDefault();
+    var email = (document.getElementById('auth-email').value || '').trim();
+    var base = forgotPasswordHref();
+    window.location.href = email ? base + '?email=' + encodeURIComponent(email) : base;
+  });
+
+  function forgotPasswordHref() {
+    var path = String(window.location && window.location.pathname ? window.location.pathname : '').replace(/\\/g, '/');
+    if (path.indexOf('/Programs/') !== -1 || path.indexOf('/advanced-open-play/staging/') !== -1 || path.indexOf('/advanced-open-play/live/') !== -1) {
+      return 'SouthEnd_Forgot_Password.html';
+    }
+    return '/forgot-password';
+  }
+
+  function fpShowMsg(text, kind) {
+    var el = document.getElementById('fp-msg');
+    if (!el) return;
+    el.textContent = text || '';
+    el.classList.remove('err', 'ok');
+    if (kind) el.classList.add(kind);
+  }
+
+  function openForgotPasswordModal() {
+    var modal = document.getElementById('fp-modal');
+    if (!modal) return;
+    var emailInput = document.getElementById('fp-email');
+    var prefill = (document.getElementById('auth-email').value || '').trim();
+    if (emailInput) {
+      emailInput.value = prefill;
+      setTimeout(function () { emailInput.focus(); emailInput.select(); }, 30);
+    }
+    fpShowMsg('');
+    var sendBtn = document.getElementById('fp-send');
+    if (sendBtn) sendBtn.disabled = false;
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeForgotPasswordModal() {
+    var modal = document.getElementById('fp-modal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+  }
+
+  document.getElementById('fp-close').addEventListener('click', closeForgotPasswordModal);
+  document.getElementById('fp-cancel').addEventListener('click', closeForgotPasswordModal);
+  document.getElementById('fp-modal').addEventListener('click', function (e) {
+    if (e.target === this) closeForgotPasswordModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      var modal = document.getElementById('fp-modal');
+      if (modal && modal.classList.contains('open')) closeForgotPasswordModal();
+    }
+  });
+
+  document.getElementById('fp-email').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      document.getElementById('fp-send').click();
+    }
+  });
+
+  document.getElementById('fp-send').addEventListener('click', function () {
+    var btn = this;
+    var email = (document.getElementById('fp-email').value || '').trim();
+    if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+      fpShowMsg('Enter a valid email address.', 'err');
+      return;
+    }
+    if (!SEOpenPlay || !SEOpenPlay.sendPasswordReset) {
+      fpShowMsg('Sign-in service unavailable. Please try again later.', 'err');
+      return;
+    }
+    btn.disabled = true;
+    var originalText = btn.textContent;
+    btn.textContent = 'Sending...';
+    fpShowMsg('Sending reset email...', 'ok');
+    SEOpenPlay.sendPasswordReset(email).then(function () {
+      fpShowMsg('Reset link sent to ' + email + '. Check your inbox (and spam folder).', 'ok');
+      btn.textContent = 'Sent';
+      var emailInput = document.getElementById('auth-email');
+      if (emailInput && !emailInput.value) emailInput.value = email;
+      setTimeout(closeForgotPasswordModal, 2400);
+    }).catch(function (err) {
+      var msg = (err && err.message) || 'Could not send reset email.';
+      var code = err && err.code ? String(err.code) : '';
+      if (code === 'auth/user-not-found') {
+        msg = 'No account found for that email. Try the email you registered with, or create a new account.';
+      } else if (code === 'auth/invalid-email') {
+        msg = 'That email address looks invalid. Double-check it and try again.';
+      } else if (code === 'auth/too-many-requests') {
+        msg = 'Too many attempts. Wait a few minutes before trying again.';
+      } else if (code === 'auth/network-request-failed') {
+        msg = 'Network error. Check your connection and try again.';
+      }
+      fpShowMsg(msg, 'err');
+      btn.disabled = false;
+      btn.textContent = originalText;
+    });
+  });
+
+  document.getElementById('auth-signout').addEventListener('click', function () {
+    SEOpenPlay.signOutUser().then(function () {
+      authShowMsg('');
+    });
+  });
+
+  document.getElementById('acc-save-profile').addEventListener('click', function () {
+    accShowProfileMsg('');
+    var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
+    if (!u) return;
+    if (!accValidateAndShowErrors()) {
+      accShowProfileMsg('Please fill all required fields.', 'err');
+      return;
+    }
+    var patch = accCollectPatch();
+    SEOpenPlay.saveUserProfilePatch(u.uid, patch)
+      .then(function () {
+        accountProfileSynced = true;
+        setAccountViewMode('hub');
+        showAccToast('Profile saved!');
+        updateAccountCtaState();
+        if (accountRedirectAfterAuthFlow || getAccountReturnHref()) redirectAfterAccountReady();
+      })
+      .catch(function (err) {
+        accShowProfileMsg((err && err.message) || 'Could not save.', 'err');
+      });
+  });
+
+  function wireRsvpCtaClick(el) {
+    if (!el) return;
+    el.addEventListener('click', function (e) {
+      var u = SEOpenPlay.getCurrentUser && SEOpenPlay.getCurrentUser();
+      if (!u) return;
+      if (!accountHasAdvancedOpenPlay()) {
+        e.preventDefault();
+        accShowProfileMsg('Advanced Open Play requires a 4.0+ skill rating, staff-assigned access, or admin approval.', 'err');
+        return;
+      }
+      if (!accProfileComplete()) {
+        e.preventDefault();
+        accShowProfileMsg('Fill all required fields.', 'err');
+        return;
+      }
+      if (!accountProfileSynced) {
+        e.preventDefault();
+        accShowProfileMsg('Save your profile on this page before booking.', 'err');
+      }
+    });
+  }
+  wireRsvpCtaClick(document.getElementById('hub-cta-rsvp'));
+  var manageRsvpsCta = document.getElementById('cta-manage-rsvps');
+  if (manageRsvpsCta) {
+    manageRsvpsCta.addEventListener('click', function () {
+      if (manageRsvpsCta.classList.contains('cta-disabled')) return;
+      setAccountViewMode('hub');
+      renderAccountRsvpCalendar();
+      openManageRsvpModal();
+    });
+  }
+  var manageClose = document.getElementById('manage-rsvp-modal-close');
+  var manageModal = document.getElementById('manage-rsvp-modal');
+  if (manageClose) manageClose.addEventListener('click', closeManageRsvpModal);
+  if (manageModal) {
+    manageModal.addEventListener('click', function (e) {
+      if (e.target === manageModal) closeManageRsvpModal();
+    });
+  }
+  wireModuleAdminPanel();
+
+  var hubEdit = document.getElementById('hub-edit-profile');
+  if (hubEdit) {
+    hubEdit.addEventListener('click', function () {
+      setAccountViewMode('edit');
+      accShowProfileMsg('');
+    });
+  }
+  var backToHub = document.getElementById('acc-back-to-hub');
+  if (backToHub) {
+    backToHub.addEventListener('click', function () {
+      setAccountViewMode('hub');
+      accShowProfileMsg('');
+    });
+  }
+
+  var calPrev = document.getElementById('cal-prev');
+  var calNext = document.getElementById('cal-next');
+  if (calPrev) {
+    calPrev.addEventListener('click', function () {
+      accountCalendarCursor = new Date(
+        accountCalendarCursor.getFullYear(),
+        accountCalendarCursor.getMonth() - 1,
+        1
+      );
+      renderAccountRsvpCalendar();
+    });
+  }
+  if (calNext) {
+    calNext.addEventListener('click', function () {
+      accountCalendarCursor = new Date(
+        accountCalendarCursor.getFullYear(),
+        accountCalendarCursor.getMonth() + 1,
+        1
+      );
+      renderAccountRsvpCalendar();
+    });
+  }
+
+  var accMem = document.getElementById('acc-member');
+  if (accMem) {
+    accMem.addEventListener('change', function () {
+      accToggleMemberCard(this.value);
+    });
+  }
+  ['acc-first', 'acc-last', 'acc-phone', 'acc-skill', 'acc-member', 'acc-hear', 'acc-notes', 'acc-member-card'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', markAccountProfileDirty);
+    el.addEventListener('change', markAccountProfileDirty);
+  });
+  ['waiver-liability', 'waiver-communication'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('change', markAccountProfileDirty);
+  });
+
+  if (typeof OpenPlayWaiverUI !== 'undefined' && OpenPlayWaiverUI.wire) {
+    OpenPlayWaiverUI.wire();
+  }
+
+  SEOpenPlay.onAuthStateChanged(function (user) {
+    var formBlock = document.getElementById('auth-form-block');
+    var signedBlock = document.getElementById('auth-signed-block');
+    var statusLine = document.getElementById('auth-status-line');
+    var profilePanel = document.getElementById('profile-data-panel');
+    var emailDisp = document.getElementById('acc-email-display');
+    var hubPanel = document.getElementById('account-hub-panel');
+    if (user) {
+      updateStaffCheckinButtons(user);
+      if (formBlock) formBlock.classList.add('hidden');
+      if (signedBlock) signedBlock.classList.remove('hidden');
+      if (statusLine) statusLine.innerHTML = 'Signed in as <strong>' + escapeHtml(user.email) + '</strong>.';
+      var ae = document.getElementById('auth-email');
+      if (ae) ae.value = user.email || '';
+      if (emailDisp) emailDisp.textContent = user.email || '-';
+      loadAccountAccessState(user).then(function () {
+        if (accountHasAdvancedOpenPlay() && SEOpenPlay.subscribeMyRsvps) {
+          SEOpenPlay.subscribeMyRsvps(user.uid, function (list) {
+            accountMyRsvpRows = list || [];
+            renderAccountRsvpCalendar();
+            renderManageRsvpListIfOpen();
+          }, user.email || '');
+        } else {
+          accountMyRsvpRows = [];
+          renderAccountRsvpCalendar();
+          renderManageRsvpListIfOpen();
+        }
+        SEOpenPlay.loadUserProfile(user.uid).then(function (p) {
+          loadAccountFormFromProfile(p);
+          accountProfileSynced = !!(p && SEOpenPlay.isProfileComplete(p));
+          if (p && accountProfileSynced) {
+            setAccountViewMode('hub');
+            if (accountRedirectAfterAuthFlow) redirectAfterAccountReady();
+          } else {
+            if (hubPanel) hubPanel.classList.add('hidden');
+            setAccountViewMode('edit');
+          }
+          updateHubModuleVisibility();
+          updateAccountCtaState();
+          try {
+            var params = new URLSearchParams(window.location.search);
+            if (params.get('section') === 'admin' && accountIsAdmin) {
+              setAccountViewMode('hub');
+              var ap = document.getElementById('module-admin-panel');
+              if (ap) setTimeout(function () { ap.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 200);
+            }
+          } catch (e) {}
+        });
+      });
+    } else {
+      updateStaffCheckinButtons(null);
+      loadAccountAccessState(null);
+      currentAccountProfile = null;
+      accountProfileSynced = false;
+      if (SEOpenPlay.unsubscribeMyRsvps) SEOpenPlay.unsubscribeMyRsvps();
+      accountMyRsvpRows = [];
+      if (formBlock) formBlock.classList.remove('hidden');
+      if (signedBlock) signedBlock.classList.add('hidden');
+      if (statusLine) statusLine.textContent = 'Create an account or sign in.';
+      if (profilePanel) profilePanel.classList.add('hidden');
+      if (hubPanel) hubPanel.classList.add('hidden');
+      var bodyWrapEl = document.querySelector('.body-wrap');
+      if (bodyWrapEl) bodyWrapEl.classList.remove('body-wrap--wide');
+      var backHubEl = document.getElementById('acc-back-to-hub');
+      if (backHubEl) backHubEl.classList.add('hidden');
+      accountViewMode = 'edit';
+      if (document.body) document.body.classList.remove('account-calendar-view');
+      syncAccountIntroVisibility();
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initAccountPage);
+</script>
+
+<a class="message-board-fab" href="/message-board" aria-label="Open Message Board">Message Board</a>
+</body>
+</html>

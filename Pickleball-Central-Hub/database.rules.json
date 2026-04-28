@@ -1,0 +1,133 @@
+{
+  "rules": {
+    "openplay_se": {
+      "rsvps": {
+        ".indexOn": ["firebaseUid", "email"],
+        ".read": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || ((root.child('openplay_se/module_access/' + auth.uid + '/advanced_open_play/enabled').val() === true || root.child('openplay_se/user_profiles/' + auth.uid + '/skill').val() == '4.0 Advanced' || root.child('openplay_se/user_profiles/' + auth.uid + '/skill').val() == '4.5 Upper Advanced' || root.child('openplay_se/user_profiles/' + auth.uid + '/skill').val() == '5.0 Open' || root.child('openplay_se/user_profiles/' + auth.uid + '/skill').val() == 'Advanced 4.0+' || root.child('openplay_se/user_profiles/' + auth.uid + '/skill').val() == 'Open 5.0+') && ((query.orderByChild === 'firebaseUid' && query.equalTo === auth.uid) || (auth.token.email_verified === true && auth.token.email != null && query.orderByChild === 'email' && query.equalTo === auth.token.email))))",
+        "$pid": {
+          ".read": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || ((root.child('openplay_se/module_access/' + auth.uid + '/advanced_open_play/enabled').val() === true || root.child('openplay_se/user_profiles/' + auth.uid + '/skill').val() == '4.0 Advanced' || root.child('openplay_se/user_profiles/' + auth.uid + '/skill').val() == '4.5 Upper Advanced' || root.child('openplay_se/user_profiles/' + auth.uid + '/skill').val() == '5.0 Open' || root.child('openplay_se/user_profiles/' + auth.uid + '/skill').val() == 'Advanced 4.0+' || root.child('openplay_se/user_profiles/' + auth.uid + '/skill').val() == 'Open 5.0+') && (!data.exists() || data.child('firebaseUid').val() === auth.uid || (auth.token.email_verified === true && auth.token.email != null && data.child('email').val() === auth.token.email))))",
+          ".write": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || ((root.child('openplay_se/module_access/' + auth.uid + '/advanced_open_play/enabled').val() === true || root.child('openplay_se/user_profiles/' + auth.uid + '/skill').val() == '4.0 Advanced' || root.child('openplay_se/user_profiles/' + auth.uid + '/skill').val() == '4.5 Upper Advanced' || root.child('openplay_se/user_profiles/' + auth.uid + '/skill').val() == '5.0 Open' || root.child('openplay_se/user_profiles/' + auth.uid + '/skill').val() == 'Advanced 4.0+' || root.child('openplay_se/user_profiles/' + auth.uid + '/skill').val() == 'Open 5.0+') && ((data.exists() && !newData.exists() && (data.child('firebaseUid').val() === auth.uid || (auth.token.email_verified === true && auth.token.email != null && data.child('email').val() === auth.token.email))) || ((!data.exists() || data.child('firebaseUid').val() === auth.uid) && newData.exists() && newData.child('firebaseUid').val() === auth.uid && newData.child('pid').val() === $pid))))",
+          ".validate": "!newData.exists() || root.child('openplay_se/admin_uids/' + auth.uid).val() === true || newData.child('pid').val() === $pid"
+        }
+      },
+      "admin_uids": {
+        ".read": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
+        "$uid": {
+          ".read": "auth != null && (auth.uid === $uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
+          ".write": false
+        }
+      },
+      "admin_scope": {
+        "$uid": {
+          ".read": "auth != null && (auth.uid === $uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
+          ".write": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
+          "$moduleKey": {
+            ".write": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
+            "$subModuleKey": {
+              ".write": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true"
+            }
+          }
+        }
+      },
+      "module_access": {
+        "$uid": {
+          ".read": "auth != null && (auth.uid === $uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
+          ".write": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
+          "$moduleId": {
+            ".write": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true"
+          }
+        }
+      },
+      "user_profiles": {
+        ".indexOn": ["email"],
+        ".read": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
+        "$uid": {
+          ".read": "auth != null && ($uid === auth.uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
+          ".write": "auth != null && (auth.uid === $uid || (root.child('openplay_se/admin_uids/' + auth.uid).val() === true && root.child('openplay_se/admin_uids/' + $uid).val() != true))"
+        }
+      },
+      "users": {
+        "$uid": {
+          ".read": "auth != null && (auth.uid === $uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
+          ".write": "auth != null && (auth.uid === $uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
+          ".validate": "!newData.exists() || (newData.hasChild('schemaVersion') && newData.child('schemaVersion').val() === 1)"
+        }
+      },
+      "activity": {
+        ".indexOn": ["ts", "type", "targetUid", "targetEmail", "nameKey"],
+        ".read": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
+        "$eventId": {
+          ".write": "auth != null && ((root.child('openplay_se/admin_uids/' + auth.uid).val() === true) || (!data.exists() && newData.exists() && newData.child('actorUid').val() === auth.uid && newData.child('targetUid').val() === auth.uid))"
+        }
+      },
+      "board_messages": {
+        ".indexOn": ["ts", "uid"],
+        ".read": "auth != null",
+        "$msgId": {
+          ".write": "auth != null && ((!data.exists() && newData.exists() && newData.child('uid').val() === auth.uid && newData.child('isStaffAdmin').val() == (root.child('openplay_se/admin_uids/' + auth.uid).val() == true)) || (data.exists() && !newData.exists() && (data.child('uid').val() === auth.uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)))"
+        }
+      },
+      "board_profiles": {
+        ".read": "auth != null",
+        "$uid": {
+          ".write": "auth != null && (auth.uid === $uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
+          ".validate": "!newData.exists() || (newData.hasChildren(['displayName', 'skill', 'isStaffAdmin']) && newData.child('displayName').isString() && newData.child('skill').isString() && newData.child('isStaffAdmin').isBoolean() && newData.child('isStaffAdmin').val() == (root.child('openplay_se/admin_uids/' + $uid).val() == true))"
+        }
+      },
+      "league_account": {
+        ".read": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
+        "$uid": {
+          ".read": "auth != null && ($uid === auth.uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
+          ".write": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || $uid === auth.uid || (data.exists() && !newData.exists() && data.child('teamId').exists() && root.child('openplay_se/league_teams/' + data.child('teamId').val() + '/captainUid').val() === auth.uid))"
+        }
+      },
+      "league_directory": {
+        ".indexOn": ["nameKey", "displayName", "optInForSearch"],
+        ".read": "auth != null",
+        "$uid": {
+          ".write": "auth != null && $uid === auth.uid"
+        }
+      },
+      "league_invites": {
+        ".indexOn": ["toUid", "fromUid", "teamId", "status", "createdAt"],
+        ".read": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (query.orderByChild === 'toUid' && query.equalTo === auth.uid) || (query.orderByChild === 'fromUid' && query.equalTo === auth.uid))",
+        "$inviteId": {
+          ".read": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (data.exists() && (data.child('toUid').val() === auth.uid || data.child('fromUid').val() === auth.uid || (!data.child('toUid').exists() && data.child('toEmail').val() === auth.token.email))))",
+          ".write": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (!data.exists() && newData.exists() && newData.child('fromUid').val() === auth.uid && newData.child('status').val() === 'pending' && newData.hasChildren(['fromUid', 'teamId', 'status', 'createdAt']) && ((newData.child('toUid').exists() && newData.child('toUid').val() !== newData.child('fromUid').val()) || (newData.child('toEmail').exists() && newData.child('toEmail').isString()))) || (data.exists() && newData.exists() && data.child('fromUid').val() === newData.child('fromUid').val() && data.child('teamId').val() === newData.child('teamId').val() && data.child('status').val() === 'pending' && (newData.child('status').val() === 'accepted' || newData.child('status').val() === 'declined') && ((data.child('toUid').exists() && data.child('toUid').val() === auth.uid && data.child('toUid').val() === newData.child('toUid').val()) || (!data.child('toUid').exists() && data.child('toEmail').val() === auth.token.email && newData.child('toUid').val() === auth.uid))) || (data.exists() && newData.exists() && data.child('fromUid').val() === auth.uid && data.child('fromUid').val() === newData.child('fromUid').val() && newData.child('status').val() === 'canceled') || (data.exists() && !newData.exists() && data.child('fromUid').val() === auth.uid))"
+        }
+      },
+      "user_notifications": {
+        "$uid": {
+          ".indexOn": ["createdAt", "state", "type", "sourceType"],
+          ".read": "auth != null && (auth.uid === $uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true)",
+          "$notificationId": {
+            ".write": "auth != null && (!data.exists() && !newData.exists() || auth.uid === $uid || root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (!data.exists() && newData.exists() && newData.child('schemaVersion').val() === 1 && newData.child('recipientUid').val() === $uid && newData.child('actorUid').val() === auth.uid && newData.child('type').val() === 'league_team_invite' && newData.child('sourceType').val() === 'league_invite' && newData.child('sourceId').val() === $notificationId && root.child('openplay_se/league_invites/' + $notificationId + '/fromUid').val() === auth.uid && root.child('openplay_se/league_invites/' + $notificationId + '/toUid').val() === $uid) || (data.exists() && newData.exists() && data.child('sourceType').val() === 'league_invite' && data.child('sourceId').val() === $notificationId && root.child('openplay_se/league_invites/' + $notificationId + '/fromUid').val() === auth.uid && root.child('openplay_se/league_invites/' + $notificationId + '/status').val() === 'canceled' && newData.child('state').val() === 'resolved') || (data.exists() && !newData.exists() && data.child('sourceType').val() === 'league_invite' && data.child('sourceId').val() === $notificationId && root.child('openplay_se/league_invites/' + $notificationId + '/fromUid').val() === auth.uid))",
+            ".validate": "!newData.exists() || (newData.child('schemaVersion').val() === 1 && newData.child('recipientUid').val() === $uid)"
+          }
+        }
+      },
+      "league_teams": {
+        ".indexOn": ["captainUid"],
+        ".read": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (query.orderByChild === 'captainUid' && query.equalTo === auth.uid))",
+        "$teamId": {
+          ".read": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (!data.exists() && $teamId === ('captain_' + auth.uid)) || (data.exists() && (data.child('captainUid').val() === auth.uid || root.child('openplay_se/league_teams/' + $teamId + '/roster/' + auth.uid).exists())) )",
+          ".write": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || (!data.exists() && newData.exists() && $teamId === ('captain_' + auth.uid) && !root.child('openplay_se/league_account/' + auth.uid + '/registrationStatus').exists() && newData.hasChildren(['captainUid', 'name', 'allMembers', 'feeLabel', 'status', 'createdAt']) && newData.child('captainUid').val() === auth.uid && !newData.hasChild('adminMarkedPaid') && !newData.hasChild('adminMarkedPaidAt') && !newData.hasChild('adminMarkedPaidBy')) || (data.exists() && newData.exists() && data.child('captainUid').val() === newData.child('captainUid').val() && data.child('createdAt').val() === newData.child('createdAt').val() && data.child('captainUid').val() === auth.uid && ((!data.hasChild('adminMarkedPaid') && !newData.hasChild('adminMarkedPaid')) || (data.hasChild('adminMarkedPaid') && newData.hasChild('adminMarkedPaid') && data.child('adminMarkedPaid').val() === newData.child('adminMarkedPaid').val())) && ((!data.hasChild('adminMarkedPaidAt') && !newData.hasChild('adminMarkedPaidAt')) || (data.hasChild('adminMarkedPaidAt') && newData.hasChild('adminMarkedPaidAt') && data.child('adminMarkedPaidAt').val() === newData.child('adminMarkedPaidAt').val())) && ((!data.hasChild('adminMarkedPaidBy') && !newData.hasChild('adminMarkedPaidBy')) || (data.hasChild('adminMarkedPaidBy') && newData.hasChild('adminMarkedPaidBy') && data.child('adminMarkedPaidBy').val() === newData.child('adminMarkedPaidBy').val()))) || (data.exists() && !newData.exists() && data.child('captainUid').val() === auth.uid))",
+          "roster": {
+            "$memberUid": {
+              ".read": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || root.child('openplay_se/league_teams/' + $teamId + '/captainUid').val() === auth.uid || $memberUid === auth.uid || root.child('openplay_se/league_teams/' + $teamId + '/roster/' + auth.uid).exists() )",
+              ".write": "auth != null && (root.child('openplay_se/admin_uids/' + auth.uid).val() === true || root.child('openplay_se/league_teams/' + $teamId + '/captainUid').val() === auth.uid )"
+            }
+          }
+        }
+      },
+      "league_games": {
+        ".read": "auth != null",
+        ".indexOn": ["weekKey", "divisionKey", "draw"],
+        "$gameId": {
+          ".write": "auth != null && root.child('openplay_se/admin_uids/' + auth.uid).val() === true",
+          ".validate": "!newData.exists() || !newData.hasChild('schemaVersion') || newData.child('schemaVersion').val() === 1"
+        }
+      }
+    }
+  }
+}

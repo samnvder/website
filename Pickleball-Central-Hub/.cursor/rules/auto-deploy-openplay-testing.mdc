@@ -1,0 +1,31 @@
+---
+description: Manual Open Play deployment checklist; local-page is never auto-synced or deployed.
+globs: []
+alwaysApply: false
+---
+
+# Open Play Deployment Checklist
+
+## Scope
+
+Use only when Sam explicitly asks to deploy Open Play.
+
+## Agent must run (from `Website/` = repo root)
+
+1. **Do not run `npm run local-test:sync` to copy files.** Local-page is independent.
+2. **`npm test`** — must pass before deploy.
+3. **`npm run deploy:openplay`** — push **`Programs/Pickleball/live`** to **Firebase Hosting** (`firebase.json` → `hosting.public`). This updates the **hosted URL** (e.g. `*.web.app` / custom domain for project `pickleball-advanced-open-play`).
+
+If deploy fails (auth): run **`firebase login`** once locally, or configure CI secret **`FIREBASE_TOKEN`** from **`firebase login:ci`**.
+
+## CI (optional auto-deploy on push)
+
+Workflow **`.github/workflows/deploy-openplay-firebase-hosting.yml`** runs on **`workflow_dispatch`** always, and on push to **`main`/`master`** only when repo variable **`OPENPLAY_CI_AUTO_DEPLOY`** is **`true`**. Requires GitHub Actions secret **`FIREBASE_TOKEN`** (`firebase login:ci`). See **`Programs/Pickleball/advanced-open-play/firebase-hosting/README.md`** (section **CI: auto-deploy on push**).
+
+## Not auto here
+
+- **Database rules** — use **`npm run firebase:deploy-rules`** when **`database.rules.json`** changes (or **`npm run deploy:openplay:all`** for hosting + rules together).
+
+## Do not deploy
+
+`Programs/Pickleball/advanced-open-play/testing/local-page/` — local test source only; **Hosting serves `live/`** per `firebase.json`.

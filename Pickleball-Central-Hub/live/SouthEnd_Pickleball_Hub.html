@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="/js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<title>South End Pickleball Hub</title>
+<meta name="description" content="South End pickleball hub: Advanced Open Play, message board, league play, and staff tools.">
+<link rel="icon" type="image/jpeg" href="/favicon.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* Season theme — aligned with South End league team registration form */
+:root {
+  --green: #1a6b3a;
+  --green-lt: #2d9458;
+  --green-dk: #0f3f22;
+  --gold: #e8a020;
+  --gold-hover: #d4911a;
+  --gold-lt: #ffd166;
+  --cream: #fafaf5;
+  --ink: #111810;
+  --muted: #5a6357;
+  --rule: #dde5d9;
+  --red: #c0392b;
+  --electric: #a855f7;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body.pickleball-hub-season,
+.pickleball-hub-season {
+  font-family: "DM Sans", sans-serif;
+  background: var(--green-dk);
+  min-height: 100vh;
+  color: var(--ink);
+  background-image:
+    repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(255, 255, 255, 0.018) 40px, rgba(255, 255, 255, 0.018) 41px);
+  padding: 24px 16px 56px;
+}
+.header {
+  max-width: 760px;
+  margin: 0 auto;
+  background: var(--green-dk);
+  border-radius: 8px 8px 0 0;
+  padding: 22px 28px 18px;
+  border-bottom: 3px solid var(--gold);
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 20px,
+    rgba(255, 255, 255, 0.025) 20px,
+    rgba(255, 255, 255, 0.025) 21px
+  );
+  pointer-events: none;
+}
+.header > div {
+  position: relative;
+  z-index: 1;
+}
+.hdr-eyebrow {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hdr-eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 1px;
+}
+.hdr-title {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 36px;
+  line-height: 0.95;
+  color: #fff;
+  letter-spacing: 1px;
+  text-transform: none;
+}
+.hdr-title span {
+  color: var(--gold);
+}
+.hdr-sub {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 5px;
+  font-weight: 500;
+  max-width: 36rem;
+  line-height: 1.45;
+}
+.hub-accent {
+  max-width: 760px;
+  margin: 0 auto;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--green-dk),
+    var(--green-lt) 38%,
+    var(--gold) 58%,
+    var(--green-lt) 80%,
+    var(--green-dk)
+  );
+}
+.se-site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  align-items: center;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 10px 24px 12px;
+  background: #fff;
+  border-left: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.se-site-nav-link {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1.5px solid var(--rule);
+  background: #fff;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.se-site-nav-link:hover {
+  color: var(--green);
+  border-color: var(--green-lt);
+  background: rgba(26, 107, 58, 0.06);
+}
+.se-site-nav-link--active {
+  color: var(--ink);
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 4px 16px rgba(232, 160, 32, 0.25);
+}
+.se-site-nav-link--admin {
+  margin-left: auto;
+  color: var(--green-dk);
+  border-color: var(--green-lt);
+  background: rgba(45, 148, 88, 0.12);
+}
+.se-site-nav-link--admin:hover {
+  background: rgba(45, 148, 88, 0.2);
+}
+.se-site-nav-link--admin.se-site-nav-link--active,
+.se-site-nav-link--admin[aria-current="page"] {
+  color: var(--ink);
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 4px 16px rgba(232, 160, 32, 0.25);
+}
+.se-site-nav-link--admin.se-site-nav-link--active:hover,
+.se-site-nav-link--admin[aria-current="page"]:hover {
+  color: var(--ink);
+  background: var(--gold);
+  border-color: var(--gold);
+}
+@media (max-width: 680px) {
+  .se-site-nav-link--admin {
+    margin-left: 0;
+  }
+}
+.body-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 28px 24px 40px;
+  background: #fff;
+  border-left: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+.lead {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 22px;
+}
+.auth-panel {
+  background: var(--cream);
+  border: 1.5px solid var(--rule);
+  border-left: 3px solid var(--gold);
+  border-radius: 8px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+.auth-title {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.auth-status {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.auth-status strong {
+  color: var(--ink);
+}
+.auth-status a {
+  color: var(--green);
+  font-weight: 600;
+}
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+@media (max-width: 680px) {
+  .hub-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.module-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 200px;
+  border: 2px solid var(--rule);
+  border-radius: 8px;
+  padding: 18px;
+  background: #fff;
+  text-decoration: none;
+  color: var(--ink);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.module-card:hover {
+  border-color: var(--green-lt);
+  box-shadow: 0 0 0 3px rgba(26, 107, 58, 0.08);
+}
+.module-card--locked {
+  opacity: 0.85;
+  border-style: dashed;
+}
+.module-card--locked:hover {
+  border-color: var(--rule);
+  box-shadow: none;
+}
+.module-kicker {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--green);
+}
+.module-card--locked .module-kicker {
+  color: var(--muted);
+}
+.module-title {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 24px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.05;
+  color: var(--ink);
+}
+.module-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.45;
+  flex: 1;
+}
+.module-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 400;
+  background: var(--gold);
+  color: var(--ink);
+  margin-top: auto;
+  transition: background 0.15s, transform 0.15s;
+}
+.module-card:hover .module-cta {
+  background: var(--gold-hover);
+}
+.module-card--locked .module-cta {
+  background: var(--cream);
+  color: var(--muted);
+  border: 1.5px solid var(--rule);
+}
+.hidden {
+  display: none !important;
+}
+.message-board-fab {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--green);
+  background: var(--green-dk);
+  color: #fff;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  transition: transform 0.15s, filter 0.15s;
+}
+.message-board-fab:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+.message-board-fab:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+@media (max-width: 520px) {
+  .message-board-fab {
+    right: 14px;
+    bottom: 14px;
+    padding: 12px 14px;
+    font-size: 12px;
+  }
+  .hdr-title {
+    font-size: 28px;
+  }
+}
+</style>
+</head>
+<body class="pickleball-hub-season">
+<div class="header">
+  <div>
+    <div class="hdr-eyebrow">South End Racquet &amp; Health Club</div>
+    <div class="hdr-title">PICKLEBALL <span>HUB</span></div>
+    <div class="hdr-sub">Program modules, access, and community tools.</div>
+  </div>
+</div>
+<div class="hub-accent" aria-hidden="true"></div>
+<nav class="se-site-nav" aria-label="Pickleball hub sections" data-se-hub-nav>
+  <a data-se-hub-tail class="se-site-nav-link se-site-nav-link--admin hidden" id="admin-hub-nav-link" href="/admin">Admin</a>
+</nav>
+<script src="/pickleball-hub-nav.js"></script>
+
+<main class="body-wrap">
+  <p class="lead">Choose a South End pickleball module. Some modules require admin-assigned access before they open.</p>
+
+  <section class="auth-panel" id="hub-auth-panel">
+    <div class="auth-title">Account</div>
+    <p class="auth-status" id="hub-auth-status">Checking sign-in...</p>
+  </section>
+
+  <section class="hub-grid" aria-label="Pickleball modules">
+    <a class="module-card module-card--locked hidden" id="advanced-open-play-locked" href="/open-play/account">
+      <div class="module-kicker">Access required</div>
+      <div class="module-title">Advanced Open Play</div>
+      <p class="module-desc">Competitive open play (4.0+ skill rating or staff-assigned access). Save your profile with an eligible rating, or ask staff to grant access.</p>
+      <span class="module-cta">Open Play</span>
+    </a>
+    <a class="module-card hidden" id="advanced-open-play-card" href="/open-play/account">
+      <div class="module-kicker">Approved module</div>
+      <div class="module-title">Advanced Open Play</div>
+      <p class="module-desc">Manage your open play profile, waiver, skill level, schedule, and bookings.</p>
+      <span class="module-cta">Open Play</span>
+    </a>
+    <a class="module-card" id="message-board-card" href="/message-board">
+      <div class="module-kicker">Community module</div>
+      <div class="module-title">Message Board</div>
+      <p class="module-desc">View updates, announcements, and community messages for South End pickleball.</p>
+      <span class="module-cta">Message Board</span>
+    </a>
+    <a class="module-card" id="league-play-card" href="/league-play">
+      <div class="module-kicker">Season play</div>
+      <div class="module-title">League Play</div>
+      <p class="module-desc">View league information, schedules, standings, registration, and match rules.</p>
+      <span class="module-cta">League Play</span>
+    </a>
+    <a class="module-card hidden" href="/admin" data-admin-card id="admin-hub-card" aria-hidden="true">
+      <div class="module-kicker">Staff</div>
+      <div class="module-title">Admin</div>
+      <p class="module-desc">Manage pickleball modules, access, schedules, members, and league tools.</p>
+      <span class="module-cta">Admin</span>
+    </a>
+  </section>
+</main>
+
+<footer class="pickleball-share-footer" data-pickleball-share data-share-context="pickleball" aria-label="Invite friends to Pickleball"></footer>
+<script src="/js/openplay-firebase-config.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/south-end-openplay-sync.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/pickleball-invite-share.js?v=20260425&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script src="/js/openplay-profile-panel.js?v=20260427-admin-hub&se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
+<script>
+function escapeHtml(s) {
+  var d = document.createElement('div');
+  d.textContent = s == null ? '' : String(s);
+  return d.innerHTML;
+}
+
+/** @param state {'unlocked'|'locked'|'hidden'} */
+function setAdvancedOpenPlayHubState(state) {
+  var card = document.getElementById('advanced-open-play-card');
+  var locked = document.getElementById('advanced-open-play-locked');
+  if (state === 'unlocked') {
+    if (card) card.classList.remove('hidden');
+    if (locked) locked.classList.add('hidden');
+  } else if (state === 'locked') {
+    if (card) card.classList.add('hidden');
+    if (locked) locked.classList.remove('hidden');
+  } else {
+    if (card) card.classList.add('hidden');
+    if (locked) locked.classList.add('hidden');
+  }
+}
+
+function setAdminHubButton(allowed) {
+  var link = document.getElementById('admin-hub-nav-link');
+  if (link) link.classList.toggle('hidden', !allowed);
+  document.querySelectorAll('[data-admin-card]').forEach(function (el) {
+    el.classList.toggle('hidden', !allowed);
+    if (el.hasAttribute('aria-hidden')) el.setAttribute('aria-hidden', allowed ? 'false' : 'true');
+  });
+}
+
+function initPickleballHub() {
+  var status = document.getElementById('hub-auth-status');
+  setAdvancedOpenPlayHubState('locked');
+  setAdminHubButton(false);
+  if (typeof SEOpenPlay === 'undefined' || !SEOpenPlay.firebaseConfigured()) {
+    if (typeof sePickleballLogFirebase === 'function') sePickleballLogFirebase('Hub', 'firebase not configured');
+    if (status) status.textContent = typeof sePickleballFirebaseUserMessage === 'function' ? sePickleballFirebaseUserMessage() : 'Unavailable.';
+    return;
+  }
+  SEOpenPlay.initFirebase().then(function () {
+    SEOpenPlay.onAuthStateChanged(function (user) {
+      if (!user) {
+        if (status) {
+          status.innerHTML =
+            'Not signed in. <a href="/open-play/account">Sign in</a> to check protected module access.';
+        }
+        setAdvancedOpenPlayHubState('locked');
+        setAdminHubButton(false);
+        return;
+      }
+      if (status) status.innerHTML = 'Signed in as <strong>' + escapeHtml(user.email || '') + '</strong>.';
+      var moduleId = SEOpenPlay.MODULE_ADVANCED_OPEN_PLAY || 'advanced_open_play';
+      if (SEOpenPlay.loadAdminUidFlag) {
+        SEOpenPlay.loadAdminUidFlag(user.uid).then(function (isAdmin) {
+          setAdminHubButton(!!isAdmin);
+        });
+      }
+      if (!SEOpenPlay.hasModuleAccess) {
+        setAdvancedOpenPlayHubState('locked');
+        return;
+      }
+      SEOpenPlay.hasModuleAccess(user.uid, moduleId).then(function (allowed) {
+        if (allowed) {
+          setAdvancedOpenPlayHubState('unlocked');
+          return;
+        }
+        if (SEOpenPlay.loadUserProfile && SEOpenPlay.isAdvancedOpenPlayEligibleSkill) {
+          SEOpenPlay.loadUserProfile(user.uid).then(function (p) {
+            var sk = p && p.skill ? String(p.skill).trim() : '';
+            if (sk && !SEOpenPlay.isAdvancedOpenPlayEligibleSkill(sk)) {
+              setAdvancedOpenPlayHubState('hidden');
+            } else {
+              setAdvancedOpenPlayHubState('locked');
+            }
+          });
+        } else {
+          setAdvancedOpenPlayHubState('locked');
+        }
+      });
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initPickleballHub);
+</script>
+
+<a class="message-board-fab" href="/message-board" aria-label="Open Message Board">Message Board</a>
+</body>
+</html>

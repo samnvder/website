@@ -1,0 +1,59 @@
+---
+description: Why static HTML/JS can look "stuck" after edits, and Open Play testing-mode cache gating (se_test, local-page, SE_OPENPLAY_TESTING).
+globs:
+  - Programs/Pickleball/live/**
+  - Programs/Pickleball/advanced-open-play/testing/**
+alwaysApply: false
+---
+
+# Open Play — testing cache behavior (RSVP / check-in)
+
+## Local Test Source
+
+`Programs/Pickleball/advanced-open-play/testing/local-page/` is the local test site. Do not mirror staging/live into it unless Sam explicitly asks for a copy operation.
+
+## Why a "hard refresh" sometimes still shows old UI
+
+Browsers and intermediaries cache **separately** by **URL** (including query string). A hard refresh usually **revalidates the main document**, but:
+
+- **Subresources** (`js/*.js`) may still be served from **disk cache** if the URL is unchanged and validators match.
+- **CDNs / reverse proxies** may cache HTML or assets with **different** TTLs than you expect; invalidation can lag.
+- **Same file path** after an edit: if the server sends **strong caching** (`Cache-Control: max-age=…`) and the browser **does not** revalidate, you can see stale bytes until the cache entry expires.
+- **ETag / Last-Modified** behavior varies: some paths skip revalidation on "hard" refresh in edge cases.
+
+So: **changing only inline HTML** while **`js/foo.js` URL is unchanged** can leave old script behavior until that JS URL changes or cache is cleared.
+
+## Gating — when testing mode is ON
+
+`Programs/Pickleball/live/js/openplay-testing-env.js` runs **first** (in `<head>` on RSVP and check-in). It activates when **any** of these is true:
+
+| Condition | Meaning |
+|-----------|---------|
+| URL path contains **`/local-page`** or **`testing/local-page`** | Local test site — always treated as testing. |
+| Query contains **`se_test=1`** | Explicit test flag (staging, or forcing test behavior on any host). |
+| Host is **`localhost` / `127.0.0.1`** **and** `localStorage.se_openplay_test === '1'` | Opt-in on plain local URLs without mirror path. Set once: `localStorage.setItem('se_openplay_test','1')`. |
+
+When active:
+
+1. **`window.SE_OPENPLAY_TESTING === true`** — other scripts may branch on this if needed.
+2. **Meta hints** `Cache-Control` / `Pragma` / `Expires` are injected (best-effort; not a substitute for server headers).
+3. If the URL has **`se_test=1`** but **no** `se_cb=` parameter, the page does a **single** `location.replace` to add **`se_cb=<timestamp>`**. That makes the **HTML document URL unique** so caches that key by full URL fetch a **fresh document** on the **next** load (one navigation; not an infinite loop).
+
+## Local-page cache behavior
+
+`npm run local-test` serves the local-page files directly. It does not rewrite HTML or append cache-busting query strings. If the browser shows old HTML after an edit, hard refresh or add a temporary `?se_test=1` query.
+
+**Workflow that reliably shows edits on first load after sync:**
+
+1. Edit **`Programs/Pickleball/advanced-open-play/testing/local-page/`**.
+2. Run **`npm run local-test`** if the server is not already running.
+3. Open the local hub or page under **`/Programs/Pickleball/advanced-open-play/testing/local-page/`** — testing mode is **on** by path; **`se_test=1`** optional.
+4. For non-local-page URLs (e.g. odd local paths), add **`?se_test=1`** once so the **document** gets the **`se_cb`** redirect if needed.
+
+## Production
+
+Deploy **`Programs/Pickleball/live/`** only. Do **not** deploy mirror folders. Production pages do **not** hit mirror paths; omit **`se_test=1`** so no redirect and no extra meta (unless you intentionally test on a staging host with `?se_test=1`).
+
+## Related
+
+- **`local-test.mdc`** — `npm run local-test` / port **3456** / local-page layout.
