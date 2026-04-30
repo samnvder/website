@@ -31,7 +31,7 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 const PROJECT_REGISTRY = [
   {
     key: 'openplay',
-    name: 'Pickleball Advanced Open Play',
+    name: 'Pickleball Central Hub',
     pathPrefix: 'Programs/Pickleball/advanced-open-play',
     modeFile: 'Programs/Pickleball/advanced-open-play/openplay-mode.json',
     modeField: 'activeTree',

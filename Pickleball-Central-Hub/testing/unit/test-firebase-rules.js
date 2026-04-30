@@ -96,7 +96,7 @@ describe('database.rules.json', () => {
     assert.match(
       rsvps['.read'],
       /module_access\/' \+ auth\.uid \+ '\/advanced_open_play\/enabled/,
-      'RSVP list reads must check Advanced Open Play module access'
+      'RSVP list reads must check Open Play module access'
     );
     assert.match(
       rsvps['.read'],
@@ -111,12 +111,12 @@ describe('database.rules.json', () => {
     assert.match(
       rsvps.$pid['.read'],
       /module_access\/' \+ auth\.uid \+ '\/advanced_open_play\/enabled/,
-      'single RSVP reads must check Advanced Open Play module access'
+      'single RSVP reads must check Open Play module access'
     );
     assert.match(
       rsvps.$pid['.write'],
       /module_access\/' \+ auth\.uid \+ '\/advanced_open_play\/enabled/,
-      'RSVP writes must check Advanced Open Play module access'
+      'RSVP writes must check Open Play module access'
     );
     assert.match(
       rsvps.$pid['.write'],

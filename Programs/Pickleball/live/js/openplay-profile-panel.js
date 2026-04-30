@@ -34,7 +34,7 @@
     },
     {
       moduleKey: 'open_play',
-      label: 'Advanced Open Play',
+      label: 'Open Play',
       parentHref: 'SouthEnd_Admin_Hub.html',
       submodules: [
         { action: 'signups', href: 'SouthEnd_Open_Play_Signups.html', label: 'Signups', subModuleKey: 'signups' },

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="/js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <title>Open Play Account | South End Pickleball</title>
-<meta name="description" content="Sign in to manage your South End Advanced Open Play profile, waiver, skill level, and bookings.">
+<meta name="description" content="Sign in to manage your South End Open Play profile, waiver, skill level, and bookings.">
 <link rel="icon" type="image/jpeg" href="/favicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -375,7 +375,7 @@ body.account-calendar-view #auth-panel{display:none!important;}
 
 <div class="body-wrap">
   <p class="page-lead">
-    <strong>Advanced Open Play</strong> is a protected South End pickleball module. Sign in to view your approved access, schedule, and RSVP tools.
+    <strong>Open Play</strong> is a protected South End pickleball module. Sign in to view your approved access, schedule, and RSVP tools.
   </p>
 
   <div id="no-firebase-msg" class="no-firebase hidden">
@@ -516,7 +516,7 @@ body.account-calendar-view #auth-panel{display:none!important;}
     <div class="module-grid" aria-label="Available pickleball modules">
       <div class="module-card module-card--locked hidden" id="module-card-advanced-open-play-locked">
         <div class="module-kicker">Admin approval required</div>
-        <div class="module-title">Advanced Open Play</div>
+        <div class="module-title">Open Play</div>
         <p class="module-desc">This module is not currently assigned to your account. Contact South End staff if you should have access.</p>
       </div>
     </div>
@@ -540,7 +540,7 @@ body.account-calendar-view #auth-panel{display:none!important;}
     </div>
     <div class="module-admin-panel hidden" id="module-admin-panel">
       <div class="auth-title">Module access admin</div>
-      <p class="hub-lead">Assign Advanced Open Play access by UID, or by email after that user has saved their profile once.</p>
+      <p class="hub-lead">Assign Open Play access by UID, or by email after that user has saved their profile once.</p>
       <div class="module-admin-row">
         <div class="field">
           <label>User email or UID</label>
@@ -550,7 +550,7 @@ body.account-calendar-view #auth-panel{display:none!important;}
         <button type="button" class="auth-btn auth-btn-primary" id="module-admin-grant">Grant</button>
       </div>
       <div class="auth-actions" style="margin-top:10px;">
-        <button type="button" class="auth-btn auth-btn-secondary" id="module-admin-revoke">Revoke Advanced Open Play</button>
+        <button type="button" class="auth-btn auth-btn-secondary" id="module-admin-revoke">Revoke Open Play</button>
       </div>
       <div class="module-admin-msg" id="module-admin-msg" role="status"></div>
     </div>
@@ -764,7 +764,7 @@ var accountViewMode = 'edit';
 var accountMyRsvpRows = [];
 var accountModuleAccess = {};
 var accountIsAdmin = false;
-/** Last loaded profile from RTDB (used for rating-based Advanced Open Play visibility). */
+/** Last loaded profile from RTDB (used for rating-based Open Play visibility). */
 var currentAccountProfile = null;
 var accountAdminTargetUid = '';
 var accountRedirectAfterAuthFlow = false;
@@ -1258,7 +1258,7 @@ function renderAccountHubUserLine(user, p) {
     escapeHtml(user.email || '') +
     '</strong>' +
     (name ? ' - ' + escapeHtml(name) : '') +
-    '. Your Advanced Open Play schedule appears below.';
+    '. Your Open Play schedule appears below.';
 }
 
 function moduleAdminMsg(text, cls) {
@@ -1300,10 +1300,10 @@ function setAdvancedOpenPlayForTarget(enabled) {
   }
   resolveModuleAdminTarget().then(function (uid) {
     if (!uid) return;
-    moduleAdminMsg((enabled ? 'Granting' : 'Revoking') + ' Advanced Open Play access...');
+    moduleAdminMsg((enabled ? 'Granting' : 'Revoking') + ' Open Play access...');
     SEOpenPlay.setModuleAccess(uid, SEOpenPlay.MODULE_ADVANCED_OPEN_PLAY || 'advanced_open_play', enabled)
       .then(function () {
-        moduleAdminMsg((enabled ? 'Granted' : 'Revoked') + ' Advanced Open Play access for ' + uid + '.', 'ok');
+        moduleAdminMsg((enabled ? 'Granted' : 'Revoked') + ' Open Play access for ' + uid + '.', 'ok');
       })
       .catch(function (err) {
         moduleAdminMsg((err && err.message) || 'Could not update module access.', 'err');
@@ -1844,7 +1844,7 @@ function initAccountPage() {
       if (!u) return;
       if (!accountHasAdvancedOpenPlay()) {
         e.preventDefault();
-        accShowProfileMsg('Advanced Open Play requires a 4.0+ skill rating, staff-assigned access, or admin approval.', 'err');
+        accShowProfileMsg('Open Play requires a 4.0+ skill rating, staff-assigned access, or admin approval.', 'err');
         return;
       }
       if (!accProfileComplete()) {

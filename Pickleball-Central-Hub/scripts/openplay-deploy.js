@@ -2,7 +2,7 @@
 /**
  * Firebase deploy wrapper — blocks production hosting until mode + confirmation allow it.
  *
- * Production hosting always deploys firebase.json → Programs/Pickleball/live.
+ * Production hosting always deploys firebase.json → `live/` (repo root).
  * If activeTree is "staging", your latest edits are NOT in live/ — promote first.
  *
  * Unblock hosting deploy:
@@ -47,14 +47,14 @@ function fail(msg) {
 if (isHosting) {
   if (tree !== 'live') {
     fail(
-      'Hosting deploy uses Programs/Pickleball/live (see firebase.json), but openplay-mode.json has activeTree "' +
+      'Hosting deploy uses live/ (see firebase.json), but openplay-mode.json has activeTree "' +
         tree +
         '". Run npm run openplay:promote to copy staging → live, set activeTree to "live", then deploy.'
     );
   }
   if (!allow && !confirm) {
     fail(
-      'Production hosting deploy is locked (allowProductionHostingDeploy is false). Set "allowProductionHostingDeploy": true in Programs/Pickleball/advanced-open-play/openplay-mode.json after QA, or use OPENPLAY_CONFIRM_PRODUCTION=1 for a one-shot deploy.'
+      'Production hosting deploy is locked (allowProductionHostingDeploy is false). Set "allowProductionHostingDeploy": true in openplay-mode.json after QA, or use OPENPLAY_CONFIRM_PRODUCTION=1 for a one-shot deploy.'
     );
   }
   if (confirm && !allow) {

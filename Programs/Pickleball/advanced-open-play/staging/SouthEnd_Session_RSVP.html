@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="/js/openplay-testing-env.js?se_cb=2026-04-27T00%3A23%3A31.235Z"></script>
 <title>Book Open Play | South End Pickleball</title>
-<meta name="description" content="Book Tuesday and Thursday Advanced Open Play sessions at South End. Sign in required.">
+<meta name="description" content="Book Tuesday and Thursday Open Play sessions at South End. Sign in required.">
 <link rel="icon" type="image/jpeg" href="/favicon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -1464,8 +1464,8 @@ function initRsvpAuthGate(onAllowed) {
           if (!ok) {
             rsvpModuleAccessAllowed = false;
             blockMain(
-              'Advanced Open Play is for players rated 4.0 and above (or staff-assigned access). Your account does not show an eligible rating yet. Update your skill on the Open Play account page, or contact South End staff.',
-              'Not eligible for Advanced Open Play'
+              'Open Play is for players rated 4.0 and above (or staff-assigned access). Your account does not show an eligible rating yet. Update your skill on the Open Play account page, or contact South End staff.',
+              'Not eligible for Open Play'
             );
             return;
           }
@@ -1763,7 +1763,7 @@ function submitRSVP() {
     if (!rsvpModuleAccessAllowed) {
       var egAccess = document.getElementById('err-general');
       if (egAccess) {
-        egAccess.textContent = 'Advanced Open Play requires a 4.0+ skill rating, staff-assigned access, or admin approval.';
+        egAccess.textContent = 'Open Play requires a 4.0+ skill rating, staff-assigned access, or admin approval.';
         egAccess.classList.add('show');
       }
       return;

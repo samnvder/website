@@ -14,7 +14,7 @@ function isAdvancedOpenPlayEligibleSkill(skill) {
   return false;
 }
 
-describe('Advanced Open Play rating eligibility', () => {
+describe('Open Play rating eligibility', () => {
   it('treats 4.0, 4.5, 5.0 and legacy top buckets as eligible', () => {
     assert.strictEqual(isAdvancedOpenPlayEligibleSkill('4.0 Advanced'), true);
     assert.strictEqual(isAdvancedOpenPlayEligibleSkill('4.5 Upper Advanced'), true);

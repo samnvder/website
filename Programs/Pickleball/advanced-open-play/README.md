@@ -1,6 +1,6 @@
-# Advanced Open Play
+# Pickleball Central Hub
 
-Deployable static app: RSVP, account/calendar hub, session check-in, shared `js/` library (Firebase sync, waivers, profile panel).
+Deployable static app for South End Pickleball: hub, Open Play (RSVP, account, check-in), League Play, admin tools, and shared `js/` (Firebase sync, waivers, profile panel).
 
 ## File structure
 
@@ -64,7 +64,7 @@ manually via Firebase Console; the app cannot grant or revoke it.
 | `openplay-waiver-modals.js` | Liability + communications consent modals |
 | `openplay-testing-env.js` | Testing environment detection |
 
-## Commands (from `Website/`)
+## Commands (from `Programs/Pickleball/advanced-open-play/`)
 
 | Command | What it does |
 |---------|-------------|
@@ -86,9 +86,9 @@ manually via Firebase Console; the app cannot grant or revoke it.
 
 | Page | URL |
 |------|-----|
-| Account | `https://pickleball-advanced-open-play.web.app/SouthEnd_OpenPlay_Account.html` |
-| RSVP | `https://pickleball-advanced-open-play.web.app/SouthEnd_Session_RSVP.html` |
-| Check-in | `https://pickleball-advanced-open-play.web.app/SouthEnd_Session_Checkin.html` |
+| Account | `https://southend-pickleball-central.web.app/open-play/account` |
+| RSVP | `https://southend-pickleball-central.web.app/rsvp` |
+| Check-in | `https://southend-pickleball-central.web.app/checkin` |
 
 See **[firebase-hosting/README.md](./firebase-hosting/README.md)** for Firebase SDK versions and config pointers.
 

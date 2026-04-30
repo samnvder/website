@@ -4,7 +4,7 @@ This folder holds **multiple program lineups** under one umbrella. They share th
 
 | Path | Role |
 |------|------|
-| **`advanced-open-play/`** | Advanced Open Play — RSVP, account/calendar hub, staff check-in, deployable static app. **[README →](./advanced-open-play/README.md)** |
+| **`advanced-open-play/`** (monorepo) / **this repo root** (standalone) | Open Play — RSVP, account/calendar hub, staff check-in, deployable static app. **[README →](./README.md)** |
 | **`league-play/`** | League Play — account, team creation, captain invites, and local smoke-test docs. **[to-do →](./league-play/to-do.md)** |
 | **`docs/`** | South End Pickleball platform/module documentation. |
 | **`account-creation/`** | Shared Firebase docs (Auth, RTDB, staff UIDs, managing accounts) — applies to all programs. **[README →](./account-creation/README.md)** |

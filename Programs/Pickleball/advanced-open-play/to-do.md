@@ -1,4 +1,4 @@
-# Advanced Open Play — project to-do
+# Pickleball Central Hub — project to-do
 
 Single place for backlog, integrations, and follow-ups for **`Programs/Pickleball/advanced-open-play/`**. Update as tasks complete or scope changes.
 

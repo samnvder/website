@@ -151,8 +151,7 @@ function buildMarkdown(context) {
 
   const hosting = firebaseJson.hosting;
   const deployRoot =
-    (Array.isArray(hosting) ? hosting[0] && hosting[0].public : hosting && hosting.public) ||
-    'Programs/Pickleball/live';
+    (Array.isArray(hosting) ? hosting[0] && hosting[0].public : hosting && hosting.public) || 'live';
   const databaseRulesFile = (firebaseJson.database && firebaseJson.database.rules) || 'database.rules.json';
   const allowProdDeploy = openplayMode.allowProductionHostingDeploy === true ? 'true' : 'false';
   const activeTree = openplayMode.activeTree || 'unknown';
@@ -160,20 +159,20 @@ function buildMarkdown(context) {
   const databaseUrl = firebaseConfig.databaseURL || '(not set)';
   const projectId = firebaseConfig.projectId || '(not set)';
 
-  return `# Advanced Open Play - Project Infrastructure Summary
+  return `# Pickleball Central Hub — Project Infrastructure Summary
 
 Last updated: ${updatedAt}
 
 ## Purpose
 
-This is the operational knowledge base for links, services, and servers used to maintain, test, build, and deploy the Advanced Open Play project.
+This is the operational knowledge base for links, services, and servers used to maintain, test, build, and deploy the Pickleball Central Hub (Open Play, League Play, admin tools, shared Firebase).
 
 ## Core Paths
 
-- Project root: \`Programs/Pickleball/advanced-open-play/\`
+- Project root: repository root (this standalone repo)
 - Deploy source (Firebase Hosting public): \`${deployRoot}\`
 - Firebase rules file: \`${databaseRulesFile}\`
-- Runtime mode file: \`Programs/Pickleball/advanced-open-play/openplay-mode.json\`
+- Runtime mode file: \`openplay-mode.json\` (repo root)
 
 ## Public Web Links
 
@@ -189,7 +188,7 @@ This is the operational knowledge base for links, services, and servers used to 
 
 | Service | Purpose | Endpoint / Reference |
 |---|---|---|
-| Firebase Hosting | Serves production static app from \`Programs/Pickleball/live/\` | https://pickleball-advanced-open-play.web.app |
+| Firebase Hosting | Serves production static app from \`live/\` | https://southend-pickleball-central.web.app (primary); legacy hostname redirects |
 | Firebase Authentication | Account sign-up/sign-in/password reset | authDomain: \`${authDomain}\` |
 | Firebase Realtime Database | RSVP, profiles, admin UIDs, activity feed | databaseURL: \`${databaseUrl}\` |
 | Firebase Web SDK (compat v10.7.1) | Client SDK loaded at runtime | https://www.gstatic.com/firebasejs/10.7.1/ |
@@ -214,7 +213,7 @@ ${databasePaths.map((p) => `- \`${p}\``).join('\n')}
 
 | Server | How to Run | URL |
 |---|---|---|
-| Local Open Play QA hub | \`npm run local-test\` | http://127.0.0.1:3456/Programs/Pickleball/advanced-open-play/testing/local-page/index.html |
+| Local hub QA | \`npm run local-test\` | http://127.0.0.1:3456/testing/local-page/index.html |
 | Local website dev server | \`npm run start\` or \`npm run dev\` | http://127.0.0.1:3000/ |
 | Static local server | \`npm run serve\` | http://127.0.0.1:3000/ |
 
@@ -224,12 +223,12 @@ ${scripts.map((s) => `- \`npm run ${s.name}\` -> \`${s.cmd}\``).join('\n')}
 
 ## Key Project Surfaces to Maintain
 
-- \`Programs/Pickleball/live/\` -> production source of truth for Hosting deploy output.
-- \`advanced-open-play/staging/\` -> development tree for iterative edits before promotion.
+- \`live/\` -> production source of truth for Hosting deploy output.
+- \`staging/\` -> development tree for iterative edits before promotion.
 - \`scripts/openplay-deploy.js\` -> deploy guard enforcing active tree and production deploy lock.
 - \`testing/scripts/local-test.js\` -> mirrors active tree into local test hubs.
-- \`Programs/Pickleball/live/js/openplay-firebase-config.js\` -> Firebase project wiring used by runtime.
-- \`Programs/Pickleball/live/js/south-end-openplay-sync.js\` -> auth/database sync and shared client logic.
+- \`live/js/openplay-firebase-config.js\` -> Firebase project wiring used by runtime.
+- \`live/js/south-end-openplay-sync.js\` -> auth/database sync and shared client logic.
 - \`database.rules.json\` -> Realtime Database read/write rules.
 
 ## Additional Discovered URLs (from source scan)
@@ -257,7 +256,7 @@ async function writePdfFromMarkdown(markdown, outputPath) {
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Open Play Project Summary</title>
+  <title>Pickleball Central Hub — Project Summary</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 34px; color: #111; line-height: 1.5; font-size: 12px; }
     h1, h2, h3 { color: #0f172a; margin-top: 22px; margin-bottom: 8px; }
@@ -314,10 +313,10 @@ async function main() {
     openplayMode,
     scripts: summarizeScripts(packageJson.scripts || {}),
     publicUrls: {
-      account: 'https://pickleball-advanced-open-play.web.app/SouthEnd_OpenPlay_Account.html',
-      rsvp: 'https://pickleball-advanced-open-play.web.app/SouthEnd_Session_RSVP.html',
-      checkin: 'https://pickleball-advanced-open-play.web.app/SouthEnd_Session_Checkin.html',
-      admin: 'https://pickleball-advanced-open-play.web.app/SouthEnd_Admin_Activity.html',
+      account: 'https://southend-pickleball-central.web.app/open-play/account',
+      rsvp: 'https://southend-pickleball-central.web.app/rsvp',
+      checkin: 'https://southend-pickleball-central.web.app/checkin',
+      admin: 'https://southend-pickleball-central.web.app/admin/activity',
     },
     discoveredUrls: collectDiscoveredUrls(OPENPLAY_ROOT),
     databasePaths: parseOpenplayDatabasePaths(databaseRules),

@@ -1,4 +1,4 @@
-# Deploy Advanced Open Play to Firebase Hosting — guarded (no accidental prod push).
+# Deploy Pickleball Central Hub to Firebase Hosting — guarded (no accidental prod push).
 #
 # Default: manual only (workflow_dispatch). Optional auto-deploy on push if
 # repo variable OPENPLAY_CI_AUTO_DEPLOY == 'true'.

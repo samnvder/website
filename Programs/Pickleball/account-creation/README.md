@@ -25,7 +25,7 @@ This folder holds **living documentation** for RSVP account features, cloud sync
 | **Firebase Authentication** | Email/password sign-up, sign-in, password reset | Firebase Console; client uses `openplay-firebase-config.js` |
 | **Firebase Realtime Database** | JSON tree: RSVPs for check-in, user profiles, admin UIDs | Same config; paths under `openplay_se/` |
 | **FormSubmit.co** | Sends RSVP payloads to club email | URL embedded in `SouthEnd_Session_RSVP.html` |
-| **Firebase Hosting** | Deploy target for Advanced Open Play (`live/`) | `firebase.json`, `.firebaserc`, `npm run deploy:openplay` |
+| **Firebase Hosting** | Deploy target for this hub (`../live/`) | `firebase.json`, `.firebaserc`, `npm run deploy:openplay` |
 | **Google Fonts (CDN)** | Oswald / Barlow typography | `<link>` in HTML |
 | **QRCode.js (cdnjs)** | QR codes on success screen | Script tag in RSVP HTML |
 | **Node (local)** | Unit tests for RSVP helpers + Firebase rules | `npm test` from `Website/` |

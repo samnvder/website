@@ -13,7 +13,7 @@ const { PROGRAM_ROOT, getProductionSourceDir } = require('./openplay-resolve-tre
 
 const LIVE = getProductionSourceDir();
 const STAGING = path.join(PROGRAM_ROOT, 'staging');
-const ROOT = path.join(PROGRAM_ROOT, '..', '..', '..');
+const ROOT = PROGRAM_ROOT;
 
 /** Keep in sync with testing/scripts/local-test.js FILES. */
 const FILES = [
@@ -140,7 +140,7 @@ function hubHtml(syncedAt) {
   </style>
 </head>
 <body>
-  <h1>Pickleball · Advanced Open Play <span>local</span></h1>
+  <h1>Pickleball Hub · <span>local</span></h1>
   <p class="meta">Synced ${syncedAt} · source: Programs/Pickleball/<strong>live</strong>/ (openplay-sync-from-live — Firebase configs preserved per folder)</p>
   <ul>
     <li><a href="SouthEnd_Session_RSVP.html">RSVP <small>Open Play — reservation form</small></a></li>

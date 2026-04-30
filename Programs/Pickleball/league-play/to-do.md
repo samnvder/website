@@ -2,7 +2,7 @@
 
 ## Overview
 
-League Play is the South End Pickleball module for league account setup, captain team registration, solo registration, captain invites, and future scheduling/results. It reuses the shared Firebase Auth and `openplay_se` Realtime Database namespace used by Advanced Open Play.
+League Play is the South End Pickleball module for league account setup, captain team registration, solo registration, captain invites, and future scheduling/results. It reuses the shared Firebase Auth and `openplay_se` Realtime Database namespace used by Open Play.
 
 ## Integrations / Risky Work
 

@@ -43,7 +43,7 @@
   ];
 
   /**
-   * True when stored skill qualifies for Advanced Open Play (4.0+), including legacy labels.
+   * True when stored skill qualifies for Open Play RSVP access (4.0+), including legacy labels.
    */
   function isAdvancedOpenPlayEligibleSkill(skill) {
     var v = String(skill == null ? '' : skill).trim();

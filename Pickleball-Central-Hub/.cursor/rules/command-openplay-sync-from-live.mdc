@@ -8,7 +8,7 @@ alwaysApply: false
 
 **Triggers:** `@command-openplay-sync-from-live`, `command-openplay-sync-from-live`, `openplay sync from live`, `sync openplay from live`
 
-**Scope:** Pickleball Advanced Open Play only — `Programs/Pickleball/advanced-open-play/`.
+**Scope:** Pickleball Central Hub — repo root with `live/`, `staging/`, and `scripts/openplay-*.js` (in the monorepo this subtree lived under `Programs/Pickleball/advanced-open-play/`).
 
 ## Purpose
 

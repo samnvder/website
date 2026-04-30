@@ -4,7 +4,7 @@ globs: []
 alwaysApply: false
 ---
 
-# command-local-test — Quick local QA (Pickleball Advanced Open Play)
+# command-local-test — Quick local QA (Pickleball Central Hub)
 
 > **Invoke:** Type `command-local-test`, `@command-local-test`, or "run local test" for the Open Play local-page site.
 

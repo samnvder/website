@@ -1,5 +1,5 @@
 /**
- * Canonical Pickleball hub primary nav (Hub, League Play, Advanced Open Play, Message Board).
+ * Canonical Pickleball hub primary nav (Hub, League Play, Open Play, Message Board).
  * Deployed with Firebase Hosting public root (live/). Pages mount via <nav data-se-hub-nav>.
  */
 (function () {
@@ -144,7 +144,7 @@
     var order = [
       ['hub', p.hub, 'Hub'],
       ['league', p.league, 'League Play'],
-      ['openplay', p.openplay, 'Advanced Open Play'],
+      ['openplay', p.openplay, 'Open Play'],
       ['board', p.board, 'Message Board'],
     ];
     return order

@@ -11,7 +11,7 @@ Standalone marketing site (HTML, CSS, vanilla JS). Exported from the WebsiteV1 m
 | `Templates/` | Templates |
 | `css/`, `js/`, `media/` | Global assets |
 | `Programs/Pickleball/` | Pickleball programs hub — [README](./Programs/Pickleball/README.md) |
-| `Programs/Pickleball/live/` | Advanced Open Play (RSVP, account, check-in) — Firebase Hosting deploy root |
+| `Programs/Pickleball/live/` | Open Play (RSVP, account, check-in) — Firebase Hosting deploy root |
 | `Programs/Pickleball/advanced-open-play/staging/` | Staging mirror (dev work before promoting to live) |
 | `Programs/Pickleball/advanced-open-play/testing/` | Unit tests + local-test mirror — `npm test` |
 | `Programs/Pickleball/league-play/` | League Play module source — account, team creation, invite inbox |
