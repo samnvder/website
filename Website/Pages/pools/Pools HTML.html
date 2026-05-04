@@ -286,8 +286,32 @@
       <div class="section-grid animate-on-scroll">
         
         <div class="section-media">
-          <div class="media-frame">
-            <img decoding="async" src="https://southendclub.com/wp-content/uploads/2024/09/Pool8.jpg" alt="Main Pool">
+          <div class="media-frame media-frame--carousel">
+            <div class="carousel-lap-pool" role="region" aria-label="Recreational and lap pool photo gallery">
+              <div class="carousel-wrap" data-carousel data-carousel-dynamic data-carousel-no-shuffle>
+                <div class="carousel-track">
+                  <div class="carousel-slide">
+                    <img decoding="async" src="https://southendclub.com/wp-content/uploads/2024/09/Pool8.jpg" alt="Heated 25-yard pool with lap lanes and recreation area">
+                  </div>
+                  <div class="carousel-slide">
+                    <img decoding="async" src="https://southendclub.com/wp-content/uploads/2024/09/Pool5.jpg" alt="Outdoor lap pool with lane lines, cabanas, and pool deck on a sunny day">
+                  </div>
+                  <div class="carousel-slide">
+                    <img decoding="async" src="https://southendclub.com/wp-content/uploads/2025/07/banquets-by-south-end-club_lounge-3-1.jpg" alt="Evening lap pool with underwater lighting and the South End Lounge behind">
+                  </div>
+                  <div class="carousel-slide">
+                    <img decoding="async" src="https://southendclub.com/wp-content/uploads/2026/05/Lap-Pool-1-scaled.jpg" alt="Swimmers in lap lanes with resort cabanas and palm trees">
+                  </div>
+                  <div class="carousel-slide">
+                    <img decoding="async" src="https://southendclub.com/wp-content/uploads/2026/05/Lap-Pool-2-scaled.jpg" alt="Lap pool with lounge chairs, umbrellas, and Mediterranean-style poolside buildings">
+                  </div>
+                  <div class="carousel-slide">
+                    <img decoding="async" src="https://southendclub.com/wp-content/uploads/2026/05/Lap-Pool-3-scaled.jpg" alt="Lap swimming area with private cabanas and tropical landscaping">
+                  </div>
+                </div>
+                <div class="carousel-dots"></div>
+              </div>
+            </div>
           </div>
           <div class="media-accent"></div>
         </div>
@@ -335,8 +359,23 @@
       <div class="section-grid reverse animate-on-scroll">
         
         <div class="section-media">
-          <div class="media-frame">
-            <img decoding="async" src="https://southendclub.com/wp-content/uploads/2021/08/Kids-Pool-1024x768.jpg" alt="Shallow Pool">
+          <div class="media-frame media-frame--carousel">
+            <div class="carousel-kids-pool" role="region" aria-label="Shallow pool photo gallery">
+              <div class="carousel-wrap" data-carousel data-carousel-dynamic data-carousel-no-shuffle>
+                <div class="carousel-track">
+                  <div class="carousel-slide">
+                    <img decoding="async" src="https://southendclub.com/wp-content/uploads/2021/08/Kids-Pool-1024x768.jpg" alt="Beach-entry shallow pool for families and young swimmers">
+                  </div>
+                  <div class="carousel-slide">
+                    <img decoding="async" src="https://southendclub.com/wp-content/uploads/2026/05/Kids-Pool-1-scaled.jpg" alt="Shallow pool deck with lounge chairs, teal patio umbrellas, and palm trees">
+                  </div>
+                  <div class="carousel-slide">
+                    <img decoding="async" src="https://southendclub.com/wp-content/uploads/2026/05/Pool7.png" alt="Club pool campus with lap pool, shallow kids pool, and landscaped decks">
+                  </div>
+                </div>
+                <div class="carousel-dots"></div>
+              </div>
+            </div>
           </div>
           <div class="media-accent"></div>
         </div>
@@ -1039,6 +1078,217 @@ document.addEventListener("DOMContentLoaded", function () {
       container.style.overscrollBehavior = 'none';
     });
   }
+
+  // Pool section carousels (shallow pool, lap pool) — same behavior as fitness carousels (dots, swipe, lightbox, visibility-gated auto-advance). Inlined for WP/Thrive.
+  (function () {
+    function shuffle(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+    function openLightbox(images, startIdx) {
+      if (!images || !images.length) return;
+      var idx = (startIdx + images.length) % images.length;
+      var lb = document.createElement('div');
+      lb.className = 'carousel-lightbox';
+      var imgWrap = document.createElement('div');
+      imgWrap.className = 'carousel-lightbox-img-wrap';
+      var imgEl = document.createElement('img');
+      imgEl.src = images[idx];
+      imgWrap.appendChild(imgEl);
+      lb.appendChild(imgWrap);
+      var closeBtn = document.createElement('button');
+      closeBtn.className = 'carousel-lightbox-close';
+      closeBtn.type = 'button';
+      closeBtn.innerHTML = '&times;';
+      closeBtn.setAttribute('aria-label', 'Close');
+      var prevBtn = document.createElement('button');
+      prevBtn.className = 'carousel-lightbox-prev';
+      prevBtn.type = 'button';
+      prevBtn.innerHTML = '&lsaquo;';
+      prevBtn.setAttribute('aria-label', 'Previous image');
+      var nextBtn = document.createElement('button');
+      nextBtn.className = 'carousel-lightbox-next';
+      nextBtn.type = 'button';
+      nextBtn.innerHTML = '&rsaquo;';
+      nextBtn.setAttribute('aria-label', 'Next image');
+      function go(delta) {
+        idx = (idx + delta + images.length) % images.length;
+        imgEl.src = images[idx];
+      }
+      function keyHandler(e) {
+        if (e.key === 'Escape') { close(); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+      }
+      closeBtn.addEventListener('click', close);
+      prevBtn.addEventListener('click', function (e) { e.stopPropagation(); go(-1); });
+      nextBtn.addEventListener('click', function (e) { e.stopPropagation(); go(1); });
+      lb.addEventListener('click', function (e) {
+        if (e.target === lb || e.target === imgWrap) close();
+      });
+      document.addEventListener('keydown', keyHandler);
+      function close() {
+        if (lb.parentNode) lb.parentNode.removeChild(lb);
+        document.removeEventListener('keydown', keyHandler);
+      }
+      lb.appendChild(closeBtn);
+      lb.appendChild(prevBtn);
+      lb.appendChild(nextBtn);
+      document.body.appendChild(lb);
+    }
+
+    function initPoolsCarousel(container) {
+      if (!container) return;
+      var wrap = container.querySelector('[data-carousel]');
+      var track = wrap ? wrap.querySelector('.carousel-track') : null;
+      var slideEls = track ? Array.prototype.slice.call(track.querySelectorAll('.carousel-slide')) : [];
+      var imgs = track ? Array.prototype.slice.call(track.querySelectorAll('img')) : [];
+      var dotsWrap = wrap ? wrap.querySelector('.carousel-dots') : null;
+      var current = 0;
+      var interval = null;
+      var isDynamic = wrap && wrap.hasAttribute('data-carousel-dynamic');
+      var carouselInView = false;
+
+      function computeWrapVisible() {
+        if (!wrap) return false;
+        var r = wrap.getBoundingClientRect();
+        var wh = window.innerHeight || document.documentElement.clientHeight;
+        return r.bottom > 1 && r.top < wh - 1;
+      }
+
+      function setCarouselInView(inView) {
+        carouselInView = inView;
+        if (carouselInView) {
+          updateFrameHeight();
+          resetInterval();
+        } else {
+          clearInterval(interval);
+          interval = null;
+        }
+      }
+
+      function shuffleSlides() {
+        var indices = [];
+        for (var i = 0; i < slideEls.length; i++) indices.push(i);
+        indices = shuffle(indices);
+        for (var i = 0; i < indices.length; i++) {
+          track.appendChild(slideEls[indices[i]]);
+        }
+        slideEls = Array.prototype.slice.call(track.querySelectorAll('.carousel-slide'));
+        imgs = Array.prototype.slice.call(track.querySelectorAll('img'));
+      }
+      function updateFrameHeight() {
+        if (!isDynamic || !wrap || !carouselInView) return;
+        var im = imgs[current];
+        if (!im || !im.complete || !im.naturalWidth) return;
+        var wrapWidth = wrap.offsetWidth || wrap.getBoundingClientRect().width;
+        if (wrapWidth <= 0) return;
+        wrap.style.height = Math.round(wrapWidth * (im.naturalHeight / im.naturalWidth)) + 'px';
+      }
+      function goToIndex(idx) {
+        current = idx;
+        if (track) track.style.transform = 'translateX(-' + (current * 100) + '%)';
+        var dots = dotsWrap ? dotsWrap.querySelectorAll('.carousel-dot') : [];
+        for (var j = 0; j < dots.length; j++) {
+          dots[j].className = 'carousel-dot' + (j === current ? ' active' : '');
+        }
+        requestAnimationFrame(function () { requestAnimationFrame(updateFrameHeight); });
+      }
+      function nextSlide() {
+        goToIndex((current + 1) % slideEls.length);
+      }
+      function prevSlide() {
+        goToIndex(current === 0 ? slideEls.length - 1 : current - 1);
+      }
+      function resetInterval() {
+        clearInterval(interval);
+        interval = null;
+        if (carouselInView) {
+          interval = setInterval(nextSlide, 3000);
+        }
+      }
+      if (!wrap || !track || !slideEls.length || !imgs.length) return;
+      if (!wrap.hasAttribute('data-carousel-no-shuffle')) {
+        shuffleSlides();
+      }
+      if (dotsWrap) {
+        dotsWrap.innerHTML = '';
+        for (var i = 0; i < imgs.length; i++) {
+          var dot = document.createElement('button');
+          dot.type = 'button';
+          dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+          dot.setAttribute('data-index', String(i));
+          dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+          dot.addEventListener('click', function () {
+            goToIndex(parseInt(this.getAttribute('data-index'), 10));
+            resetInterval();
+          });
+          dotsWrap.appendChild(dot);
+        }
+      }
+      if (isDynamic) {
+        var checkAndUpdate = function () {
+          if (!carouselInView) return;
+          if (imgs[current] && imgs[current].complete && imgs[current].naturalWidth) updateFrameHeight();
+        };
+        for (var k = 0; k < imgs.length; k++) imgs[k].addEventListener('load', checkAndUpdate);
+        function onResize() {
+          if (carouselInView) updateFrameHeight();
+        }
+        window.addEventListener('resize', onResize);
+      }
+      var startX = 0;
+      wrap.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+      wrap.addEventListener('touchend', function (e) {
+        var diff = startX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 40) {
+          if (diff > 0) nextSlide();
+          else prevSlide();
+          resetInterval();
+        }
+      }, { passive: true });
+      function getCarouselSrcs() {
+        var srcs = [];
+        for (var i = 0; i < imgs.length; i++) srcs.push(imgs[i].src);
+        return srcs;
+      }
+      for (var m = 0; m < slideEls.length; m++) {
+        (function (slideIdx) {
+          slideEls[slideIdx].addEventListener('click', function (e) {
+            e.stopPropagation();
+            openLightbox(getCarouselSrcs(), slideIdx);
+          });
+        })(m);
+      }
+      goToIndex(0);
+      if (typeof IntersectionObserver !== 'undefined') {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            setCarouselInView(entry.isIntersecting);
+          });
+        }, { root: null, rootMargin: '0px', threshold: 0 });
+        io.observe(wrap);
+        requestAnimationFrame(function () {
+          var rec = io.takeRecords();
+          if (rec.length) {
+            setCarouselInView(rec[0].isIntersecting);
+          } else {
+            setCarouselInView(computeWrapVisible());
+          }
+        });
+      } else {
+        setCarouselInView(true);
+      }
+    }
+
+    document.querySelectorAll('.carousel-kids-pool, .carousel-lap-pool').forEach(function (el) {
+      initPoolsCarousel(el);
+    });
+  })();
 
 });
   </script>

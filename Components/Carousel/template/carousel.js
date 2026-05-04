@@ -1,6 +1,7 @@
 /**
  * Generic Carousel Base — Reusable for any amenity.
  * Shuffle, dots, auto-advance, swipe, lightbox, dynamic height.
+ * Dynamic height + auto-advance only run while the carousel is in view (no off-screen layout shift).
  * Images injected by build-carousel.js. Works with [data-carousel].
  */
 (function(){
@@ -75,6 +76,24 @@
             var dotsWrap = wrap.querySelector('.carousel-dots');
             var current = 0, interval = null;
             var isDynamic = wrap.hasAttribute('data-carousel-dynamic');
+            var carouselInView = false;
+
+            function computeWrapVisible() {
+                var r = wrap.getBoundingClientRect();
+                var wh = window.innerHeight || document.documentElement.clientHeight;
+                return r.bottom > 1 && r.top < wh - 1;
+            }
+
+            function setCarouselInView(inView) {
+                carouselInView = inView;
+                if (carouselInView) {
+                    updateFrameHeight();
+                    resetInterval();
+                } else {
+                    clearInterval(interval);
+                    interval = null;
+                }
+            }
 
             function shuffleSlides() {
                 var indices = [];
@@ -86,12 +105,12 @@
             }
 
             function updateFrameHeight() {
-                if (!isDynamic) return;
-                var img = imgs[current];
-                if (!img || !img.complete || !img.naturalWidth) return;
+                if (!isDynamic || !carouselInView) return;
+                var imgEl = imgs[current];
+                if (!imgEl || !imgEl.complete || !imgEl.naturalWidth) return;
                 var wrapWidth = wrap.offsetWidth || wrap.getBoundingClientRect().width;
                 if (wrapWidth <= 0) return;
-                wrap.style.height = Math.round(wrapWidth * (img.naturalHeight / img.naturalWidth)) + 'px';
+                wrap.style.height = Math.round(wrapWidth * (imgEl.naturalHeight / imgEl.naturalWidth)) + 'px';
             }
 
             function goToIndex(idx) {
@@ -108,10 +127,15 @@
             function prevSlide() { goToIndex(current === 0 ? slideEls.length - 1 : current - 1); }
             function resetInterval() {
                 clearInterval(interval);
-                interval = setInterval(nextSlide, 3000);
+                interval = null;
+                if (carouselInView) {
+                    interval = setInterval(nextSlide, 3000);
+                }
             }
 
-            shuffleSlides();
+            if (!wrap.hasAttribute('data-carousel-no-shuffle')) {
+                shuffleSlides();
+            }
 
             if (dotsWrap) {
                 dotsWrap.innerHTML = '';
@@ -122,7 +146,7 @@
                     dot.setAttribute('data-index', String(i));
                     dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
                     dot.addEventListener('click', function() {
-                        goToIndex(parseInt(this.getAttribute('data-index')));
+                        goToIndex(parseInt(this.getAttribute('data-index'), 10));
                         resetInterval();
                     });
                     dotsWrap.appendChild(dot);
@@ -131,11 +155,14 @@
 
             if (isDynamic) {
                 var checkAndUpdate = function() {
+                    if (!carouselInView) return;
                     if (imgs[current] && imgs[current].complete && imgs[current].naturalWidth) updateFrameHeight();
                 };
                 for (var k = 0; k < imgs.length; k++) imgs[k].addEventListener('load', checkAndUpdate);
-                checkAndUpdate();
-                window.addEventListener('resize', updateFrameHeight);
+                function onResize() {
+                    if (carouselInView) updateFrameHeight();
+                }
+                window.addEventListener('resize', onResize);
             }
 
             var startX = 0;
@@ -156,13 +183,32 @@
             }
 
             for (var m = 0; m < slideEls.length; m++) {
-                slideEls[m].addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    openLightbox(getCarouselSrcs(), current);
-                });
+                (function(slideIdx) {
+                    slideEls[slideIdx].addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        openLightbox(getCarouselSrcs(), slideIdx);
+                    });
+                })(m);
             }
 
-            resetInterval();
+            if (typeof IntersectionObserver !== 'undefined') {
+                var io = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        setCarouselInView(entry.isIntersecting);
+                    });
+                }, { root: null, rootMargin: '0px', threshold: 0 });
+                io.observe(wrap);
+                requestAnimationFrame(function() {
+                    var rec = io.takeRecords();
+                    if (rec.length) {
+                        setCarouselInView(rec[0].isIntersecting);
+                    } else {
+                        setCarouselInView(computeWrapVisible());
+                    }
+                });
+            } else {
+                setCarouselInView(true);
+            }
         });
     }
 

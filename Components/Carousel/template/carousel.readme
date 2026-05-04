@@ -6,7 +6,7 @@ Bare-bones carousel behavior: shuffle slides, dots for navigation, auto-advance,
 
 ## Medium understanding
 
-Vanilla JS. Finds all `[data-carousel]` elements, shuffles .carousel-slide in DOM, builds dots, auto-advance 3s, touch swipe, lightbox (arrows, Escape, click-off). Supports data-carousel-dynamic for aspect-ratio height; offsetWidth fallback for Thrive iframes. Images injected by build-carousel.js.
+Vanilla JS. Finds all `[data-carousel]` elements, shuffles .carousel-slide in DOM, builds dots, auto-advance 3s, touch swipe, lightbox (arrows, Escape, click-off). Supports data-carousel-dynamic for aspect-ratio height; offsetWidth fallback for Thrive iframes. **Visibility:** dynamic height and auto-advance run only while the wrap intersects the viewport (`IntersectionObserver`), so off-screen carousels do not resize the page. Images injected by build-carousel.js.
 
 ## Advanced
 

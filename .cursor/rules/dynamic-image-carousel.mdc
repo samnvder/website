@@ -82,6 +82,25 @@ Use this pattern when building image carousels that resize the frame to match ea
 - Use double `requestAnimationFrame` when switching slides for layout
 - Wrap in `DOMContentLoaded` for embed contexts (WordPress, etc.)
 
+## Visibility gating (required for all dynamic-height carousels)
+
+When `data-carousel-dynamic` is set, **never** update `wrap.style.height` or run the **auto-advance** timer while the carousel is off-screen. Off-screen height changes shift document layout and move the page while the user has scrolled away.
+
+**Required behavior:**
+
+1. **`IntersectionObserver`** on the `carousel-wrap` (or equivalent root) with `threshold: 0` (and `rootMargin: '0px'` unless a product decision says otherwise).
+2. Track `carouselInView` (or equivalent). When **not** intersecting:
+   - Do not call `updateFrameHeight()` / do not apply dynamic height.
+   - `clearInterval` on the auto-advance timer (do not advance slides in the background).
+3. When intersecting again: call `updateFrameHeight()` once and restart the auto-advance interval.
+4. **Resize** handlers: call `updateFrameHeight()` only if `carouselInView`.
+5. **Image `load`** handlers for height: only run height sync if `carouselInView`.
+6. If `IntersectionObserver` is missing (very old browsers), fall back to **always on** (current behavior) so the carousel still works.
+
+**Reference implementation:** `Components/Carousel/template/carousel.js` (and any page-specific inlined carousel, e.g. fitness `initFitnessCarousel`).
+
+Pickleball / other legacy **inline** carousels should be updated to this pattern when those files are next edited.
+
 ## Optional Enhanced Features (Not Default)
 
 Carousels **may** support enhanced features (category tabs, photo albums, shuffle-no-repeat), but these must **not** be default. Only enable when explicitly opted in.
