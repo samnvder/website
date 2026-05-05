@@ -1760,3 +1760,207 @@ body {
   display: none !important;
   content: none !important;
 }
+
+/* ----- Pickleball Hub + League promo (South End League Play green/gold palette) ----- */
+.sec-page .pb-hub-promo {
+  --pb-lg-green: #1a6b3a;
+  --pb-lg-green-lt: #2d9458;
+  --pb-lg-green-dk: #0f3f22;
+  --pb-lg-gold: #e8a020;
+  --pb-lg-gold-lt: #ffd166;
+  --pb-lg-gold-glow: rgba(232, 160, 32, 0.38);
+  --pb-lg-ink: #111810;
+
+  position: relative;
+  margin: clamp(28px, 5vw, 56px) auto 0;
+  max-width: 900px;
+  padding: clamp(22px, 4vw, 32px) clamp(20px, 4vw, 36px);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--pb-lg-gold);
+  background: linear-gradient(145deg, var(--pb-lg-green-dk) 0%, #123a24 45%, var(--pb-lg-green) 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 18px 48px rgba(15, 63, 34, 0.45),
+    0 0 40px var(--pb-lg-gold-glow);
+  overflow: hidden;
+}
+
+.sec-page .pb-hub-promo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -42deg,
+    transparent,
+    transparent 22px,
+    rgba(255, 255, 255, 0.028) 22px,
+    rgba(255, 255, 255, 0.028) 23px
+  );
+  pointer-events: none;
+}
+
+.sec-page .pb-hub-promo__glow {
+  position: absolute;
+  top: -40%;
+  right: -20%;
+  width: 55%;
+  height: 120%;
+  background: radial-gradient(ellipse at center, rgba(232, 160, 32, 0.22) 0%, transparent 68%);
+  pointer-events: none;
+}
+
+.sec-page .pb-hub-promo__inner {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.sec-page .pb-hub-promo__eyebrow {
+  font-family: "Bebas Neue", "Arial Narrow", sans-serif;
+  font-size: clamp(0.95rem, 2.8vw, 1.05rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--pb-lg-gold-lt);
+  margin: 0 0 8px;
+  text-shadow: 0 0 24px rgba(255, 209, 102, 0.35);
+}
+
+.sec-page .pb-hub-promo__title {
+  font-family: "DM Sans", "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(1.35rem, 3.2vw, 1.75rem);
+  font-weight: 700;
+  color: #f4faf6;
+  line-height: 1.25;
+  margin: 0 0 12px;
+  letter-spacing: -0.02em;
+}
+
+.sec-page .pb-hub-promo__lede {
+  font-family: "DM Sans", "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(0.95rem, 2.2vw, 1.05rem);
+  font-weight: 500;
+  color: rgba(244, 250, 246, 0.88);
+  line-height: 1.55;
+  margin: 0 auto 22px;
+  max-width: 38rem;
+}
+
+.sec-page .pb-hub-promo__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.sec-page .pb-hub-promo__btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 52px;
+  padding: 14px 22px;
+  border-radius: 14px;
+  text-decoration: none;
+  font-family: "DM Sans", "Plus Jakarta Sans", sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.95rem, 2.2vw, 1.05rem);
+  line-height: 1.25;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+}
+
+.sec-page .pb-hub-promo__btn .pb-hub-promo__icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  align-self: center;
+}
+
+.sec-page .pb-hub-promo__btn--hub {
+  flex: 1 1 240px;
+  max-width: 340px;
+  flex-direction: row;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.22);
+  color: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(232, 160, 32, 0.75);
+  box-shadow: 0 0 0 1px rgba(255, 209, 102, 0.12) inset, 0 8px 28px rgba(0, 0, 0, 0.25);
+}
+
+.sec-page .pb-hub-promo__btn--hub:hover {
+  transform: translateY(-2px);
+  border-color: var(--pb-lg-gold-lt);
+  background: rgba(232, 160, 32, 0.14);
+  box-shadow: 0 0 24px rgba(232, 160, 32, 0.2), 0 12px 32px rgba(0, 0, 0, 0.28);
+}
+
+.sec-page .pb-hub-promo__btn-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  text-align: left;
+  min-width: 0;
+}
+
+.sec-page .pb-hub-promo__btn--league {
+  flex: 1 1 260px;
+  max-width: 380px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: linear-gradient(160deg, var(--pb-lg-gold-lt) 0%, var(--pb-lg-gold) 52%, #c77f12 100%);
+  color: var(--pb-lg-ink);
+  border: 2px solid rgba(255, 250, 235, 0.55);
+  box-shadow:
+    0 4px 22px var(--pb-lg-gold-glow),
+    0 0 0 1px rgba(17, 24, 16, 0.08) inset;
+}
+
+.sec-page .pb-hub-promo__btn--league:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow:
+    0 8px 36px var(--pb-lg-gold-glow),
+    0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+}
+
+.sec-page .pb-hub-promo__btn-label {
+  text-align: center;
+}
+
+.sec-page .pb-hub-promo__btn-label--league {
+  font-family: "Bebas Neue", "Arial Narrow", sans-serif;
+  font-size: clamp(1.15rem, 3.2vw, 1.42rem);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1.12;
+  color: var(--pb-lg-ink);
+}
+
+.sec-page .pb-hub-promo__paren {
+  font-family: "DM Sans", "Plus Jakarta Sans", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(17, 24, 16, 0.88);
+  line-height: 1.3;
+}
+
+.sec-page .pb-hub-promo__btn--league .pb-hub-promo__icon {
+  stroke: var(--pb-lg-ink);
+}
+
+@media (max-width: 520px) {
+  .sec-page .pb-hub-promo__btn--hub,
+  .sec-page .pb-hub-promo__btn--league {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .sec-page .pb-hub-promo__btn-stack {
+    align-items: center;
+    text-align: center;
+  }
+}
