@@ -691,6 +691,11 @@ body {
   margin-bottom: 24px;
 }
 
+/* Café section: center the single menu CTA */
+.section-alt .menu-buttons {
+  justify-content: center;
+}
+
 
 /* =========================================================
    HOURS INLINE
