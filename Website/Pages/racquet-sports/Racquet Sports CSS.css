@@ -1952,6 +1952,65 @@ body {
   stroke: var(--pb-lg-ink);
 }
 
+.sec-page .pb-hub-promo__timeline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  margin: 0 auto 28px;
+  max-width: 700px;
+}
+
+.sec-page .pb-hub-promo__date-card {
+  flex: 1 1 240px;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 18px 24px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.sec-page .pb-hub-promo__date-label {
+  font-family: "Bebas Neue", "Arial Narrow", sans-serif;
+  font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(244, 250, 246, 0.85);
+}
+
+.sec-page .pb-hub-promo__date-value {
+  font-family: "Bebas Neue", "Arial Narrow", sans-serif;
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  line-height: 1.1;
+}
+
+.sec-page .pb-hub-promo__btn--register {
+  flex: 0 1 auto;
+  max-width: 340px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 18px 48px;
+}
+
+.sec-page .pb-hub-promo__btn--register .pb-hub-promo__btn-stack {
+  align-items: center;
+  text-align: center;
+}
+
+.sec-page .pb-hub-promo__btn--register .pb-hub-promo__btn-label--league {
+  font-size: clamp(1.6rem, 4.5vw, 2.2rem);
+}
+
 @media (max-width: 520px) {
   .sec-page .pb-hub-promo__btn--hub,
   .sec-page .pb-hub-promo__btn--league {
@@ -1962,5 +2021,10 @@ body {
   .sec-page .pb-hub-promo__btn-stack {
     align-items: center;
     text-align: center;
+  }
+
+  .sec-page .pb-hub-promo__date-card {
+    flex: 1 1 100%;
+    max-width: none;
   }
 }

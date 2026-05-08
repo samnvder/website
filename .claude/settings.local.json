@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir /b \"Pages\\\\racquet-sports\\\\\")",
+      "PowerShell(if \\(-not $?\\) { \"Pages dir not found\" })"
+    ]
+  }
+}
