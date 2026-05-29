@@ -1325,7 +1325,7 @@ body {
   line-height: 1.6;
 }
 
-/* Instructor pill - swim lesson info inside Vianne card (STYLE-GUIDE typography, centered) */
+/* Instructor pill - swim lesson info (STYLE-GUIDE typography, centered) */
 .instructor-pill {
   margin-top: 24px;
   /* Extra horizontal padding so copy clears the pill edge on narrow columns */
