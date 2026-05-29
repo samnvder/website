@@ -1,0 +1,16 @@
+#!/bin/sh
+# Opt-in local pre-commit hook: runs the structural guards before each commit
+# so regressions (e.g. the racquet-sports Pickleball Hub two-CTA promo) fail fast
+# locally instead of in CI.
+#
+# Install (one time):
+#   cp scripts/hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+#
+# Skip for a single commit if you really need to:
+#   git commit --no-verify
+
+npm run guard || {
+  echo ""
+  echo "pre-commit: structural guard failed. Fix the issues above or commit with --no-verify."
+  exit 1
+}

@@ -11,7 +11,7 @@ const path = require('path');
 const repoRoot = path.resolve(__dirname, '..', '..');
 
 const SCAN_DIRS = [
-  path.join(repoRoot, 'Programs', 'Pickleball', 'advanced-open-play', 'live'),
+  path.join(repoRoot, 'Programs', 'Pickleball', 'live'),
   path.join(repoRoot, 'Programs', 'Pickleball', 'advanced-open-play', 'staging'),
   path.join(repoRoot, 'Programs', 'Pickleball', 'league-play'),
 ];
@@ -30,12 +30,16 @@ function checkFile(absPath) {
   if (!html.includes('hdr-title')) failures.push('missing .hdr-title');
   if (!html.includes('hdr-sub')) failures.push('missing .hdr-sub');
 
-  const profileOk =
-    html.includes('openplay-profile-panel.js') || html.includes('league-header-profile');
-  if (!profileOk) {
-    failures.push(
-      'missing profile affordance (openplay-profile-panel.js or league-header-profile)'
-    );
+  // Pre-auth pages (e.g. password reset) legitimately have no logged-in profile UI.
+  const isPreAuthPage = /forgot[_-]?password/i.test(rel);
+  if (!isPreAuthPage) {
+    const profileOk =
+      html.includes('openplay-profile-panel.js') || html.includes('league-header-profile');
+    if (!profileOk) {
+      failures.push(
+        'missing profile affordance (openplay-profile-panel.js or league-header-profile)'
+      );
+    }
   }
 
   return { rel, failures };

@@ -329,23 +329,23 @@
         <div class="pb-hub-promo__glow" aria-hidden="true"></div>
         <div class="pb-hub-promo__inner">
           <p class="pb-hub-promo__eyebrow">South End Pickleball Digital Hub</p>
-          <h3 class="pb-hub-promo__title" id="pb-hub-promo-heading">Season Timeline</h3>
-          <div class="pb-hub-promo__timeline">
-            <div class="pb-hub-promo__date-card">
-              <span class="pb-hub-promo__date-label">Registration Closes</span>
-              <span class="pb-hub-promo__date-value">May 28th</span>
-            </div>
-            <div class="pb-hub-promo__date-card">
-              <span class="pb-hub-promo__date-label">League Begins</span>
-              <span class="pb-hub-promo__date-value">June 1</span>
-            </div>
-          </div>
+          <h3 class="pb-hub-promo__title" id="pb-hub-promo-heading">Play, leagues &amp; community online</h3>
+          <p class="pb-hub-promo__lede">Use the South End Pickleball Hub for modules and sign-in, and register for league play—including solo and non-member options when seasons are open, and a whole lot more!</p>
           <div class="pb-hub-promo__actions">
-            <a class="pb-hub-promo__btn pb-hub-promo__btn--league pb-hub-promo__btn--register" href="https://southend-pickleball-central.web.app/league-play" target="_blank" rel="noopener noreferrer">
+            <a class="pb-hub-promo__btn pb-hub-promo__btn--hub" href="https://southend-pickleball-central.web.app/hub" target="_blank" rel="noopener noreferrer">
+              <span class="pb-hub-promo__btn-label">Join the South End Pickleball Hub Web App!</span>
+              <svg class="pb-hub-promo__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M5 12h14M12 5l7 7-7 7"></path>
+              </svg>
+            </a>
+            <a class="pb-hub-promo__btn pb-hub-promo__btn--league" href="https://southend-pickleball-central.web.app/league-play/register" target="_blank" rel="noopener noreferrer">
               <span class="pb-hub-promo__btn-stack">
-                <span class="pb-hub-promo__btn-label pb-hub-promo__btn-label--league">Register</span>
-                <span class="pb-hub-promo__paren">Deadline: May 28th</span>
+                <span class="pb-hub-promo__btn-label pb-hub-promo__btn-label--league">Sign up for League Play!</span>
+                <span class="pb-hub-promo__paren">(open to non-members)</span>
               </span>
+              <svg class="pb-hub-promo__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M5 12h14M12 5l7 7-7 7"></path>
+              </svg>
             </a>
           </div>
         </div>
@@ -1079,7 +1079,7 @@ document.addEventListener("DOMContentLoaded", function () {
   window.addEventListener('scroll', updateActiveSection);
   updateActiveSection();
 
-  /* Pickleball carousel — fixed: lightbox image selection + resize behavior */
+  /* Pickleball carousel — visibility-gated dynamic height + auto-advance (no off-screen layout shift) */
   (function(){
     function shuffle(arr) {
       var a = arr.slice();
@@ -1155,6 +1155,26 @@ document.addEventListener("DOMContentLoaded", function () {
     var currentView = 'all';
     var current = 0, interval = null;
     var isDynamic = wrap && wrap.hasAttribute('data-carousel-dynamic');
+    var carouselInView = false;
+
+    function computeWrapVisible() {
+      if (!wrap) return false;
+      var r = wrap.getBoundingClientRect();
+      var wh = window.innerHeight || document.documentElement.clientHeight;
+      return r.bottom > 1 && r.top < wh - 1;
+    }
+
+    function setCarouselInView(inView) {
+      carouselInView = inView;
+      if (carouselInView) {
+        updateFrameHeight();
+        resetInterval();
+      } else {
+        clearInterval(interval);
+        interval = null;
+      }
+    }
+
     function shuffleSlides() {
       var indices = [];
       for (var i = 0; i < slideEls.length; i++) indices.push(i);
@@ -1166,7 +1186,7 @@ document.addEventListener("DOMContentLoaded", function () {
       imgs = Array.prototype.slice.call(track.querySelectorAll('img'));
     }
     function updateFrameHeight() {
-      if (!isDynamic || !wrap) return;
+      if (!isDynamic || !wrap || !carouselInView) return;
       var img = imgs[current];
       if (!img || !img.complete || !img.naturalWidth) return;
       var wrapWidth = wrap.offsetWidth || wrap.getBoundingClientRect().width;
@@ -1191,7 +1211,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     function resetInterval() {
       clearInterval(interval);
-      interval = setInterval(nextSlide, 3000);
+      interval = null;
+      if (carouselInView) {
+        interval = setInterval(nextSlide, 3000);
+      }
     }
     if (wrap && track && imgs.length) {
       shuffleSlides();
@@ -1212,11 +1235,14 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       if (isDynamic) {
         var checkAndUpdate = function() {
+          if (!carouselInView) return;
           if (imgs[current] && imgs[current].complete && imgs[current].naturalWidth) updateFrameHeight();
         };
         for (var k = 0; k < imgs.length; k++) imgs[k].addEventListener('load', checkAndUpdate);
-        checkAndUpdate();
-        window.addEventListener('resize', updateFrameHeight);
+        function onResize() {
+          if (carouselInView) updateFrameHeight();
+        }
+        window.addEventListener('resize', onResize);
       }
       var startX = 0;
       wrap.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; }, {passive:true});
@@ -1239,7 +1265,25 @@ document.addEventListener("DOMContentLoaded", function () {
           openLightbox(getCarouselSrcs(), current);
         });
       }
-      resetInterval();
+      goToIndex(0);
+      if (typeof IntersectionObserver !== 'undefined') {
+        var io = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            setCarouselInView(entry.isIntersecting);
+          });
+        }, { root: null, rootMargin: '0px', threshold: 0 });
+        io.observe(wrap);
+        requestAnimationFrame(function() {
+          var rec = io.takeRecords();
+          if (rec.length) {
+            setCarouselInView(rec[0].isIntersecting);
+          } else {
+            setCarouselInView(computeWrapVisible());
+          }
+        });
+      } else {
+        setCarouselInView(true);
+      }
     }
     function showView(view) {
       currentView = view;

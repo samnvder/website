@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "South End Club marketing website (standalone repo; exported from WebsiteV1)",
   "scripts": {
+    "pretest": "npm run guard",
     "test": "node --test Programs/Pickleball/advanced-open-play/testing/unit/test-openplay-rsvp.js Programs/Pickleball/advanced-open-play/testing/unit/test-firebase-rules.js Programs/Pickleball/advanced-open-play/testing/unit/test-rating-eligibility.js Programs/Pickleball/advanced-open-play/testing/unit/test-roll-live.js",
     "test:pools-instructors": "node Website/Pages/pools/testing/instructor-pill-layout-test.mjs",
     "firebase:deploy-rules": "npx firebase-tools deploy --only database --non-interactive",
@@ -27,7 +28,9 @@
     "scaffold:carousel": "node scripts/scaffold/new-carousel.js",
     "resolve-project-mode": "node scripts/resolve-project-mode.js",
     "summarize": "node Programs/Pickleball/advanced-open-play/scripts/openplay-summarize.js",
+    "guard": "npm run guard:membership-pricing && npm run guard:pickleball-header && npm run guard:racquet-promo",
     "guard:membership-pricing": "node scripts/audit/membership-pricing-guard.js",
+    "guard:racquet-promo": "node scripts/audit/racquet-promo-guard.js",
     "audit:membership-pricing": "node scripts/audit/membership-pricing-guard.js && node scripts/audit/membership-pricing-audit-pdf.js",
     "pricing:apply": "node scripts/audit/membership-pricing-apply.js",
     "pricing-change": "node scripts/audit/membership-pricing-change.js",

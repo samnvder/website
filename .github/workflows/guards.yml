@@ -1,0 +1,25 @@
+# Structural guards — always-on gate. Blocks regressions (e.g. the racquet-sports
+# Pickleball Hub promo two-CTA layout) before they can merge. No opt-in flag:
+# unlike the deploy workflow, this runs on every push and pull request.
+name: Guards
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  guards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run structural guards
+        run: npm run guard
