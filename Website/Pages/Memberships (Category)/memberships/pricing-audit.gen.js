@@ -19,9 +19,10 @@ const path = require('path');
 const crypto = require('crypto');
 
 const DIR = __dirname;
-const SRC = path.join(DIR, 'membership builder JS.js');
-const LOG = path.join(DIR, 'membership-pricing-audit.log');
-const PDF = path.join(DIR, 'membership-pricing-audit.pdf');
+const SRC = process.env.AUDIT_SRC || path.join(DIR, 'membership builder JS.js');
+const LOG = process.env.AUDIT_LOG || path.join(DIR, 'membership-pricing-audit.log');
+const PDF = process.env.AUDIT_PDF || path.join(DIR, 'membership-pricing-audit.pdf');
+const LEDGER = process.env.AUDIT_LEDGER || path.join(DIR, 'membership-pricing-audit.ledger.log');
 
 // --- Read source ------------------------------------------------------------
 let srcBuf;
@@ -183,8 +184,82 @@ for (const off of offsets) pdf += String(off).padStart(10, '0') + ' 00000 n \n';
 pdf += 'trailer\n<< /Size ' + (objs.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + xrefStart + '\n%%EOF';
 fs.writeFileSync(PDF, Buffer.from(pdf, 'latin1'));
 
+// --- Append-only ledger (one entry per actual pricing change) ---------------
+// A flat, diff-friendly view of every priced field.
+function flatPricing() {
+  const m = {};
+  const T = ['Tier 1', 'Tier 2', 'Tier 3'];
+  ['single', 'couple'].forEach(t => T.forEach((tn, i) => { m['Monthly ' + t + ' ' + tn] = pricing[t][i]; }));
+  T.forEach((tn, i) => { m['Monthly family-base ' + tn] = pricing.family[1][i]; });
+  ['single', 'couple', 'family'].forEach(t => { m['F&B ' + t] = minimumAmounts[t]; });
+  ['single', 'couple', 'family'].forEach(t => {
+    T.forEach((tn, i) => { m['Enrollment ' + t + ' ' + tn] = enrollmentFees[t][i]; });
+    m['Discount ' + t] = discounts[t];
+  });
+  return m;
+}
+function fmtVal(v) { return v === undefined ? '(none)' : (typeof v === 'number' ? '$' + v : String(v)); }
+function diffMaps(prev, cur) {
+  const out = [];
+  Object.keys(cur).forEach(k => {
+    const a = prev ? prev[k] : undefined;
+    if (String(a) !== String(cur[k])) {
+      out.push('    - ' + k + ': ' + (prev ? fmtVal(a) + ' → ' + fmtVal(cur[k]) : fmtVal(cur[k])));
+    }
+  });
+  return out;
+}
+
+// Find the most recent recorded digest/data in the existing ledger.
+let lastDigest = null, lastData = null, ledgerExists = false;
+if (fs.existsSync(LEDGER)) {
+  ledgerExists = true;
+  const txt = fs.readFileSync(LEDGER, 'utf8');
+  const dm = txt.match(/^# digest: (.+)$/gm);
+  if (dm) lastDigest = dm[dm.length - 1].replace('# digest: ', '').trim();
+  const pm = txt.match(/^# data: (.+)$/gm);
+  if (pm) { try { lastData = JSON.parse(pm[pm.length - 1].replace('# data: ', '')); } catch (_) {} }
+}
+
+let ledgerStatus;
+if (lastDigest === priceHash) {
+  ledgerStatus = 'unchanged (no new ledger entry)';
+} else {
+  const curMap = flatPricing();
+  const changes = diffMaps(lastData, curMap);
+  let entry = '';
+  if (!ledgerExists) {
+    entry += '===== Membership Builder — Pricing CHANGE LEDGER (append-only) =====\n';
+    entry += 'One block per recorded pricing change, oldest first / newest at the bottom.\n';
+    entry += 'Maintained by pricing-audit.gen.js. Do not edit by hand.\n\n';
+  }
+  entry += '================================================================================\n';
+  entry += (lastDigest === null ? 'Initial baseline entry\n' : 'Pricing change recorded\n');
+  entry += '  When (UTC):     ' + iso + '\n';
+  entry += '  When (local):   ' + la + '\n';
+  entry += '  Source size:    ' + srcBuf.length + ' bytes\n';
+  entry += '  Source SHA-256: ' + srcHash + '\n';
+  entry += '  Pricing digest: ' + priceHash + '\n';
+  entry += '  Changes:\n';
+  entry += (changes.length ? changes.join('\n') + '\n' : '    - (digest changed; summarized fields identical)\n');
+  entry += '  Snapshot:\n';
+  entry += '    Monthly dues (T1/T2/T3) — Single $' + pricing.single.join('/$') +
+           ' · Couple $' + pricing.couple.join('/$') +
+           ' · Family base $' + pricing.family[1].join('/$') + '\n';
+  entry += '    F&B — Single ' + minimumAmounts.single + ' · Couple ' + minimumAmounts.couple +
+           ' · Family ' + minimumAmounts.family + '\n';
+  entry += '    Enrollment orig (T1/T2/T3) — single $' + enrollmentFees.single.join('/$') + ' (−$' + discounts.single + ')' +
+           ' · couple $' + enrollmentFees.couple.join('/$') + ' (−$' + discounts.couple + ')' +
+           ' · family $' + enrollmentFees.family.join('/$') + ' (−$' + discounts.family + ')\n';
+  entry += '# digest: ' + priceHash + '\n';
+  entry += '# data: ' + JSON.stringify(curMap) + '\n';
+  fs.appendFileSync(LEDGER, entry, 'utf8');
+  ledgerStatus = (lastDigest === null ? 'baseline entry appended' : 'change entry appended');
+}
+
 console.log('[pricing-audit] Regenerated:');
 console.log('  ' + LOG);
 console.log('  ' + PDF);
+console.log('  ledger: ' + LEDGER + ' (' + ledgerStatus + ')');
 console.log('  source SHA-256: ' + srcHash);
 console.log('  pricing digest: ' + priceHash);

@@ -1,7 +1,7 @@
 ===== Membership Builder — Pricing audit =====
-Generated (UTC): 2026-05-31T02:05:27.122Z
-Generated (America/Los_Angeles): Saturday, May 30, 2026 at 7:05:27 PM PDT
-Unix time (ms): 1780193127122
+Generated (UTC): 2026-05-31T23:32:33.735Z
+Generated (America/Los_Angeles): Sunday, May 31, 2026 at 4:32:33 PM PDT
+Unix time (ms): 1780270353735
 Source file: C:\Users\samna\Documents\Local Projects\Website\Website\Pages\Memberships (Category)\memberships\membership builder JS.js
 Source size (bytes): 9370
 SHA-256 (source): d581275c0b35c6fcf2841c9d6743fa4f16e867447437ecee64d43bc83334a4ff
@@ -37,7 +37,7 @@ Final monthly due = base + additional charges (after the adjustments above).
 End of audit (detail sections).
 
 ----- Audit record (closing) -----
-Generated (UTC): 2026-05-31T02:05:27.122Z
+Generated (UTC): 2026-05-31T23:32:33.735Z
 Source: C:\Users\samna\Documents\Local Projects\Website\Website\Pages\Memberships (Category)\memberships\membership builder JS.js
 Source size (bytes): 9370
 SHA-256 (source): d581275c0b35c6fcf2841c9d6743fa4f16e867447437ecee64d43bc83334a4ff

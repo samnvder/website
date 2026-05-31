@@ -1,0 +1,42 @@
+===== Membership Builder — Pricing CHANGE LEDGER (append-only) =====
+One block per recorded pricing change, oldest first / newest at the bottom.
+Maintained by pricing-audit.gen.js. Do not edit by hand.
+
+================================================================================
+Initial baseline entry
+  When (UTC):     2026-05-31T23:32:33.594Z
+  When (local):   Sunday, May 31, 2026 at 4:32:33 PM PDT
+  Source size:    9370 bytes
+  Source SHA-256: d581275c0b35c6fcf2841c9d6743fa4f16e867447437ecee64d43bc83334a4ff
+  Pricing digest: dc162488aebdaa7ff1195e12e50fadd666f168f4b3a68adc502f9632194ddca2
+  Changes:
+    - Monthly single Tier 1: $245
+    - Monthly single Tier 2: $215
+    - Monthly single Tier 3: $195
+    - Monthly couple Tier 1: $390
+    - Monthly couple Tier 2: $350
+    - Monthly couple Tier 3: $335
+    - Monthly family-base Tier 1: $490
+    - Monthly family-base Tier 2: $425
+    - Monthly family-base Tier 3: $395
+    - F&B single: $20
+    - F&B couple: $40
+    - F&B family: $60
+    - Enrollment single Tier 1: $400
+    - Enrollment single Tier 2: $350
+    - Enrollment single Tier 3: $300
+    - Discount single: $100
+    - Enrollment couple Tier 1: $500
+    - Enrollment couple Tier 2: $450
+    - Enrollment couple Tier 3: $400
+    - Discount couple: $100
+    - Enrollment family Tier 1: $600
+    - Enrollment family Tier 2: $550
+    - Enrollment family Tier 3: $500
+    - Discount family: $150
+  Snapshot:
+    Monthly dues (T1/T2/T3) — Single $245/$215/$195 · Couple $390/$350/$335 · Family base $490/$425/$395
+    F&B — Single $20 · Couple $40 · Family $60
+    Enrollment orig (T1/T2/T3) — single $400/$350/$300 (−$100) · couple $500/$450/$400 (−$100) · family $600/$550/$500 (−$150)
+# digest: dc162488aebdaa7ff1195e12e50fadd666f168f4b3a68adc502f9632194ddca2
+# data: {"Monthly single Tier 1":245,"Monthly single Tier 2":215,"Monthly single Tier 3":195,"Monthly couple Tier 1":390,"Monthly couple Tier 2":350,"Monthly couple Tier 3":335,"Monthly family-base Tier 1":490,"Monthly family-base Tier 2":425,"Monthly family-base Tier 3":395,"F&B single":"$20","F&B couple":"$40","F&B family":"$60","Enrollment single Tier 1":400,"Enrollment single Tier 2":350,"Enrollment single Tier 3":300,"Discount single":100,"Enrollment couple Tier 1":500,"Enrollment couple Tier 2":450,"Enrollment couple Tier 3":400,"Discount couple":100,"Enrollment family Tier 1":600,"Enrollment family Tier 2":550,"Enrollment family Tier 3":500,"Discount family":150}
