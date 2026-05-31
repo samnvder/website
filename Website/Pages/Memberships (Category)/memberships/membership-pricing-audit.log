@@ -1,20 +1,18 @@
 ===== Membership Builder — Pricing audit =====
-Generated (UTC): 2026-04-16T08:13:34.815Z
-Generated (America/Los_Angeles): Thursday, April 16, 2026 at 1:13:34 AM PDT (America/Los_Angeles)
-Unix time (ms): 1776327214815
-Source file: C:\Users\Sam Work\Documents\Local Projects\online-sales-agent\Website\Website\Pages\Memberships (Category)\memberships\membership builder JS.js
-Source size (bytes): 9755
-SHA-256 (source): b830ba48f07c0e3663876994944b8b28599a503e1ee8d8fc96617f9ef1010dbe
-Pricing digest (SHA-256, canonical JSON): 445afd9a2f9efbacd98581067ad72fe802f7e557db4a9383560ff8e5262dd822
-Generator: Node v24.13.1 | win32 | nvde
-Git: master @ 34c6d34 (working tree dirty)
-Commit: 34c6d343fe74794275f0255091eb53b45b517136
+Generated (UTC): 2026-05-31T02:05:27.122Z
+Generated (America/Los_Angeles): Saturday, May 30, 2026 at 7:05:27 PM PDT
+Unix time (ms): 1780193127122
+Source file: C:\Users\samna\Documents\Local Projects\Website\Website\Pages\Memberships (Category)\memberships\membership builder JS.js
+Source size (bytes): 9370
+SHA-256 (source): d581275c0b35c6fcf2841c9d6743fa4f16e867447437ecee64d43bc83334a4ff
+Pricing digest (SHA-256, canonical JSON): dc162488aebdaa7ff1195e12e50fadd666f168f4b3a68adc502f9632194ddca2
+Generator: Node v24.13.0 | win32 | pricing-audit.gen.js
 
 --- Monthly dues (base) ---
-Single — Tier 1: $220, Tier 2: $205, Tier 3: $190
-Couple — Tier 1: $350, Tier 2: $335, Tier 3: $315
+Single — Tier 1: $245, Tier 2: $215, Tier 3: $195
+Couple — Tier 1: $390, Tier 2: $350, Tier 3: $335
 Family (monthly base by tier; same tiers as Single/Couple):
-All child counts (1–6): Tier 1 $435, Tier 2 $405, Tier 3 $375
+All child counts (1–6): Tier 1 $490, Tier 2 $425, Tier 3 $395
 
 --- Food & beverage assessment (display minimums) ---
 Single: $20
@@ -39,11 +37,9 @@ Final monthly due = base + additional charges (after the adjustments above).
 End of audit (detail sections).
 
 ----- Audit record (closing) -----
-Generated (UTC): 2026-04-16T08:13:34.815Z
-Generated (America/Los_Angeles): Thursday, April 16, 2026 at 1:13:34 AM PDT (America/Los_Angeles)
-Unix time (ms): 1776327214815
-Source: C:\Users\Sam Work\Documents\Local Projects\online-sales-agent\Website\Website\Pages\Memberships (Category)\memberships\membership builder JS.js
-Source size (bytes): 9755
-SHA-256 (source): b830ba48f07c0e3663876994944b8b28599a503e1ee8d8fc96617f9ef1010dbe
-Pricing digest (SHA-256): 445afd9a2f9efbacd98581067ad72fe802f7e557db4a9383560ff8e5262dd822
-End of audit — same run as header; do not append by hand.
+Generated (UTC): 2026-05-31T02:05:27.122Z
+Source: C:\Users\samna\Documents\Local Projects\Website\Website\Pages\Memberships (Category)\memberships\membership builder JS.js
+Source size (bytes): 9370
+SHA-256 (source): d581275c0b35c6fcf2841c9d6743fa4f16e867447437ecee64d43bc83334a4ff
+Pricing digest (SHA-256): dc162488aebdaa7ff1195e12e50fadd666f168f4b3a68adc502f9632194ddca2
+End of audit — regenerated automatically by pricing-audit.gen.js; do not edit by hand.

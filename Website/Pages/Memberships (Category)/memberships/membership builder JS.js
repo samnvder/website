@@ -12,15 +12,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Pricing data
     const pricing = {
-        single: [220, 205, 190],
-        couple: [350, 335, 315],
+        single: [245, 215, 195],
+        couple: [390, 350, 335],
         family: {
-            1: [435, 405, 375],
-            2: [435, 405, 375],
-            3: [435, 405, 375],
-            4: [435, 405, 375],
-            5: [435, 405, 375],
-            6: [435, 405, 375]
+            1: [490, 425, 395],
+            2: [490, 425, 395],
+            3: [490, 425, 395],
+            4: [490, 425, 395],
+            5: [490, 425, 395],
+            6: [490, 425, 395]
         }
     };
 
@@ -76,10 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (allFieldsFilled) {
                 const averageAge = childrenAges.reduce((a, b) => a + b, 0) / childrenAges.length;
                 if (averageAge <= 6 && numChildren <= 2) {
-                    const youngChildDiscounts = { 1: 25, 2: 15 };
-                    if (youngChildDiscounts[numChildren]) {
-                        additionalCharge -= youngChildDiscounts[numChildren];
-                    }
+                    additionalCharge -= numChildren === 1 ? 30 : 20;
                 }
 
                 for (let i = 3; i <= numChildren; i++) {

@@ -114,10 +114,642 @@
 	<div class="tve-page-section-in tve_empty_dropzone" data-css="tve-u-693b313a87d943" style=""></div>
 </div>
 
+<!-- =========================
+     NAVIGATION STYLES (inline for WordPress)
+  ========================== -->
+<style>
+/* Desktop Floating Nav */
+.floating-nav {
+  position: fixed;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+.floating-nav.visible {
+  opacity: 1;
+  visibility: visible;
+}
+.floating-nav.faded {
+  opacity: 0.15;
+  transition: opacity 0.4s ease;
+}
+.nav-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 14px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 2px solid rgba(11, 70, 140, 0.15);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(11, 70, 140, 0.15), 0 0 30px rgba(11, 70, 140, 0.12);
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px;
+  color: #3d5a5e;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+.nav-link .nav-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(11, 70, 140, 0.3);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(11, 70, 140, 0.25);
+}
+.nav-link span:not(.nav-dot) {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.nav-link:hover,
+.nav-link:active {
+  background: rgba(11, 70, 140, 0.08);
+}
+.nav-link:hover span:not(.nav-dot),
+.nav-link.active span:not(.nav-dot) {
+  opacity: 1;
+  transform: translateX(0);
+}
+.nav-link.active {
+  color: #0b468c;
+  background: rgba(11, 70, 140, 0.12);
+}
+.nav-link.active .nav-dot {
+  background: #0b468c;
+  box-shadow: 0 0 20px rgba(11, 70, 140, 0.6), 0 0 40px rgba(11, 70, 140, 0.35);
+  transform: scale(1.1);
+}
+
+/* Hide desktop nav on mobile/tablet */
+@media (max-width: 1024px) {
+  .floating-nav {
+    display: none !important;
+  }
+}
+
+/* Mobile Nav - Accordion Style (Top Right) */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  right: 12px;
+  top: 80px;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+@media (max-width: 1024px) {
+  .mobile-nav.visible {
+    display: block !important;
+    opacity: 1;
+    visibility: visible;
+  }
+}
+.mobile-nav.faded {
+  opacity: 0.15;
+  transition: opacity 0.4s ease;
+}
+.mobile-nav-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(11, 70, 140, 0.1);
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(11, 70, 140, 0.1), 0 0 12px rgba(11, 70, 140, 0.05);
+  overflow: hidden;
+  max-height: 34px;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mobile-nav-inner.expanded {
+  max-height: 280px;
+}
+.mobile-nav-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #0b468c;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: all 0.2s ease;
+}
+.mobile-nav-toggle:hover {
+  background: rgba(11, 70, 140, 0.08);
+}
+.mobile-nav-toggle .toggle-icon {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.3s ease;
+}
+.mobile-nav-inner.expanded .mobile-nav-toggle .toggle-icon {
+  transform: rotate(180deg);
+}
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 4px 6px 8px;
+  border-top: 1px solid rgba(11, 70, 140, 0.08);
+}
+.mobile-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  text-decoration: none;
+  color: #3d5a5e;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+.mobile-nav-link .nav-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(11, 70, 140, 0.25);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  box-shadow: 0 0 3px rgba(11, 70, 140, 0.15);
+}
+.mobile-nav-link:hover,
+.mobile-nav-link:active {
+  background: rgba(11, 70, 140, 0.1);
+}
+.mobile-nav-link.active {
+  color: #0b468c;
+  background: rgba(11, 70, 140, 0.12);
+}
+.mobile-nav-link.active .nav-dot {
+  background: #0b468c;
+  box-shadow: 0 0 16px rgba(11, 70, 140, 0.6), 0 0 30px rgba(11, 70, 140, 0.3);
+  transform: scale(1.2);
+}
+</style>
+
+<!-- =========================
+     FLOATING NAV - Desktop Only
+  ========================== -->
+  <nav class="floating-nav" id="floatingNav">
+    <div class="nav-inner">
+      <a href="#membershipOptions" class="nav-link active" data-section="membershipOptions">
+        <span class="nav-dot"></span>
+        <span>Options</span>
+      </a>
+      <a href="#membershipBuilder" class="nav-link" data-section="membershipBuilder">
+        <span class="nav-dot"></span>
+        <span>Builder</span>
+      </a>
+      <a href="#corporate-membership" class="nav-link" data-section="corporate-membership">
+        <span class="nav-dot"></span>
+        <span>Corporate</span>
+      </a>
+      <a href="#scheduleAtour" class="nav-link" data-section="scheduleAtour">
+        <span class="nav-dot"></span>
+        <span>Book a Tour</span>
+      </a>
+      <a href="#FAQs" class="nav-link" data-section="FAQs">
+        <span class="nav-dot"></span>
+        <span>FAQs</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- =========================
+       MOBILE NAV - Accordion
+  ========================== -->
+  <nav class="mobile-nav" id="mobileNav">
+    <div class="mobile-nav-inner" id="mobileNavInner">
+      <button class="mobile-nav-toggle" id="mobileNavToggle">
+        <span class="current-section">Options</span>
+        <svg class="toggle-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+      <div class="mobile-nav-links">
+        <a href="#membershipOptions" class="mobile-nav-link active" data-section="membershipOptions">
+          <span class="nav-dot"></span>
+          <span>Options</span>
+        </a>
+        <a href="#membershipBuilder" class="mobile-nav-link" data-section="membershipBuilder">
+          <span class="nav-dot"></span>
+          <span>Builder</span>
+        </a>
+        <a href="#corporate-membership" class="mobile-nav-link" data-section="corporate-membership">
+          <span class="nav-dot"></span>
+          <span>Corporate Memberships</span>
+        </a>
+        <a href="#scheduleAtour" class="mobile-nav-link" data-section="scheduleAtour">
+          <span class="nav-dot"></span>
+          <span>Book a Tour</span>
+        </a>
+        <a href="#FAQs" class="mobile-nav-link" data-section="FAQs">
+          <span class="nav-dot"></span>
+          <span>FAQs</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
 <!-- MEMBERSHIP OPTIONS SECTION -->
 <div class="thrv_wrapper thrv-page-section tve-height-update">
 	<div class="tve-page-section-out"></div>
-	<div class="tve-page-section-in tve_empty_dropzone" data-css="tve-u-693b313a87d966"><div class="thrv_wrapper thrv_custom_html_shortcode" style="" data-css="tve-u-693b313a87d981">
+	<div class="tve-page-section-in tve_empty_dropzone" data-css="tve-u-693b313a87d966"><div class="thrv_wrapper thrv_custom_html_shortcode"><!-- =========================
+     MEMBERSHIPS PAGE - FLOATING SECTION NAV
+     Standalone HTML block. Paste into Custom HTML block (e.g. after video hero).
+     ========================== -->
+<style>
+/* Desktop Floating Nav */
+.floating-nav {
+  position: fixed;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+.floating-nav.visible {
+  opacity: 1;
+  visibility: visible;
+}
+.floating-nav.faded {
+  opacity: 0.15;
+  transition: opacity 0.4s ease;
+}
+.nav-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 14px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 2px solid rgba(11, 70, 140, 0.15);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(11, 70, 140, 0.15), 0 0 30px rgba(11, 70, 140, 0.12);
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px;
+  color: #3d5a5e;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+.nav-link .nav-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(11, 70, 140, 0.3);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(11, 70, 140, 0.25);
+}
+.nav-link span:not(.nav-dot) {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.nav-link:hover,
+.nav-link:active {
+  background: rgba(11, 70, 140, 0.08);
+}
+.nav-link:hover span:not(.nav-dot),
+.nav-link.active span:not(.nav-dot) {
+  opacity: 1;
+  transform: translateX(0);
+}
+.nav-link.active {
+  color: #0b468c;
+  background: rgba(11, 70, 140, 0.12);
+}
+.nav-link.active .nav-dot {
+  background: #0b468c;
+  box-shadow: 0 0 20px rgba(11, 70, 140, 0.6), 0 0 40px rgba(11, 70, 140, 0.35);
+  transform: scale(1.1);
+}
+@media (max-width: 1024px) {
+  .floating-nav { display: none !important; }
+}
+/* Mobile Nav */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  right: 12px;
+  top: 80px;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+@media (max-width: 1024px) {
+  .mobile-nav.visible {
+    display: block !important;
+    opacity: 1;
+    visibility: visible;
+  }
+}
+.mobile-nav.faded {
+  opacity: 0.15;
+  transition: opacity 0.4s ease;
+}
+.mobile-nav-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(11, 70, 140, 0.1);
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(11, 70, 140, 0.1), 0 0 12px rgba(11, 70, 140, 0.05);
+  overflow: hidden;
+  max-height: 34px;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mobile-nav-inner.expanded {
+  max-height: 280px;
+}
+.mobile-nav-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #0b468c;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: all 0.2s ease;
+}
+.mobile-nav-toggle:hover {
+  background: rgba(11, 70, 140, 0.08);
+}
+.mobile-nav-toggle .toggle-icon {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.3s ease;
+}
+.mobile-nav-inner.expanded .mobile-nav-toggle .toggle-icon {
+  transform: rotate(180deg);
+}
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 4px 6px 8px;
+  border-top: 1px solid rgba(11, 70, 140, 0.08);
+}
+.mobile-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  text-decoration: none;
+  color: #3d5a5e;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+.mobile-nav-link .nav-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(11, 70, 140, 0.25);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  box-shadow: 0 0 3px rgba(11, 70, 140, 0.15);
+}
+.mobile-nav-link:hover,
+.mobile-nav-link:active {
+  background: rgba(11, 70, 140, 0.1);
+}
+.mobile-nav-link.active {
+  color: #0b468c;
+  background: rgba(11, 70, 140, 0.12);
+}
+.mobile-nav-link.active .nav-dot {
+  background: #0b468c;
+  box-shadow: 0 0 16px rgba(11, 70, 140, 0.6), 0 0 30px rgba(11, 70, 140, 0.3);
+  transform: scale(1.2);
+}
+</style>
+
+<nav class="floating-nav" id="floatingNav">
+  <div class="nav-inner">
+    <a href="#membershipOptions" class="nav-link active" data-section="membershipOptions">
+      <span class="nav-dot"></span>
+      <span>Options</span>
+    </a>
+    <a href="#membershipBuilder" class="nav-link" data-section="membershipBuilder">
+      <span class="nav-dot"></span>
+      <span>Builder</span>
+    </a>
+    <a href="#corporate-membership" class="nav-link" data-section="corporate-membership">
+      <span class="nav-dot"></span>
+      <span>Corporate</span>
+    </a>
+    <a href="#scheduleAtour" class="nav-link" data-section="scheduleAtour">
+      <span class="nav-dot"></span>
+      <span>Book a Tour</span>
+    </a>
+    <a href="#FAQs" class="nav-link" data-section="FAQs">
+      <span class="nav-dot"></span>
+      <span>FAQs</span>
+    </a>
+  </div>
+</nav>
+
+<nav class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-inner" id="mobileNavInner">
+    <button class="mobile-nav-toggle" id="mobileNavToggle">
+      <span class="current-section">Options</span>
+      <svg class="toggle-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </button>
+    <div class="mobile-nav-links">
+      <a href="#membershipOptions" class="mobile-nav-link active" data-section="membershipOptions">
+        <span class="nav-dot"></span>
+        <span>Options</span>
+      </a>
+      <a href="#membershipBuilder" class="mobile-nav-link" data-section="membershipBuilder">
+        <span class="nav-dot"></span>
+        <span>Builder</span>
+      </a>
+      <a href="#corporate-membership" class="mobile-nav-link" data-section="corporate-membership">
+        <span class="nav-dot"></span>
+        <span>Corporate Memberships</span>
+      </a>
+      <a href="#scheduleAtour" class="mobile-nav-link" data-section="scheduleAtour">
+        <span class="nav-dot"></span>
+        <span>Book a Tour</span>
+      </a>
+      <a href="#FAQs" class="mobile-nav-link" data-section="FAQs">
+        <span class="nav-dot"></span>
+        <span>FAQs</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const floatingNav = document.getElementById('floatingNav');
+  const mobileNav = document.getElementById('mobileNav');
+  const mobileNavInner = document.getElementById('mobileNavInner');
+  const mobileNavToggle = document.getElementById('mobileNavToggle');
+  const currentSectionText = mobileNavToggle ? mobileNavToggle.querySelector('.current-section') : null;
+  const hero = document.querySelector('.tcb-video-background-parent');
+  const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+  const sectionIds = ['membershipOptions', 'membershipBuilder', 'corporate-membership', 'scheduleAtour', 'FAQs'];
+  const sections = sectionIds.map(id => document.getElementById(id)).filter(el => el);
+  let navFadeTimeout, desktopNavFadeTimeout;
+  let isMobile = window.innerWidth <= 1024;
+  function checkMobile() { isMobile = window.innerWidth <= 1024; }
+  window.addEventListener('resize', checkMobile);
+  function showMobileNav() { if (mobileNav && mobileNav.classList.contains('visible')) mobileNav.classList.remove('faded'); }
+  function startNavFadeTimer() {
+    if (!isMobile) return;
+    clearTimeout(navFadeTimeout);
+    showMobileNav();
+    navFadeTimeout = setTimeout(function() {
+      if (mobileNav && mobileNav.classList.contains('visible') && mobileNavInner && !mobileNavInner.classList.contains('expanded')) mobileNav.classList.add('faded');
+    }, 1000);
+  }
+  function showDesktopNav() { if (floatingNav && floatingNav.classList.contains('visible')) floatingNav.classList.remove('faded'); }
+  function startDesktopNavFadeTimer() {
+    if (isMobile) return;
+    clearTimeout(desktopNavFadeTimeout);
+    showDesktopNav();
+    desktopNavFadeTimeout = setTimeout(function() {
+      if (floatingNav && floatingNav.classList.contains('visible')) floatingNav.classList.add('faded');
+    }, 750);
+  }
+  if (mobileNavToggle && mobileNavInner) {
+    mobileNavToggle.addEventListener('click', function() {
+      mobileNavInner.classList.toggle('expanded');
+      if (mobileNavInner.classList.contains('expanded')) { mobileNav.classList.remove('faded'); clearTimeout(navFadeTimeout); }
+      else startNavFadeTimer();
+    });
+  }
+  document.addEventListener('click', function(e) {
+    if (mobileNavInner && mobileNav && !mobileNav.contains(e.target)) mobileNavInner.classList.remove('expanded');
+  });
+  function showNav() {
+    if (floatingNav) floatingNav.classList.add('visible');
+    if (mobileNav) mobileNav.classList.add('visible');
+    startNavFadeTimer();
+    startDesktopNavFadeTimer();
+  }
+  if (hero) {
+    const heroObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          if (floatingNav) floatingNav.classList.remove('visible', 'faded');
+          if (mobileNav) mobileNav.classList.remove('visible', 'faded');
+          if (mobileNavInner) mobileNavInner.classList.remove('expanded');
+          clearTimeout(navFadeTimeout);
+          clearTimeout(desktopNavFadeTimeout);
+        } else { showNav(); }
+      });
+    }, { threshold: 0.3 });
+    heroObserver.observe(hero);
+  } else {
+    setTimeout(showNav, 500);
+  }
+  window.addEventListener('scroll', function() {
+    const scrollY = window.scrollY || window.pageYOffset;
+    const heroHeight = hero ? hero.offsetHeight : 300;
+    if (scrollY > heroHeight * 0.5) showNav();
+    if (isMobile) startNavFadeTimer();
+    else startDesktopNavFadeTimer();
+  }, { passive: true });
+  window.addEventListener('touchstart', startNavFadeTimer, { passive: true });
+  window.addEventListener('touchmove', startNavFadeTimer, { passive: true });
+  if (floatingNav) {
+    floatingNav.addEventListener('mouseenter', function() { clearTimeout(desktopNavFadeTimeout); showDesktopNav(); }, { passive: true });
+    floatingNav.addEventListener('mouseleave', startDesktopNavFadeTimer, { passive: true });
+  }
+  const sectionNames = { 'membershipOptions': 'Options', 'membershipBuilder': 'Builder', 'corporate-membership': 'Corporate Memberships', 'scheduleAtour': 'Book a Tour', 'FAQs': 'FAQs' };
+  function updateActiveSection() {
+    let maxVisibility = 0, mostVisibleSection = '';
+    sections.forEach(section => {
+      const rect = section.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const visibleTop = Math.max(0, rect.top);
+      const visibleBottom = Math.min(windowHeight, rect.bottom);
+      const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+      const centerOffset = Math.abs((rect.top + rect.bottom) / 2 - windowHeight / 2);
+      const visibility = visibleHeight - (centerOffset * 0.3);
+      if (visibility > maxVisibility && rect.top < windowHeight * 0.6) { maxVisibility = visibility; mostVisibleSection = section.id; }
+    });
+    if (mostVisibleSection) {
+      navLinks.forEach(link => link.classList.toggle('active', link.dataset.section === mostVisibleSection));
+      if (currentSectionText && sectionNames[mostVisibleSection]) currentSectionText.textContent = sectionNames[mostVisibleSection];
+    }
+  }
+  let scrollTicking = false;
+  window.addEventListener('scroll', function() {
+    if (!scrollTicking) {
+      requestAnimationFrame(function() { updateActiveSection(); scrollTicking = false; });
+      scrollTicking = true;
+    }
+  }, { passive: true });
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href').substring(1);
+      const target = document.getElementById(targetId);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (mobileNavInner) { mobileNavInner.classList.remove('expanded'); startNavFadeTimer(); }
+    });
+  });
+  updateActiveSection();
+});
+</script></div><div class="thrv_wrapper thrv_custom_html_shortcode" style="" data-css="tve-u-693b313a87d981">
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -549,6 +1181,25 @@ for (var i = 0; i < tierLinks.length; i++) {
 	<hr class="tve_sep tve_sep-1" style="">
 </div><div class="thrv_wrapper thrv_custom_html_shortcode" data-css="tve-u-693b313a87da07" style="">
 
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Membership Builder — South End Club</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 24px 16px 48px;
+      background: #e8e4dc;
+      font-family: 'Montserrat', sans-serif;
+    }
+  </style>
+
+
 <!-- Membership Builder Styles - Royal Blue/Beige Theme -->
 <style>
   /* MEMBERSHIP BUILDER - Matching Theme */
@@ -952,6 +1603,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+<script src="membership builder JS.js"></script>
 
 </div><div class="thrv_wrapper thrv_custom_html_shortcode"><style>
 /* Pulse highlight when the builder updates - Royal Blue Theme */
@@ -1000,7 +1652,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 })();
-</script></div><div class="thrv_wrapper thrv_custom_html_shortcode" data-css="tve-u-693b313a87da28" style="">[wpcode id="7315"]</div><div class="thrv_wrapper thrv-columns tcb-mobile-hidden tcb-tablet-hidden" style="--tcb-col-el-width: 1429.83;"><div class="tcb-flex-row v-2 tcb--cols--4" data-css="tve-u-693b313a87da55"><div class="tcb-flex-col" data-css="tve-u-693b313a87da71" style=""><div class="tcb-col" style=""><div class="thrv_wrapper tve_image_caption" data-css="tve-u-693b313a87da96"><span class="tve_image_frame" style=""><img decoding="async" class="tve_image wp-image-6998" alt="" data-id="6998" width="389" data-init-width="1417" height="316" data-init-height="1151" title="Pool5" loading="lazy" src="https://southendclub.com/wp-content/uploads/2024/09/Pool5.jpg" data-width="389" data-height="316" style="aspect-ratio: auto 1417 / 1151;" mt-d="-19.937999999999988" ml-d="0" data-css="tve-u-693b313a87dab2" mt-m="0" ml-m="0"></span></div></div></div><div class="tcb-flex-col" data-css="tve-u-693b313a87dad4" style=""><div class="tcb-col" style=""><div class="thrv_wrapper tve_image_caption" data-css="tve-u-693b313a87daf8" style=""><span class="tve_image_frame" style=""><img decoding="async" class="tve_image wp-image-2296 tcb-moved-image" alt="" data-id="2296" width="420" data-init-width="1000" height="280" data-init-height="667" title="banquets-by-south-end-club_lounge-2 (1)" loading="lazy" src="https://southendclub.com/wp-content/uploads/2021/09/banquets-by-south-end-club_lounge-2-1.jpg" data-width="420" data-height="280" style="aspect-ratio: auto 1000 / 667;" ml-d="-5.406000000000006" mt-d="0" data-css="tve-u-693b313a87db26"></span></div></div></div><div class="tcb-flex-col" data-css="tve-u-693b313a87db40" style=""><div class="tcb-col" style=""><div class="thrv_wrapper tve_image_caption" data-css="tve-u-693b313a87db63"><span class="tve_image_frame" style=""><img decoding="async" class="tve_image wp-image-1192 tcb-moved-image" alt="" data-id="1192" width="412" data-init-width="998" height="275" data-init-height="666" title="SouthEndclub_lounge" loading="lazy" src="https://southendclub.com/wp-content/uploads/2021/08/SouthEndclub_lounge-e1629500802808.jpg" data-width="412" data-height="275" style="aspect-ratio: auto 998 / 666;" mt-d="0" ml-d="-2.4139999999999873" data-css="tve-u-693b313a87db94"></span></div></div></div><div class="tcb-flex-col" data-css="tve-u-693b313a87dbb4" style=""><div class="tcb-col" style=""><div class="thrv_wrapper tve_image_caption" data-css="tve-u-693b313a87dbd3" style=""><span class="tve_image_frame" style=""><img decoding="async" class="tve_image wp-image-6996 tcb-moved-image tve-not-lazy-loaded" alt="" data-id="6996" width="498" data-init-width="750" height="276" data-init-height="415" title="Pool8" src="https://southendclub.com/wp-content/uploads/2024/09/Pool8.jpg" data-width="498" data-height="276" style="aspect-ratio: auto 750 / 415;" ml-d="-13.5" mt-d="0" data-css="tve-u-693b313a87dbe0" loading="lazy"></span></div></div></div></div></div><div class="thrv_wrapper thrv-divider tcb-desktop-hidden" data-style-d="tve_sep-1" data-thickness-d="1" data-color-d="rgb(13, 64, 79)" data-gradient-d="linear-gradient(90deg, rgb(66, 66, 66) 0%, rgb(0, 0, 0) 100%)" data-css="tve-u-693b313a87dc02" style="">
+</script></div><div class="thrv_wrapper thrv_custom_html_shortcode" data-css="tve-u-693b313a87da28" style="">[wpcode id="7315"]</div><div class="thrv_wrapper thrv-columns tcb-mobile-hidden tcb-tablet-hidden" style="--tcb-col-el-width: 1814.69;"><div class="tcb-flex-row v-2 tcb--cols--4" data-css="tve-u-693b313a87da55"><div class="tcb-flex-col" data-css="tve-u-693b313a87da71" style=""><div class="tcb-col" style=""><div class="thrv_wrapper tve_image_caption" data-css="tve-u-693b313a87da96"><span class="tve_image_frame" style=""><img decoding="async" class="tve_image wp-image-6998" alt="" data-id="6998" width="389" data-init-width="1417" height="316" data-init-height="1151" title="Pool5" loading="lazy" src="https://southendclub.com/wp-content/uploads/2024/09/Pool5.jpg" data-width="389" data-height="316" style="aspect-ratio: auto 1417 / 1151;" mt-d="-19.937999999999988" ml-d="0" data-css="tve-u-693b313a87dab2" mt-m="0" ml-m="0"></span></div></div></div><div class="tcb-flex-col" data-css="tve-u-693b313a87dad4" style=""><div class="tcb-col" style=""><div class="thrv_wrapper tve_image_caption" data-css="tve-u-693b313a87daf8" style=""><span class="tve_image_frame" style=""><img decoding="async" class="tve_image wp-image-2296 tcb-moved-image" alt="" data-id="2296" width="420" data-init-width="1000" height="280" data-init-height="667" title="banquets-by-south-end-club_lounge-2 (1)" loading="lazy" src="https://southendclub.com/wp-content/uploads/2021/09/banquets-by-south-end-club_lounge-2-1.jpg" data-width="420" data-height="280" style="aspect-ratio: auto 1000 / 667;" ml-d="-5.406000000000006" mt-d="0" data-css="tve-u-693b313a87db26"></span></div></div></div><div class="tcb-flex-col" data-css="tve-u-693b313a87db40" style=""><div class="tcb-col" style=""><div class="thrv_wrapper tve_image_caption" data-css="tve-u-693b313a87db63"><span class="tve_image_frame" style=""><img decoding="async" class="tve_image wp-image-1192 tcb-moved-image" alt="" data-id="1192" width="412" data-init-width="998" height="275" data-init-height="666" title="SouthEndclub_lounge" loading="lazy" src="https://southendclub.com/wp-content/uploads/2021/08/SouthEndclub_lounge-e1629500802808.jpg" data-width="412" data-height="275" style="aspect-ratio: auto 998 / 666;" mt-d="0" ml-d="-2.4139999999999873" data-css="tve-u-693b313a87db94"></span></div></div></div><div class="tcb-flex-col" data-css="tve-u-693b313a87dbb4" style=""><div class="tcb-col" style=""><div class="thrv_wrapper tve_image_caption" data-css="tve-u-693b313a87dbd3" style=""><span class="tve_image_frame" style=""><img decoding="async" class="tve_image wp-image-6996 tcb-moved-image tve-not-lazy-loaded" alt="" data-id="6996" width="498" data-init-width="750" height="276" data-init-height="415" title="Pool8" src="https://southendclub.com/wp-content/uploads/2024/09/Pool8.jpg" data-width="498" data-height="276" style="aspect-ratio: auto 750 / 415;" ml-d="-13.5" mt-d="0" data-css="tve-u-693b313a87dbe0" loading="lazy"></span></div></div></div></div></div><div class="thrv_wrapper thrv-divider tcb-desktop-hidden" data-style-d="tve_sep-1" data-thickness-d="1" data-color-d="rgb(13, 64, 79)" data-gradient-d="linear-gradient(90deg, rgb(66, 66, 66) 0%, rgb(0, 0, 0) 100%)" data-css="tve-u-693b313a87dc02" style="">
 	<hr class="tve_sep tve_sep-1" style="">
 </div><div class="thrv_wrapper thrv_custom_html_shortcode" data-css="tve-u-693b313a87dc20" style=""><style>
   /* Expandable Amenity Button */
@@ -1233,7 +1885,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </button>
             <div class="faq-answer">
                 <div class="faq-answer-inner">
-                    Yes! We offer guest passes at $20 for kids between the ages of 2-13 and $25 for people 14 and over. Bulk adult guest passes can be purchased at 10 passes for $250 (25% off each adult entry).
+                    Yes! We offer guest passes at $20 for kids between the ages of 2-13 and $25 for people 14 and over. Bulk adult guest passes can be purchased at 10 passes for $200 (20% off each adult entry).
                 </div>
             </div>
         </div>
@@ -1297,7 +1949,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="faq-item faq-cta-item" id="faq-message-us">
             <button class="faq-question faq-cta-question">
                 Have Your Own Questions?
-                <span class="faq-cta-icon">💬</span>
+                <span class="faq-cta-icon"><img decoding="async" role="img" class="emoji" alt="💬" src="https://s.w.org/images/core/emoji/17.0.2/svg/1f4ac.svg"></span>
             </button>
         </div>
     </div>
@@ -1331,140 +1983,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Message Us button not found - make sure the global header snippet is installed');
         }
     });
-</script></div><div class="thrv_wrapper thrv_custom_html_shortcode" data-css="tve-u-693b313a87dc47" style="">
-
-<!-- Questions/Contact Section Styles - Royal Blue/Beige Theme -->
-<style>
-  /* QUESTIONS SECTION - Royal Blue Theme */
-  .questions-section {
-    max-width: 850px !important;
-    margin: 50px auto !important;
-    padding: 45px 40px !important;
-    background: rgba(255, 255, 255, 0.9) !important;
-    border-radius: 24px !important;
-    border: 2px solid #0b468c !important;
-    box-shadow: 0 15px 50px rgba(11, 70, 140, 0.12) !important;
-    text-align: center !important;
-    position: relative !important;
-    overflow: hidden !important;
-    transition: all 0.3s ease !important;
-  }
-
-  .questions-section::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #0b468c, #204147, #0b468c);
-  }
-
-  .questions-section:hover {
-    transform: translateY(-3px) !important;
-    box-shadow: 0 20px 60px rgba(11, 70, 140, 0.18) !important;
-  }
-
-  .questions-section h2 {
-    font-size: clamp(22px, 3vw, 28px) !important;
-    font-weight: 700 !important;
-    margin-bottom: 25px !important;
-    color: #204147 !important;
-    -webkit-text-fill-color: #204147 !important;
-  }
-
-  .questions-section .membership-btn {
-    padding: 16px 32px !important;
-    font-size: 15px !important;
-    cursor: pointer !important;
-    background: #0b468c !important;
-    color: #ffffff !important;
-    border: none !important;
-    border-radius: 12px !important;
-    transition: all 0.3s ease !important;
-    font-family: 'Montserrat', sans-serif !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.5px !important;
-    text-transform: uppercase !important;
-    box-shadow: 0 8px 25px rgba(11, 70, 140, 0.3) !important;
-  }
-
-  .questions-section .membership-btn:hover {
-    transform: translateY(-3px) !important;
-    background: #204147 !important;
-    box-shadow: 0 12px 35px rgba(32, 65, 71, 0.35) !important;
-  }
-
-  #zapierFormContainer {
-    margin-top: 30px !important;
-    max-width: 100% !important;
-    width: 100% !important;
-  }
-
-  #zapierForm {
-    border: none !important;
-    border-radius: 14px !important;
-    box-shadow: 0 10px 30px rgba(11, 70, 140, 0.1) !important;
-    height: 1400px;
-    width: 100%;
-  }
-
-  @media (max-width: 1024px) and (min-width: 769px) {
-    #zapierForm { height: 1600px; }
-  }
-
-  @media (max-width: 768px) {
-    .questions-section {
-      max-width: 95% !important;
-      padding: 35px 25px !important;
-      margin: 40px auto !important;
-      border-radius: 20px !important;
-    }
-    .questions-section h2 { margin-bottom: 22px !important; }
-    .questions-section .membership-btn { padding: 14px 28px !important; font-size: 14px !important; }
-    #zapierForm { height: 1350px; }
-    #zapierFormContainer { margin-top: 25px !important; }
-  }
-
-  @media (max-width: 480px) {
-    .questions-section { padding: 28px 18px !important; }
-    .questions-section .membership-btn { padding: 14px 26px !important; font-size: 14px !important; }
-  }
-</style>
-
-<div class="container">
-    <!-- Questions Section -->
-    <div class="questions-section membership-card">
-        <h2>I'd like to be notified about Special Membership Promotions.</h2>       
-        <button type="button" id="contactButton" class="membership-btn">Submit a Form</button>
-        <div id="zapierFormContainer" style="display: none;">
-            <!-- Default iframe height is for desktop -->
-            <iframe id="zapierForm" width="100%" height="1400px" style="border: none;"></iframe>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Toggle the Zapier form and load the iframe content only when clicked
-    document.getElementById('contactButton').addEventListener('click', function() {
-        const zapierFormContainer = document.getElementById('zapierFormContainer');
-        const contactButton = document.getElementById('contactButton');
-        const zapierForm = document.getElementById('zapierForm');
-        
-        if (zapierFormContainer.style.display === 'none' || zapierFormContainer.style.display === '') {
-            zapierFormContainer.style.display = 'block';
-            contactButton.textContent = 'Close';
-            
-            // Load the iframe only when it's shown
-            if (!zapierForm.src) {
-                zapierForm.src = 'https://interfaces.zapier.com/embed/page/cm1jxql2l001o8bubfm2nwb35?';
-            }
-        } else {
-            zapierFormContainer.style.display = 'none';
-            contactButton.textContent = 'Submit a Form';
-        }
-    });
-</script>
-
-<div class="tve_iframe_cover"></div></div><div class="thrv_wrapper thrv_custom_html_shortcode" id="corporate-membership" data-css="tve-u-693b313a87dc68" style=""><!-- Corporate Teaser - Royal Blue/Beige Theme -->
+</script></div><div class="thrv_wrapper thrv_custom_html_shortcode" id="corporate-membership" data-css="tve-u-693b313a87dc68" style=""><!-- Corporate Teaser - Royal Blue/Beige Theme -->
 <section class="corp-teaser-dark" aria-label="Corporate Memberships Teaser">
   <style>
     .corp-teaser-dark{--panel:rgba(255,255,255,0.9);--accent:#0b468c;--accent-dark:#204147;--text:#204147;--muted:#3d5a5e}
@@ -1605,7 +2124,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 </style>
 <div class="tour-cta-heading">
-  <div class="thrv_wrapper thrv_text_element"><h2 class="">Never been to South End?</h2><h2 class="">Book a Tour below!</h2></div>
+  <div class="thrv_wrapper thrv_text_element"><h2 class="" style="" data-css="tve-u-19cc23e0c89">Never Been to South End?</h2></div>
   
 </div><div class="thrv_wrapper thrv_custom_html_shortcode" style="" data-css="tve-u-693b313a87dd27"><!-- TOUR BOOKING FORM — CALENDAR VERSION (nvde-v1)                          -->
 <!-- ══════════════════════════════════════════════════════════════════════════ -->
@@ -2046,11 +2565,14 @@ body.se-cal-panel-open #wpadminbar {
   gap: 10px !important;
   cursor: pointer !important;
   font-size: 12px !important;
-  color: #475569 !important;
+  color: #64748b !important;
   line-height: 1.5 !important;
   text-transform: none !important;
   letter-spacing: normal !important;
   font-weight: normal !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .se-cal-consent input[type="checkbox"] {
@@ -2059,6 +2581,19 @@ body.se-cal-panel-open #wpadminbar {
   margin-top: 2px !important;
   flex-shrink: 0 !important;
   accent-color: #0b468c !important;
+}
+
+.se-cal-consent span {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  box-sizing: border-box !important;
+}
+
+.se-cal-consent span a {
+  word-break: break-word !important;
 }
 
 .se-cal-error {
@@ -2157,6 +2692,14 @@ body.se-cal-panel-open #wpadminbar {
   background: #0d3d7a !important;
 }
 
+.se-cal-form-back:hover {
+  border-color: #0b468c !important;
+  color: #0b468c !important;
+}
+
+#se-cal-interests label:hover { border-color: #cbd5e1 !important; }
+#se-cal-interests label:has(input:checked) { border-color: #0b468c !important; background: #f0f4ff !important; color: #0b468c !important; }
+
 .se-cal-ref-status {
   display: none;
   margin-top: 8px !important;
@@ -2240,6 +2783,45 @@ body.se-cal-panel-open #wpadminbar {
   .se-cal-form-body {
     padding-bottom: 120px !important;
   }
+
+  /* Interests + confirm row: full-width buttons, no horizontal bleed */
+  #se-cal-page2 > div:last-child {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+  #se-cal-back,
+  #se-cal-submit {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex: none !important;
+    box-sizing: border-box !important;
+  }
+}
+/* ── Inline field-level validation ──────────────────────────────────── */
+.se-invalid{
+  border-color:#dc2626 !important;
+  box-shadow:0 0 0 3px rgba(220,38,38,0.12) !important;
+  background:#fff5f5 !important;
+}
+.se-field-error{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-top:6px;
+  font-family:system-ui,sans-serif;
+  font-size:12.5px;
+  line-height:1.3;
+  color:#dc2626;
+}
+.se-field-error svg{
+  flex:0 0 auto;
+  width:14px;
+  height:14px;
 }
 </style>
 
@@ -2301,9 +2883,11 @@ body.se-cal-panel-open #wpadminbar {
   <div class="se-cal-form-body">
     <!-- Form content -->
     <div id="se-cal-form-content">
+      <!-- Page 1: Info -->
+      <div id="se-cal-page1">
       <div class="se-cal-selected-time">
         <div class="se-cal-selected-icon">
-          <svg viewBox="0 0 24 24" fill="#fff" style="width:22px;height:22px;"><path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1zm-2 6v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8H5z"/></svg>
+          <svg viewBox="0 0 24 24" fill="#fff" style="width:22px;height:22px;"><path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1zm-2 6v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8H5z"></path></svg>
         </div>
         <div class="se-cal-selected-text">
           <h4 id="se-cal-selected-date"></h4>
@@ -2314,28 +2898,28 @@ body.se-cal-panel-open #wpadminbar {
       <div style="display:flex;gap:10px;">
         <div class="se-cal-field" style="flex:1;">
           <label>First Name</label>
-          <input type="text" id="se-cal-fname" placeholder="John" maxlength="25" autocomplete="given-name" />
+          <input type="text" id="se-cal-fname" placeholder="John" maxlength="25" autocomplete="given-name">
         </div>
         <div class="se-cal-field" style="flex:1;">
           <label>Last Name</label>
-          <input type="text" id="se-cal-lname" placeholder="Smith" maxlength="25" autocomplete="family-name" />
+          <input type="text" id="se-cal-lname" placeholder="Smith" maxlength="25" autocomplete="family-name">
         </div>
       </div>
 
       <div class="se-cal-field">
         <label>Email</label>
-        <input type="email" id="se-cal-email" placeholder="john@example.com" maxlength="60" autocomplete="email" />
+        <input type="email" id="se-cal-email" placeholder="john@example.com" maxlength="60" autocomplete="email">
       </div>
 
       <div class="se-cal-field">
         <label>Phone</label>
-        <input type="tel" id="se-cal-phone" placeholder="(310) 555-1234" maxlength="14" autocomplete="tel" />
+        <input type="tel" id="se-cal-phone" placeholder="(310) 555-1234" maxlength="14" autocomplete="tel">
       </div>
 
       <div class="se-cal-field">
         <label>How did you hear about us?</label>
         <select id="se-cal-heard">
-          <option value="" disabled selected>— Select —</option>
+          <option value="" disabled="" selected="">— Select —</option>
           <option value="Friends/Family">Member Referral</option>
           <option value="Web Search/Website">Web Search / Website</option>
           <option value="Instagram">Instagram</option>
@@ -2349,18 +2933,47 @@ body.se-cal-panel-open #wpadminbar {
         <label>Who referred you?</label>
         <p style="margin:0 0 8px;font-size:12px;color:#94a3b8;">Enter the member's email or phone to verify.</p>
         <div class="se-cal-ref-input-wrap">
-          <input type="text" id="se-cal-referral" placeholder="Email or phone number" style="padding-right:80px;" />
+          <input type="text" id="se-cal-referral" placeholder="Email or phone number" style="padding-right:80px;">
           <button type="button" class="se-cal-ref-btn" id="se-cal-ref-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             Match
           </button>
         </div>
         <div class="se-cal-ref-status" id="se-cal-ref-status"></div>
       </div>
 
-      <div style="padding:14px 16px;background:#f0f4ff;border-radius:12px;margin-bottom:16px;border:1px solid #dbe4f0;">
+      <button type="button" class="se-cal-submit" id="se-cal-continue" style="background:linear-gradient(135deg,#0b468c,#1a6dd4);box-shadow:0 4px 16px rgba(11,70,140,0.25);">
+        Continue
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </button>
+      </div>
+
+      <!-- Page 2: Interests -->
+      <div id="se-cal-page2" style="display:none;">
+      <h4 style="margin:0 0 16px;font-family:Montserrat, system-ui, sans-serif;font-weight:700;font-size:16px;color:#1a1a2e;text-align:center;">What are you interested in?</h4>
+      <p style="margin:0 0 20px;font-family:Montserrat, system-ui, sans-serif;font-size:14px;color:#64748b;line-height:1.4;text-align:center;">Select all that apply — helps us personalize your tour.</p>
+      <div id="se-cal-interests" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;">
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;color:#64748b;cursor:pointer;background:#fafbfc;"><input type="checkbox" name="se-cal-interest" value="Weight/Resistance Training" style="accent-color:#0b468c;width:18px;height:18px;"> Weight/Resistance Training</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;color:#64748b;cursor:pointer;background:#fafbfc;"><input type="checkbox" name="se-cal-interest" value="Swimming" style="accent-color:#0b468c;width:18px;height:18px;"> Swimming</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;color:#64748b;cursor:pointer;background:#fafbfc;"><input type="checkbox" name="se-cal-interest" value="Tennis" style="accent-color:#0b468c;width:18px;height:18px;"> Tennis</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;color:#64748b;cursor:pointer;background:#fafbfc;"><input type="checkbox" name="se-cal-interest" value="Pickleball" style="accent-color:#0b468c;width:18px;height:18px;"> Pickleball</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;color:#64748b;cursor:pointer;background:#fafbfc;"><input type="checkbox" name="se-cal-interest" value="Squash" style="accent-color:#0b468c;width:18px;height:18px;"> Squash</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;color:#64748b;cursor:pointer;background:#fafbfc;"><input type="checkbox" name="se-cal-interest" value="Padel" style="accent-color:#0b468c;width:18px;height:18px;"> Padel</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;color:#64748b;cursor:pointer;background:#fafbfc;"><input type="checkbox" name="se-cal-interest" value="Family Oriented Atmosphere" style="accent-color:#0b468c;width:18px;height:18px;"> Family Oriented Atmosphere</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;color:#64748b;cursor:pointer;background:#fafbfc;"><input type="checkbox" name="se-cal-interest" value="Cardio" style="accent-color:#0b468c;width:18px;height:18px;"> Cardio</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;color:#64748b;cursor:pointer;background:#fafbfc;"><input type="checkbox" name="se-cal-interest" value="Group Exercise Classes" style="accent-color:#0b468c;width:18px;height:18px;"> Group Exercise Classes</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;color:#64748b;cursor:pointer;background:#fafbfc;"><input type="checkbox" name="se-cal-interest" value="Racquetball" style="accent-color:#0b468c;width:18px;height:18px;"> Racquetball</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;color:#64748b;cursor:pointer;background:#fafbfc;"><input type="checkbox" name="se-cal-interest" value="Social Community" style="accent-color:#0b468c;width:18px;height:18px;"> Social Community</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:14px;color:#64748b;cursor:pointer;background:#fafbfc;"><input type="checkbox" name="se-cal-interest" value="Childcare" data-crm="Kid's Club" style="accent-color:#0b468c;width:18px;height:18px;"> Childcare</label>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="display:block;font-family:Montserrat, system-ui, sans-serif;font-weight:600;font-size:11px;color:#64748b;margin-bottom:6px;">Other (comma-separated for multiple)</label>
+        <input type="text" id="se-cal-interest-other" placeholder="e.g. Yoga, Pilates" style="width: 100%; padding: 12px 14px; border: 2px solid rgb(226, 232, 240); border-radius: 10px; font-family: Montserrat, system-ui, sans-serif; font-size: 14px; color: rgb(26, 26, 46); outline: none; box-sizing: border-box; background-origin: initial; background-clip: initial; background-color: rgb(250, 251, 252);">
+      </div>
+
+      <div id="se-cal-consent-wrap" style="padding:14px 16px;background:#f0f4ff;border-radius:12px;margin-bottom:16px;border:1px solid #dbe4f0;">
         <label class="se-cal-consent">
-          <input type="checkbox" id="se-cal-consent" checked />
+          <input type="checkbox" id="se-cal-consent" checked="">
           <span>
             By providing your phone number and email address, you consent to the
             <a href="https://southendclub.com/privacy-policy/" target="_blank" rel="noopener" style="color:#0b468c;text-decoration:underline;">Privacy Policy</a> and
@@ -2372,10 +2985,17 @@ body.se-cal-panel-open #wpadminbar {
 
       <div class="se-cal-error" id="se-cal-error"></div>
 
-      <button type="button" class="se-cal-submit" id="se-cal-submit">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><polyline points="20 6 9 17 4 12"/></svg>
-        Confirm Tour
-      </button>
+      <div style="display:flex;gap:10px;">
+        <button type="button" class="se-cal-form-back" id="se-cal-back" style="flex:0 0 auto;padding:16px 20px;border:2px solid #e2e8f0;border-radius:100px;color:#64748b;font-family:Montserrat, system-ui, sans-serif;font-weight:600;font-size:14px;cursor:pointer;background:#fff;transition:border-color 0.15s ease,color 0.15s ease;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px;vertical-align:middle;margin-right:6px;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Back
+        </button>
+        <button type="button" class="se-cal-submit" id="se-cal-submit" style="flex:1;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Confirm Tour
+        </button>
+      </div>
+      </div>
     </div>
 
     <!-- Success -->
@@ -2386,7 +3006,7 @@ body.se-cal-panel-open #wpadminbar {
       <h3>Accepted! See you then.</h3>
       <p id="se-cal-success-detail" style="margin:0 0 6px;font-size:15px;color:#0b468c;font-weight:600;"></p>
       <p style="margin:0 0 8px;font-size:14px;color:#64748b;">A confirmation email will be sent shortly.</p>
-      <p style="margin:0 0 24px;font-size:15px;color:#22c55e;font-weight:600;">Have a great day! 🎉</p>
+      <p style="margin:0 0 24px;font-size:15px;color:#22c55e;font-weight:600;">Have a great day! <img decoding="async" role="img" class="emoji" alt="🎉" src="https://s.w.org/images/core/emoji/17.0.2/svg/1f389.svg"></p>
       <a href="https://southendclub.com/memberships/#FAQs"
         style="display:inline-block;padding:14px 32px;border-radius:100px;background:linear-gradient(135deg,#0b468c,#1a6dd4);color:#fff;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:14px;text-decoration:none;box-shadow:0 4px 16px rgba(11,70,140,0.25);"
       >View Membership FAQs</a>
@@ -2397,9 +3017,10 @@ body.se-cal-panel-open #wpadminbar {
 <!-- ══════════════════════════════════════════════════════════════════════════ -->
 <!-- JAVASCRIPT                                                               -->
 <!-- ══════════════════════════════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/validator@13.12.0/validator.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/libphonenumber-js@1.10.53/bundle/libphonenumber-min.js"></script>
 <script>
 (function(){
-  if(!document.getElementById('scheduleAtour') || !document.getElementById('se-cal-prev')) return;
   var SE_URL = 'https://zngbawafqjntciafhxgr.supabase.co';
   var SE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuZ2Jhd2FmcWpudGNpYWZoeGdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2ODE3NTgsImV4cCI6MjA4NjI1Nzc1OH0.NtH0Cm6gENkkYki2LUMMYlPsFvrdg8CDt63iNP7Xi4o';
 
@@ -2558,8 +3179,16 @@ body.se-cal-panel-open #wpadminbar {
       headers: { 'Content-Type': 'application/json', 'apikey': SE_KEY, 'Authorization': 'Bearer ' + SE_KEY },
       body: JSON.stringify({ date: dk })
     })
-    .then(function(r){ return r.json(); })
-    .then(function(data){
+    .then(function(r){
+      return r.json()
+        .then(function(data){ return { ok: r.ok, data: data }; })
+        .catch(function(){ return { ok: r.ok, data: null }; });
+    })
+    .then(function(res){
+      var data = res.data || {};
+      if(!res.ok || data.success !== true){
+        throw new Error('availability_unavailable');
+      }
       var booked = {};
       if(data.booked_slots){
         for(var i = 0; i < data.booked_slots.length; i++){
@@ -2570,8 +3199,14 @@ body.se-cal-panel-open #wpadminbar {
       renderSlots(date, column, h, booked);
     })
     .catch(function(){
-      bookedSlotsCache[dk] = {};
-      renderSlots(date, column, h, {});
+      var loading = document.getElementById('se-cal-loading-' + dk);
+      if(loading) loading.remove();
+      var colLoading = column.querySelector('.se-cal-loading');
+      if(colLoading) colLoading.remove();
+      var msg = document.createElement('div');
+      msg.className = 'se-cal-no-slots';
+      msg.textContent = 'Live availability unavailable';
+      column.appendChild(msg);
     });
   }
 
@@ -2664,6 +3299,8 @@ body.se-cal-panel-open #wpadminbar {
     document.body.style.overflow = 'hidden';
     var heardSelect = document.getElementById('se-cal-heard');
     heardSelect.selectedIndex = 0;
+    document.getElementById('se-cal-page1').style.display = 'block';
+    document.getElementById('se-cal-page2').style.display = 'none';
   }
 
   function closeFormPanel(){
@@ -2685,9 +3322,89 @@ body.se-cal-panel-open #wpadminbar {
     else this.value = v;
   });
 
+  /* ══════════════════════════════════════════════════════════════════ */
+  /* INLINE FIELD-LEVEL VALIDATION HELPERS                            */
+  /* ══════════════════════════════════════════════════════════════════ */
+  function seFieldEl(ref){
+    if(!ref) return null;
+    if(typeof ref === 'string'){ return document.getElementById(ref); }
+    return ref;
+  }
+  function seClearError(ref){
+    var el = seFieldEl(ref);
+    if(!el) return;
+    el.classList.remove('se-invalid');
+    el.removeAttribute('aria-invalid');
+    if(el._seErrMsg && el._seErrMsg.parentNode){
+      el._seErrMsg.parentNode.removeChild(el._seErrMsg);
+    }
+    el._seErrMsg = null;
+  }
+  function seShowError(ref, message, anchorRef){
+    var el = seFieldEl(ref);
+    if(!el) return;
+    seClearError(el);
+    el.classList.add('se-invalid');
+    el.setAttribute('aria-invalid', 'true');
+    var anchor = anchorRef ? seFieldEl(anchorRef) : el;
+    if(!anchor) anchor = el;
+    var msg = document.createElement('div');
+    msg.className = 'se-field-error';
+    msg.setAttribute('role', 'alert');
+    msg.innerHTML = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span></span>';
+    msg.querySelector('span').textContent = message;
+    if(anchor.parentNode){
+      anchor.parentNode.insertBefore(msg, anchor.nextSibling);
+    }
+    el._seErrMsg = msg;
+    var clear = function(){
+      seClearError(el);
+      el.removeEventListener('input', clear);
+      el.removeEventListener('change', clear);
+    };
+    el.addEventListener('input', clear);
+    el.addEventListener('change', clear);
+  }
+  function seFocusFirst(ref){
+    var el = seFieldEl(ref);
+    if(!el) return;
+    try { el.focus({ preventScroll: true }); } catch(e){ el.focus(); }
+    if(el.scrollIntoView){ el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  }
+  function seFail(ref, message, anchorRef){
+    seShowError(ref, message, anchorRef);
+    seFocusFirst(ref);
+    return undefined;
+  }
+
   /* ── How Heard → show/hide referral ─────────────────────────────── */
   document.getElementById('se-cal-heard').addEventListener('change', function(){
     document.getElementById('se-cal-ref-wrap').style.display = this.value === 'Friends/Family' ? 'block' : 'none';
+  });
+
+  /* ── Continue to Interests (Page 2) ──────────────────────────────── */
+  document.getElementById('se-cal-continue').addEventListener('click', function(){
+    var fn = document.getElementById('se-cal-fname').value.trim();
+    var ln = document.getElementById('se-cal-lname').value.trim();
+    var em = document.getElementById('se-cal-email').value.trim();
+    var ph = document.getElementById('se-cal-phone').value.trim();
+    var heard = document.getElementById('se-cal-heard').value;
+
+    if(!fn){ return seFail('se-cal-fname', 'Please enter your first name'); }
+    if(!ln){ return seFail('se-cal-lname', 'Please enter your last name'); }
+    if(!em || em.indexOf('@') < 0){ return seFail('se-cal-email', 'Please enter a valid email'); }
+    if(ph.replace(/\D/g,'').length !== 10){ return seFail('se-cal-phone', 'Please enter a valid 10-digit phone'); }
+    if(!heard){ return seFail('se-cal-heard', 'Please select how you heard about us'); }
+
+    document.getElementById('se-cal-page1').style.display = 'none';
+    document.getElementById('se-cal-page2').style.display = 'block';
+  });
+
+  /* ── Back to Info (Page 1) ───────────────────────────────────────── */
+  document.getElementById('se-cal-back').addEventListener('click', function(){
+    document.getElementById('se-cal-page2').style.display = 'none';
+    document.getElementById('se-cal-page1').style.display = 'block';
+    document.getElementById('se-cal-error').style.display = 'none';
   });
 
   /* ── Referral Verification ──────────────────────────────────────── */
@@ -2713,15 +3430,28 @@ body.se-cal-panel-open #wpadminbar {
     status.textContent = 'Searching...';
 
     var searchType = val.indexOf('@') >= 0 ? 'email' : (val.replace(/\D/g,'').length >= 7 ? 'phone' : 'name');
+    var normalizedVal = searchType === 'email' ? val.trim().toLowerCase() : (searchType === 'phone' ? val.replace(/\D/g,'') : val.trim());
 
     fetch(SE_URL + '/functions/v1/validate-referral', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'apikey': SE_KEY, 'Authorization': 'Bearer ' + SE_KEY },
-      body: JSON.stringify({ search_type: searchType, search_value: val })
+      body: JSON.stringify({ search_type: searchType, search_value: normalizedVal })
     })
-    .then(function(r){ return r.json(); })
-    .then(function(d){
+    .then(function(r){
+      return r.json()
+        .then(function(data){ return { ok: r.ok, data: data }; })
+        .catch(function(){ return { ok: r.ok, data: null }; });
+    })
+    .then(function(res){
+      var d = res.data || {};
       btn.innerHTML = origHtml;
+      if(!res.ok){
+        SE_REF_ID = null; SE_REF_REFID = null; SE_REF_NAME = ''; SE_REF_EMAIL = null; SE_REF_PHONE = null;
+        status.style.background = '#fffbeb'; status.style.color = '#b45309';
+        status.textContent = d.message || 'Referral lookup unavailable right now.';
+        input.style.borderColor = '#f59e0b';
+        return;
+      }
       if(d.found){
         SE_REF_ID = d.member.id;
         SE_REF_REFID = d.member.ref_id || null;
@@ -2731,6 +3461,11 @@ body.se-cal-panel-open #wpadminbar {
         status.style.background = '#f0fdf4'; status.style.color = '#16a34a';
         status.innerHTML = '<span style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Member matched: <strong>' + SE_REF_NAME.trim() + '</strong></span>';
         input.style.borderColor = '#22c55e';
+      } else if(d.noted){
+        SE_REF_ID = null; SE_REF_REFID = null; SE_REF_NAME = ''; SE_REF_EMAIL = null; SE_REF_PHONE = null;
+        status.style.background = '#fef2f2'; status.style.color = '#dc2626';
+        status.textContent = "Please enter the member's email or phone.";
+        input.style.borderColor = '#e2e8f0';
       } else {
         SE_REF_ID = null; SE_REF_REFID = null; SE_REF_NAME = ''; SE_REF_EMAIL = null; SE_REF_PHONE = null;
         status.style.background = '#fffbeb'; status.style.color = '#b45309';
@@ -2756,17 +3491,30 @@ body.se-cal-panel-open #wpadminbar {
     var errEl = document.getElementById('se-cal-error');
     var submitBtn = document.getElementById('se-cal-submit');
 
-    if(!fn || !ln){ errEl.textContent = 'Please enter your name.'; errEl.style.display = 'block'; return; }
-    if(!em || em.indexOf('@') < 0){ errEl.textContent = 'Please enter a valid email.'; errEl.style.display = 'block'; return; }
-    if(ph.replace(/\D/g,'').length !== 10){ errEl.textContent = 'Please enter a valid 10-digit phone.'; errEl.style.display = 'block'; return; }
-    if(!heard){ errEl.textContent = 'Please select how you heard about us.'; errEl.style.display = 'block'; return; }
-    if(!consent.checked){ errEl.textContent = 'Please accept the terms to continue.'; errEl.style.display = 'block'; return; }
+    if(!fn){ return seFail('se-cal-fname', 'Please enter your first name'); }
+    if(!ln){ return seFail('se-cal-lname', 'Please enter your last name'); }
+    if(!em || em.indexOf('@') < 0){ return seFail('se-cal-email', 'Please enter a valid email'); }
+    if(ph.replace(/\D/g,'').length !== 10){ return seFail('se-cal-phone', 'Please enter a valid 10-digit phone'); }
+    if(!heard){ return seFail('se-cal-heard', 'Please select how you heard about us'); }
+    if(!consent.checked){ seShowError('se-cal-consent', 'Please accept the terms to continue', 'se-cal-consent-wrap'); seFocusFirst('se-cal-consent'); return; }
     errEl.style.display = 'none';
 
     submitBtn.style.pointerEvents = 'none'; submitBtn.style.opacity = '0.7';
     submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;animation:seBkSpin 0.8s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="31" stroke-dashoffset="10"/></svg> Booking...';
 
     var refInput = document.getElementById('se-cal-referral');
+    var interests = [];
+    var interestEls = document.querySelectorAll('input[name="se-cal-interest"]:checked');
+    for(var i = 0; i < interestEls.length; i++){
+      var interestEl = interestEls[i];
+      interests.push(interestEl.getAttribute('data-crm') || interestEl.value);
+    }
+    var interestOther = document.getElementById('se-cal-interest-other');
+    if(interestOther && interestOther.value.trim()){
+      var otherVals = interestOther.value.trim().split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+      for(var j = 0; j < otherVals.length; j++){ interests.push(otherVals[j]); }
+    }
+
     var payload = {
       first_name: fn,
       last_name: ln,
@@ -2775,6 +3523,7 @@ body.se-cal-panel-open #wpadminbar {
       preferred_date: SE_SELECTED_DATE,
       preferred_time: SE_SELECTED_TIME,
       how_heard: heard || null,
+      interests: interests.length > 0 ? interests.join(', ') : null,
       referral_member: (refInput && refInput.value.trim()) ? (SE_REF_NAME || refInput.value.trim()) : null,
       referral_member_id: SE_REF_ID || null,
       referral_member_ref_id: SE_REF_REFID || null,

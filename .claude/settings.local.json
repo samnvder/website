@@ -2,7 +2,17 @@
   "permissions": {
     "allow": [
       "Bash(dir /b \"Pages\\\\racquet-sports\\\\\")",
-      "PowerShell(if \\(-not $?\\) { \"Pages dir not found\" })"
+      "PowerShell(if \\(-not $?\\) { \"Pages dir not found\" })",
+      "WebFetch(domain:southendclub.com)",
+      "mcp__Claude_in_Chrome__list_connected_browsers",
+      "mcp__Claude_in_Chrome__select_browser",
+      "mcp__Claude_in_Chrome__tabs_create_mcp",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "mcp__Claude_in_Chrome__navigate",
+      "mcp__Claude_in_Chrome__javascript_tool",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "Bash(node \"pricing-audit.gen.js\")"
     ]
   }
 }
