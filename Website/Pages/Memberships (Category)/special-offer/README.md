@@ -22,7 +22,8 @@ Promotional membership landing page (Thrive Custom HTML). Same builder/tour/FAQ 
 | `Special Offer.css` | Local/preview companion styles (page is mostly inline + join theme) |
 | `membership builder JS-special-offer.js` | Pricing + buy flow for this offer |
 | `CURRENT-OFFER.md` | Offer copy + paste checklist |
-| `email-campaign-summer-2026.html` | Email HTML that drives traffic here |
+| `email-campaign-summer-2026.html` | Email HTML (earlier summer send) |
+| `email-campaign-summer-2026-final.html` | Final-push email — $100 enrollment through July 31; August dues lock-in |
 | `Brandon PB Offer/` | Separate pickleball offer (not this campaign) |
 
 ## WordPress wiring

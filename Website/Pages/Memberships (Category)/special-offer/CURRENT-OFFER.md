@@ -22,4 +22,8 @@
 
 ## Email
 
-Campaign HTML archived as `email-campaign-summer-2026.html` (Join Now → this page).
+- Earlier summer send: `email-campaign-summer-2026.html`
+- Final push: `email-campaign-summer-2026-final.html`
+  - **Subject:** August dues go up. These rates aren't coming back.
+  - **Sent:** 2026-07-29 — 5 sent
+  - Join Now → this page · Schedule a Tour → `/schedule-a-tour/`
