@@ -1,6 +1,6 @@
 /**
  * Special Offer membership builder pricing (WPCode #7966).
- * Offer: flat $100 enrollment + 10 guest passes through July 22, 2026 (midnight Pacific).
+ * Offer: flat $100 enrollment + 10 guest passes through July 31, 2026 (midnight Pacific).
  * Monthly dues match current join-page rates (lock in before August increase).
  */
 (function () {
@@ -116,7 +116,7 @@
             originalPriceDisplay.textContent = `$${originalPrice}`;
             discountedPriceDisplay.textContent = `$${SPECIAL_ENROLLMENT}`;
             if (limitedTimeText) {
-                limitedTimeText.textContent = "through July 22 at midnight · 10 guest passes included";
+                limitedTimeText.textContent = "through July 31 at midnight · 10 guest passes included";
                 limitedTimeText.style.display = "inline";
             }
         }
@@ -247,7 +247,7 @@
                 enrollmentFee,
                 monthlyDue,
                 foodBeverageMinimum,
-                offer: "summer-special-2026-jul21"
+                offer: "summer-special-2026-jul31"
             };
 
             console.log("Form data being sent:", data);

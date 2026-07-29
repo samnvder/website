@@ -1,6 +1,6 @@
 # Current offer — Summer special (lock in before August)
 
-**Valid through:** July 22, 2026 at midnight (Pacific)  
+**Valid through:** July 31, 2026 at midnight (Pacific)  
 **Page:** https://southendclub.com/special-offer/  
 **Source HTML:** `Special Offer.html`  
 **Pricing JS (WPCode #7966):** `membership builder JS-special-offer.js`
@@ -17,8 +17,9 @@
 1. [ ] Replace Thrive page content with `Special Offer.html`
 2. [ ] Pricing JS is **inlined** in `Special Offer.html` (no need for WPCode #7966 on this page). Optional: leave #7966 inactive here to avoid double-bind.
 3. [ ] Preview: Couple + Tier 3 → enrollment **$100**, Monthly Due **$335** (not `$0`)
-4. [ ] Confirm countdown targets July 22 midnight Pacific
+4. [ ] Confirm countdown targets July 31 midnight Pacific
 5. [ ] Confirm no console 404 for `membership builder JS.js` or `Memberships Page CSS.css`
+6. [ ] Paste homepage hero CTA from `Homepage Hero Offer CTA.html`
 
 ## Email
 
