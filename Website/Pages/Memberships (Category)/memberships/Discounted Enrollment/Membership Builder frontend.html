@@ -200,10 +200,21 @@
     gap: 8px !important;
   }
 
-  #enrollmentFeeDisplay {
-    color: #0b468c !important;
+  .strikethrough, #originalPrice {
+    text-decoration: line-through !important;
+    color: rgba(32, 65, 71, 0.5) !important;
+  }
+
+  #discountedPrice {
+    color: #059669 !important;
     font-weight: 800 !important;
     font-size: 22px !important;
+  }
+
+  .limited-time, #limitedTimeText {
+    color: #0b468c !important;
+    font-style: italic !important;
+    font-size: 14px !important;
   }
 
   .price-info, #priceDisplay, #minimumAmount {
@@ -266,7 +277,7 @@
     }
     .content-box { padding: 22px !important; margin: 28px 0 !important; }
     .bold-text, #priceDisplay { font-size: 20px !important; }
-    #enrollmentFeeDisplay { font-size: 18px !important; }
+    #discountedPrice { font-size: 18px !important; }
     .membership-btn, #purchaseButton { padding: 16px 28px !important; font-size: 15px !important; }
   }
 
@@ -325,7 +336,11 @@
     <div class="content-box">
         <p class="enrollment-fee-info">
             <span>One-Time Enrollment Fee:</span>
-            <span id="enrollmentFeeDisplay">$0</span>
+            <span id="originalPrice" class="strikethrough">$0</span>
+        </p>
+        <p class="enrollment-fee-info">
+            <span id="discountedPrice">$0</span>
+            <span id="limitedTimeText" class="limited-time">for a limited time</span>
         </p>
         <p id="priceDisplay" class="price-info bold-text">Monthly Due: $0</p>
         <p id="minimumAmount" class="price-info">Monthly Food &amp; Beverage Assessment: $20</p>

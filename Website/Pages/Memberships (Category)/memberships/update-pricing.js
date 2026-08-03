@@ -8,7 +8,7 @@
  *   2. Shows an old -> new diff so a human (or Claude) can confirm.
  *   3. On --apply, rewrites the JS, then refreshes the audit artifacts
  *      (.log, .pdf, .md, ledger) via pricing-audit.gen.js.
- *   4. Prints exactly what to paste into the live WordPress wpcode snippet #7315.
+ *   4. Prints exactly what to paste into the live WordPress wpcode snippet #9926.
  *
  * Dues are triples in TIER ORDER:  Tier1,Tier2,Tier3  (matches pricing[type][tier-1]).
  *
@@ -55,7 +55,7 @@ if (HELP) {
     '  --family a,b,c   Family base monthly dues (applies to all child counts 1-6)',
     '  --apply          Write the change (otherwise DRY RUN — shows diff only)',
     '',
-    'Omitted types are left unchanged. Enrollment fees, discounts and F&B minimums',
+    'Omitted types are left unchanged. Enrollment fees and F&B minimums',
     'are edited directly in "membership builder JS.js" (then run pricing-audit.gen.js).'
   ].join('\n'));
   process.exit(0);
@@ -156,7 +156,7 @@ try {
 console.log('\n============================================================');
 console.log(' GO LIVE — paste into WordPress');
 console.log('============================================================');
-console.log(' 1. WP Admin -> Code Snippets (WPCode) -> snippet #7315');
+console.log(' 1. WP Admin -> Code Snippets (WPCode) -> snippet #9926 (normal join)');
 console.log('    ("JS - Build Your Membership - with email notification")');
 console.log(' 2. Replace its entire contents with the full contents of:');
 console.log('      ' + SRC);

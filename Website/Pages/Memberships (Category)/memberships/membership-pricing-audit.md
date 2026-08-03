@@ -1,18 +1,18 @@
 # Membership Builder — Pricing Audit
 
-_Generated: 2026-06-01T00:02:32.433Z (Sunday, May 31, 2026 at 5:02:32 PM PDT)_
+_Generated: 2026-08-03T01:16:40.289Z (Sunday, August 2, 2026 at 6:16:40 PM PDT)_
 
-- **Source:** `membership builder JS.js` — 9370 bytes
-- **Source SHA-256:** `d581275c0b35c6fcf2841c9d6743fa4f16e867447437ecee64d43bc83334a4ff`
-- **Pricing digest:** `dc162488aebdaa7ff1195e12e50fadd666f168f4b3a68adc502f9632194ddca2`
+- **Source:** `membership builder JS.js` — 9670 bytes
+- **Source SHA-256:** `fe6323f00cfe503b225038b3b5d548689f71751f88cf272d62a2f00b78d5be8d`
+- **Pricing digest:** `66fa14ac578c29635fb4a5975e29c5d12bee19b3312610dd65fb14540327ac56`
 
 ## Monthly dues (base)
 
 | Type | Tier 1 | Tier 2 | Tier 3 |
 | --- | ---: | ---: | ---: |
-| Single | $245 | $215 | $195 |
-| Couple | $390 | $350 | $335 |
-| Family (base) | $490 | $425 | $395 |
+| Single | $245 | $225 | $205 |
+| Couple | $420 | $380 | $350 |
+| Family (base) | $495 | $445 | $420 |
 
 _Family base applies to all child counts (1–6) before age surcharges._
 
@@ -24,13 +24,15 @@ _Family base applies to all child counts (1–6) before age surcharges._
 | Couple | $40 |
 | Family | $60 |
 
-## Enrollment fees (before → after promo discount)
+## Enrollment fees (sticker / no promo)
 
-| Type | Tier 1 | Tier 2 | Tier 3 | Discount |
-| --- | --- | --- | --- | ---: |
-| Single | $400 → $300 | $350 → $250 | $300 → $200 | −$100 |
-| Couple | $500 → $400 | $450 → $350 | $400 → $300 | −$100 |
-| Family | $600 → $450 | $550 → $400 | $500 → $350 | −$150 |
+| Type | Tier 1 | Tier 2 | Tier 3 |
+| --- | ---: | ---: | ---: |
+| Single | $400 | $350 | $300 |
+| Couple | $500 | $450 | $400 |
+| Family | $600 | $550 | $500 |
+
+_Discounted enrollment variants live under `Discounted Enrollment/`._
 
 ## Family monthly add-ons
 

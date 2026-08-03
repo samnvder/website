@@ -22,17 +22,17 @@
             return;
         }
 
-        // Current dues (same as join / WPCode #7315) — lock in before August increase
+        // Current dues (same as normal join / WPCode #9926) — lock in before August increase
         const pricing = {
-            single: [245, 215, 195],
-            couple: [390, 350, 335],
+            single: [245, 225, 205],
+            couple: [420, 380, 350],
             family: {
-                1: [490, 425, 395],
-                2: [490, 425, 395],
-                3: [490, 425, 395],
-                4: [490, 425, 395],
-                5: [490, 425, 395],
-                6: [490, 425, 395]
+                1: [495, 445, 420],
+                2: [495, 445, 420],
+                3: [495, 445, 420],
+                4: [495, 445, 420],
+                5: [495, 445, 420],
+                6: [495, 445, 420]
             }
         };
 

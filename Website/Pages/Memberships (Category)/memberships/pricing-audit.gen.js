@@ -46,13 +46,13 @@ let data;
 try {
   // The block is pure data literals (no DOM access) so this is safe to evaluate.
   data = new Function(
-    block[1] + '\n; return { pricing, minimumAmounts, enrollmentFees, discounts };'
+    block[1] + '\n; return { pricing, minimumAmounts, enrollmentFees };'
   )();
 } catch (e) {
   console.error('[pricing-audit] Failed to parse pricing data: ' + e.message);
   process.exit(1);
 }
-const { pricing, minimumAmounts, enrollmentFees, discounts } = data;
+const { pricing, minimumAmounts, enrollmentFees } = data;
 
 // --- Hashes -----------------------------------------------------------------
 function canonical(v) {
@@ -62,7 +62,7 @@ function canonical(v) {
   }
   return JSON.stringify(v);
 }
-const pricingCanon = canonical({ pricing, minimumAmounts, enrollmentFees, discounts });
+const pricingCanon = canonical({ pricing, minimumAmounts, enrollmentFees });
 const srcHash = crypto.createHash('sha256').update(srcBuf).digest('hex');
 const priceHash = crypto.createHash('sha256').update(pricingCanon, 'utf8').digest('hex');
 
@@ -84,12 +84,10 @@ function tierLine(arr) {
 }
 function enrollLine(type) {
   const f = enrollmentFees[type];
-  const d = discounts[type];
   return type + ': '
-    + 'Tier 1 $' + f[0] + ' → $' + (f[0] - d) + ' | '
-    + 'Tier 2 $' + f[1] + ' → $' + (f[1] - d) + ' | '
-    + 'Tier 3 $' + f[2] + ' → $' + (f[2] - d)
-    + ' (discount $' + d + ')';
+    + 'Tier 1 $' + f[0] + ' | '
+    + 'Tier 2 $' + f[1] + ' | '
+    + 'Tier 3 $' + f[2];
 }
 const famBase = pricing.family[1]; // same for all child counts 1-6
 
@@ -115,7 +113,7 @@ const lines = [
   'Couple: ' + minimumAmounts.couple,
   'Family: ' + minimumAmounts.family,
   '',
-  '--- Enrollment fees (before / after promo discount) ---',
+  '--- Enrollment fees (sticker / no promo) ---',
   enrollLine('single'),
   enrollLine('couple'),
   enrollLine('family'),
@@ -213,19 +211,21 @@ const md = [
   '| Couple | ' + minimumAmounts.couple + ' |',
   '| Family | ' + minimumAmounts.family + ' |',
   '',
-  '## Enrollment fees (before → after promo discount)',
+  '## Enrollment fees (sticker / no promo)',
   '',
-  '| Type | Tier 1 | Tier 2 | Tier 3 | Discount |',
-  '| --- | --- | --- | --- | ---: |',
-  '| Single | $' + enrollmentFees.single[0] + ' → $' + (enrollmentFees.single[0] - discounts.single) +
-    ' | $' + enrollmentFees.single[1] + ' → $' + (enrollmentFees.single[1] - discounts.single) +
-    ' | $' + enrollmentFees.single[2] + ' → $' + (enrollmentFees.single[2] - discounts.single) + ' | −$' + discounts.single + ' |',
-  '| Couple | $' + enrollmentFees.couple[0] + ' → $' + (enrollmentFees.couple[0] - discounts.couple) +
-    ' | $' + enrollmentFees.couple[1] + ' → $' + (enrollmentFees.couple[1] - discounts.couple) +
-    ' | $' + enrollmentFees.couple[2] + ' → $' + (enrollmentFees.couple[2] - discounts.couple) + ' | −$' + discounts.couple + ' |',
-  '| Family | $' + enrollmentFees.family[0] + ' → $' + (enrollmentFees.family[0] - discounts.family) +
-    ' | $' + enrollmentFees.family[1] + ' → $' + (enrollmentFees.family[1] - discounts.family) +
-    ' | $' + enrollmentFees.family[2] + ' → $' + (enrollmentFees.family[2] - discounts.family) + ' | −$' + discounts.family + ' |',
+  '| Type | Tier 1 | Tier 2 | Tier 3 |',
+  '| --- | ---: | ---: | ---: |',
+  '| Single | $' + enrollmentFees.single[0] +
+    ' | $' + enrollmentFees.single[1] +
+    ' | $' + enrollmentFees.single[2] + ' |',
+  '| Couple | $' + enrollmentFees.couple[0] +
+    ' | $' + enrollmentFees.couple[1] +
+    ' | $' + enrollmentFees.couple[2] + ' |',
+  '| Family | $' + enrollmentFees.family[0] +
+    ' | $' + enrollmentFees.family[1] +
+    ' | $' + enrollmentFees.family[2] + ' |',
+  '',
+  '_Discounted enrollment variants live under `Discounted Enrollment/`._',
   '',
   '## Family monthly add-ons',
   '',
@@ -251,7 +251,6 @@ function flatPricing() {
   ['single', 'couple', 'family'].forEach(t => { m['F&B ' + t] = minimumAmounts[t]; });
   ['single', 'couple', 'family'].forEach(t => {
     T.forEach((tn, i) => { m['Enrollment ' + t + ' ' + tn] = enrollmentFees[t][i]; });
-    m['Discount ' + t] = discounts[t];
   });
   return m;
 }
@@ -305,9 +304,9 @@ if (lastDigest === priceHash) {
            ' · Family base $' + pricing.family[1].join('/$') + '\n';
   entry += '    F&B — Single ' + minimumAmounts.single + ' · Couple ' + minimumAmounts.couple +
            ' · Family ' + minimumAmounts.family + '\n';
-  entry += '    Enrollment orig (T1/T2/T3) — single $' + enrollmentFees.single.join('/$') + ' (−$' + discounts.single + ')' +
-           ' · couple $' + enrollmentFees.couple.join('/$') + ' (−$' + discounts.couple + ')' +
-           ' · family $' + enrollmentFees.family.join('/$') + ' (−$' + discounts.family + ')\n';
+  entry += '    Enrollment (T1/T2/T3) — single $' + enrollmentFees.single.join('/$') +
+           ' · couple $' + enrollmentFees.couple.join('/$') +
+           ' · family $' + enrollmentFees.family.join('/$') + '\n';
   entry += '# digest: ' + priceHash + '\n';
   entry += '# data: ' + JSON.stringify(curMap) + '\n';
   fs.appendFileSync(LEDGER, entry, 'utf8');

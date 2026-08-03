@@ -1,5 +1,5 @@
 {
-  "_comment": "Canonical membership pricing source for scripts/audit/membership-pricing-apply.js",
+  "_comment": "Canonical membership pricing source for scripts/audit/membership-pricing-apply.js — sticker rates 8-2-26",
   "tiers": [
     1,
     2,
@@ -8,9 +8,9 @@
   "membership_types": {
     "single": {
       "monthly_dues": {
-        "1": 220,
-        "2": 205,
-        "3": 190
+        "1": 245,
+        "2": 225,
+        "3": 205
       },
       "enrollment_fee": {
         "original": {
@@ -29,9 +29,9 @@
     },
     "couple": {
       "monthly_dues": {
-        "1": 350,
-        "2": 335,
-        "3": 315
+        "1": 420,
+        "2": 380,
+        "3": 350
       },
       "enrollment_fee": {
         "original": {
@@ -51,34 +51,34 @@
     "family": {
       "base_monthly_dues_by_children": {
         "1": {
-          "1": 435,
-          "2": 405,
-          "3": 375
+          "1": 495,
+          "2": 445,
+          "3": 420
         },
         "2": {
-          "1": 435,
-          "2": 405,
-          "3": 375
+          "1": 495,
+          "2": 445,
+          "3": 420
         },
         "3": {
-          "1": 435,
-          "2": 405,
-          "3": 375
+          "1": 495,
+          "2": 445,
+          "3": 420
         },
         "4": {
-          "1": 435,
-          "2": 405,
-          "3": 375
+          "1": 495,
+          "2": 445,
+          "3": 420
         },
         "5": {
-          "1": 435,
-          "2": 405,
-          "3": 375
+          "1": 495,
+          "2": 445,
+          "3": 420
         },
         "6": {
-          "1": 435,
-          "2": 405,
-          "3": 375
+          "1": 495,
+          "2": 445,
+          "3": 420
         }
       },
       "enrollment_fee": {
@@ -108,8 +108,8 @@
       "max_average_age": 6,
       "max_children": 2,
       "discounts": {
-        "1": 25,
-        "2": 15
+        "1": 30,
+        "2": 20
       }
     },
     "third_child_over_age_4_surcharge": 20

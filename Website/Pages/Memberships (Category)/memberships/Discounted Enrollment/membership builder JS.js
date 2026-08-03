@@ -6,10 +6,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const childrenAgesContainer = document.getElementById("childrenAgesContainer");
     const priceDisplay = document.getElementById("priceDisplay");
     const minimumAmountDisplay = document.getElementById("minimumAmount");
-    const enrollmentFeeDisplay = document.getElementById("enrollmentFeeDisplay");
-    const enrollmentFeeHidden = document.getElementById("enrollmentFee");
-    const monthlyDueHidden = document.getElementById("monthlyDue");
-    const foodBeverageHidden = document.getElementById("foodBeverageMinimum");
+    const originalPriceDisplay = document.getElementById("originalPrice");
+    const discountedPriceDisplay = document.getElementById("discountedPrice");
+    const limitedTimeText = document.getElementById("limitedTimeText");
 
     // Pricing data
     const pricing = {
@@ -35,6 +34,12 @@ document.addEventListener("DOMContentLoaded", function () {
         single: [400, 350, 300],
         couple: [500, 450, 400],
         family: [600, 550, 500]
+    };
+
+    const discounts = {
+        single: 100,
+        couple: 100,
+        family: 150
     };
 
     function updatePrice() {
@@ -88,29 +93,24 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         priceDisplay.textContent = `Monthly Due: $${price}`;
-        if (monthlyDueHidden) monthlyDueHidden.value = String(price);
     }
 
     function updateEnrollmentFee() {
         const type = membershipType.value;
         const tier = parseInt(tierSelect.value, 10);
-        const fee = enrollmentFees[type][tier - 1];
+        const originalPrice = enrollmentFees[type][tier - 1];
+        const discount = discounts[type];
+        const discountedPrice = originalPrice - discount;
 
-        if (enrollmentFeeDisplay) {
-            enrollmentFeeDisplay.textContent = `$${fee}`;
-        }
-        if (enrollmentFeeHidden) {
-            enrollmentFeeHidden.value = String(fee);
-        }
+        originalPriceDisplay.textContent = `$${originalPrice}`;
+        discountedPriceDisplay.textContent = `$${discountedPrice}`;
+        limitedTimeText.style.display = "inline";
     }
 
     function updateMinimumAmount() {
         const type = membershipType.value;
         const minimumAmount = minimumAmounts[type];
         minimumAmountDisplay.textContent = `Monthly Food & Beverage Assessment: ${minimumAmount}`;
-        if (foodBeverageHidden) {
-            foodBeverageHidden.value = minimumAmount.replace("$", "").trim();
-        }
     }
 
     function updateChildrenAges() {
@@ -167,6 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
     updateEnrollmentFee();
     updateMinimumAmount();
 
+    // Function to validate email format using regex
     function isValidEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
@@ -175,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("purchaseButton").addEventListener("click", function () {
         const name = document.getElementById("name").value.trim();
         const email = document.getElementById("email").value.trim();
-        const phone = document.getElementById("phone").value.trim();
+        const phone = document.getElementById("phone").value.trim(); // New phone field
 
         if (!name) {
             alert("Please enter your full name.");
@@ -218,16 +219,14 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        const enrollmentFee = enrollmentFeeDisplay
-            ? enrollmentFeeDisplay.textContent.replace("$", "").trim()
-            : (enrollmentFeeHidden ? enrollmentFeeHidden.value : "");
-        const monthlyDue = priceDisplay.textContent.replace("Monthly Due: $", "").trim();
-        const foodBeverageMinimum = minimumAmountDisplay.textContent.replace("Monthly Food & Beverage Assessment: $", "").trim();
+        const enrollmentFee = discountedPriceDisplay.textContent.replace('$', '').trim();
+        const monthlyDue = priceDisplay.textContent.replace('Monthly Due: $', '').trim();
+        const foodBeverageMinimum = minimumAmountDisplay.textContent.replace('Monthly Food & Beverage Assessment: $', '').trim();
 
         const data = {
             Name: name,
             "Email address": email,
-            Phone: phone,
+            Phone: phone, // Include phone in the data
             membershipType: membershipTypeValue,
             tier,
             numberOfChildren: numberOfChildrenValue,
@@ -237,23 +236,24 @@ document.addEventListener("DOMContentLoaded", function () {
             foodBeverageMinimum
         };
 
-        console.log("Form data being sent:", data);
+        console.log('Form data being sent:', data);
 
-        fetch("https://still-cliffs-89444-6c029a7a2024.herokuapp.com/create-signature-request", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+        fetch('https://still-cliffs-89444-6c029a7a2024.herokuapp.com/create-signature-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         })
         .then(response => response.json())
         .then(result => {
             if (result.error) {
-                alert("Failed to create signature request: " + result.error);
+                alert('Failed to create signature request: ' + result.error);
             } else {
-                alert("Thank you! A membership form has been sent to the email address you provided!");
+                alert('Thank you! A membership form has been sent to the email address you provided!');
 
-                fetch("https://still-cliffs-89444-6c029a7a2024.herokuapp.com/notify-admin", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                // Notify admin of membership click
+                fetch('https://still-cliffs-89444-6c029a7a2024.herokuapp.com/notify-admin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 })
                 .then(response => {
@@ -261,9 +261,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         console.log("Admin notified of membership click.");
                     }
                 })
-                .catch(error => console.error("Error notifying admin:", error));
+                .catch(error => console.error('Error notifying admin:', error));
             }
         })
-        .catch(() => alert("Failed to create signature request. Please check your input."));
+        .catch(error => alert('Failed to create signature request. Please check your input.'));
     });
 });

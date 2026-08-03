@@ -2,13 +2,15 @@
 
 ## Layman's terms
 
-JavaScript that powers the membership builder page: toggles, filters, or interactive elements for comparing or selecting membership options. Makes the builder interactive.
+Powers the normal membership builder: type/tier/family ages → monthly dues, sticker enrollment fee, F&B minimum, and Buy Membership submit.
 
 ## Medium understanding
 
-Page-specific script for the memberships membership builder. Handles any dynamic behavior (tabs, filters, accordions, etc.). DOM-ready pattern. Check file for exact behavior—naming suggests membership comparison/selection UI.
+No enrollment discount/promo logic. Shows sticker enrollment next to “One-Time Enrollment Fee.” Discounted / special-offer variants live in `Discounted Enrollment/`.
 
 ## Advanced
 
 - **Scope:** Pages/Memberships (Category)/memberships/
+- **Live:** paste into WPCode **#9926** (normal join). Discounted enrollment stays on **#7315**.
+- **DOM:** `#enrollmentFeeDisplay`, `#priceDisplay`, `#minimumAmount`, `#membershipType`, `#tier`, `#purchaseButton`
 - **Naming:** Space in filename; legacy convention
