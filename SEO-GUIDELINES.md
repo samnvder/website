@@ -1,5 +1,22 @@
 # SEO Guidelines for South End Club Website
 
+> ## ⚠️ Read this first: meta tags in page HTML do nothing
+>
+> The `<title>`, `<meta name="description">`, and JSON-LD blocks in the page files under `Website/Pages/` are pasted into Thrive Architect as page **content**, so they render inside `<body>`. **Google ignores all of it.** On `/memberships/` there were four `<title>` tags — the only one that counted was Yoast's, in `<head>`.
+>
+> **Titles, descriptions, and canonical URLs must be set in the Yoast SEO panel on each WordPress page.** The applied values are recorded in [YOAST-SEO-SHEET.md](YOAST-SEO-SHEET.md).
+>
+> **Site-wide schema (address, phone, geo, hours) is set by the WPCode PHP snippet `SEO - LocalBusiness schema (NAP, geo, hours)`**, which filters `wpseo_schema_organization`. Noindex rules live in the snippet `SEO - Noindex internal & utility pages`. Edit those snippets, not the page HTML.
+>
+> The sections below are still the right *content* guidance — just apply them in Yoast, not in the HTML.
+>
+> **The three SEO files:**
+> | File | Purpose |
+> |---|---|
+> | **SEO-GUIDELINES.md** (this file) | Content rules — audience, positioning, keywords, business facts |
+> | [SEO-TODO.md](SEO-TODO.md) | Live backlog — what's done, what's open, who's blocked on what |
+> | [YOAST-SEO-SHEET.md](YOAST-SEO-SHEET.md) | The exact title/description/keyphrase applied to every page |
+
 ## Target Audience & Positioning
 
 ### Geographic Targeting
@@ -168,10 +185,18 @@ Email: info@southendclub.com
 
 Coordinates: 33.8358, -118.3406
 
-Social:
-- Facebook: https://www.facebook.com/southendclub
-- Instagram: https://www.instagram.com/southendclub
+Social (verified — do not guess these, the handles differ from the domain):
+- Facebook: https://www.facebook.com/southendracquetandhealthclub
+- Instagram: https://www.instagram.com/southendhealthclub
+- Yelp: https://www.yelp.com/biz/south-end-racquet-and-health-club-torrance
 ```
+
+**Phone:** `+1-310-530-0630` is the only correct number. Do not use `310-325-8000` — it was wrong in six schema blocks and has been corrected.
+
+**Club hours** (source: contact page):
+- Mon–Fri: 6 AM – 9 PM
+- Sat–Sun: 7 AM – 6 PM (summer weekends to 7 PM)
+- Holidays (Thanksgiving, Christmas, New Year's Day, Easter): 7 AM – 2 PM
 
 ---
 
