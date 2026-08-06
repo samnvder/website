@@ -1,6 +1,6 @@
 # Yoast SEO — Applied Reference
 
-Part of: [SEO-GUIDELINES.md](SEO-GUIDELINES.md) (content rules) · [SEO-TODO.md](SEO-TODO.md) (backlog) · **this file** (applied metadata)
+Part of: [GUIDELINES.md](GUIDELINES.md) (content rules) · [TODO.md](TODO.md) (backlog) · **this file** (applied metadata)
 
 > **Status (2026-08-05):** Sections A, B and C are all **applied live** and verified in the rendered HTML.
 >
@@ -36,7 +36,7 @@ Titles are ≤60 chars; descriptions 140–155 chars. Every entry carries **Torr
 - Instagram: `https://www.instagram.com/southendhealthclub`
 - Yelp: `https://www.yelp.com/biz/south-end-racquet-and-health-club-torrance`
 
-> Note: `SEO-GUIDELINES.md` lines 172–173 list these as `southendclub` for both — that is wrong. The real handles are above.
+> Note: `GUIDELINES.md` lines 172–173 list these as `southendclub` for both — that is wrong. The real handles are above.
 
 **Canonical phone everywhere: `(310) 530-0630` / `+1-310-530-0630`.**
 Do not use `310-325-8000` — it appears in 6 schema blocks in the repo and is incorrect.
