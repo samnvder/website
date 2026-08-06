@@ -51,10 +51,47 @@ The biggest measurable performance win available.
 
 **⚠️ Free tier requires the browser tab to stay open** for the whole bulk run (~25 min for 483 images). Pro runs it in the background.
 
-**Still to verify after the run completes:**
-1. Flush GoDaddy cache
-2. Confirm pages actually serve WebP/AVIF — at time of writing, homepage and /pools/ show 0 `<picture>` tags and 0 `.webp` refs. Conversion ≠ delivery; this must be checked before calling it done.
-3. Re-measure page weight against the earlier baseline (home 752 KB, memberships 459 KB)
+**Bulk run COMPLETE:** 483/483, **0 failures**, **282.38 MB** of source images converted to WebP + AVIF.
+
+**✅ RESOLVED — delivery now works. No hosting change or support ticket was needed.**
+
+The plugin's own delivery depends on `.htaccess`, which GoDaddy ignores. But the generated files are publicly readable at `/wp-content/compressx-nextgen/uploads/<same path>.<ext>.webp|.avif`, so the fix was a third WPCode snippet, **`SEO - Serve WebP/AVIF via picture tag`** (id 9936), which buffers page output and wraps each `<img>` in a `<picture>` with AVIF and WebP `<source>` elements. Pure PHP — no server config.
+
+It maps `srcset` entry-by-entry (so responsive sizing is preserved), skips any image with no generated variant, and always leaves the original `<img>` as the fallback, so unsupported browsers are unaffected.
+
+**Measured on the homepage — 25 images sampled:**
+| | |
+|---|---|
+| Original JPG/PNG | 8,851 KB |
+| AVIF served | 3,629 KB |
+| **Saving** | **58% — 5.2 MB** |
+
+Verified: 60 `<picture>` opened / 60 closed, all 11 key pages HTTP 200.
+
+*Note: homepage emits 60 AVIF sources but only 22 WebP — some images have no `.webp` variant, so those fall back to the original for WebP-only browsers. AVIF covers the modern majority; worth a re-run with "Force all images to be re-processed" to close the gap.*
+
+<details><summary>Original diagnosis (kept for reference)</summary>
+
+Verified after a GoDaddy cache flush:
+- `/` and `/pools/` — **0** `<picture>` tags, **0** `.webp` refs, **0** `.avif` refs
+- `/pools/` still 382 KB, unchanged from baseline
+- Content-negotiation test is conclusive:
+  ```
+  curl -H "Accept: image/avif,image/webp,*/*"  .../Pool5.jpg
+  →  image/jpeg  413,684 bytes     (identical to the plain request)
+  ```
+
+**Root cause (same wall as Converter for Media):** CompressX's delivery relies on `/wp-content/.htaccess`, and GoDaddy Managed WordPress ignores `.htaccess`. The files exist; nothing routes browsers to them.
+
+**Options, in order of preference:**
+1. **CompressX → CDN Support** — serves next-gen formats from their CDN, bypassing server rewrites entirely. Check whether it's on the free tier. Most likely fix.
+2. **GoDaddy support ticket** — ask whether `.htaccess` overrides can be enabled for `/wp-content/`, or equivalent nginx rules added. This would unblock CompressX *and* Converter for Media.
+3. **GoDaddy Airo Site Optimizer** — GoDaddy advertises it in wp-admin and it may do next-gen conversion natively at the platform layer, where .htaccess is irrelevant.
+
+Nothing is lost either way: originals are untouched, the WebP/AVIF files are already generated and will be served the moment a delivery path works. Auto-optimize is ON, so new uploads keep converting.
+</details>
+
+**Lesson:** "the plugin's delivery method is blocked" is not the same as "delivery is impossible." Check whether the generated files are *reachable* before escalating to the host — here they were, and a ~20-line output filter solved it.
 
 **Note:** ShortPixel is still installed and active. CompressX warns about conflicts between multiple image plugins. ShortPixel's WebP/CDN options are all OFF so it should be inert, but consider deactivating it.
 
