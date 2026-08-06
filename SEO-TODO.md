@@ -68,7 +68,7 @@ It maps `srcset` entry-by-entry (so responsive sizing is preserved), skips any i
 
 Verified: 60 `<picture>` opened / 60 closed, all 11 key pages HTTP 200.
 
-*Note: homepage emits 60 AVIF sources but only 22 WebP — some images have no `.webp` variant, so those fall back to the original for WebP-only browsers. AVIF covers the modern majority; worth a re-run with "Force all images to be re-processed" to close the gap.*
+*Note: homepage emits 60 AVIF sources but only 22 WebP. **This is correct, not a bug** — the images lacking a `.webp` are already well-compressed JPEGs where WebP came out larger than the original, so CompressX discarded it (e.g. `Girls-Gazebo.jpg` 177 KB → AVIF 150 KB, no WebP). AVIF was still smaller and was kept. Fallback chain is AVIF → original JPG. No re-run needed.*
 
 <details><summary>Original diagnosis (kept for reference)</summary>
 
