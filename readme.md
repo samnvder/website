@@ -18,7 +18,14 @@ Standalone marketing site (HTML, CSS, vanilla JS). Exported from the WebsiteV1 m
 | `Programs/Pickleball/docs/South-End-Pickleball-Platform-Statement.md` | South End Pickleball platform / module source of truth |
 | `Programs/Pickleball/account-creation/` | Firebase Auth/RTDB docs, changelog, managing accounts |
 | `scripts/` | Carousel build, convert, scaffold — [README](./scripts/README.md) |
+| `SEO/` | Search optimisation — status, backlog, applied metadata — [README](./SEO/README.md) |
 | `.cursor/rules/` | Cursor rules for this site |
+
+## SEO
+
+See **[SEO/README.md](./SEO/README.md)** — start at [SEO/TODO.md](./SEO/TODO.md) for current status.
+
+⚠️ **Editing meta tags in `Website/Pages/*.html` does nothing.** Those files are pasted into Thrive Architect as page *content*, so `<title>`, `<meta>` and JSON-LD render inside `<body>`, where Google ignores them. Live SEO config is in the WordPress database: per-page metadata in Yoast, and WPCode snippets **9934** (noindex + sitemap), **9935** (LocalBusiness schema), **9936** (WebP/AVIF delivery).
 
 ## Pickleball Open Play
 
