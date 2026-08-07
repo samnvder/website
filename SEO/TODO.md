@@ -70,10 +70,14 @@ This, not the website, governs the "2800 Skypark Dr" result.
 South End Racquet & Health Club is the South Bay's family-focused health, racquet and social club, set on seven acres at the base of the Palos Verdes Peninsula in Torrance. More than a gym: 9 lighted tennis courts, 9 pickleball courts, padel, racquetball and the only squash courts within 20 miles. Swim year-round in our heated 25-yard pool, or bring the kids to the beach-entry shallow pool. Members enjoy a full fitness center with a women's-only gym, personal training and group classes, plus sauna, steam room and jacuzzis. Dine at The Lounge, grab coffee at the Café, or eat poolside. Junior camps, swim lessons and child care from 6 weeks. Serving Torrance, Redondo Beach, Manhattan Beach, Palos Verdes and the South Bay.
 </details>
 
-### 2. Google Search Console — **Sam**
-Nothing is being measured. No `google-site-verification` meta found (may be DNS/Analytics verified).
-- Submit `https://southendclub.com/sitemap_index.xml`
-- In 2–3 weeks, use the query data to steer item 4 rather than guessing keywords
+### 2. Google Search Console — **already set up** ✅
+**Correction:** an earlier note here said Search Console needed setting up. It didn't. The property exists as **`sc-domain:southendclub.com`** — a *domain* property, verified via DNS, which is why no `google-site-verification` meta tag appears in the HTML. Checking the HTML was the wrong test.
+
+**Open:** on 2026-08-07 GSC reported two new non-indexing reasons — *"Alternate page with proper canonical tag"* and *"Excluded by 'noindex' tag"*. The noindex one is almost certainly the 8 pages deliberately excluded via snippet 9934. The canonical one is unverified.
+
+→ **See [HANDOFF.md](HANDOFF.md)** for the full investigation brief.
+
+Still useful: in 2–3 weeks, use the query data to steer item 4 rather than guessing keywords.
 
 ### 3. Heading structure — **Both** · needs sign-off
 - **`/youth-programs/` has zero `<h1>`.** Top heading "The South Bay's Favorite" is an h2. Real defect on a page targeting "kids camp Torrance".

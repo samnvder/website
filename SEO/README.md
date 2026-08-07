@@ -7,6 +7,7 @@ Documentation for southendclub.com search optimisation.
 | [TODO.md](TODO.md) | **Start here.** Live backlog — what's done, what's open, who's blocked on what |
 | [GUIDELINES.md](GUIDELINES.md) | Content rules — audience, positioning, keywords, verified business facts |
 | [YOAST-SHEET.md](YOAST-SHEET.md) | The exact title, description and keyphrase applied to every page |
+| [HANDOFF.md](HANDOFF.md) | Investigation brief for the 2026-08-07 Search Console indexing alert |
 
 ## ⚠️ The one thing to know
 
