@@ -2,7 +2,7 @@
 
 Working backlog for southendclub.com. Companion to [GUIDELINES.md](GUIDELINES.md) (content rules) and [YOAST-SHEET.md](YOAST-SHEET.md) (exact metadata applied).
 
-**Last updated:** 2026-08-07
+**Last updated:** 2026-08-08
 
 Owner key: **Claude** = doable without you · **Sam** = needs your access or a judgement call
 
