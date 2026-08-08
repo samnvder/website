@@ -6,6 +6,25 @@
 
 ---
 
+## ✅ RESOLVED 2026-08-07 — the investigation below is done; read the outcome first
+
+The GSC report **has now been opened**. Everything below this box was hypothesis; here is what was actually there. Full detail in [TODO.md](TODO.md) §2 and §9.
+
+**Both alert reasons are benign. Neither matched the leading hypothesis.**
+
+- **"Excluded by 'noindex'" = 1 URL**, `/comments/feed/` — the WordPress comments RSS feed, which Yoast noindexes by default. **Not** the eight pages from snippet 9934. Those don't appear at all because the report's data was **last updated 8/4/26**, one day *before* the noindex work landed. All eight verified serving `noindex, follow` by `curl` — snippet 9934 is fine.
+- **"Alternate page with proper canonical tag" = 1 URL**, `/?ref=padelhive` — an inbound referral parameter, canonical correctly resolved to `/`. That's **H3**, not H1 or H2.
+  - **H1 was the right phenomenon in the wrong bucket:** protocol/`www` root variants do appear, but under *Page with redirect* (all 301 → 200, correct).
+  - **H2 is not implicated.** No canonical fix needed; the duplicate `<body>` canonical stays a cosmetic item (§7).
+
+**The alert was a distraction from the real problem it sat next to.** The report's largest category — *Not found (404), 13 pages*, never mentioned in this brief — exposed that **three URLs linked from the main nav on every page of the site return 404**, including "Youth Programs". See [TODO.md](TODO.md) §9 for the exact menu items and fixes.
+
+⚠️ **Gotcha for whoever re-runs these checks:** Yoast emits `<meta name='robots' content='…' />` with **single** quotes. The snippet below already accounts for this — but if you rewrite it from memory with `content="…"`, it returns nothing and reads as a false negative rather than an error.
+
+Regression check re-run 2026-08-07: all 11 pages HTTP 200, NAP and `<picture>` intact. No regressions.
+
+---
+
 ## Why you're here
 
 Google Search Console emailed on **Fri 2026-08-07 4:41 PM**:
