@@ -56,6 +56,15 @@ Also: [SEO/GUIDELINES.md](./SEO/GUIDELINES.md) (content rules, verified business
 
 ## Known issues (not SEO)
 
-- **`npm run guard` is broken on `master` — CI has been red on every PR since commit `3fc792b`.** The membership-pricing guard crashes with `Could not find "const discountRates" in source file.` That refactor moved the discount variant into `Website/Pages/Memberships (Category)/memberships/Discounted Enrollment/membership builder JS.js` (which defines `const discounts`), but `scripts/audit/membership-pricing-paths.js` still points `DISCOUNT_SOURCE_REL` at `membership builder JS-discount-enrollment.js`, a filename that now only exists under `Old/`. Nothing to do with SEO — but it means **a red check is the normal state, so a genuinely broken build looks identical to a healthy one.** Worth fixing before trusting CI.
+- **`npm run guard` is broken on `master` — CI has been red on every PR since commit `3fc792b`.** The membership-pricing guard crashes with `Could not find "const discountRates" in source file.` Nothing to do with SEO, but it means **a red check is the normal state, so a genuinely broken build looks identical to a healthy one.** Fix it before trusting CI.
+
+  Verified cause — the refactor moved the discount files into a `Discounted Enrollment/` subdirectory and the guard's path config was never updated:
+
+  | | Path |
+  |---|---|
+  | `DISCOUNT_SOURCE_REL` expects | `…/memberships/membership builder JS-discount-enrollment.js` |
+  | File actually lives at | `…/memberships/`**`Discounted Enrollment/`**`membership builder JS-discount-enrollment.js` |
+
+  Separately, `loadMembershipBuilderPricing` reads discounts out of `SOURCE_REL` (`…/memberships/membership builder JS.js`), which no longer defines `discounts` *or* `discountRates` — it only has `pricing`, `minimumAmounts`, `enrollmentFees`. The constant it wants, `const discounts`, is in `…/memberships/Discounted Enrollment/membership builder JS.js`. **Confirm which file is authoritative for live pricing before repointing it** — making the guard pass against the wrong file would silently stop validating real pricing drift, which is the whole point of the guard.
 - **All-in-One WP Migration Unlimited Extension is flagged by WordPress as likely pirated** and throws a fatal error against the current core version. Currently deactivated. Should be deleted — nulled plugins are a malware vector.
 - Backups exist on the server (2 × 6.72 GB) but **cannot be restored** with the free plugin's ~512 MB import cap. GoDaddy's own managed backups have not been checked.
