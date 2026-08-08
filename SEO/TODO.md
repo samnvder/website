@@ -135,6 +135,30 @@ Three URLs are linked from the main nav on **every page of the site** and all re
 
 These are **custom-link** menu items (`menu-item-type-custom`), so the URLs are hardcoded in **Appearance → Menus** — they did not auto-update when the pages were renamed. Fix them there, not in `Website/Pages/*.html`.
 
+> ### ✅ Status 2026-08-07 — WP menus fixed live; Thrive header/footer still broken
+>
+> **Done and verified live.** There are **7 menus**, not one (Main Menu 19, Fitness 20, Pools 21, Junior Programs 22, Racquet Sports 23, Events 24, Services 25). All were affected; all are fixed and saved:
+>
+> | Menu | Fixed |
+> |---|---|
+> | Main Menu | 15 links |
+> | Services | 7 · Fitness 7 · Pools 6 · Racquet Sports 5 · Events 3 · Junior Programs 2 |
+>
+> Also: the **Karate item was deleted** (programme discontinued), and the `/youth-programs/` **Yoast meta description** was updated to drop karate — it was advertising a programme the club no longer runs.
+>
+> Live menu state differed from this repo: the anchors had already been partly modernised (`#sports-camp`, `#pool-parties`) while the **page paths were never updated** — so the dropdowns pointed at semantic anchors on dead pages.
+>
+> ### 🔴 Still broken live — the Thrive header/footer template
+>
+> Every page still serves **2 dead page-links + 12 stale `tve-jump` anchors** (homepage: 7 and 15). These are **not** WP menu items — they are a *second*, duplicate nav hardcoded inside the **Thrive header and footer templates**:
+>
+> - **16** dead links in the Thrive header
+> - **3** in the Thrive footer
+>
+> Fixing these means editing the header/footer in **Thrive Theme Builder**, which restyles sitewide — higher risk than the menu edits, and it needs a decision before proceeding. The repo-side equivalents are already fixed (see the `fix/dead-nav-links-in-source` and `fix/stale-thrive-anchors` branches), so whoever edits Thrive can copy the exact target URLs from there.
+>
+> **Gotcha for the next person:** in the WP menu editor, `find`-derived refs for the Save button go stale and the click silently does nothing — the page looks saved but isn't. Confirm every save by the *"X has been updated."* notice, never by the field values.
+
 The replacement pages carry proper **semantic** anchor ids (`#sports-camp`, `#ballet`, `#banquet-hall`, `#garden-gazebo`, `#the-lounge`), so each link can land on the right section — only the old auto-generated `#tve-jump-…` ids are gone. Every target above was checked against the live page's actual ids.
 
 **Karate is a content gap, not a link bug:** it appears only in the `/youth-programs/` meta description, with no section on the page. The page promises karate and doesn't deliver it.
