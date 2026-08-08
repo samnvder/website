@@ -2,7 +2,7 @@
 
 Working backlog for southendclub.com. Companion to [GUIDELINES.md](GUIDELINES.md) (content rules) and [YOAST-SHEET.md](YOAST-SHEET.md) (exact metadata applied).
 
-**Last updated:** 2026-08-05
+**Last updated:** 2026-08-07
 
 Owner key: **Claude** = doable without you · **Sam** = needs your access or a judgement call
 
@@ -28,6 +28,54 @@ After any change: **GoDaddy Quick Links → Flush Cache**, then verify with `cur
 
 ---
 
+## 📋 Delivery status — everything, at a glance
+
+Single board for the whole project: what is live, what is written but unmerged, and what is still open. Detail for each item is in the numbered sections below.
+
+### A · Done and live on the site
+
+| Item | When | Section |
+|---|---|---|
+| Yoast metadata on 19 pages | 08-05 | ✅ table below |
+| `HealthClub` schema, NAP/geo/hours, snippet 9935 | 08-05 | ✅ |
+| Noindex + sitemap exclusion, snippet 9934 | 08-05 | ✅ |
+| 483 images → WebP/AVIF via `<picture>`, snippet 9936 | 08-05 | ✅ |
+| GSC report opened; both alert reasons closed as benign | 08-07 | §2 |
+| **All 7 WordPress menus repointed — 45 links** | 08-07 | §9 |
+| **Karate menu item deleted** (programme discontinued) | 08-07 | §9 |
+| **`/youth-programs/` Yoast description — karate removed** | 08-07 | §9 |
+
+### B · Written and pushed, awaiting merge
+
+Nothing here changes the live site. These fix the Thrive **paste-source**, so the bugs don't return on the next paste.
+
+| PR | Branch | Contents |
+|---|---|---|
+| #1 | `seo/gsc-alert-findings` | GSC findings, live status, this board |
+| #2 | `fix/dead-nav-links-in-source` | 52 dead nav links repointed |
+| #3 | `fix/stale-thrive-anchors` → #2 | 24 stale `tve-jump` anchors repointed |
+| #4 | `seo/redirect-snippet` | 301 snippet + `SEO/snippets/` mirror |
+| #5 | `content/remove-karate` → #3 | Karate removed from copy, nav, schema |
+
+**Merge order: #2 → #3 → #5.** #3 and #5 are stacked because they edit the same long Thrive nav lines and conflict if merged independently. #1 and #4 are independent.
+
+### C · Open
+
+| # | Item | Owner | Size |
+|---|---|---|---|
+| §9 | 🔴 **Thrive header/footer nav still broken** — 16 header + 3 footer dead links, every page | Sam | needs a decision |
+| §9 | Apply the 301 snippet (PR #4) — 3 paths still 404 | Sam | 10 min |
+| §9 | Broken Group Exercise Schedule PDF on `/summer-membership/` | Sam | needs the file |
+| §1 | Google Business Profile — description, categories, reviews | Sam | ~30 min · highest ROI |
+| §3 | Heading structure — zero `<h1>` on youth, three on home | Both | needs sign-off |
+| §4 | No blog / informational content | Sam | large · biggest gap |
+| §5 | Basketball & volleyball missing from copy and schema | Claude | small |
+| §8 | Pirated All-in-One WP Migration extension — delete | Sam | irreversible |
+| §6 | Page weight 318–767 KB of Thrive HTML | — | deferred |
+| §7 | Body-level duplicate meta | — | cosmetic |
+
+---
+
 ## ✅ Done and verified live
 
 | # | Item | Verification |
@@ -43,6 +91,16 @@ After any change: **GoDaddy Quick Links → Flush Cache**, then verify with `cur
 | 9 | 483 images → WebP + AVIF, delivered via `<picture>` | **58% smaller** (8,851 KB → 3,629 KB across 25 homepage images) |
 | 10 | GBP website URL → canonical HTTPS | Submitted, pending Google review |
 | 11 | Site health after 3 PHP snippets | All pages HTTP 200, zero PHP errors |
+
+**Added 2026-08-07:**
+
+| # | Item | Verification |
+|---|---|---|
+| 12 | GSC Page Indexing report opened; all 5 reasons classified | Both alert reasons benign — see §2 |
+| 13 | **All 7 WP menus repointed — 45 links** across Main Menu, Services, Fitness, Pools, Racquet Sports, Events, Junior Programs | Each save confirmed by its *"X has been updated"* notice; new targets confirmed in live HTML |
+| 14 | **Karate menu item deleted** — programme discontinued | Zero `karate` in live homepage HTML |
+| 15 | **`/youth-programs/` meta description — karate removed** | Live: `Junior sports camps, ballet & performing arts, private swim lessons…` |
+| 16 | Regression after all of the above | 11/11 pages HTTP 200, NAP and `<picture>` counts unchanged |
 
 ---
 
@@ -70,18 +128,35 @@ This, not the website, governs the "2800 Skypark Dr" result.
 South End Racquet & Health Club is the South Bay's family-focused health, racquet and social club, set on seven acres at the base of the Palos Verdes Peninsula in Torrance. More than a gym: 9 lighted tennis courts, 9 pickleball courts, padel, racquetball and the only squash courts within 20 miles. Swim year-round in our heated 25-yard pool, or bring the kids to the beach-entry shallow pool. Members enjoy a full fitness center with a women's-only gym, personal training and group classes, plus sauna, steam room and jacuzzis. Dine at The Lounge, grab coffee at the Café, or eat poolside. Junior camps, swim lessons and child care from 6 weeks. Serving Torrance, Redondo Beach, Manhattan Beach, Palos Verdes and the South Bay.
 </details>
 
-### 2. Google Search Console — **already set up** ✅
-**Correction:** an earlier note here said Search Console needed setting up. It didn't. The property exists as **`sc-domain:southendclub.com`** — a *domain* property, verified via DNS, which is why no `google-site-verification` meta tag appears in the HTML. Checking the HTML was the wrong test.
+### 2. Google Search Console — **report opened 2026-08-07, both alert reasons closed** ✅
+The property is **`sc-domain:southendclub.com`** — a *domain* property, verified via DNS, which is why no `google-site-verification` meta tag appears in the HTML. Checking the HTML was the wrong test.
 
-**Open:** on 2026-08-07 GSC reported two new non-indexing reasons — *"Alternate page with proper canonical tag"* and *"Excluded by 'noindex' tag"*. The noindex one is almost certainly the 8 pages deliberately excluded via snippet 9934. The canonical one is unverified.
+**The 2026-08-07 alert was benign on both counts.** Report opened; actual affected URLs listed below. Note the report's data was **last updated 8/4/26**, i.e. it *predates* the 8/5 noindex work — so none of the 8 deliberately-noindexed pages appear in it yet.
 
-→ **See [HANDOFF.md](HANDOFF.md)** for the full investigation brief.
+| Reason | Pages | Actual URLs | Verdict |
+|---|---|---|---|
+| Not found (404) | 13 | see §9 | 🔴 **real — sitewide broken nav** |
+| Page with redirect | 9 | 3 × protocol/`www` root variants, 5 × `?post_type=tcb_symbol`, `/memberships/summer-membership/` | ✅ benign, all 301 → 200 |
+| Excluded by 'noindex' | **1** | `/comments/feed/` | ✅ benign — WP comments RSS, Yoast noindexes feeds by default |
+| Alternate page w/ canonical | **1** | `/?ref=padelhive` | ✅ benign — inbound referral param; canonical correctly resolved to `/` |
+| Crawled – currently not indexed | 5 | 3 × menu/schedule PDFs (all 200), `?post_type=tcb_symbol&p=63`, `/memberships` (no slash, 301 → 200) | ✅ benign |
+
+**Against the HANDOFF hypotheses:** H1 (protocol/`www` variants) was the right phenomenon but the **wrong bucket** — those surface under *Page with redirect*, not *Alternate page with canonical*. H2 (Thrive's duplicate `<body>` canonical) is **not implicated** — the one alternate is a query-string variant, i.e. **H3**. No canonical fix needed.
+
+Verified independently with `curl`: all 8 pages from snippet 9934 serve `noindex, follow` — snippet 9934 is working correctly. (Yoast emits these with **single** quotes, `<meta name='robots' …>`; a `content="…"` grep returns nothing and reads as a false negative rather than an error.)
 
 Still useful: in 2–3 weeks, use the query data to steer item 4 rather than guessing keywords.
 
 ### 3. Heading structure — **Both** · needs sign-off
-- **`/youth-programs/` has zero `<h1>`.** Top heading "The South Bay's Favorite" is an h2. Real defect on a page targeting "kids camp Torrance".
-- **Homepage has two `<h1>`s.** Should be one.
+Re-verified 2026-08-07 against live HTML:
+
+- **`/youth-programs/` has zero `<h1>`** (confirmed). Top heading "The South Bay's Favorite" is an h2. Real defect on a page targeting "kids camp Torrance".
+- **Homepage has three `<h1>`s, not two** (earlier count was low):
+  1. `Video Review` — a stray heading, almost certainly a leftover element
+  2. `The Only Holistic Family, Health&nbsp;`
+  3. `& Racquet Club in the South Bay`
+
+  Note 2 and 3 are **one sentence split across two `<h1>` tags** — likely a Thrive line-break styling choice. The fix is to make it a single `<h1>` containing the whole headline, and demote or delete "Video Review".
 
 Blocked only because Thrive styles by tag — changing heading level can alter appearance. Needs before/after screenshots.
 
@@ -100,10 +175,75 @@ Thrive still emits duplicate `<title>`, canonical and `og:` tags inside `<body>`
 ### 8. Plugin hygiene — **Sam** · small
 ShortPixel and Converter for Media are both still installed. Converter for Media is deactivated; ShortPixel is active but inert (all WebP/CDN options off). CompressX warns about conflicts. Consider removing both.
 
+### 9. Sitewide broken navigation — **WP menus fixed ✅ · Thrive header/footer still open 🔴**
+**Found 2026-08-07 while investigating the GSC alert. This, not the alert, was the real problem.**
+
+Three URLs were linked from the nav on **every page of the site** and all return **404** — including "Youth Programs", on a site targeting *kids camp Torrance*.
+
+The table below is the original diagnosis. **The WordPress menu half is now done and live** (status box follows). What remains is the duplicate nav inside the Thrive header/footer templates.
+
+| Menu item ID | Label | Current (404) href | Should be |
+|---|---|---|---|
+| — | **Youth Programs** | `/junior-programs/` | `/youth-programs/` ✅ 200 |
+| 5041 | Junior Sports Camp | `/junior-programs/#tve-jump-17da699dcde` | `/youth-programs/#sports-camp` |
+| 5042 | Ballet | `/junior-programs/#tve-jump-17db9a7a4b0` | `/youth-programs/#ballet` |
+| 5043 | Karate | `/junior-programs/#tve-jump-17db9a7e602` | `/youth-programs/` — no karate section exists |
+| — | **The Lounge & Dining** | `/food-services/` | `/food-beverage/` ✅ 200 |
+| 5050 | Banquets | `/banquets/#tve-jump-17da07ecd00` | `/events/#banquet-hall` |
+| 5051 | Garden Gazebo | `/banquets/#tve-jump-17da08192f1` | `/events/#garden-gazebo` |
+| 5052 | South End Lounge | `/banquets/#tve-jump-17da0822f41` | `/events/#the-lounge` |
+
+These are **custom-link** menu items (`menu-item-type-custom`), so the URLs are hardcoded in **Appearance → Menus** — they did not auto-update when the pages were renamed. Fix them there, not in `Website/Pages/*.html`.
+
+> ### ✅ Status 2026-08-07 — WP menus fixed live; Thrive header/footer still broken
+>
+> **Done and verified live.** There are **7 menus**, not one (Main Menu 19, Fitness 20, Pools 21, Junior Programs 22, Racquet Sports 23, Events 24, Services 25). All were affected; all are fixed and saved:
+>
+> | Menu | Fixed |
+> |---|---|
+> | Main Menu | 15 links |
+> | Services | 7 · Fitness 7 · Pools 6 · Racquet Sports 5 · Events 3 · Junior Programs 2 |
+>
+> Also: the **Karate item was deleted** (programme discontinued), and the `/youth-programs/` **Yoast meta description** was updated to drop karate — it was advertising a programme the club no longer runs.
+>
+> Live menu state differed from this repo: the anchors had already been partly modernised (`#sports-camp`, `#pool-parties`) while the **page paths were never updated** — so the dropdowns pointed at semantic anchors on dead pages.
+>
+> ### 🔴 Still broken live — the Thrive header/footer template
+>
+> Every page still serves **2 dead page-links + 12 stale `tve-jump` anchors** (homepage: 7 and 15). These are **not** WP menu items — they are a *second*, duplicate nav hardcoded inside the **Thrive header and footer templates**:
+>
+> - **16** dead links in the Thrive header
+> - **3** in the Thrive footer
+>
+> Fixing these means editing the header/footer in **Thrive Theme Builder**, which restyles sitewide — higher risk than the menu edits, and it needs a decision before proceeding. The repo-side equivalents are already fixed (see the `fix/dead-nav-links-in-source` and `fix/stale-thrive-anchors` branches), so whoever edits Thrive can copy the exact target URLs from there.
+>
+> **Gotcha for the next person:** in the WP menu editor, `find`-derived refs for the Save button go stale and the click silently does nothing — the page looks saved but isn't. Confirm every save by the *"X has been updated."* notice, never by the field values.
+
+The replacement pages carry proper **semantic** anchor ids (`#sports-camp`, `#ballet`, `#banquet-hall`, `#garden-gazebo`, `#the-lounge`), so each link can land on the right section — only the old auto-generated `#tve-jump-…` ids are gone. Every target above was checked against the live page's actual ids.
+
+**Karate is a content gap, not a link bug:** it appears only in the `/youth-programs/` meta description, with no section on the page. The page promises karate and doesn't deliver it.
+
+Also add 301s for the three dead paths so external/historical links and any remaining Google equity survive. **GoDaddy ignores `.htaccess`**, so this needs a WPCode snippet on `template_redirect` — source is ready at [snippets/renamed-page-redirects.php](snippets/renamed-page-redirects.php), not yet applied.
+
+**Same bug, wider than the nav:** 24 further anchor links across `/fitness/`, `/pools/`, `/racquet-sports/` and `/services/` also pointed at `#tve-jump-…` ids that no longer exist. Those pages return 200, so the links weren't 404 — they silently landed at page top instead of the section the label promised. Repo side is fixed; the live menu has the same stale ids. Two things surfaced there worth your judgement:
+
+- **Pool party links point at the wrong page.** "Kid's Pool Party" and "Adult Poolside Party" pointed into `/pools/`, but that content is on `/events/#pool-parties` (19 mentions there, 1 on `/pools/`).
+- **"Dance Studio" points at nothing.** No dance section exists on `/services/` or anywhere on the site — its only occurrence sitewide is the nav link itself. Either the section was lost in a rebuild, or the link should go.
+
+**Separately — one broken PDF link:** `/summer-membership/` links to
+`…/uploads/2025/06/Group-Exercise-Schedule-6-25.pdf` → **404**. The older
+`…/uploads/2024/08/Current-Group-Exercise-Schedule.pdf` is also 404. Re-upload the current
+schedule or repoint the link. (The Lounge, Café and Aqua PDFs are all fine — 200.)
+
+The 6 × `?post_type=tcb_symbol&p=NN` 404s are Thrive template internals leaking into the crawl — harmless, ignore. `/wellness/page/[thrive_page_number]/` is an unreplaced Thrive placeholder token; cosmetic, but a sign a pagination element is misconfigured on `/wellness/`.
+
 ---
 
 ## Recommended next step
 
-**Stop optimising, start measuring.** The technical foundation is done. Give Google 2–3 weeks to recrawl, get Search Console reporting, and let real query data drive the content plan.
+1. **Merge the open PRs** — #2 → #3 → #5, plus #1 and #4. Until they land, the next Thrive paste reintroduces every link bug that was just fixed live.
+2. **Decide on the Thrive header/footer** (§9). It's the last place dead nav links still ship to visitors, on every page. It needs a decision because editing those templates restyles the whole site — the target URLs are already worked out in PRs #2/#3.
+3. **Apply the 301 snippet** (PR #4). `/junior-programs/`, `/food-services/` and `/banquets/` still 404, so inbound links from Google, the GBP, old email and print are still being thrown away.
+4. **Google Business Profile** (§1) — ~30 minutes and probably worth more than everything done to the website, because that is what governs the local pack.
 
-Meanwhile the GBP items are ~30 minutes and probably worth more than everything done to the website, because that is what governs the local pack.
+Then: **stop optimising, start measuring.** Give Google 2–3 weeks to recrawl and let real query data drive the content plan (§4).
