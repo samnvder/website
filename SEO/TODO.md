@@ -45,19 +45,21 @@ Single board for the whole project: what is live, what is written but unmerged, 
 | **Karate menu item deleted** (programme discontinued) | 08-07 | §9 |
 | **`/youth-programs/` Yoast description — karate removed** | 08-07 | §9 |
 
-### B · Written and pushed, awaiting merge
+### B · In the repo on `master` (merged 2026-08-08)
 
-Nothing here changes the live site. These fix the Thrive **paste-source**, so the bugs don't return on the next paste.
+None of this changed the live site. It fixes the Thrive **paste-source**, so the bugs don't return on the next paste, and stages the redirect snippet.
 
-| PR | Branch | Contents |
-|---|---|---|
-| #1 | `seo/gsc-alert-findings` | GSC findings, live status, this board |
-| #2 | `fix/dead-nav-links-in-source` | 52 dead nav links repointed |
-| #3 | `fix/stale-thrive-anchors` → #2 | 24 stale `tve-jump` anchors repointed |
-| #4 | `seo/redirect-snippet` | 301 snippet + `SEO/snippets/` mirror |
-| #5 | `content/remove-karate` → #3 | Karate removed from copy, nav, schema |
+| PR | Contents |
+|---|---|
+| #1 | GSC findings, live status, this board |
+| #2 | 52 dead nav links repointed |
+| #3 | 24 stale `tve-jump` anchors repointed |
+| #4 | 301 redirect snippet + `SEO/snippets/` mirror |
+| #5 | Karate removed from copy, nav, schema |
 
-**Merge order: #2 → #3 → #5.** #3 and #5 are stacked because they edit the same long Thrive nav lines and conflict if merged independently. #1 and #4 are independent.
+Verified on `master`: **0** dead page-links, **0** `tve-jump` references, **0** `karate` in any `.html`/`.css`/`.js`.
+
+> PR #3 shows as *closed* rather than *merged* — a GitHub artefact, not a lost change. It was stacked on #2, and deleting #2's branch on merge auto-closed it. Its commit (`952b502`) reached `master` via #5, which was stacked on #3. The audit counts above confirm the content is present.
 
 ### C · Open
 

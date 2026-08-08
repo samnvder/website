@@ -79,7 +79,7 @@ Do not use `310-325-8000` — it appears in 6 schema blocks in the repo and is i
 - **Focus keyphrase:** `kids camp Torrance`
 - **SEO title:** `Kids Camps, Swim Lessons & Child Care | Torrance, CA`
 - **Meta description:** `Junior sports camps, ballet & performing arts, private swim lessons, and child care from 6 weeks to 7 years in Torrance & the South Bay.`
-  - ⚠️ **Karate was removed 2026-08-07 — the programme is discontinued.** The live Yoast field must be updated to match; until it is, the page advertises a programme the club no longer offers.
+  - **Karate removed 2026-08-07** — the programme is discontinued. ✅ **Applied live** via Yoast → Tools → Bulk editor and verified in the rendered `<meta name="description">`. Do not reintroduce it.
 
 ### `/events/` — Events
 - **Focus keyphrase:** `event venue Torrance`
