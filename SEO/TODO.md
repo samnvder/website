@@ -28,6 +28,54 @@ After any change: **GoDaddy Quick Links → Flush Cache**, then verify with `cur
 
 ---
 
+## 📋 Delivery status — everything, at a glance
+
+Single board for the whole project: what is live, what is written but unmerged, and what is still open. Detail for each item is in the numbered sections below.
+
+### A · Done and live on the site
+
+| Item | When | Section |
+|---|---|---|
+| Yoast metadata on 19 pages | 08-05 | ✅ table below |
+| `HealthClub` schema, NAP/geo/hours, snippet 9935 | 08-05 | ✅ |
+| Noindex + sitemap exclusion, snippet 9934 | 08-05 | ✅ |
+| 483 images → WebP/AVIF via `<picture>`, snippet 9936 | 08-05 | ✅ |
+| GSC report opened; both alert reasons closed as benign | 08-07 | §2 |
+| **All 7 WordPress menus repointed — 45 links** | 08-07 | §9 |
+| **Karate menu item deleted** (programme discontinued) | 08-07 | §9 |
+| **`/youth-programs/` Yoast description — karate removed** | 08-07 | §9 |
+
+### B · Written and pushed, awaiting merge
+
+Nothing here changes the live site. These fix the Thrive **paste-source**, so the bugs don't return on the next paste.
+
+| PR | Branch | Contents |
+|---|---|---|
+| #1 | `seo/gsc-alert-findings` | GSC findings, live status, this board |
+| #2 | `fix/dead-nav-links-in-source` | 52 dead nav links repointed |
+| #3 | `fix/stale-thrive-anchors` → #2 | 24 stale `tve-jump` anchors repointed |
+| #4 | `seo/redirect-snippet` | 301 snippet + `SEO/snippets/` mirror |
+| #5 | `content/remove-karate` → #3 | Karate removed from copy, nav, schema |
+
+**Merge order: #2 → #3 → #5.** #3 and #5 are stacked because they edit the same long Thrive nav lines and conflict if merged independently. #1 and #4 are independent.
+
+### C · Open
+
+| # | Item | Owner | Size |
+|---|---|---|---|
+| §9 | 🔴 **Thrive header/footer nav still broken** — 16 header + 3 footer dead links, every page | Sam | needs a decision |
+| §9 | Apply the 301 snippet (PR #4) — 3 paths still 404 | Sam | 10 min |
+| §9 | Broken Group Exercise Schedule PDF on `/summer-membership/` | Sam | needs the file |
+| §1 | Google Business Profile — description, categories, reviews | Sam | ~30 min · highest ROI |
+| §3 | Heading structure — zero `<h1>` on youth, three on home | Both | needs sign-off |
+| §4 | No blog / informational content | Sam | large · biggest gap |
+| §5 | Basketball & volleyball missing from copy and schema | Claude | small |
+| §8 | Pirated All-in-One WP Migration extension — delete | Sam | irreversible |
+| §6 | Page weight 318–767 KB of Thrive HTML | — | deferred |
+| §7 | Body-level duplicate meta | — | cosmetic |
+
+---
+
 ## ✅ Done and verified live
 
 | # | Item | Verification |
@@ -43,6 +91,16 @@ After any change: **GoDaddy Quick Links → Flush Cache**, then verify with `cur
 | 9 | 483 images → WebP + AVIF, delivered via `<picture>` | **58% smaller** (8,851 KB → 3,629 KB across 25 homepage images) |
 | 10 | GBP website URL → canonical HTTPS | Submitted, pending Google review |
 | 11 | Site health after 3 PHP snippets | All pages HTTP 200, zero PHP errors |
+
+**Added 2026-08-07:**
+
+| # | Item | Verification |
+|---|---|---|
+| 12 | GSC Page Indexing report opened; all 5 reasons classified | Both alert reasons benign — see §2 |
+| 13 | **All 7 WP menus repointed — 45 links** across Main Menu, Services, Fitness, Pools, Racquet Sports, Events, Junior Programs | Each save confirmed by its *"X has been updated"* notice; new targets confirmed in live HTML |
+| 14 | **Karate menu item deleted** — programme discontinued | Zero `karate` in live homepage HTML |
+| 15 | **`/youth-programs/` meta description — karate removed** | Live: `Junior sports camps, ballet & performing arts, private swim lessons…` |
+| 16 | Regression after all of the above | 11/11 pages HTTP 200, NAP and `<picture>` counts unchanged |
 
 ---
 
@@ -117,10 +175,12 @@ Thrive still emits duplicate `<title>`, canonical and `og:` tags inside `<body>`
 ### 8. Plugin hygiene — **Sam** · small
 ShortPixel and Converter for Media are both still installed. Converter for Media is deactivated; ShortPixel is active but inert (all WebP/CDN options off). CompressX warns about conflicts. Consider removing both.
 
-### 9. 🔴 Sitewide broken navigation — **Sam** (WP Admin) · highest-value fix found so far
-**Found 2026-08-07 while investigating the GSC alert. This, not the alert, is the real problem.**
+### 9. Sitewide broken navigation — **WP menus fixed ✅ · Thrive header/footer still open 🔴**
+**Found 2026-08-07 while investigating the GSC alert. This, not the alert, was the real problem.**
 
-Three URLs are linked from the main nav on **every page of the site** and all return **404**. Every visitor who clicks them hits a dead end, including "Youth Programs" — on a site targeting *kids camp Torrance*.
+Three URLs were linked from the nav on **every page of the site** and all return **404** — including "Youth Programs", on a site targeting *kids camp Torrance*.
+
+The table below is the original diagnosis. **The WordPress menu half is now done and live** (status box follows). What remains is the duplicate nav inside the Thrive header/footer templates.
 
 | Menu item ID | Label | Current (404) href | Should be |
 |---|---|---|---|
@@ -181,8 +241,9 @@ The 6 × `?post_type=tcb_symbol&p=NN` 404s are Thrive template internals leaking
 
 ## Recommended next step
 
-**Fix the broken nav (§9) first** — it's ~10 minutes in Appearance → Menus and it's a live defect hitting every visitor on every page, not a ranking nicety.
+1. **Merge the open PRs** — #2 → #3 → #5, plus #1 and #4. Until they land, the next Thrive paste reintroduces every link bug that was just fixed live.
+2. **Decide on the Thrive header/footer** (§9). It's the last place dead nav links still ship to visitors, on every page. It needs a decision because editing those templates restyles the whole site — the target URLs are already worked out in PRs #2/#3.
+3. **Apply the 301 snippet** (PR #4). `/junior-programs/`, `/food-services/` and `/banquets/` still 404, so inbound links from Google, the GBP, old email and print are still being thrown away.
+4. **Google Business Profile** (§1) — ~30 minutes and probably worth more than everything done to the website, because that is what governs the local pack.
 
-Then: **stop optimising, start measuring.** The technical foundation is done. Give Google 2–3 weeks to recrawl and let real query data drive the content plan.
-
-The GBP items (§1) are ~30 minutes and probably worth more than everything done to the website, because that is what governs the local pack.
+Then: **stop optimising, start measuring.** Give Google 2–3 weeks to recrawl and let real query data drive the content plan (§4).
