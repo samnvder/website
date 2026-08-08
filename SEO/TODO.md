@@ -125,19 +125,26 @@ Three URLs are linked from the main nav on **every page of the site** and all re
 | Menu item ID | Label | Current (404) href | Should be |
 |---|---|---|---|
 | — | **Youth Programs** | `/junior-programs/` | `/youth-programs/` ✅ 200 |
-| 5041 | Junior Sports Camp | `/junior-programs/#tve-jump-17da699dcde` | `/youth-programs/` |
-| 5042 | Ballet | `/junior-programs/#tve-jump-17db9a7a4b0` | `/youth-programs/` |
-| 5043 | Karate | `/junior-programs/#tve-jump-17db9a7e602` | `/youth-programs/` |
+| 5041 | Junior Sports Camp | `/junior-programs/#tve-jump-17da699dcde` | `/youth-programs/#sports-camp` |
+| 5042 | Ballet | `/junior-programs/#tve-jump-17db9a7a4b0` | `/youth-programs/#ballet` |
+| 5043 | Karate | `/junior-programs/#tve-jump-17db9a7e602` | `/youth-programs/` — no karate section exists |
 | — | **The Lounge & Dining** | `/food-services/` | `/food-beverage/` ✅ 200 |
-| 5050 | Banquets | `/banquets/#tve-jump-17da07ecd00` | `/events/#banquets` ✅ 200 |
-| 5051 | Garden Gazebo | `/banquets/#tve-jump-17da08192f1` | `/events/` |
-| 5052 | South End Lounge | `/banquets/#tve-jump-17da0822f41` | `/events/` |
+| 5050 | Banquets | `/banquets/#tve-jump-17da07ecd00` | `/events/#banquet-hall` |
+| 5051 | Garden Gazebo | `/banquets/#tve-jump-17da08192f1` | `/events/#garden-gazebo` |
+| 5052 | South End Lounge | `/banquets/#tve-jump-17da0822f41` | `/events/#the-lounge` |
 
 These are **custom-link** menu items (`menu-item-type-custom`), so the URLs are hardcoded in **Appearance → Menus** — they did not auto-update when the pages were renamed. Fix them there, not in `Website/Pages/*.html`.
 
-⚠️ The old `#tve-jump-…` anchors **do not exist** on the replacement pages (verified — zero occurrences). Links will land at the top of the page, not the specific section. Either accept that, or re-add anchors in Thrive.
+The replacement pages carry proper **semantic** anchor ids (`#sports-camp`, `#ballet`, `#banquet-hall`, `#garden-gazebo`, `#the-lounge`), so each link can land on the right section — only the old auto-generated `#tve-jump-…` ids are gone. Every target above was checked against the live page's actual ids.
 
-Also add 301s for the three dead paths so external/historical links and any remaining Google equity survive: `/junior-programs/` → `/youth-programs/`, `/food-services/` → `/food-beverage/`, `/banquets/` → `/events/`. **GoDaddy ignores `.htaccess`**, so use a redirect plugin or a WPCode snippet on `template_redirect`.
+**Karate is a content gap, not a link bug:** it appears only in the `/youth-programs/` meta description, with no section on the page. The page promises karate and doesn't deliver it.
+
+Also add 301s for the three dead paths so external/historical links and any remaining Google equity survive. **GoDaddy ignores `.htaccess`**, so this needs a WPCode snippet on `template_redirect` — source is ready at [snippets/renamed-page-redirects.php](snippets/renamed-page-redirects.php), not yet applied.
+
+**Same bug, wider than the nav:** 24 further anchor links across `/fitness/`, `/pools/`, `/racquet-sports/` and `/services/` also pointed at `#tve-jump-…` ids that no longer exist. Those pages return 200, so the links weren't 404 — they silently landed at page top instead of the section the label promised. Repo side is fixed; the live menu has the same stale ids. Two things surfaced there worth your judgement:
+
+- **Pool party links point at the wrong page.** "Kid's Pool Party" and "Adult Poolside Party" pointed into `/pools/`, but that content is on `/events/#pool-parties` (19 mentions there, 1 on `/pools/`).
+- **"Dance Studio" points at nothing.** No dance section exists on `/services/` or anywhere on the site — its only occurrence sitewide is the nav link itself. Either the section was lost in a rebuild, or the link should go.
 
 **Separately — one broken PDF link:** `/summer-membership/` links to
 `…/uploads/2025/06/Group-Exercise-Schedule-6-25.pdf` → **404**. The older
