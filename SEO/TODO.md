@@ -30,7 +30,7 @@ After any change: **GoDaddy Quick Links → Flush Cache**, then verify with `cur
 
 ## 📋 Delivery status — everything, at a glance
 
-Single board for the whole project: what is live, what is written but unmerged, and what is still open. Detail for each item is in the numbered sections below.
+Single board for the whole project: what is live on the site, what is in the repo, and what is still open. Detail for each item is in the numbered sections below.
 
 ### A · Done and live on the site
 
