@@ -249,7 +249,8 @@
 }
 
 .card-details > ul > li {
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.9) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.9) !important;
   padding: 12px 0;
   font-size: 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
@@ -261,12 +262,13 @@
 
 .card-details > ul > li strong {
   font-weight: 600;
-  color: #ffffff;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
-.card-details > ul > li.base-amenity strong { color: #ffffff; }
-.card-details > ul > li.silver-amenity strong { color: #c0c0c0; font-weight: 700; }
-.card-details > ul > li.gold-amenity strong { color: #ffd700; font-weight: 700; }
+.card-details > ul > li.base-amenity strong { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+.card-details > ul > li.silver-amenity strong { color: #c0c0c0 !important; -webkit-text-fill-color: #c0c0c0 !important; font-weight: 700; }
+.card-details > ul > li.gold-amenity strong { color: #ffd700 !important; -webkit-text-fill-color: #ffd700 !important; font-weight: 700; }
 
 /* Expandable amenity */
 .card-details > ul > li.expandable-amenity {
@@ -315,7 +317,8 @@
 .sub-amenities li {
   padding: 6px 0 6px 20px !important;
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.95) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.95) !important;
   border: none !important;
   position: relative;
   margin: 0 !important;
@@ -326,17 +329,20 @@
   content: "•";
   position: absolute;
   left: 5px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.7) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.7) !important;
   font-size: 14px;
 }
 
 .sub-amenities li.pink-amenity {
   color: #ff99cc !important;
+  -webkit-text-fill-color: #ff99cc !important;
   font-weight: 600;
 }
 
 .sub-amenities li.pink-amenity::before {
-  color: #ff99cc;
+  color: #ff99cc !important;
+  -webkit-text-fill-color: #ff99cc !important;
 }
 
 /* Pricing Button */
