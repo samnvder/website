@@ -1,9 +1,9 @@
 <?php
 /**
  * Snippet: Renamed-page 301 redirects
- * Where:   WPCode → Add Snippet → PHP Snippet, "Run Everywhere"
- * Status:  NOT YET APPLIED — paste this into WPCode, then record the
- *          assigned snippet ID in SEO/TODO.md next to 9934/9935/9936.
+ * Where:   WPCode snippet ID 9951, "Run Everywhere", ACTIVE
+ * Status:  ✅ APPLIED & VERIFIED LIVE 2026-08-13 — all three old URLs now
+ *          return 301 to the correct target. They had been returning 404.
  *
  * Why this exists
  * ---------------
