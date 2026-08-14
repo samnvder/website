@@ -8,6 +8,18 @@ Owner key: **Claude** = doable without you · **Sam** = needs your access or a j
 
 ---
 
+## 🥇 START HERE — Google Business Profile (§1)
+
+**This is the single highest-value item on the board, and it is worth more than everything else on this list combined.**
+
+The GBP — not the website — governs the local pack and the "2800 Skypark Dr" result. It already carries **192 reviews, 4.4★, 5,748 monthly views and 9,684 interactions**. That is a live, high-traffic asset with an **empty description**, thin service-area coverage, stale special hours, six unread reviews, and a category edit stuck in a failed state.
+
+Roughly **30 minutes.** Ready-to-paste description and the full item list are in **§1 below**.
+
+Everything the site needed most has now been done: metadata is applied and verified across all 18 pages, schema is correct, dead nav is fixed in the WP menus, 301s are live, images are optimised. Further on-site tuning without Search Console query data is guessing. **The remaining leverage is off-site, and it is here.**
+
+---
+
 ## ⚠️ Where configuration actually lives
 
 Almost none of the live SEO setup is in this repo — it's in the WordPress database. **Editing the page HTML under `Website/Pages/` does nothing**, because Thrive renders it inside `<body>` where Google ignores it.
@@ -68,7 +80,7 @@ Verified on `master`: **0** dead page-links, **0** `tve-jump` references, **0** 
 
 | # | Item | Owner | Size |
 |---|---|---|---|
-| §1 | Google Business Profile — description, categories, reviews | Sam | ~30 min · **highest ROI open item** |
+| §1 | 🥇 **Google Business Profile — DO THIS FIRST.** Description, categories, service area, reviews | Sam | ~30 min · **highest ROI on the board** |
 | §9 | 🔴 **Thrive header/footer nav still broken** — 16 header + 3 footer dead links, every page | Sam | needs a decision |
 | §10 | 🔴 **Stale JSON-LD phone — still live on 5 pages.** Search-&-Replace plugin failed 3×; use **WP-CLI over SSH** | Sam | ~10 min · do with §5 |
 | §5 | Basketball/volleyball schema on `/racquet-sports/` — same edit, same pass as §10 | Sam | small · repo done ✅ |
@@ -137,8 +149,8 @@ Verified on `master`: **0** dead page-links, **0** `tve-jump` references, **0** 
 
 ## 🔴 Open
 
-### 1. Google Business Profile — **Sam** · highest ROI
-This, not the website, governs the "2800 Skypark Dr" result.
+### 1. 🥇 Google Business Profile — **Sam** · TOP PRIORITY · ~30 min
+**Start here.** This, not the website, governs the local pack and the "2800 Skypark Dr" result. It is the highest-leverage item remaining by a wide margin — the on-site work is essentially complete, and this is where the remaining upside is.
 
 **Baseline:** 4.4★, **192 Google reviews**, 9,684 interactions, 5,748 monthly views, one verified profile, no duplicates.
 
