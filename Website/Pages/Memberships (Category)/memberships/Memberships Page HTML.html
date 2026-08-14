@@ -911,17 +911,18 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   .card-details > ul > li { 
-    color: rgba(255, 255, 255, 0.9); 
+    color: rgba(255, 255, 255, 0.9) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.9) !important;
     padding: 12px 0; 
     font-size: 14px; 
     border-bottom: 1px solid rgba(255, 255, 255, 0.15); 
   }
   
   .card-details > ul > li:last-child { border-bottom: none; }
-  .card-details > ul > li strong { font-weight: 600; color: #ffffff; }
-  .card-details > ul > li.base-amenity strong { color: #ffffff; }
-  .card-details > ul > li.silver-amenity strong { color: #c0c0c0; font-weight: 700; }
-  .card-details > ul > li.gold-amenity strong { color: #ffd700; font-weight: 700; }
+  .card-details > ul > li strong { font-weight: 600; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+  .card-details > ul > li.base-amenity strong { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+  .card-details > ul > li.silver-amenity strong { color: #c0c0c0 !important; -webkit-text-fill-color: #c0c0c0 !important; font-weight: 700; }
+  .card-details > ul > li.gold-amenity strong { color: #ffd700 !important; -webkit-text-fill-color: #ffd700 !important; font-weight: 700; }
   
   .card-details > ul > li.expandable-amenity { cursor: pointer; }
   .card-details > ul > li.expandable-amenity strong { display: flex; align-items: center; justify-content: space-between; }
@@ -931,10 +932,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
   .sub-amenities { max-height: 0; overflow: hidden; transition: all 0.4s ease; margin: 0 !important; padding: 0 !important; list-style: none !important; background: transparent !important; border: none !important; }
   .sub-amenities.expanded { max-height: 500px; margin-top: 10px !important; padding-top: 5px !important; }
-  .sub-amenities li { padding: 6px 0 6px 20px !important; font-size: 13px; color: rgba(255, 255, 255, 0.85); border: none !important; position: relative; margin: 0 !important; background: transparent !important; }
-  .sub-amenities li::before { content: "•"; position: absolute; left: 5px; color: rgba(255, 255, 255, 0.5); font-size: 14px; }
-  .sub-amenities li.pink-amenity { color: #ff99cc !important; font-weight: 600; }
-  .sub-amenities li.pink-amenity::before { color: #ff99cc; }
+  .sub-amenities li { padding: 6px 0 6px 20px !important; font-size: 13px; color: rgba(255, 255, 255, 0.95) !important; -webkit-text-fill-color: rgba(255, 255, 255, 0.95) !important; border: none !important; position: relative; margin: 0 !important; background: transparent !important; }
+  .sub-amenities li::before { content: "•"; position: absolute; left: 5px; color: rgba(255, 255, 255, 0.7) !important; -webkit-text-fill-color: rgba(255, 255, 255, 0.7) !important; font-size: 14px; }
+  .sub-amenities li.pink-amenity { color: #ff99cc !important; -webkit-text-fill-color: #ff99cc !important; font-weight: 600; }
+  .sub-amenities li.pink-amenity::before { color: #ff99cc !important; -webkit-text-fill-color: #ff99cc !important; }
 
   .pricing-backdrop {
     display: block;
@@ -1118,20 +1119,18 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-// Toggle card details when "View Details" button is clicked
 function toggleCard(button) {
   var card = button.closest('.membership-card');
   var wasActive = card.classList.contains('active');
-  
-  // Close all cards
   var allCards = document.querySelectorAll('.membership-card');
   for (var i = 0; i < allCards.length; i++) {
     allCards[i].classList.remove('active');
+    var btn = allCards[i].querySelector('.details-button');
+    if (btn) btn.textContent = 'View Details';
   }
-  
-  // Toggle current card
   if (!wasActive) {
     card.classList.add('active');
+    button.textContent = 'Close';
   }
 }
 
@@ -1685,7 +1684,8 @@ document.addEventListener('DOMContentLoaded', function() {
   .sub-amenities li {
     padding: 6px 0;
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.95) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.95) !important;
     border-bottom: none;
     list-style-type: none;
     margin-left: 0;
@@ -1698,12 +1698,14 @@ document.addEventListener('DOMContentLoaded', function() {
     content: "•";
     position: absolute;
     left: 0;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.7) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.7) !important;
   }
 
   /* Pink color for Women's Only Gym */
   .sub-amenities li.pink-amenity {
-    color: #ff99cc;
+    color: #ff99cc !important;
+    -webkit-text-fill-color: #ff99cc !important;
   }
 </style></div><div class="thrv_wrapper thrv_custom_html_shortcode"><!-- FAQ Section Styles - Royal Blue/Beige Theme -->
 <style>

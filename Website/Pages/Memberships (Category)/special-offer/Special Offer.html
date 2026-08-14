@@ -1282,10 +1282,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
   .sub-amenities { max-height: 0; overflow: hidden; transition: all 0.4s ease; margin: 0 !important; padding: 0 !important; list-style: none !important; background: transparent !important; border: none !important; }
   .sub-amenities.expanded { max-height: 500px; margin-top: 10px !important; padding-top: 5px !important; }
-  .sub-amenities li { padding: 6px 0 6px 20px !important; font-size: 13px; color: rgba(255, 255, 255, 0.85); border: none !important; position: relative; margin: 0 !important; background: transparent !important; }
-  .sub-amenities li::before { content: "•"; position: absolute; left: 5px; color: rgba(255, 255, 255, 0.5); font-size: 14px; }
-  .sub-amenities li.pink-amenity { color: #ff99cc !important; font-weight: 600; }
-  .sub-amenities li.pink-amenity::before { color: #ff99cc; }
+  .sub-amenities li { padding: 6px 0 6px 20px !important; font-size: 13px; color: rgba(255, 255, 255, 0.95) !important; -webkit-text-fill-color: rgba(255, 255, 255, 0.95) !important; border: none !important; position: relative; margin: 0 !important; background: transparent !important; }
+  .sub-amenities li::before { content: "•"; position: absolute; left: 5px; color: rgba(255, 255, 255, 0.7) !important; -webkit-text-fill-color: rgba(255, 255, 255, 0.7) !important; font-size: 14px; }
+  .sub-amenities li.pink-amenity { color: #ff99cc !important; -webkit-text-fill-color: #ff99cc !important; font-weight: 600; }
+  .sub-amenities li.pink-amenity::before { color: #ff99cc !important; -webkit-text-fill-color: #ff99cc !important; }
 
   .pricing-backdrop {
     display: block;
@@ -2350,7 +2350,8 @@ document.addEventListener('DOMContentLoaded', function() {
   .sub-amenities li {
     padding: 6px 0;
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.95) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.95) !important;
     border-bottom: none;
     list-style-type: none;
     margin-left: 0;
@@ -2363,12 +2364,14 @@ document.addEventListener('DOMContentLoaded', function() {
     content: "•";
     position: absolute;
     left: 0;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.7) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.7) !important;
   }
 
   /* Pink color for Women's Only Gym */
   .sub-amenities li.pink-amenity {
-    color: #ff99cc;
+    color: #ff99cc !important;
+    -webkit-text-fill-color: #ff99cc !important;
   }
 </style></div><div class="thrv_wrapper thrv_custom_html_shortcode"><!-- FAQ Section Styles - Royal Blue/Beige Theme -->
 <style>

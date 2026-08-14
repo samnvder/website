@@ -1,8 +1,10 @@
 # SEO Guidelines for South End Club Website
 
-> ## ⚠️ Read this first: meta tags in page HTML do nothing
+> ## ⚠️ Read this first: most meta tags in page HTML do nothing — but JSON-LD does
 >
-> The `<title>`, `<meta name="description">`, and JSON-LD blocks in the page files under `Website/Pages/` are pasted into Thrive Architect as page **content**, so they render inside `<body>`. **Google ignores all of it.** On `/memberships/` there were four `<title>` tags — the only one that counted was Yoast's, in `<head>`.
+> The page files under `Website/Pages/` are pasted into Thrive Architect as page **content**, so everything in them renders inside `<body>`. For head-only tags that means they are inert: `<title>`, `<meta name="description">`, `<meta name="keywords">`, `<meta name="robots">`, `rel="canonical"`, `og:` and `twitter:` are all ignored where they land. On `/memberships/` there were four `<title>` tags — the only one that counted was Yoast's, in `<head>`.
+>
+> **`<script type="application/ld+json">` is the exception.** Google parses JSON-LD from `<body>` as well as `<head>`, so the schema blocks in these files *are* live and *do* count. Verified 2026-08-13: `/racquet-sports/` serves one `ld+json` block in `<head>` (Yoast + snippet 9935) and a second in `<body>` (the pasted page block), and both are eligible. Treat page-level JSON-LD as real, editable SEO — and keep it consistent with the head graph rather than contradicting it.
 >
 > **Titles, descriptions, and canonical URLs must be set in the Yoast SEO panel on each WordPress page.** The applied values are recorded in [YOAST-SHEET.md](YOAST-SHEET.md).
 >
@@ -43,91 +45,60 @@ Emphasize:
 
 ## Required SEO Elements for Each Page
 
-### 1. Primary Meta Tags (Required)
+Split by **where the element actually has to go**. Putting a title or canonical in the page HTML is not a small waste — it produces a second, wrong copy of the tag inside `<body>` and makes the page look optimised when it isn't. That is how months of work sat inert.
+
+### 1. Set in Yoast, never in the page HTML
+
+Set these in **WP Admin → Pages → [page] → Yoast SEO panel**, and record what you entered in [YOAST-SHEET.md](YOAST-SHEET.md).
+
+| Element | Rule |
+|---|---|
+| **SEO title** | ≤60 chars. Pattern: `[Page Topic] \| [Category] \| Torrance & South Bay, CA`. Must carry Torrance and/or South Bay. |
+| **Meta description** | 140–155 chars. Include location, the "more than a gym" positioning, and the family focus. |
+| **Focus keyphrase** | One per page, location-qualified. |
+| **Canonical** | Yoast sets it automatically. Only override for a genuine duplicate. |
+| **Robots / noindex** | Per-page in Yoast → Advanced, or in bulk via WPCode snippet 9934. |
+| **Open Graph & Twitter** | Yoast → Social tab on each page. Never hand-write `og:` / `twitter:` tags in the HTML. |
+
+`<meta name="keywords">` is ignored by Google entirely — don't write it anywhere.
+
+### 2. Set once site-wide, in a WPCode snippet
+
+Do **not** repeat these per page. Address, phone, geo, hours, `areaServed` and `sameAs` come from snippet **9935** — mirrored at [snippets/localbusiness-schema.php](snippets/localbusiness-schema.php). Repeating them per page creates competing LocalBusiness nodes.
+
+Geo constants, when you legitimately need them: `33.8358, -118.3406` · `US-CA` · Torrance.
+
+### 3. Keep in the page HTML
+
+Only what genuinely serves the pasted content or the standalone local preview:
 
 ```html
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
-
-<!-- Primary Meta Tags -->
-<title>[Page Topic] | [Category] | Torrance & South Bay, CA</title>
-<meta name="title" content="[Same as title]">
-<meta name="description" content="[150-160 chars including location, 'more than a gym' positioning, and family focus]">
-<meta name="keywords" content="[comma-separated, include Torrance, South Bay, family-focused terms]">
-<meta name="author" content="South End Racquet & Health Club">
-<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-<meta name="language" content="English">
-<meta name="revisit-after" content="7 days">
 <meta name="theme-color" content="#0b468c">
+<link rel="stylesheet" href="[Page] CSS.css">
 ```
 
-### 2. Geographic Targeting (Required)
+### 4. JSON-LD structured data — **this one is real**
 
-```html
-<meta name="geo.region" content="US-CA">
-<meta name="geo.placename" content="Torrance">
-<meta name="geo.position" content="33.8358;-118.3406">
-<meta name="ICBM" content="33.8358, -118.3406">
-```
+Unlike everything in §1, page-level JSON-LD **does** count: Google parses `application/ld+json` from `<body>`. Write it in the page HTML, keep it accurate, and keep it consistent with the head graph.
 
-### 3. Mobile Optimizations (Required)
-
-```html
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="[Short Page Name]">
-<meta name="format-detection" content="telephone=yes">
-<meta name="msapplication-TileColor" content="#0b468c">
-```
-
-### 4. Open Graph / Facebook (Required)
-
-```html
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://southendclub.com/[page-slug]/">
-<meta property="og:title" content="[Engaging title with positioning]">
-<meta property="og:description" content="[Description emphasizing community and family]">
-<meta property="og:image" content="[Full URL to image - 1200x630 recommended]">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="[Descriptive alt text]">
-<meta property="og:site_name" content="South End Racquet & Health Club">
-<meta property="og:locale" content="en_US">
-```
-
-### 5. Twitter Cards (Required)
-
-```html
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:url" content="https://southendclub.com/[page-slug]/">
-<meta name="twitter:title" content="[Title]">
-<meta name="twitter:description" content="[Description]">
-<meta name="twitter:image" content="[Image URL]">
-<meta name="twitter:image:alt" content="[Alt text]">
-```
-
-### 6. Canonical & Favicon (Required)
-
-```html
-<link rel="canonical" href="https://southendclub.com/[page-slug]/">
-<link rel="icon" type="image/svg+xml" href="https://southendclub.com/wp-content/uploads/2025/11/Original-Logo.svg">
-```
-
-### 7. JSON-LD Structured Data (Required)
-
-Use appropriate schema type:
-- **Home/Memberships**: `HealthClub`
-- **Fitness/Pools/Racquet Sports**: `SportsActivityLocation`
+Schema type by page:
+- **Home / Memberships**: `HealthClub`
+- **Fitness / Pools / Racquet Sports**: `SportsActivityLocation`
 - **Events**: `EventVenue`
 - **Youth Programs**: `SportsActivityLocation` with audience targeting
 
-Always include:
-- Full address with postal code
-- Geo coordinates (33.8358, -118.3406)
-- `areaServed` array with all South Bay cities
-- `amenityFeature` array with specific offerings
-- `hasOfferCatalog` with services
+Include:
+- Full address with postal code, and geo coordinates
+- `areaServed` array with the South Bay cities
+- `amenityFeature` array with the specific offerings **on that page**
+- `hasOfferCatalog` with the services on that page
+- `sport` array where applicable — and keep it complete: basketball, volleyball and badminton were missing from `/racquet-sports/` until 2026-08-13 despite being in the page copy and on the GBP
+
+Two rules that matter more than the rest:
+- **Phone is `+1-310-530-0630`.** `310-325-8000` appeared in six blocks in this repo and is wrong.
+- **Never describe an amenity the club no longer offers.** Karate was discontinued and is not to be reintroduced in copy or schema.
 
 ---
 
@@ -202,34 +173,63 @@ Social (verified — do not guess these, the handles differ from the domain):
 
 ## Checklist for New Pages
 
-- [ ] Title includes location (Torrance & South Bay, CA)
-- [ ] Description mentions "more than a gym" or family focus
-- [ ] Keywords include Torrance + South Bay + family terms
-- [ ] Geographic meta tags present
-- [ ] Open Graph tags complete with image
-- [ ] Twitter cards complete
-- [ ] Canonical URL set
-- [ ] JSON-LD structured data with full address
-- [ ] `areaServed` includes all South Bay cities
-- [ ] Mobile optimization tags present
+**In Yoast** (and recorded in [YOAST-SHEET.md](YOAST-SHEET.md)):
+- [ ] SEO title ≤60 chars, includes Torrance and/or South Bay
+- [ ] Meta description **140–155 chars** — count it, don't estimate
+- [ ] Description carries "more than a gym" or the family focus
+- [ ] Focus keyphrase set, location-qualified
+- [ ] Social tab: OG title/description/image set
+
+**In the page HTML** (JSON-LD only — everything else is inert here):
+- [ ] JSON-LD present, with full address and geo
+- [ ] `areaServed` includes the South Bay cities
+- [ ] **Phone is `+1-310-530-0630`** — grep the block for `325-8000` before shipping
+- [ ] `amenityFeature` matches what the page copy actually claims
+- [ ] No discontinued programmes named anywhere (karate)
+- [ ] No `<title>`, `description`, `canonical`, `og:`, `twitter:` or `keywords` left in the file
+
+**After applying:**
+- [ ] GoDaddy Quick Links → Flush Cache
+- [ ] Verified with `curl`, not the browser
+- [ ] Checked the **rendered** page, not just the repo file
 
 ---
 
 ## Pages Currently Optimized
 
-| Page | Status | Notes |
+**Rewritten 2026-08-13 from a live audit.** The previous version of this table
+marked Fitness, Pools and Events "✅ Complete" — those are three of the five
+pages serving a *stale phone number* in live structured data. The table was
+recording that a file had been written, not that the site was correct. Status
+below means **verified against the rendered page**.
+
+The 🔴 rows below are **schema-only**. All five of those pages display the
+correct phone number to visitors and dial it correctly from `tel:` links —
+verified 2026-08-13, zero occurrences of the stale number in visible text.
+It exists purely inside `<script type="application/ld+json">`.
+
+Yoast metadata: **all 18 sitemap pages verified live on 2026-08-13**, byte-identical to
+YOAST-SHEET.md. Titles, descriptions, keyphrases, canonicals and robots are done.
+What varies below is the page-level JSON-LD, which is pasted content and drifts
+from the repo.
+
+| Page | Live JSON-LD | Notes |
 |------|--------|-------|
-| Fitness | ✅ Complete | Full SEO + JSON-LD |
-| Pools | ✅ Complete | Full SEO + JSON-LD |
-| Events | ✅ Complete | Full SEO + JSON-LD |
-| Youth Programs | ✅ Complete | Added Dec 2024 |
-| Racquet Sports | ✅ Complete | Added Dec 2024 |
-| Memberships | ✅ Complete | Added Dec 2024 |
-| Wellness | ⚠️ Check | May need update |
-| Food & Beverage | ⚠️ Check | May need update |
-| Services | ⚠️ Check | May need update |
-| Contact | ⚠️ Check | May need update |
-| Home/Index | ⚠️ Check | Verify CMS handles this |
+| Contact | ✅ | Correct phone, 5 occurrences |
+| Memberships | ✅ | Correct phone |
+| Youth Programs | ✅ | Correct phone · description is 136 chars, below floor — fix pending |
+| Summer Membership | ✅ | Correct phone |
+| Racquet Sports | ⚠️ | Phone correct, but `sport`/`amenityFeature` missing basketball, volleyball, badminton — fixed in repo, needs paste |
+| **Fitness** | 🔴 | `"telephone": "+1-310-325-8000"` — wrong |
+| **Pools** | 🔴 | `"telephone": "+1-310-325-8000"` — wrong |
+| **Wellness** | 🔴 | `"telephone": "+1-310-325-8000"` — wrong |
+| **Corporate Membership** | 🔴 | `"telephone": "+1-310-325-8000"` — wrong |
+| **Events** | 🔴 | **two** wrong numbers — `telephone` + `ContactPoint.telephone` |
+| Home, Services, Food & Beverage, Subscribe, Schedule an Event Viewing | — | No body JSON-LD; head schema only |
+| Lounge Rentals, Schedule a Tour, Get Answers | — | Clean, no body metadata at all |
+
+The repo copies of all five 🔴 pages already carry the correct number. This is a
+paste-source-to-live gap, not a content problem. See [TODO.md](TODO.md) §10.
 
 ---
 

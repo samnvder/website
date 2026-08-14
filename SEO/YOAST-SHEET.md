@@ -28,8 +28,22 @@ Titles are ≤60 chars; descriptions 140–155 chars. Every entry carries **Torr
 - Logo: existing square logo
 
 **Yoast SEO → Settings → Site basics**
-- Website name: `South End Racquet & Health Club` (currently "South End Racquet and Health Club" — use the ampersand everywhere for entity consistency)
+- Website name: `South End Racquet & Health Club` — use the ampersand everywhere for entity consistency
 - Title separator: `|`
+
+> **✅ Applied and verified live 2026-08-13.** The rendered JSON-LD now serves
+> `"name": "South End Racquet & Health Club"` on **both** the `#organization` and
+> `#website` nodes, matching the logo, the Google Business Profile and every meta
+> description. Title separator set to `|` at the same time.
+>
+> It lives in **two** separate fields — Yoast → Settings → **Site representation**
+> (Organization name) and → **Site basics** (Website name). Changing only one leaves
+> the other spelling live in the schema. It cannot be fixed from WPCode snippet 9935,
+> which does not touch `name`.
+>
+> **The Site basics save silently failed the first time** — no success notice, Save
+> button still showing. A second click produced *"Great! Your settings were saved
+> successfully."* Confirm by that notice, never by reading the fields back.
 
 **Yoast SEO → Settings → Site connections / Social profiles**
 - Facebook: `https://www.facebook.com/southendracquetandhealthclub/`
@@ -78,8 +92,9 @@ Do not use `310-325-8000` — it appears in 6 schema blocks in the repo and is i
 ### `/youth-programs/` — Youth Programs
 - **Focus keyphrase:** `kids camp Torrance`
 - **SEO title:** `Kids Camps, Swim Lessons & Child Care | Torrance, CA`
-- **Meta description:** `Junior sports camps, ballet & performing arts, private swim lessons, and child care from 6 weeks to 7 years in Torrance & the South Bay.`
-  - **Karate removed 2026-08-07** — the programme is discontinued. ✅ **Applied live** via Yoast → Tools → Bulk editor and verified in the rendered `<meta name="description">`. Do not reintroduce it.
+- **Meta description:** `Junior sports camps, ballet & performing arts, private swim lessons and child care from 6 weeks to 7 years. Kids programs in Torrance & the South Bay.` — **150 chars · ✅ APPLIED & VERIFIED LIVE 2026-08-13**
+  - **Karate removed 2026-08-07** — the programme is discontinued. ✅ Applied live via Yoast → Tools → Bulk editor and verified in the rendered `<meta name="description">`. Do not reintroduce it.
+  - **Lengthened 2026-08-13.** Removing karate left the live description at **136 chars**, below the 140 floor. The replacement above restores length and works "Kids programs" back in, matching the focus keyphrase *kids camp Torrance*. Live value is still the 136-char one until someone applies this in Yoast.
 
 ### `/events/` — Events
 - **Focus keyphrase:** `event venue Torrance`
@@ -134,7 +149,8 @@ Do not use `310-325-8000` — it appears in 6 schema blocks in the repo and is i
 ### `/subscribe/` — Subscribe
 - **Focus keyphrase:** `South End Club newsletter`
 - **SEO title:** `Subscribe to Club News | Torrance & South Bay, CA`
-- **Meta description:** `Get South End Club news, events, programs and member offers by email. Torrance and South Bay's premier family health and racquet club.`
+- **Meta description:** `Get South End Club news, events, youth programs and member offers by email. Torrance and the South Bay's premier family health and racquet club.` — **144 chars · ✅ APPLIED & VERIFIED LIVE 2026-08-13**
+  - **Lengthened 2026-08-13** from 134 chars, which was below the 140 floor. This was a defect in this sheet, not drift — the short value was what got applied.
 
 ---
 
@@ -156,7 +172,10 @@ Do not use `310-325-8000` — it appears in 6 schema blocks in the repo and is i
 
 ## D. Full amenity inventory (source for all copy above)
 
-**Racquet:** 9 lighted tennis courts · 9 pickleball courts (incl. 3 hybrid paddle) · 2 enclosed outdoor padel courts with turf · 2 air-conditioned squash courts (**only courts within a 20-mile radius**) · 1 indoor A/C racquetball court · open play · private lessons · leagues
+**Racquet:** 9 lighted tennis courts · 9 pickleball courts (incl. 3 hybrid paddle) · 2 enclosed outdoor padel courts with turf · 2 air-conditioned squash courts (**only courts within a 20-mile radius**) · 1 indoor A/C racquetball court · POP tennis · open play · private lessons · leagues
+
+**Other court sports:** hybrid indoor court in the Sports Center, configurable for **basketball · volleyball · badminton**
+*(Added 2026-08-13. These are on the Google Business Profile and in the `/racquet-sports/` page copy, but had never made it into the metadata or schema — see TODO.md §5.)*
 
 **Fitness:** weight room (Matrix) · cardio room (treadmills, ellipticals, stair masters, rowers) · free weights (dumbbells, kettlebells, TRX, inversion table) · outdoor Keiser air-pressure gym · women's-only gym · group fitness & cycle classes · ACE-certified personal training
 
