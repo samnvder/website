@@ -81,9 +81,7 @@ Verified on `master`: **0** dead page-links, **0** `tve-jump` references, **0** 
 | # | Item | Owner | Size |
 |---|---|---|---|
 | §1 | 🥇 **Google Business Profile — DO THIS FIRST.** Description, categories, service area, reviews | Sam | ~30 min · **highest ROI on the board** |
-| §9 | 🔴 **Thrive header/footer nav still broken** — 16 header + 3 footer dead links, every page | Sam | needs a decision |
-| §10 | 🔴 **Stale JSON-LD phone — still live on 5 pages.** Search-&-Replace plugin failed 3×; use **WP-CLI over SSH** | Sam | ~10 min · do with §5 |
-| §5 | Basketball/volleyball schema on `/racquet-sports/` — same edit, same pass as §10 | Sam | small · repo done ✅ |
+| §10 · §9 · §5 | ⚠️ **One WP-CLI pass clears all three** — stale JSON-LD phone (6), stale nav anchors (10), racquet-sports schema (3). ~19 exact-string replacements. Search-&-Replace plugin failed 3×, use **SSH** | Sam | ~15 min |
 | §9 | Broken Group Exercise Schedule PDF on `/summer-membership/` | Sam | needs the file |
 | §3 | Heading structure — zero `<h1>` on youth, three on home | Both | needs sign-off |
 | §4 | No blog / informational content | Sam | large · biggest gap |
@@ -249,12 +247,49 @@ Thrive emits duplicate `<title>`, description, canonical and `og:` tags inside `
 ### 8. Plugin hygiene — **Sam** · small
 ShortPixel and Converter for Media are both still installed. Converter for Media is deactivated; ShortPixel is active but inert (all WebP/CDN options off). CompressX warns about conflicts. Consider removing both.
 
-### 9. Sitewide broken navigation — **WP menus fixed ✅ · Thrive header/footer still open 🔴**
+### 9. Sitewide broken navigation — **WP menus fixed ✅ · 404s fixed ✅ · 10 stale anchors left ⚠️**
+
+> ### 🔻 RE-MEASURED 2026-08-13 — this is much smaller than it was
+>
+> **All 404s in the nav are gone.** Snippet **9951** (§10's sibling, applied the same day) now 301s `/junior-programs/`, `/food-services/` and `/banquets/` to their correct targets. A full scan of all 84 internal links on the homepage found **zero 404s**.
+>
+> **It no longer needs Thrive Theme Builder.** The header and footer are Thrive *symbols*, stored in the database as posts — so what remains is **10 exact-string replacements**, the same shape as §10. That removes the "editing those templates restyles the whole site" risk that had this item blocked on a decision.
+>
+> **Do it in the same WP-CLI pass as §5 and §10.** All three together are ~15 string replacements.
+>
+> What's left is **not broken URLs** — every link lands on the right page. They land at the *top* of it instead of the section the label promises. Silent, and invisible to a status-code check.
+
+#### The 10 replacements — verified against live section IDs 2026-08-13
+
+Identical on every page: 12 `tve-jump` hrefs, 11 in the header and 1 in the footer (Child Care appears twice).
+
+| Label | Current (lands at page top) | Should be |
+|---|---|---|
+| Lap Swimming | `/pools/#tve-jump-17db9cbcce7` | `/pools/#main-pool` ⚠️ |
+| Shallow Pool | `/pools/#tve-jump-17db9cc4531` | `/pools/#shallow-pool` |
+| Outdoor Spa | `/pools/#tve-jump-17db9cc80cc` | `/pools/#spa` |
+| Aqua Fitness | `/pools/#tve-jump-17db9cccd7b` | `/pools/#aqua-fitness` |
+| Child Care | `/services/#tve-jump-17db9d57cc0` | `/services/#child-care` |
+| Salon | `/services/#tve-jump-17db9d5a28d` | `/services/#salon` |
+| Skincare | `/services/#tve-jump-17db9d5d61a` | `/services/#skincare` |
+| Pilates | `/services/#tve-jump-17db9d617a1` | `/services/#pilates` |
+| Chiropractor | `/services/#tve-jump-17db9d673e7` | `/services/#chiropractic` |
+| Sports Shop | `/services/#tve-jump-17db9d7d47a` | `/services/#sports-shop` |
+| **Dance Studio** | `/services/#tve-jump-17db9d787b7` | **no target exists — decision needed** |
+
+Each target ID was confirmed present in the live HTML of its page. Replacing just the anchor fragment (e.g. `tve-jump-17db9cc4531` → `shallow-pool`) is enough — the path is already correct.
+
+⚠️ **`Lap Swimming` → `#main-pool` is an inference**, not a name match: the lap pool is the 25-yard main pool. The other nine are exact. `/pools/` also has an unused `#swim-instructors` section.
+
+🔴 **`Dance Studio` needs your call.** No dance section exists on `/services/` or anywhere on the site — its only occurrence sitewide is the nav link itself. Either the section was lost in a rebuild, or the link should be removed. Don't point it at `/services/` top and call it fixed; that just makes a broken promise quieter.
+
+---
+
+**Original 2026-08-07 diagnosis follows, kept for history.** The 404s it describes are now resolved by snippet 9951.
+
 **Found 2026-08-07 while investigating the GSC alert. This, not the alert, was the real problem.**
 
-Three URLs were linked from the nav on **every page of the site** and all return **404** — including "Youth Programs", on a site targeting *kids camp Torrance*.
-
-The table below is the original diagnosis. **The WordPress menu half is now done and live** (status box follows). What remains is the duplicate nav inside the Thrive header/footer templates.
+Three URLs were linked from the nav on **every page of the site** and all returned **404** — including "Youth Programs", on a site targeting *kids camp Torrance*.
 
 | Menu item ID | Label | Current (404) href | Should be |
 |---|---|---|---|
@@ -282,22 +317,22 @@ These are **custom-link** menu items (`menu-item-type-custom`), so the URLs are 
 >
 > Live menu state differed from this repo: the anchors had already been partly modernised (`#sports-camp`, `#pool-parties`) while the **page paths were never updated** — so the dropdowns pointed at semantic anchors on dead pages.
 >
-> ### 🔴 Still broken live — the Thrive header/footer template
+> ### ~~🔴 Still broken live — the Thrive header/footer template~~ — SUPERSEDED
 >
-> Every page still serves **2 dead page-links + 12 stale `tve-jump` anchors** (homepage: 7 and 15). These are **not** WP menu items — they are a *second*, duplicate nav hardcoded inside the **Thrive header and footer templates**:
+> This box said every page served **2 dead page-links + 12 stale `tve-jump` anchors**, with **16** dead links in the header and **3** in the footer, and that fixing it required **Thrive Theme Builder** and "needs a decision before proceeding."
 >
-> - **16** dead links in the Thrive header
-> - **3** in the Thrive footer
+> **Both halves of that are now out of date** — see the re-measurement at the top of §9:
 >
-> Fixing these means editing the header/footer in **Thrive Theme Builder**, which restyles sitewide — higher risk than the menu edits, and it needs a decision before proceeding. The repo-side equivalents are already fixed (see the `fix/dead-nav-links-in-source` and `fix/stale-thrive-anchors` branches), so whoever edits Thrive can copy the exact target URLs from there.
+> - **The dead page-links are fixed.** Snippet 9951 301s all three renamed paths. Zero 404s in the nav as of 2026-08-13.
+> - **Thrive Theme Builder is not required.** The header/footer are Thrive symbols stored in the database, so the remaining 10 stale anchors are exact-string replacements. No sitewide restyle risk, and no decision needed beyond the Dance Studio content question.
 >
-> **Gotcha for the next person:** in the WP menu editor, `find`-derived refs for the Save button go stale and the click silently does nothing — the page looks saved but isn't. Confirm every save by the *"X has been updated."* notice, never by the field values.
+> **Gotcha still worth keeping:** in the WP menu editor, `find`-derived refs for the Save button go stale and the click silently does nothing — the page looks saved but isn't. Confirm every save by the *"X has been updated."* notice, never by the field values. **The same applies to Yoast's settings screens** — the Site basics save silently failed once on 2026-08-13 and needed a second click.
 
 The replacement pages carry proper **semantic** anchor ids (`#sports-camp`, `#ballet`, `#banquet-hall`, `#garden-gazebo`, `#the-lounge`), so each link can land on the right section — only the old auto-generated `#tve-jump-…` ids are gone. Every target above was checked against the live page's actual ids.
 
 **Karate is a content gap, not a link bug:** it appears only in the `/youth-programs/` meta description, with no section on the page. The page promises karate and doesn't deliver it.
 
-Also add 301s for the three dead paths so external/historical links and any remaining Google equity survive. **GoDaddy ignores `.htaccess`**, so this needs a WPCode snippet on `template_redirect` — source is ready at [snippets/renamed-page-redirects.php](snippets/renamed-page-redirects.php), not yet applied.
+~~Also add 301s for the three dead paths~~ — **done 2026-08-13.** Applied as WPCode snippet **9951** from [snippets/renamed-page-redirects.php](snippets/renamed-page-redirects.php) and verified: all three return 301 to the correct target. **GoDaddy ignores `.htaccess`**, so it runs on `template_redirect`, guarded by `is_404()`.
 
 **Same bug, wider than the nav:** 24 further anchor links across `/fitness/`, `/pools/`, `/racquet-sports/` and `/services/` also pointed at `#tve-jump-…` ids that no longer exist. Those pages return 200, so the links weren't 404 — they silently landed at page top instead of the section the label promised. Repo side is fixed; the live menu has the same stale ids. Two things surfaced there worth your judgement:
 
@@ -452,8 +487,9 @@ Two defects surfaced, both **in the sheet itself** rather than drift from it —
 ## Recommended next step
 
 1. **Google Business Profile** (§1) — ~30 minutes and now clearly the highest-value thing left. It governs the local pack, which is a bigger lever than anything remaining on the website.
-2. **Decide on the Thrive header/footer** (§9). It's the last place dead nav links still ship to visitors, on every page. It needs a decision because editing those templates restyles the whole site — the target URLs are already worked out in PRs #2/#3.
-3. **Fix the JSON-LD phone at source** (§10) **and the `/racquet-sports/` schema** (§5) **in one pass.** Four exact-string replacements. Use **WP-CLI over SSH** — the Search & Replace plugin failed three times and never touched `post_content`, so don't start there. §10 has the exact commands and a post-mortem.
+2. **One WP-CLI pass over SSH clears §10, §9 and §5 together** — ~19 exact-string replacements: the stale JSON-LD phone (6), the stale nav anchors (10), and the racquet-sports schema (3). Every find-string is verified present in live HTML and every target verified to exist. **Don't start with the Search & Replace plugin** — it failed three times and never wrote to `post_content`. §10 has the commands and a post-mortem; §9 and §5 have the mapping tables.
+
+   One content decision to make first: **Dance Studio** (§9) points at a section that does not exist anywhere on the site. Remove the link, or build the section.
 
 Then: **stop optimising, start measuring.** Give Google 2–3 weeks to recrawl and let real query data drive the content plan (§4).
 
