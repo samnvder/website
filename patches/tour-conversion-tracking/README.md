@@ -1,6 +1,6 @@
 # patches/tour-conversion-tracking
 
-Prepared artifacts for [HANDOFF-tour-conversion-tracking.md](../../HANDOFF-tour-conversion-tracking.md) — adding a `tour_booked` `dataLayer` push to the tour booking form so GA4 and Google Ads can see bookings.
+Prepared artifacts for [handoffs/tour-conversion-tracking.md](../../handoffs/tour-conversion-tracking.md) — adding a `tour_booked` `dataLayer` push to the tour booking form so GA4 and Google Ads can see bookings.
 
 Read the handoff first. This directory is the machinery; the handoff is the plan.
 

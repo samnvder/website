@@ -1,4 +1,4 @@
-        /* --- GA4 / Google Ads conversion — added 2026-08-17, see HANDOFF-tour-conversion-tracking.md --- */
+        /* --- GA4 / Google Ads conversion — added 2026-08-17, see handoffs/tour-conversion-tracking.md --- */
         try {
           window.dataLayer = window.dataLayer || [];
           window.dataLayer.push({

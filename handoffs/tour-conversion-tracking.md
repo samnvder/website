@@ -3,7 +3,7 @@
 **Created:** 2026-08-17 · **Status:** OPEN · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
 **Est.:** ~1h for Parts A + B. Part C is blocked on Google Ads access (see [Prerequisites](#prerequisites)).
 
-> **Execution convention:** this handoff is written to be run by a Claude Code agent in Cowork, not by a human working through a checklist. Every step is either a command the agent runs, a browser action it drives, or an explicitly marked **🛑 HUMAN GATE**. See [CLAUDE.md § Handoffs](./CLAUDE.md).
+> **Execution convention:** this handoff is written to be run by a Claude Code agent in Cowork, not by a human working through a checklist. Every step is either a command the agent runs, a browser action it drives, or an explicitly marked **🛑 HUMAN GATE**. See [CLAUDE.md § Handoffs](../CLAUDE.md).
 
 ---
 
@@ -27,7 +27,7 @@ The booking data itself is fine — `book-tour` already writes `utm_source`, `ut
 
 ## ⚠️ Four things that will burn you
 
-**1. Editing `Website/Pages/**/*.html` does not change the live site.** The documented trap in [CLAUDE.md](./CLAUDE.md). Live is WordPress + Thrive Architect on GoDaddy; repo files get *pasted into* Thrive as page content. **The repo edits in Part A are already done — they are not the live fix.**
+**1. Editing `Website/Pages/**/*.html` does not change the live site.** The documented trap in [CLAUDE.md](../CLAUDE.md). Live is WordPress + Thrive Architect on GoDaddy; repo files get *pasted into* Thrive as page content. **The repo edits in Part A are already done — they are not the live fix.**
 
 **2. The repo is stale against live.** Live carries a second, floating booking widget (`se-bk-floating-*`, 140 refs/page). **It does not exist in the repo at all.** So repo line numbers will not match live — work by search string, and expect **2 hits per live page**.
 
@@ -55,7 +55,7 @@ The booking data itself is fine — `book-tour` already writes `utm_source`, `ut
 | GTM edit access to `GTM-WLRX58RN` | Parts B, C | assumed |
 | **Google Ads account** | **Part C only** | 🔴 **CONFIRMED ABSENT 2026-08-17** — GA4 Product links → Google Ads shows *"No links yet"*, and no `AW-` tag exists in the container. **Part C is blocked.** |
 
-**Part C is blocked — A + B are not.** Verified against the live property; see [analytics/GA4-SNAPSHOT.md](./analytics/GA4-SNAPSHOT.md). Do A and B regardless — the `dataLayer` push is what unblocks everything, and Ads wires to the same event later with zero code change. Don't let a missing login stall the hour.
+**Part C is blocked — A + B are not.** Verified against the live property; see [analytics/GA4-SNAPSHOT.md](../analytics/GA4-SNAPSHOT.md). Do A and B regardless — the `dataLayer` push is what unblocks everything, and Ads wires to the same event later with zero code change. Don't let a missing login stall the hour.
 
 ---
 
@@ -76,7 +76,7 @@ Applied by `patches/tour-conversion-tracking/apply.sh` (idempotent — re-runnin
 Canonical copy: `patches/tour-conversion-tracking/snippet.js`. Inserted directly after the anchor `if(res.ok && res.data.success){`, which appears exactly once per widget. Both widgets build identically-keyed `payload` objects, so **one byte-identical snippet works in all sites** — no per-page variation.
 
 ```js
-        /* --- GA4 / Google Ads conversion — added 2026-08-17, see HANDOFF-tour-conversion-tracking.md --- */
+        /* --- GA4 / Google Ads conversion — added 2026-08-17, see handoffs/tour-conversion-tracking.md --- */
         try {
           window.dataLayer = window.dataLayer || [];
           window.dataLayer.push({
@@ -139,7 +139,7 @@ Drive `tagmanager.google.com` for container `GTM-WLRX58RN`.
 
 **3. Tag** — GA4 Event · name `GA4 - tour_booked` · Measurement ID `G-SJN8S5QWXE` · Event Name `tour_booked` · map each variable above to a same-named parameter · trigger `CE - tour_booked`
 
-**Confirmed against the live property 2026-08-17** ([analytics/GA4-SNAPSHOT.md](./analytics/GA4-SNAPSHOT.md)): measurement ID `G-SJN8S5QWXE` is correct — but the property has a **second, dormant stream `G-KSB6ZBR8FS`** left over from MonsterInsights. Don't use it. 12 of 50 custom-dimension slots are used, so all five below will fit.
+**Confirmed against the live property 2026-08-17** ([analytics/GA4-SNAPSHOT.md](../analytics/GA4-SNAPSHOT.md)): measurement ID `G-SJN8S5QWXE` is correct — but the property has a **second, dormant stream `G-KSB6ZBR8FS`** left over from MonsterInsights. Don't use it. 12 of 50 custom-dimension slots are used, so all five below will fit.
 
 **4. In GA4** — Admin → Events → mark `tour_booked` as a **key event**. Then Admin → Custom definitions → register `tour_source_page`, `tour_utm_source`, `tour_utm_campaign`, `tour_heard_about`, `tour_device` as custom dimensions. **Unregistered parameters are collected but not reportable** — this is the step that makes the data usable, and the one people skip.
 
@@ -183,7 +183,11 @@ Expect **2** for each. `0` → cache not flushed or Thrive didn't save. `1` → 
 
 **4. Google Ads** → Conversions → status moves from "No recent conversions" to "Recording." Can take hours. Don't declare victory first.
 
-**5. Clean up.** The test booking is a real Supabase row and will send a real confirmation email and probably a real SMS. Tell whoever staffs the tour calendar **before** testing, then delete the row.
+**5. Cross-check against Supabase — the only check that proves the numbers are *complete*.** Everything above proves the event fires; none of it proves all four widgets fire. Count bookings in Supabase for a window after go-live and compare to `tour_booked` in GA4 for the same window. **They should match.** A persistent shortfall means a widget was missed — which is exactly the failure mode that looks like success.
+
+> Don't confuse `tour_booked` with GA4's built-in `form_start` / `form_submit`. Both sat at **5 events per 28 days** pre-launch ([GA4 snapshot](../analytics/GA4-SNAPSHOT.md)) and neither counts tour bookings — GA4's automatic form tracking can't see these widgets at all. Ignore them.
+
+**6. Clean up.** The test booking is a real Supabase row and will send a real confirmation email and probably a real SMS. Tell whoever staffs the tour calendar **before** testing, then delete the row.
 
 ---
 
@@ -194,9 +198,15 @@ Snippet is self-contained and `try/catch`-wrapped — delete between the two `/*
 ## Gotchas
 
 - **Thrive may reformat or escape pasted script.** Always verify with the Part D `curl`, never by reading it back in the editor.
-- **The consent checkbox is pre-ticked** and covers SMS *and* calls, and `send_texts`/`send_calls` are hardcoded `'1'` regardless of its state. Unrelated to this task but you'll see it. TCPA exposure — **flag it in [SEO/TODO.md](./SEO/TODO.md), don't fix it here.**
+- **The consent checkbox is pre-ticked** and covers SMS *and* calls, and `send_texts`/`send_calls` are hardcoded `'1'` regardless of its state. Unrelated to this task but you'll see it. TCPA exposure — **flag it in [SEO/TODO.md](../SEO/TODO.md), don't fix it here.**
 - **Repo/live drift on the floating widget is not fixed by this handoff.** Log it separately; don't scope-creep into it.
 - **Week 1 will look bad.** You're going zero → real number with no baseline. Don't let anyone read it as a decline.
+
+## Related
+
+- **[link-search-console.md](link-search-console.md)** — 5 minutes, no code, and independent of this. Worth doing in the same sitting.
+- **[analytics/GA4-SNAPSHOT.md](../analytics/GA4-SNAPSHOT.md)** — property config and the pre-tracking baseline this work is measured against.
+- **[ga4-hygiene.md](ga4-hygiene.md)** — dormant stream and orphaned dimensions. Not urgent; do not let it delay this.
 
 ## Unblocks
 
@@ -212,7 +222,7 @@ Snippet is self-contained and `try/catch`-wrapped — delete between the two `/*
 Paste into a fresh Claude Code (Cowork) session in this repo:
 
 ```
-Execute HANDOFF-tour-conversion-tracking.md in this repo.
+Execute handoffs/tour-conversion-tracking.md in this repo.
 
 Read it in full first, along with CLAUDE.md, before doing anything.
 

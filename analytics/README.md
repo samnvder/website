@@ -23,7 +23,7 @@ Records of the measurement stack for southendclub.com — what's configured, whe
 
 ## Open work
 
-Tracked as §14 in [SEO/TODO.md](../SEO/TODO.md); execution plan in [HANDOFF-tour-conversion-tracking.md](../HANDOFF-tour-conversion-tracking.md).
+Tracked as §14 in [SEO/TODO.md](../SEO/TODO.md); execution plan in [handoffs/tour-conversion-tracking.md](../handoffs/tour-conversion-tracking.md).
 
 The headline: **tour bookings are invisible.** The booking form swaps two divs on success and tells nobody, so GA4 has recorded zero bookings in its lifetime. Every prioritisation call on the SEO backlog is currently being made without conversion data.
 

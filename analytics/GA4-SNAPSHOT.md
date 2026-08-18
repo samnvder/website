@@ -1,7 +1,7 @@
 # GA4 — account snapshot
 
 **Captured:** 2026-08-17 · read-only pass over the live GA4 UI. **Nothing was changed.**
-Companion to [HANDOFF-tour-conversion-tracking.md](../HANDOFF-tour-conversion-tracking.md) (§14 of [SEO/TODO.md](../SEO/TODO.md)).
+Companion to [handoffs/tour-conversion-tracking.md](../handoffs/tour-conversion-tracking.md) (§14 of [SEO/TODO.md](../SEO/TODO.md)).
 
 Point-in-time record. GA4 config lives only in Google's UI — like Yoast metadata and the WP menus, **it is not in this repo and not in any backup.** This file is the only copy.
 

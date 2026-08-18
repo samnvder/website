@@ -3534,7 +3534,7 @@ body.se-cal-panel-open #wpadminbar {
     .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
     .then(function(res){
       if(res.ok && res.data.success){
-        /* --- GA4 / Google Ads conversion — added 2026-08-17, see HANDOFF-tour-conversion-tracking.md --- */
+        /* --- GA4 / Google Ads conversion — added 2026-08-17, see handoffs/tour-conversion-tracking.md --- */
         try {
           window.dataLayer = window.dataLayer || [];
           window.dataLayer.push({

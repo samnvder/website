@@ -89,6 +89,7 @@ Verified on `master`: **0** dead page-links, **0** `tve-jump` references, **0** 
 | §12 | Homepage listed **twice** in `page-sitemap.xml` | Sam | small · new finding |
 | §13 | 🔴 **Pre-ticked SMS/calls consent on the tour form** — TCPA exposure | Sam | legal call · ~15 min to fix |
 | §14 | 🥈 **Tour bookings are invisible to GA4 and Ads** — handoff + patches ready to run | Claude + Sam | ~1 h · **highest ROI after §1** |
+| §17 | **Search Console is not linked to GA4** — handoff ready | Claude + Sam | ~5 min · no code |
 | §15 | Repo has no `se-bk-floating` widget that runs on live | Claude | medium · silent-loss risk |
 | §16 | `/special-offer/` 404s while its repo file exists | Sam | small |
 | §6 | Page weight 318–767 KB of Thrive HTML | — | deferred |
@@ -529,7 +530,7 @@ The booking form reports nothing. On success it swaps two divs — no redirect, 
 
 Attribution data does exist — `book-tour` already writes `utm_source`, `utm_medium`, `utm_campaign`, `source_page` and `device_type` into Supabase. It has simply never been surfaced. A read-only report over that table is a quick separate win.
 
-**Ready to run:** [HANDOFF-tour-conversion-tracking.md](../HANDOFF-tour-conversion-tracking.md) with paste-ready blocks in [patches/tour-conversion-tracking/](../patches/tour-conversion-tracking/). Repo edits applied; live, GTM and Ads untouched. Part C needs a Google Ads account, which is unconfirmed — **Parts A and B are not blocked on it.**
+**Ready to run:** [handoffs/tour-conversion-tracking.md](../handoffs/tour-conversion-tracking.md) with paste-ready blocks in [patches/tour-conversion-tracking/](../patches/tour-conversion-tracking/). All handoffs and their kickoff prompts are indexed in [handoffs/README.md](../handoffs/README.md). Repo edits applied; live, GTM and Ads untouched. Part C needs a Google Ads account, which is unconfirmed — **Parts A and B are not blocked on it.**
 
 ---
 
@@ -544,6 +545,18 @@ Consequences:
 - It's a variant of the §"repo is not a backup" problem, one level deeper: not just config missing, but **shipped functionality**.
 
 **Fix:** extract the live floating widget into the repo as proper paste-source, the way the `se-cal` pages already are. Then audit whether anything else on live is missing here.
+
+---
+
+### 17. Search Console not linked to GA4 — **handoff ready** · ~5 min
+
+Found 2026-08-17 during the GA4 audit. GA4 → Product links → Search Console reads *"No links yet."*
+
+Search Console knows the **query**; GA4 knows the **behaviour**. Unlinked, "which search terms bring people who actually book" can't be answered. **Organic Search is 62.6% of sessions** (3,015 of 4,813 over 28 days) — the largest channel, and the one with the least visibility.
+
+This is the data this file keeps deferring to: §4 defers content work pending query data, and the closing note says further metadata tuning "would be guessing" without it. **Not backfilled** — query data starts from the link date, so linking early costs nothing and waiting costs data.
+
+**Ready to run:** [handoffs/link-search-console.md](../handoffs/link-search-console.md). Needs verified-**owner** GSC access and GA4 editor on the same signed-in account.
 
 ---
 

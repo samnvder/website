@@ -56,7 +56,7 @@ A handoff must have:
 - **A prepared-artifact directory** under `patches/<task>/` when the change needs pasting into Thrive, holding the exact paste-ready content plus the script that regenerated it. Hand-inserting into Thrive is where mistakes happen.
 - **A ready-to-paste kickoff prompt as the last section**, so starting the work is one copy-paste. Always include this.
 
-Live handoffs: [HANDOFF-tour-conversion-tracking.md](./HANDOFF-tour-conversion-tracking.md) · [SEO/HANDOFF.md](./SEO/HANDOFF.md) (closed, kept as a record).
+**All handoffs live in [handoffs/](./handoffs/)** — start at its [README](./handoffs/README.md), which indexes them and collects every kickoff prompt in one place. ([SEO/HANDOFF.md](./SEO/HANDOFF.md) predates the convention and is closed, kept as a record.)
 
 **Never paste a repo page file into Thrive.** The repo lags live — e.g. the `se-bk-floating` booking widget exists on production and not in the repo at all. Pasting a whole repo page over a live one silently deletes whatever live has and the repo doesn't.
 
