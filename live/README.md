@@ -122,8 +122,9 @@ reconstruction, and reconstructions of Thrive elements are wrong by default:
 
 Thrive wraps script tags in `<code class="tve_js_placeholder">` **on output**,
 and the page renders the element inside a
-`<div class="thrv_wrapper thrv_custom_html_shortcode">`. None of that exists in
-the editor. Slicing `/schedule-a-tour/` straight out of `curl` output yielded
+`<div class="thrv_wrapper thrv_custom_html_shortcode">`. CompressX wraps every
+image in `<picture><source type="image/avif"><source type="image/webp">…</picture>`
+on output as well. None of that exists in the editor. Slicing `/schedule-a-tour/` straight out of `curl` output yielded
 1,472 lines against the editor's 1,471, carrying a stray leading `</div>`, that
 wrapper div, and three placeholder opens against two closes. Paste that back and
 you inject junk markup into the page.
@@ -132,9 +133,20 @@ WPCode is the easy case — it injects its snippet raw into the footer, so what 
 served is what is stored, give or take one stray `</div>` from the surrounding
 template.
 
+The direction matters: content flows **from this repo into Thrive**, and the
+rendered page is downstream of it. Copying served HTML back over a page file
+without that cleanup rots the source — CompressX will double-wrap images it
+already wrapped, and a `<source>` copied out of a browser usually arrives with
+no `srcset`, which silently kills AVIF/WebP delivery for every image in the
+element. What *does* belong in the repo is a real editor-level change; the test
+is whether it exists in the Thrive editor, or only in what the server serves.
+
 If a paste genuinely isn't available, a rendered capture can be cleaned: drop
 everything before the opening comment banner, strip every
-`<code class="tve_js_placeholder">` and `</code>`, then **prove the result** by
+`<code class="tve_js_placeholder">` and `</code>`, unwrap CompressX's
+`<picture>`/`<source>` around each image, collapse the boolean attributes a DOM
+copy expands (`controls=""`, `playsinline=""`, `data-carousel=""`) back to the
+bare form the editor stores, then **prove the result** by
 checking its inner JS against a copy already known to be exact, and by matching
 the character count the editor itself reports. Both `se-cal` mirrors here were
 built that way and verified against the patched artifacts in
