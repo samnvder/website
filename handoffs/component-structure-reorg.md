@@ -6,7 +6,8 @@ inside the repo and rewrites docs. It never edits Thrive, never publishes, never
 flushes cache. The live site is used **read-only**, as the source of truth for
 where each block actually renders.
 
-**Time:** ~1.5h. **Blocked:** no.
+**Status 2026-08-18: Phases 1–4 COMPLETE** (`eb845d3` → `ff81463`).
+Phases 5–6 open, plus three items found along the way. **Time remaining:** ~2h.
 
 ---
 
@@ -315,75 +316,161 @@ grep -rhoE '\(\.?\.?/?(Components|Templates|Website)/[^)]+\)' --include="*.md" .
 
 ---
 
-## Phase 5 — Reconcile the docs
+## Phase 5 — The law system nobody wrote down
 
-These are wrong today regardless of the reorg and are worth fixing on their own.
+**Scope changed after measurement.** The original plan said "renumber the Law
+citations." The real finding is larger:
 
-1. **Law citations.** In `Components/README.md`, rewrite "Law I / IV / VIII" to
-   the actual Commandment numbers from `Website-Law.md` (0–10).
-2. **The `Dev/` workflow.** `Components/README.md` and `Website/Pages/README.md`
-   both instruct readers to work in `Dev/` and promote from there. **Neither
-   `Dev/` nor `Applications/` exists.** Strike the language, or create the
-   directories — do not leave it pointing at nothing.
-3. **Commandment 5.** Amend in `Website-Law.md` to state the real rule: page
-   sources separate HTML and CSS; **Thrive paste-blocks are self-contained by
-   necessity and are the documented exception.** This reconciles it with
-   Commandment Zero's Defense section and with the 33 files already violating it.
-4. **Rules A and B** go into `Components/README.md` verbatim, or the ambiguity
-   returns with the next banner.
+**31 files make 36 citations to a roman-numeral law system. Not one of those
+laws is defined anywhere in the repo.**
+
+```bash
+grep -rhoE "Law [IVX]+" --exclude-dir=node_modules --exclude-dir=.git . | sort | uniq -c | sort -rn
+```
+
+| Cited | Times | Meaning, inferred from usage |
+|---|---:|---|
+| **Law I** | 27 | Never edit production files directly; copy to `Dev/`, test, promote |
+| **Law XI** | 4 | Every script carries a `.readme` |
+| **Law IV** | 3 | Thrive uses inline styles; no `<style>` blocks in Thrive content |
+| **Law VIII** | 2 | `{name}.html` / `.css` / `.js` / `-combined.html` |
+
+Every hit is a *citation*. A search for definitions returns only more citations.
+`Website-Law.md` contains **Commandments 0–10**, arabic, and its numbers do not
+line up: its 4 is "320px minimum", its 5 is "separate HTML and CSS". Neither
+matches Law IV or Law VIII as used.
+
+Two consequences worth stating plainly:
+
+1. **The most-cited rule in the repo is unfollowable.** Law I appears in 27
+   files and prescribes working in `Dev/` — which does not exist. `HISTORY.md`
+   shows `Dev/central/` belonged to a different project (Central) that this repo
+   no longer contains, so the workflow was real once and its removal was never
+   reflected in the docs.
+2. **The roman system may be more accurate than the arabic one.** Law IV as
+   cited ("Thrive uses inline styles; no `<style>` blocks in Thrive *content*")
+   describes reality. `Website-Law.md` Commandment 5 ("separate HTML and CSS.
+   **Always.**") is violated by 33 files and cannot hold, because Thrive
+   paste-blocks must be self-contained. **Do not assume the arabic file wins.**
+
+### 5.1 Decide the single authority — 🛑 HUMAN GATE
+
+This is not a mechanical fix and must not be guessed. Present the table above
+and ask which way to resolve:
+
+- **(a)** Define the roman laws in `Website-Law.md` as a numbered section, keeping
+  all 36 citations valid. Least churn, and honours how the repo already talks.
+- **(b)** Rewrite all 36 citations to point at existing Commandments. Requires a
+  meaning-by-meaning mapping, and there is no Commandment matching Law XI.
+- **(c)** Drop the citations and state the rule inline in each README.
+
+Recommend **(a)**: the citations are consistent and their meanings are
+recoverable; the defect is a missing definition, not bad references.
+
+### 5.2 Fix `Dev/` — 🛑 HUMAN GATE
+
+27 files tell the reader to work somewhere that does not exist. Either recreate
+`Dev/`, or rewrite Law I to describe the workflow actually in use. **Ask which
+— this is a statement about how the owner works, not a documentation defect.**
+`Applications/Tour-Booking-nvde` is cited by three page READMEs and is likewise
+missing.
+
+### 5.3 Reconcile Commandment 5
+
+Amend `Website-Law.md` so it states the real rule: page sources separate HTML
+and CSS; **Thrive paste-blocks are self-contained by necessity and are the
+documented exception.** This reconciles it with Commandment Zero's Defense
+section, with Law IV as cited, and with the 33 files already violating it.
+
+### 5.4 Write Rules A, A-bis and B into `Components/README.md`
+
+Verbatim from this handoff, or the ambiguity returns with the next banner.
+`Components/README.md` also still carries the Law I / Law VIII / `Dev/` /
+`Applications/` text and describes the retired `{Type}/` structure.
 
 ---
 
-## Phase 6 — The index
+## Phase 6 — The component index
+
+**The phase that prevents recurrence. Do not skip it as documentation polish.**
 
 Write `Components/README.md` with a table of every block and the live URL it
-renders on, generated from `render-map.txt`:
+renders on, generated from `patches/component-structure-reorg/render-map.txt`:
 
-| Block | Renders on |
-|---|---|
-| `Homepage Youth Camp Banner.html` | `/` |
-| … | … |
+| Block | Location | Renders on | Notes |
+|---|---|---|---|
+| `Homepage Youth Camp Banner.html` | `Homepage/` | — | seasonal 6/8–8/21, dormant |
+| `Header.html` | `Shared/Header/` | all 20 pages | |
+| … | | | |
+
+Include the seasonal register, and mark archived blocks with *why* they died
+(superseded by `se-bk-floating`, replaced by the footer CTA, and so on).
 
 **The absence of this index is the direct reason the youth camp banner was
-invisible** — there was no place to look that would have shown it existed. This
-phase is the one that prevents recurrence; do not skip it as documentation
-polish.
+invisible.** The reorg made the tree tidy; only the index makes it searchable.
 
 ---
 
-## Guardrails
+## Found along the way — open
 
-- **Repo-only.** Nothing here edits Thrive, publishes, or flushes cache. If a
-  step seems to require a live edit, you have misread it — stop and ask.
-- **The repo lags live.** Moving a file does not validate its contents against
-  production. This handoff reorganizes; it does not certify.
-- **`git mv`, never delete-and-recreate.**
-- **Three commits minimum:** docs fix, duplicate resolution, moves. Do not
-  squash — the moves must be revertible without losing the doc repairs.
-- **Out of scope:** `Programs/` (49 HTML files) and `Pickleball-Central-Hub/`
-  (43) were never surveyed. Together they are larger than everything above.
-  Leave them alone and say so in the closing report.
+Not part of the original handoff. Ordered by consequence.
+
+### A. `npm run audit:capture` does not cover `Components/`
+
+The script hardcodes `Website/Pages`. **After this reorg, `Components/` holds
+every reusable block and sits permanently unaudited.** Widen it or add a second
+target:
+
+```bash
+node scripts/convert/live-capture-to-source.js Components --report Components/CAPTURE-AUDIT.md
+```
+
+Currently clean (17 files, 0 carrying output-only markup) — so this is about
+keeping it that way.
+
+### B. Nine page sources carry output-only markup
+
+44 boolean and 26 `data-*` attribute expansions across the Membership Builders,
+Memberships Page, Special Offer, both Tour Booking pages, Contact Us and Index.
+Four also carry `thrv_wrapper thrv_custom_html_shortcode` divs the converter
+**refuses to strip automatically** — removing one means matching its closing
+div, which is hand work. `index/Index.html` additionally carries Thrive
+header/footer symbol markup, meaning that capture is wider than the element it
+should mirror.
+
+### C. `npm run guard` has been broken since `3fc792b`
+
+Pre-existing, documented in CLAUDE.md, untouched by this work. **A red check is
+the normal state, so a genuinely broken build looks identical to a healthy one.**
+Two faults: `DISCOUNT_SOURCE_REL` misses the `Discounted Enrollment/`
+subdirectory, and `loadMembershipBuilderPricing` reads discounts from a file
+that no longer defines them. **Confirm which file is authoritative for live
+pricing before repointing** — pointing the guard at the wrong file would
+silently stop validating real pricing drift, which is its entire purpose.
 
 ---
 
-## Kickoff prompt
+## Kickoff prompt — Phases 5 and 6
 
 ```
-Execute handoffs/component-structure-reorg.md in this repo.
+Continue handoffs/component-structure-reorg.md from Phase 5. Phases 1-4 are
+committed (eb845d3 through ff81463); do not redo them.
 
-This is a repo-only reorganization — it moves files and rewrites docs, and
-never touches the live site except to read it with curl. Read CLAUDE.md first.
+Read Phase 5 first -- its scope changed after measurement. The finding is not
+that Law citations are misnumbered: it is that 31 files cite a roman-numeral
+law system that is defined nowhere, and the most-cited law (Law I, 27 files)
+prescribes working in a Dev/ directory that does not exist.
 
-Start with Phase 1 and stop at HUMAN GATE 1. Do not move any file before I
-approve the render map.
+Phase 5 has two HUMAN GATES, 5.1 and 5.2. Both are decisions about how the
+owner works, not documentation defects. Stop and ask; do not guess, and do not
+assume Website-Law.md wins just because it is the file named after the laws --
+Law IV as cited describes reality better than Commandment 5 does.
 
-Phase 1 is the whole point: the destination of every block is decided by
-measuring which live pages actually contain it, not by what its filename or
-current directory implies. A block that advertises youth programs but renders
-on the homepage is a homepage component. Report anything that resolves to
-ABSENT rather than quietly archiving it.
+Then do Phase 6, the component index. That is the phase that prevents this
+recurring, so do not treat it as polish. Generate it from
+patches/component-structure-reorg/render-map.txt and include the seasonal
+register plus why each archived block died.
 
-When you reach the gate, show me render-map.txt, the derived move list, and
-specifically flag every block whose measured destination differs from where it
-currently lives.
+Report the three "Found along the way" items separately; do not fix C (the
+guard) without confirming which pricing file is authoritative.
 ```
