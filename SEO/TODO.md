@@ -555,6 +555,10 @@ Consequences:
 
 **Fix:** extract the live floating widget into the repo as proper paste-source, the way the `se-cal` pages already are. Then audit whether anything else on live is missing here.
 
+> **Widget now mirrored ✅ — 2026-08-18.** The floating widget is in the repo at [live/wpcode/8309-floating-book-tour-button.html](../live/wpcode/8309-floating-book-tour-button.html), verified present on all 19 published pages.
+>
+> **The follow-up audit this item asked for is now done, and it found one more (§24).** A full live↔repo parity sweep of every page ([checklist](../Website/Pages/LIVE-PARITY-CHECKLIST.md)) confirmed `se-cal`, `secDrone*`, `secMenuWrapper`, `secFooterCta*` and `vtBtn*` are all accounted for — but the homepage runs a **second** booking widget, `se-bk-inline` (62 ids), that is in no file anywhere. Tracked as **§24**.
+
 ---
 
 ### 17. Search Console not linked to GA4 — **DONE 2026-08-17** ✅
@@ -582,6 +586,12 @@ Found 2026-08-17. `Website/Pages/Memberships (Category)/special-offer/Special Of
 Nothing links to it, so there's no live dead link and no SEO harm today. But a promo page exists in source and isn't published — either it was never published, or it was deleted from WP and the source outlived it.
 
 **Decide:** publish it, or mark the repo file clearly as retired. Leaving it ambiguous means the next person patches a page that doesn't exist — which already happened during the 2026-08-17 conversion-tracking work.
+
+> **Re-checked 2026-08-18 — still 404, and now dated.** The page serves `noindex, follow` and is absent from `page-sitemap.xml`. [CURRENT-OFFER.md](<../Website/Pages/Memberships (Category)/special-offer/CURRENT-OFFER.md>) states the offer was **valid through July 31 2026** — so it is expired, not merely unpublished, which settles the "publish it or retire it" question in favour of retiring.
+>
+> **One thing this item missed: inbound links.** "Nothing links to it" is true of the *site*, but the summer email campaign (`email-campaign-summer-2026-final.html`) pointed at `/special-offer/`, and those emails are already delivered. Snippet **9951** redirects `junior-programs`, `food-services` and `banquets` — **not** `special-offer`.
+>
+> **Fix:** add `'special-offer' => 'memberships'` to snippet 9951 and mirror the edit to [live/wpcode/9951-renamed-page-redirects.php](../live/wpcode/9951-renamed-page-redirects.php) in the same session (backup law). Then move the offer sources under an `Expired/` folder.
 
 ---
 
@@ -646,6 +656,67 @@ The 2026-08-18 verification booking is half cleared: the Supabase row was delete
 Also blocking: the Conversion Linker ([handoff](../handoffs/gtm-conversion-linker.md)) **must** run before any Ads conversion tag — it cannot backfill — and `tour_booking_id` is confirmed `null`, which weakens Ads deduplication until the `book-tour` owner returns an appointment id.
 
 ---
+
+---
+
+### 24. 🔴 `se-bk-inline` booking widget on the homepage exists nowhere in the repo — **Claude** · silent-loss risk
+
+Found 2026-08-18 during the full live↔repo parity audit ([checklist](../Website/Pages/LIVE-PARITY-CHECKLIST.md)).
+
+§15 closed the `se-bk-floating` gap — that widget is now mirrored at [live/wpcode/8309-floating-book-tour-button.html](../live/wpcode/8309-floating-book-tour-button.html). §15's own closing line said *"then audit whether anything else on live is missing here."* This is the answer, and there is one more.
+
+The live homepage runs a **second, inline** booking widget — **62 distinct ids** under the `se-bk-inline-*` prefix (`se-bk-inline-card`, `-tabs`, `-s1pick`, `-s2`, `-s3`, `-referral`, `-consent`, …). It is a near-complete parallel of the floating widget, homepage-only, and:
+
+```
+grep -rl "se-bk-inline" live/ Website/ Components/   →   no matches
+```
+
+**It exists in exactly one place: a database row.** Same shape as the `se-bk-floating` incident, one page narrower.
+
+**Fix:** open the homepage in Thrive, find the custom HTML element containing `se-bk-inline-card`, copy the **whole element from the editor** (not `curl` — backup-law rule 1), and commit it to `live/thrive/pages/index/se-bk-inline.html`. Verify by the character count the editor reports (rule 3).
+
+**Also decide:** the header/footer widgets (`secDrone*`, `secMenuWrapper`, `secFooterCta*`, `vtBtn*`) *are* in the repo, but under `Components/` — design source, not the `live/` mirror that [live/README.md](../live/README.md) specifies. Either declare `Components/` sufficient for Thrive symbols, or add a `live/thrive/templates/` mirror. Right now the law is ambiguous about them.
+
+---
+
+### 25. 🔴 Homepage repo source carries a Christmas banner and an expired countdown that are not on live — **Claude** · paste-hazard
+
+Found 2026-08-18 in the same parity audit. Every other published page matches live exactly; the homepage does not.
+
+`Website/Pages/index/Index.html` contains **23 ids and 56 classes that are absent from the live homepage**, in four blocks:
+
+| Block | Markers | On live? |
+|---|---|---|
+| Holiday video banner | `video-banner-holiday-*`, `balloonGold/Red/Green`, `hatGradient`, `furGradient`, `pomGradient`, `treeGradient`, `santa-hat-svg`, `balloons-svg`, `vb-days/hours/minutes/seconds` | No |
+| Promotion countdown | `promotion-title`, `promo-countdown`, `promo-days/hours/minutes/seconds`, `snowflake`, `sf1`, `sf2`, `tree-accent`, `mini-tree`, `countdown-timer`, `offer-link` | No |
+| Zapier contact form | `contactButton2`, `zapierFormContainer`, `zapierForm` | No |
+| Secondary CTA / questions | `questions-section`, `membership-card`, `membership-btn`, `sec-cta-*`, `sec-btn-primary/secondary` | No |
+
+**⚠️ Pasting `Index.html` into Thrive today would put a Christmas banner and a dead countdown timer on the homepage in August.** This is the concrete instance of the *"never paste a repo page file into Thrive"* rule in [CLAUDE.md](../CLAUDE.md) — previously stated as a general risk, now a specific one with a date on it.
+
+**Fix:** resolve per block, not wholesale. For the seasonal two, live is right — move them to a clearly-marked `Website/Pages/index/Seasonal/` folder so they are reusable in December without sitting in the paste path. For the Zapier form and the CTA/questions sections, confirm with Sam whether they were deliberately removed from live or lost.
+
+---
+
+### 26. `/get-answers/` is live and indexed with no page source in this repo — **Claude** · small
+
+Found 2026-08-18. `https://southendclub.com/get-answers/` returns **200**, is listed in `page-sitemap.xml`, and is referenced by both §7 above and [YOAST-SHEET.md](./YOAST-SHEET.md) — but there is **no HTML or CSS for it anywhere under `Website/Pages/`**. It is the only published page in the sitemap with no repo counterpart.
+
+Lower risk than §24 (nothing is going to overwrite it), but it means the page cannot be reviewed, diffed or restored from here.
+
+**Fix:** capture it from the Thrive editor, run `npm run convert:capture`, commit as `Website/Pages/get-answers/`.
+
+---
+
+### 27. Parity audit — 17 of 19 published pages verified byte-faithful ✅ — **done 2026-08-18**
+
+For the record, because it is the first time this has been measured. All 21 candidate URLs were fetched by `curl` and each repo page's `id`s, authored classes and CSS class selectors matched against the live markup ([full checklist](../Website/Pages/LIVE-PARITY-CHECKLIST.md), method described there).
+
+**17 of 19 published pages score 100% on all three signals** — contact-us, events, lounge-rentals, fitness, food-beverage, corporate-membership, memberships, summer-membership, pools, privacy-policy, racquet-sports, services, subscribe, schedule-a-tour, schedule-an-event-viewing, wellness, youth-programs. The repo genuinely is the source of what renders on those pages.
+
+The two exceptions are §25 (homepage) and §16 (`/special-offer/`, 404). `/terms-conditions/` is not measurable by this method — it is pure Thrive builder markup with no authored ids or classes. `/testimonials/` is an unpublished draft.
+
+Re-run after any Thrive paste; the script is small enough to rebuild from the method note in the checklist.
 
 ## Recommended next step
 
