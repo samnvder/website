@@ -6,8 +6,10 @@ inside the repo and rewrites docs. It never edits Thrive, never publishes, never
 flushes cache. The live site is used **read-only**, as the source of truth for
 where each block actually renders.
 
-**Status 2026-08-18: Phases 1–4 COMPLETE** (`eb845d3` → `ff81463`).
-Phases 5–6 open, plus three items found along the way. **Time remaining:** ~2h.
+**Status 2026-08-18: Phases 1–4 and 6 COMPLETE** (`eb845d3` → `2577f54`).
+**Phase 5 is the only open phase**, plus items B and C below. Item A was closed
+inside the Phase 6 index. **Time remaining:** ~1h, most of it waiting on two
+decisions only the owner can make.
 
 ---
 
@@ -390,9 +392,11 @@ Verbatim from this handoff, or the ambiguity returns with the next banner.
 
 ---
 
-## Phase 6 — The component index
+## Phase 6 — The component index ✅ DONE `2577f54`
 
-**The phase that prevents recurrence. Do not skip it as documentation polish.**
+**The phase that prevents recurrence.** Delivered as [`Components/README.md`](../Components/README.md):
+all 38 component files indexed by the live URL they render on, verified complete
+and link-clean. Retained below as the record of intent.
 
 Write `Components/README.md` with a table of every block and the live URL it
 renders on, generated from `patches/component-structure-reorg/render-map.txt`:
@@ -415,7 +419,13 @@ invisible.** The reorg made the tree tidy; only the index makes it searchable.
 
 Not part of the original handoff. Ordered by consequence.
 
-### A. `npm run audit:capture` does not cover `Components/`
+### A. `npm run audit:capture` does not cover `Components/` — ✅ mitigated
+
+Closed inside the Phase 6 index, which states the gap and gives the explicit
+command. **Not fixed at the script level** — widening `package.json` is still
+worth doing so the default audit covers the tree that now holds every block.
+
+<details><summary>Original finding</summary>
 
 The script hardcodes `Website/Pages`. **After this reorg, `Components/` holds
 every reusable block and sits permanently unaudited.** Widen it or add a second
@@ -427,6 +437,8 @@ node scripts/convert/live-capture-to-source.js Components --report Components/CA
 
 Currently clean (17 files, 0 carrying output-only markup) — so this is about
 keeping it that way.
+
+</details>
 
 ### B. Nine page sources carry output-only markup
 
@@ -450,27 +462,89 @@ silently stop validating real pricing drift, which is its entire purpose.
 
 ---
 
-## Kickoff prompt — Phases 5 and 6
+## Kickoff prompts
+
+Three independent pieces. **Phase 5 is decision-gated; B and C are not.** Run
+them in separate sessions — C in particular has nothing to do with this reorg.
+
+### Phase 5 — the undefined law system
 
 ```
-Continue handoffs/component-structure-reorg.md from Phase 5. Phases 1-4 are
-committed (eb845d3 through ff81463); do not redo them.
+Work Phase 5 of handoffs/component-structure-reorg.md. Everything else in that
+handoff is done and committed (eb845d3 through 2577f54) -- do not redo it, and
+do not move any component files.
 
-Read Phase 5 first -- its scope changed after measurement. The finding is not
-that Law citations are misnumbered: it is that 31 files cite a roman-numeral
-law system that is defined nowhere, and the most-cited law (Law I, 27 files)
-prescribes working in a Dev/ directory that does not exist.
+Read Phase 5 before acting. The finding is not that Law citations are
+misnumbered. It is that 31 files make 36 citations to a roman-numeral law
+system that is defined nowhere in this repo, and the most-cited law -- Law I,
+in 27 files -- prescribes working in a Dev/ directory that does not exist.
+HISTORY.md shows Dev/central belonged to the Central project this repo no
+longer contains.
 
-Phase 5 has two HUMAN GATES, 5.1 and 5.2. Both are decisions about how the
-owner works, not documentation defects. Stop and ask; do not guess, and do not
-assume Website-Law.md wins just because it is the file named after the laws --
-Law IV as cited describes reality better than Commandment 5 does.
+There are two HUMAN GATES, 5.1 and 5.2. Both are questions about how the owner
+actually works, not documentation defects. Stop and ask at each; do not guess.
 
-Then do Phase 6, the component index. That is the phase that prevents this
-recurring, so do not treat it as polish. Generate it from
-patches/component-structure-reorg/render-map.txt and include the seasonal
-register plus why each archived block died.
+Specifically do NOT assume Website-Law.md wins because it is the file named
+after the laws. Law IV as cited describes Thrive reality accurately, while that
+file's Commandment 5 forbids <style> blocks and is contradicted by 33 files and
+by its own Commandment Zero. Present the evidence and let the owner choose.
 
-Report the three "Found along the way" items separately; do not fix C (the
-guard) without confirming which pricing file is authoritative.
+Components/README.md has a Pending section describing what was removed from it
+and why. Whatever 5.1 and 5.2 decide, that section is what should be replaced.
+
+Verify when done: no markdown file cites a law that has no definition, and no
+file points a reader at a directory that does not exist.
+```
+
+### Item B — output-only markup in nine page sources
+
+```
+Work item B from the "Found along the way" section of
+handoffs/component-structure-reorg.md. Repo-only; nothing here touches the
+live site.
+
+Nine files under Website/Pages carry markup the server adds on output -- 44
+boolean and 26 data-* attribute expansions. Website/Pages/CAPTURE-AUDIT.md
+lists them, and scripts/convert/live-capture-to-source.js --in-place fixes the
+attribute cases mechanically.
+
+Two things need judgment rather than the tool:
+
+- Four files carry thrv_wrapper thrv_custom_html_shortcode divs. The converter
+  deliberately refuses to strip these, because removing one means matching its
+  closing div. Do that by hand or not at all; do not script it.
+- Website/Pages/index/Index.html additionally carries Thrive header/footer
+  symbol markup, which means that capture is wider than the element it should
+  mirror. Report it rather than trimming it -- deciding what Index.html is
+  supposed to contain is an owner question, and three homepage variants exist
+  (index.html, index-complete.html, Website/Pages/index/Index.html).
+
+Commit the mechanical attribute fixes separately from any hand work, re-run
+npm run audit:capture, and report the before/after counts.
+```
+
+### Item C — the broken pricing guard
+
+```
+npm run guard has been broken on master since commit 3fc792b, so CI has been
+red on every PR. This is documented in CLAUDE.md and is unrelated to the
+component reorg -- treat it as its own task.
+
+It matters more than a red check usually would: because red is the normal
+state, a genuinely broken build currently looks identical to a healthy one.
+
+Two known faults:
+- DISCOUNT_SOURCE_REL points at a path missing the "Discounted Enrollment/"
+  subdirectory the refactor introduced.
+- loadMembershipBuilderPricing reads discounts from a file that no longer
+  defines them; the constant it wants lives in the Discounted Enrollment copy.
+
+STOP before repointing anything. Confirm with the owner which file is
+authoritative for LIVE pricing first. Pointing the guard at the wrong file
+would make it pass while silently no longer validating real pricing drift,
+which is the entire reason the guard exists. A passing guard that checks
+nothing is worse than the current red.
+
+Report what you changed, and prove the guard now fails when pricing actually
+drifts -- not merely that it exits 0.
 ```
