@@ -4,7 +4,7 @@
   "description": "South End Club marketing website (standalone repo; exported from WebsiteV1)",
   "scripts": {
     "pretest": "npm run guard",
-    "test": "node --test Programs/Pickleball/advanced-open-play/testing/unit/test-openplay-rsvp.js Programs/Pickleball/advanced-open-play/testing/unit/test-firebase-rules.js Programs/Pickleball/advanced-open-play/testing/unit/test-rating-eligibility.js Programs/Pickleball/advanced-open-play/testing/unit/test-roll-live.js",
+    "test": "node --test Programs/Pickleball/advanced-open-play/testing/unit/test-openplay-rsvp.js Programs/Pickleball/advanced-open-play/testing/unit/test-firebase-rules.js Programs/Pickleball/advanced-open-play/testing/unit/test-rating-eligibility.js Programs/Pickleball/advanced-open-play/testing/unit/test-roll-live.js scripts/audit/testing/test-pricing-apply.js",
     "test:pools-instructors": "node Website/Pages/pools/testing/instructor-pill-layout-test.mjs",
     "firebase:deploy-rules": "npx firebase-tools deploy --only database --non-interactive",
     "deploy:openplay": "node Programs/Pickleball/advanced-open-play/scripts/openplay-deploy.js --only hosting",

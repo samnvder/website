@@ -1,5 +1,9 @@
 {
   "_comment": "Canonical membership pricing source for scripts/audit/membership-pricing-apply.js — sticker rates 8-2-26",
+  "sticker_rate_source": [
+    "South End Membership Rates 8-2-26.pdf",
+    "Monthly dues updated 2026-08-02; enrollment fees and F&B minimums unchanged."
+  ],
   "tiers": [
     1,
     2,
