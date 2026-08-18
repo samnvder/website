@@ -1,18 +1,22 @@
 /* ========================================================================== */
-/* JS - BUILD YOUR MEMBERSHIP - WITH EMAIL NOTIFICATION   (WPCode #9926)   */
+/* WPCode #9926                                                             */
+/* Title: "JS - Build Your Membership - with email notification"            */
 /* ========================================================================== */
-/* Runs on: the normal join page membership builder.                       */
-/* Status:  ACTIVE (verified in WPCode 2026-08-18).                        */
-/*                                                                         */
-/* Sticker enrollment only -- this builder has NO discount const, and must  */
-/* not gain one. Commit 3fc792b removed the promo UI; promo pricing lives   */
-/* in #7315. npm run guard:membership-pricing FAILS if discounts appear     */
-/* here, or if any figure drifts from membership-pricing-source.json.       */
-/*                                                                         */
-/* Verify: captured 2026-08-18 and byte-identical (ignoring line endings)   */
-/* to Website/Pages/Memberships (Category)/memberships/membership builder   */
-/* JS.js. Re-check with:                                                    */
-/*   npm run guard:membership-pricing                                       */
+/* THE ORIGINAL BUILDER, NO DISCOUNT. This is the baseline the join page    */
+/* runs: sticker enrollment fees, shown as-is, nothing struck through.      */
+/* The discount variants (#7315, #7966) are derived from it.                */
+/*                                                                          */
+/* Status:  ACTIVE (verified in WPCode 2026-08-18).                         */
+/*                                                                          */
+/* It has NO discount const and must not gain one -- commit 3fc792b removed */
+/* the promo UI from this builder deliberately. npm run guard:membership-   */
+/* pricing FAILS if a discounts const appears here, or if any figure drifts */
+/* from scripts/audit/membership-pricing-source.json.                       */
+/*                                                                          */
+/* Captured 2026-08-18 and byte-identical (ignoring line endings) to        */
+/* Website/Pages/Memberships (Category)/memberships/membership builder      */
+/* JS.js -- so the guard is verified to check what is actually running.     */
+/* Re-check with:  npm run guard:membership-pricing                         */
 /* ========================================================================== */
 document.addEventListener("DOMContentLoaded", function () {
     const membershipType = document.getElementById("membershipType");

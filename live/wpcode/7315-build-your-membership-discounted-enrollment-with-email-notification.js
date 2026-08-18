@@ -1,19 +1,31 @@
 /* ========================================================================== */
-/* JS - BUILD YOUR MEMBERSHIP (DISCOUNTED ENROLLMENT)      (WPCode #7315)   */
-/* - with email notification                                               */
+/* WPCode #7315                                                             */
+/* Title: "JS - Build Your Membership (Discounted Enrollment)               */
+/*         - with email notification"                                       */
 /* ========================================================================== */
-/* Runs on: discounted-enrollment / promo membership pages.                */
-/* Status:  ACTIVE (toggle confirmed ON in WPCode 2026-08-18).             */
-/*                                                                         */
-/* Carries enrollment discounts: single $100, couple $100, family $150.     */
-/* This builder MUST keep its discounts const -- the guard fails if it      */
-/* disappears, which is how a promo page would silently start quoting       */
-/* sticker enrollment.                                                      */
-/*                                                                         */
-/* Verify: captured 2026-08-18 and byte-identical (ignoring line endings)   */
-/* to .../memberships/Discounted Enrollment/membership builder JS.js.       */
-/* Re-check with:                                                           */
-/*   npm run guard:membership-pricing                                       */
+/* REUSABLE OFFER TEMPLATE, fixed-dollar variant. Like #7966, the owner     */
+/* re-edits this per promotion rather than replacing it. Derived from       */
+/* #9926, which is the original no-discount builder.                        */
+/*                                                                          */
+/* Status:  ACTIVE -- toggle confirmed ON in WPCode 2026-08-18.             */
+/*                                                                          */
+/* Currently: enrollment discounts of single $100, couple $100, family $150,*/
+/* subtracted from the sticker fee and shown as a strikethrough. It MUST    */
+/* keep its discounts const -- the guard fails if it disappears, which is   */
+/* how a promo page would silently start quoting sticker enrollment.        */
+/*                                                                          */
+/* ⚠ BEFORE THE NEXT OFFER -- this holds the last campaign's values:         */
+/*   1. discounts { single, couple, family } -- the offer itself            */
+/*   2. pricing / enrollmentFees / minimumAmounts -- must match the join    */
+/*      page unless the offer deliberately changes them                     */
+/*   3. limitedTimeText -- this builder only sets display, the wording      */
+/*      lives in the PAGE markup, so check the page too                     */
+/* Then re-capture into this file, and update membership-pricing-source.json*/
+/* so the guard is checking the new numbers rather than the old ones.       */
+/*                                                                          */
+/* Captured 2026-08-18 and byte-identical (ignoring line endings) to        */
+/* .../memberships/Discounted Enrollment/membership builder JS.js.          */
+/* Re-check with:  npm run guard:membership-pricing                         */
 /* ========================================================================== */
 document.addEventListener("DOMContentLoaded", function () {
     const membershipType = document.getElementById("membershipType");

@@ -1,7 +1,9 @@
 /* ========================================================================== */
-/* JS - BUILD YOUR MEMBERSHIP - DISCOUNTED ENROLLMENT %    (WPCode #7966)   */
+/* WPCode #7966                                                             */
+/* Title: "JS - Build Your Membership - Discounted Enrollment %"            */
 /* ========================================================================== */
-/* REUSABLE OFFER TEMPLATE. This snippet is not a one-off -- the owner      */
+/* REUSABLE OFFER TEMPLATE, percentage variant (per its title; it currently */
+/* runs a FLAT $100 via SPECIAL_ENROLLMENT, not a percentage). The owner     */
 /* re-edits it for each new promotion, then publishes a special-offer page  */
 /* that carries the builder markup. Treat it as a live template, not as     */
 /* expired code to retire.                                                  */

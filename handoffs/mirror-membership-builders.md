@@ -31,9 +31,9 @@ Its young-family discounts are confirmed live as `{1: 25, 2: 15}` where #9926 an
 
 ## Done means
 
-- [x] `live/wpcode/9926-membership-builder.js` — captured 2026-08-18 (`dbafa08`)
-- [x] `live/wpcode/7315-membership-builder-discounted-enrollment.js` — captured 2026-08-18 (`dbafa08`)
-- [x] `live/wpcode/7966-membership-builder-summer-offer.js` — captured 2026-08-18
+- [x] `live/wpcode/9926-build-your-membership-with-email-notification.js` — captured 2026-08-18 (`dbafa08`)
+- [x] `live/wpcode/7315-build-your-membership-discounted-enrollment-with-email-notification.js` — captured 2026-08-18 (`dbafa08`)
+- [x] `live/wpcode/7966-build-your-membership-discounted-enrollment-percent.js` — captured 2026-08-18
 - [x] Headers added as a separate commit, so stripping them reproduces the editor contents (`dbafa08` → headers)
 - [x] Diff of live vs repo paste-source for #9926 and #7315 — **identical**
 - [x] Same for #7966 — **differs**: dates + comment + `offer:` tag; no pricing figure
@@ -73,7 +73,7 @@ Write to `live/wpcode/<id>-<kebab-name>.js`, content exactly as pasted, with **o
 Verify before committing:
 
 ```bash
-node -e "console.log(require('fs').readFileSync(process.argv[1],'utf8').length)" live/wpcode/9926-membership-builder.js
+node -e "console.log(require('fs').readFileSync(process.argv[1],'utf8').length)" live/wpcode/9926-build-your-membership-with-email-notification.js
 ```
 
 Expect the count (minus your header) to match what WPCode reported. If it does not, stop and re-request the paste.
@@ -87,7 +87,7 @@ One commit, all three, no edits beyond headers. Message states these are verbati
 For each snippet, against the repo copy in the table above:
 
 ```bash
-git diff --no-index "Website/Pages/Memberships (Category)/memberships/membership builder JS.js" live/wpcode/9926-membership-builder.js
+git diff --no-index "Website/Pages/Memberships (Category)/memberships/membership builder JS.js" live/wpcode/9926-build-your-membership-with-email-notification.js
 ```
 
 Expect differences — the question is *which*. Classify every hunk as one of:
