@@ -173,14 +173,25 @@ Rules:
   it needs window.opener. Ask me to click Connect.
 - tagmanager.google.com's account list may show zero accounts even when
   access is fine. Navigate straight to the container URL instead.
-- Record whether tour_booking_id resolves or is null. It is unverified and
-  it determines whether Ads dedup will work later.
-- Stop and ask me at every 🛑 HUMAN GATE — the test booking (it sends a real
-  email and SMS and writes a real Supabase row) and the publish.
-- After publishing you are NOT done. Mark tour_booked as a key event and
-  register the five custom dimensions. Unregistered parameters are
-  collected but unreportable, and every report shows (not set).
+DO NOT make a real tour booking. Verify with the synthetic dataLayer.push in
+step 2 of the handoff. It exercises trigger, variables and tag end to end
+while writing no Supabase row and sending no email or SMS. A real booking
+would reach a real person on the tour calendar.
 
-Report what you verified with what output, whether tour_booking_id was
-null, and anything you left undone.
+- Stop and ask me before publishing the container. That is a production
+  change and it is the one HUMAN GATE here.
+- After publishing you are NOT finished. Mark tour_booked as a key event and
+  register the five custom dimensions (tour_source_page, tour_utm_source,
+  tour_utm_campaign, tour_heard_about, tour_device). Unregistered parameters
+  are collected but unreportable and every report shows (not set).
+- tour_booking_id stays UNVERIFIED after a synthetic push, because the push
+  supplies it rather than reading it from the edge function. Record it as
+  unverified. Do not claim otherwise.
+- Do not run the Supabase cross-check yet — there is no post-publish data.
+  Note that GA4 will read roughly 70-85% of Supabase because of ad blockers.
+  They are not supposed to match.
+
+Report: the inventory you confirmed, what fired in Preview and which
+variables resolved, whether you published, what you registered in GA4, and
+anything left undone.
 ```
