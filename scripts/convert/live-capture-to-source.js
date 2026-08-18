@@ -100,7 +100,14 @@ const WARNINGS = [
     },
     {
         pattern: /thrv_custom_html_shortcode/,
-        message: 'thrv_wrapper thrv_custom_html_shortcode div present. That wrapper is output-only, but removing it means matching its closing div - do that by hand, do not guess.',
+        // Whether this wrapper is junk depends entirely on what the capture is
+        // meant to mirror, so the warning has to state both frames. Relative to
+        // one Custom HTML block - the code box, which is what live/thrive/pages/
+        // holds - Thrive adds it on output and it must go. Relative to the page
+        // tree, which is what Website/Pages/ holds, it IS the editor's node for
+        // that block, sitting among sibling thrv_wrapper elements that everyone
+        // agrees are editor state. Stripping it there deletes real structure.
+        message: 'thrv_wrapper thrv_custom_html_shortcode div present. Whether it belongs depends on what this capture mirrors. Mirroring one Custom HTML element (its code box, as under live/thrive/pages/): the wrapper is added on output and should go. Mirroring a page tree (as under Website/Pages/, alongside thrv-page-section and thrv_text_element siblings): it is the editor node for that block and must stay. Either way this script will not touch it, because removing one means matching its closing div - settle the frame first, then do it by hand.',
     },
     {
         pattern: /compressx-nextgen/,
