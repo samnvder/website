@@ -1,0 +1,801 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2026-08-18 09:05:10",
+    "containerVersion": {
+        "path": "accounts/6261176694/containers/201877150/versions/7",
+        "accountId": "6261176694",
+        "containerId": "201877150",
+        "containerVersionId": "7",
+        "name": "tour_booked conversion tracking (GA4)",
+        "description": "Adds tour_booked conversion tracking: CE - tour_booked trigger, 10 DLV variables, and GA4 - tour_booked event tag to G-SJN8S5QWXE. Verified in Preview 2026-08-18 with a real booking: tag fired once and succeeded, all 10 variables resolved. Known gap: tour_booking_id returns null (book-tour edge function does not return an appointment id) - must be fixed before any Google Ads dedup work. See handoffs/publish-tour-tracking-gtm.md.",
+        "container": {
+            "path": "accounts/6261176694/containers/201877150",
+            "accountId": "6261176694",
+            "containerId": "201877150",
+            "name": "southendclub.com",
+            "publicId": "GTM-WLRX58RN",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1733868037475",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/6261176694/containers/201877150/workspaces?apiLink=container",
+            "features": {
+                "supportUserPermissions": true,
+                "supportEnvironments": true,
+                "supportWorkspaces": true,
+                "supportGtagConfigs": false,
+                "supportBuiltInVariables": true,
+                "supportClients": false,
+                "supportFolders": true,
+                "supportTags": true,
+                "supportTemplates": true,
+                "supportTriggers": true,
+                "supportVariables": true,
+                "supportVersions": true,
+                "supportZones": true,
+                "supportTransformations": false
+            },
+            "tagIds": [
+                "GTM-WLRX58RN"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "tagId": "7",
+                "name": "Google Tag - G-SJN8S5QWXE",
+                "type": "googtag",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "tagId",
+                        "value": "G-SJN8S5QWXE"
+                    }
+                ],
+                "fingerprint": "1734050912331",
+                "firingTriggerId": [
+                    "2147479553"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "tagId": "9",
+                "name": "Click - Virtual Tour!",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enhancedUserId",
+                        "value": "false"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "{{Page URL}}"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "https://southendclub.com/"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "{{Click Text}}"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "Virtual Tour!"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "Click - Virtual Tour!"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "G-SJN8S5QWXE"
+                    }
+                ],
+                "fingerprint": "1734128936875",
+                "firingTriggerId": [
+                    "8"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "tagId": "11",
+                "name": "Click - Message Us Button",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enhancedUserId",
+                        "value": "false"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "{{Click Text}}"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "Message Us"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "Click - Message Us Button"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "G-SJN8S5QWXE"
+                    }
+                ],
+                "fingerprint": "1734261777475",
+                "firingTriggerId": [
+                    "10"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "tagId": "23",
+                "name": "GA4 - tour_booked",
+                "type": "gaawe",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "sendEcommerceData",
+                        "value": "false"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "eventSettingsTable",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "tour_booking_id"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - tour_booking_id}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "tour_is_reschedule"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - tour_is_reschedule}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "tour_date"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - tour_date}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "tour_time"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - tour_time}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "tour_heard_about"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - tour_heard_about}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "tour_source_page"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - tour_source_page}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "tour_device"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - tour_device}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "tour_utm_source"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - tour_utm_source}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "tour_utm_medium"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - tour_utm_medium}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameter",
+                                        "value": "tour_utm_campaign"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "parameterValue",
+                                        "value": "{{DLV - tour_utm_campaign}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventName",
+                        "value": "tour_booked"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "measurementIdOverride",
+                        "value": "G-SJN8S5QWXE"
+                    }
+                ],
+                "fingerprint": "1787040097348",
+                "firingTriggerId": [
+                    "12"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT",
+                "monitoringMetadata": {
+                    "type": "MAP"
+                },
+                "consentSettings": {
+                    "consentStatus": "NOT_SET"
+                }
+            }
+        ],
+        "trigger": [
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "triggerId": "8",
+                "name": "Click - Virtual Tour!",
+                "type": "CLICK",
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Click Text}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "Virtual Tour!"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1734377898174"
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "triggerId": "10",
+                "name": "Click - All Elements",
+                "type": "CLICK",
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Click Text}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "Message Us"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1734377719281"
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "triggerId": "12",
+                "name": "CE - tour_booked",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "tour_booked"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1787039375581"
+            }
+        ],
+        "variable": [
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "variableId": "13",
+                "name": "DLV - tour_booking_id",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "tour_booking_id"
+                    }
+                ],
+                "fingerprint": "1787039440551",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "variableId": "14",
+                "name": "DLV - tour_is_reschedule",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "tour_is_reschedule"
+                    }
+                ],
+                "fingerprint": "1787039490937",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "variableId": "15",
+                "name": "DLV - tour_date",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "tour_date"
+                    }
+                ],
+                "fingerprint": "1787039514932",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "variableId": "16",
+                "name": "DLV - tour_time",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "tour_time"
+                    }
+                ],
+                "fingerprint": "1787039563852",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "variableId": "17",
+                "name": "DLV - tour_heard_about",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "tour_heard_about"
+                    }
+                ],
+                "fingerprint": "1787039599617",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "variableId": "18",
+                "name": "DLV - tour_source_page",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "tour_source_page"
+                    }
+                ],
+                "fingerprint": "1787039635586",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "variableId": "19",
+                "name": "DLV - tour_device",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "tour_device"
+                    }
+                ],
+                "fingerprint": "1787039668839",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "variableId": "20",
+                "name": "DLV - tour_utm_source",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "tour_utm_source"
+                    }
+                ],
+                "fingerprint": "1787039708488",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "variableId": "21",
+                "name": "DLV - tour_utm_medium",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "tour_utm_medium"
+                    }
+                ],
+                "fingerprint": "1787039733604",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "variableId": "22",
+                "name": "DLV - tour_utm_campaign",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "tour_utm_campaign"
+                    }
+                ],
+                "fingerprint": "1787039744096",
+                "formatValue": {}
+            }
+        ],
+        "builtInVariable": [
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "type": "PAGE_URL",
+                "name": "Page URL"
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "type": "PAGE_HOSTNAME",
+                "name": "Page Hostname"
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "type": "PAGE_PATH",
+                "name": "Page Path"
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "type": "REFERRER",
+                "name": "Referrer"
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "type": "EVENT",
+                "name": "Event"
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "type": "CLICK_ELEMENT",
+                "name": "Click Element"
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "type": "CLICK_CLASSES",
+                "name": "Click Classes"
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "type": "CLICK_ID",
+                "name": "Click ID"
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "type": "CLICK_URL",
+                "name": "Click URL"
+            },
+            {
+                "accountId": "6261176694",
+                "containerId": "201877150",
+                "type": "CLICK_TEXT",
+                "name": "Click Text"
+            }
+        ],
+        "fingerprint": "1787042234244",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/6261176694/containers/201877150/versions/7?apiLink=version"
+    }
+}
