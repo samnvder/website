@@ -13,13 +13,13 @@ Three WPCode snippets compute **every membership price the site quotes**. All th
 
 | Snippet | What it is | Repo copy (paste-source, may lag) |
 |---|---|---|
-| **#9926** | Normal join page builder, sticker enrollment | `Website/Pages/Memberships (Category)/memberships/membership builder JS.js` |
-| **#7315** | Discounted enrollment — **confirmed toggled ON 2026-08-18** | `…/memberships/Discounted Enrollment/membership builder JS.js` |
-| **#7966** | Summer special, flat `SPECIAL_ENROLLMENT` — offer expired 2026-07-22 | `…/Discounted Enrollment/membership builder JS-discount-enrollment.js` |
+| **#9926** | **The original** — no discount, sticker enrollment. The other two derive from it. Active. | `Website/Pages/Memberships (Category)/memberships/membership builder JS.js` |
+| **#7315** | Reusable offer template, fixed-dollar ($100/$100/$150 currently). **Toggled ON 2026-08-18.** | `…/memberships/Discounted Enrollment/membership builder JS.js` |
+| **#7966** | Reusable offer template, "%" per its title though it runs a flat `SPECIAL_ENROLLMENT`. Enabled but **inert** — no page published to bind to. | `…/Discounted Enrollment/membership builder JS-discount-enrollment.js` |
 
 [The backup law](../CLAUDE.md) says any code pasted into the live site is mirrored here. These never were. `consolidate-snippet-mirrors` closed having gathered *five* snippets and did not surface these three, because they are membership-builder JS rather than SEO/tracking snippets.
 
-There is a sharper reason than tidiness. `npm run guard:membership-pricing` now validates the two repo builder files and cross-checks them against `scripts/audit/membership-pricing-source.json`, so it fails on real pricing drift (proved 12/12 by `npm run guard:membership-pricing:prove`). But **it validates the repo copies, and the repo is known to lag live.** Until the live snippets are captured and diffed, a green guard means "the repo agrees with itself", not "the site quotes the right prices."
+There was a sharper reason than tidiness. `npm run guard:membership-pricing` validates the two repo builder files against `scripts/audit/membership-pricing-source.json`, so it fails on real pricing drift (proved 12/12 by `npm run guard:membership-pricing:prove`) — but it reads the **repo copies**, and the repo is known to lag live. Before this handoff ran, a green guard meant "the repo agrees with itself", not "the site quotes the right prices". **It now means the latter for #9926 and #7315.**
 
 **Outcome for #9926 and #7315: live is byte-identical to the repo paste-source copies** (ignoring line endings), and live pricing matches `membership-pricing-source.json`. Live #9926 has no `discounts` const; live #7315 has `$100/$100/$150`. Both match what the guard asserts.
 
@@ -27,7 +27,9 @@ This handoff originally predicted the opposite, reasoning that both snippets are
 
 **#7966 is the one that drifted.** Live runs the **July 31** offer wording; `6a347b1` changed the repo copy to July 22 and was never pasted. The repo's `offer:` tag reads `summer-special-2026-jul21`, matching neither. **No pricing figure differs.** Live is the authority — do not paste the repo copy over live without deciding which date was intended.
 
-Its young-family discounts are confirmed live as `{1: 25, 2: 15}` where #9926 and #7315 use 30/20, so a family with one young child pays **$5/month more** on the special-offer page. That is a genuine behavioural difference, not repo staleness.
+Its young-family discounts are confirmed live as `{1: 25, 2: 15}` where #9926 and #7315 use 30/20, so a family with one young child pays **$5/month more** through it. That is a genuine behavioural difference, not repo staleness.
+
+**Both #7315 and #7966 are reusable templates** — the owner re-edits them per promotion rather than replacing them — so each holds the *last* campaign's values, and publishing an offer page activates them as-is. That makes the stale `offer:` tag a live hazard rather than dead text: it reaches Heroku and Dropbox Sign, and would file every signup of a new campaign under the old offer. Each mirror header carries its own pre-launch checklist.
 
 ## Done means
 
@@ -136,34 +138,8 @@ Still open: #7966's young-family discounts read `{1: 25, 2: 15}` in the repo whe
 
 ---
 
-## Kickoff prompt
+## Kickoff prompt — retired
 
-Paste into a fresh Claude Code (Cowork) session in this repo:
-
-```
-Execute handoffs/mirror-membership-builders.md in this repo.
-
-Two of three are done. #9926 and #7315 were captured on 2026-08-18 and
-both proved byte-identical to their repo paste-source copies, so the
-pricing guard demonstrably checks what is actually running for those two.
-
-What is left is #7966 (summer offer, WPCode). Step 1 is a human gate: ask
-the owner to open it, Ctrl+A, Ctrl+C, paste it, and report its toggle
-state and character count. Do not curl it -- Thrive adds wrapper markup
-on output and the capture would be corrupt.
-
-Commit the unpatched capture first, then add the header in a second
-commit, then diff against
-"Website/Pages/Memberships (Category)/memberships/Discounted Enrollment/membership builder JS-discount-enrollment.js".
-
-Do not assume it will differ. The same prediction was made for #7315 on
-the strength of its snippet title and was wrong -- a title is not evidence
-about contents.
-
-One known discrepancy to settle: the repo copy has young-family discounts
-{1: 25, 2: 15} where membership-pricing-source.json says {1: 30, 2: 20}.
-Whatever the live capture shows is what is being charged. If #7966 is
-toggled OFF, mirror it to live/wpcode/retired/ instead.
-
-Stop at the human gate in step 8 before applying any pricing change.
-```
+This handoff is closed; there is nothing left to kick off. If a future promotion
+needs re-mirroring, the work is a two-step: get the owner to paste the snippet
+from its WPCode editor, then re-run the diff in step 4 against the repo copy.

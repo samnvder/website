@@ -44,9 +44,24 @@ Naming rules:
 
 - **WPCode** → `<id>-<kebab-name>.<ext>`. The ID is what you search for in WP
   Admin, so it leads the filename. Extension matches the snippet's Code Type
-  (`.php` for PHP Snippet, `.html` for HTML Snippet). Each file carries a header
-  comment stating **where** it runs, its **current status**, why it exists, and
-  how to verify it.
+  (`.php` for PHP Snippet, `.html` for HTML Snippet, `.js` for JS Snippet). Each
+  file carries a header comment stating **where** it runs, its **current
+  status**, why it exists, and how to verify it.
+
+  **`<kebab-name>` comes from the snippet's WPCode title**, minus the leading
+  category prefix the titles use for grouping in WP Admin — `SEO - LocalBusiness
+  schema (NAP, geo, hours)` → `9935-localbusiness-schema.php`, `JS - Build Your
+  Membership - with email notification` →
+  `9926-build-your-membership-with-email-notification.js`. Do not invent a
+  descriptive name instead: the mirrors were briefly named for what they *did*
+  (`7966-membership-builder-summer-offer.js`) and that particular file is reused
+  for every promotion, so the name described one dead campaign and made a live
+  template look like history. The title is the one label that also exists in WP
+  Admin, which is where anyone comparing the two will be standing.
+
+  **A title is not evidence about contents.** Two of these are titled
+  "…with email notification" and it was assumed, on that basis, that the live
+  copies carried code the repo lacked. They did not. Diff before concluding.
 - **`wpcode/retired/`** → snippets that were applied to the site and later
   removed. They are kept because the source is worth reading, but they are *not*
   running, and the top-level directory must only ever hold things that are.
