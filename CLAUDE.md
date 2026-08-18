@@ -123,15 +123,24 @@ A handoff must have:
 
 ## Known issues (not SEO)
 
-- **`npm run guard` is broken on `master` — CI has been red on every PR since commit `3fc792b`.** The membership-pricing guard crashes with `Could not find "const discountRates" in source file.` Nothing to do with SEO, but it means **a red check is the normal state, so a genuinely broken build looks identical to a healthy one.** Fix it before trusting CI.
+- ~~**`npm run guard` is broken on `master`**~~ — **fixed 2026-08-18.** `npm run guard` exits 0, so **a red check now means something.** History, because the wrong fix here is tempting:
 
-  Verified cause — the refactor moved the discount files into a `Discounted Enrollment/` subdirectory and the guard's path config was never updated:
+  The guard crashed with `Could not find "const discountRates" in source file.` The obvious reading — repoint `SOURCE_REL` at the copy that still has `discounts` — would have been **wrong**, and would have left a guard that passes while validating the wrong page's pricing.
 
-  | | Path |
-  |---|---|
-  | `DISCOUNT_SOURCE_REL` expects | `…/memberships/membership builder JS-discount-enrollment.js` |
-  | File actually lives at | `…/memberships/`**`Discounted Enrollment/`**`membership builder JS-discount-enrollment.js` |
+  What was actually true: commit `3fc792b` deliberately removed the promo UI from the normal join-page builder, so its missing `discounts` const is correct, not a regression. The guard was demanding a constant the live file is supposed to not have. Two builders are live (owner-confirmed, WPCode toggles verified 2026-08-18):
 
-  Separately, `loadMembershipBuilderPricing` reads discounts out of `SOURCE_REL` (`…/memberships/membership builder JS.js`), which no longer defines `discounts` *or* `discountRates` — it only has `pricing`, `minimumAmounts`, `enrollmentFees`. The constant it wants, `const discounts`, is in `…/memberships/Discounted Enrollment/membership builder JS.js`. **Confirm which file is authoritative for live pricing before repointing it** — making the guard pass against the wrong file would silently stop validating real pricing drift, which is the whole point of the guard.
+  | Builder | WPCode | `discounts` |
+  |---|---|---|
+  | `memberships/membership builder JS.js` | **#9926** normal join | none, by design |
+  | `memberships/Discounted Enrollment/membership builder JS.js` | **#7315** discounted enrollment | `$100 / $100 / $150` |
+  | `memberships/Discounted Enrollment/…-discount-enrollment.js` | **#7966** summer offer | flat `SPECIAL_ENROLLMENT`, expired 2026-07-22 |
+
+  The fix: discounts became **optional** (`discountsMode: 'none'`); the guard checks **both** live builders and asserts the *kind* of each (`discounts: 'forbidden'` for #9926, `'required'` for #7315); and `DISCOUNT_SOURCE_REL` gained the missing `Discounted Enrollment/` segment.
+
+  It also closes a hole that predates the crash: the guard only ever checked **shape**, so any internally-consistent set of numbers passed. It now cross-checks both builders against `scripts/audit/membership-pricing-source.json`, so a dues figure changed in one place and not the other fails.
+
+  **`npm run guard:membership-pricing:prove` is the proof, and it is runnable.** It mutates real pricing files, asserts each mutation landed, runs the guard, and restores from git — 12/12 drift cases caught. It refuses to run if the pricing files are dirty. If you change the guard, run it; a guard that exits 0 without this passing is not known to check anything.
+
+  **Still broken, separately:** `npm run pricing:apply` throws — its codegen assumes every target builder has a `discounts` const and a `discountedPrice` calculation, which #9926 no longer does. Not in the `guard` chain, so CI is unaffected. Note also that WPCode **#9926**, **#7315** and **#7966** are *not* mirrored under [`live/wpcode/`](./live/wpcode/) — a standing gap against the backup law above. The live #7315 is titled "…with email notification", so it may already differ from the repo copy.
 - **All-in-One WP Migration Unlimited Extension is flagged by WordPress as likely pirated** and throws a fatal error against the current core version. Currently deactivated. Should be deleted — nulled plugins are a malware vector.
 - Backups exist on the server (2 × 6.72 GB) but **cannot be restored** with the free plugin's ~512 MB import cap. GoDaddy's own managed backups have not been checked.

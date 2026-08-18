@@ -7,7 +7,12 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 const crypto = require('crypto');
-const { SOURCE_REL } = require('./membership-pricing-paths.js');
+const {
+  SOURCE_REL,
+  DISCOUNTED_ENROLLMENT_SOURCE_REL,
+  GUARD_TARGETS,
+  CANONICAL_JSON_REL,
+} = require('./membership-pricing-paths.js');
 
 function extractConstObjectLiteral(source, name) {
   const needle = `const ${name}`;
@@ -39,11 +44,19 @@ function evalObjectLiteral(literal) {
 }
 
 /**
- * Load and parse pricing-related consts from membership builder JS.js.
+ * Load and parse pricing-related consts from a membership builder JS file.
+ *
+ * Discounts are OPTIONAL. The normal join-page builder (WPCode #9926) has had
+ * no `discounts` const since commit 3fc792b removed the promo UI; demanding one
+ * is what made this guard throw. Absence is reported as discountsMode 'none' so
+ * the caller can assert it, rather than silently treated as a parse failure.
+ *
  * @param {string} repoRoot Absolute path to Website repo root (parent of Website/Pages/...)
+ * @param {string} [relPath] Builder file to read, relative to repoRoot. Defaults to
+ *   the normal join page (SOURCE_REL) so existing callers are unaffected.
  */
-function loadMembershipBuilderPricing(repoRoot) {
-  const sourcePath = path.join(repoRoot, SOURCE_REL);
+function loadMembershipBuilderPricing(repoRoot, relPath = SOURCE_REL) {
+  const sourcePath = path.join(repoRoot, relPath);
   if (!fs.existsSync(sourcePath)) {
     throw new Error(`Source not found: ${sourcePath}`);
   }
@@ -54,12 +67,12 @@ function loadMembershipBuilderPricing(repoRoot) {
   const pricing = evalObjectLiteral(extractConstObjectLiteral(raw, 'pricing'));
   const minimumAmounts = evalObjectLiteral(extractConstObjectLiteral(raw, 'minimumAmounts'));
   const enrollmentFees = evalObjectLiteral(extractConstObjectLiteral(raw, 'enrollmentFees'));
-  let discountsMode = 'amount';
+  let discountsMode = 'none';
   let discountValues = null;
-  try {
+  if (raw.includes('const discounts')) {
     discountValues = evalObjectLiteral(extractConstObjectLiteral(raw, 'discounts'));
     discountsMode = 'amount';
-  } catch {
+  } else if (raw.includes('const discountRates')) {
     discountValues = evalObjectLiteral(extractConstObjectLiteral(raw, 'discountRates'));
     discountsMode = 'rate';
   }
@@ -72,6 +85,115 @@ function loadMembershipBuilderPricing(repoRoot) {
     discountsMode,
   };
   return { sourcePath, raw, sourceBytes, sha256, data };
+}
+
+/**
+ * Reduce membership-pricing-source.json — the declared canonical pricing —
+ * to the same shape the builder JS exposes, so the two can be compared.
+ */
+function loadCanonicalPricing(repoRoot) {
+  const jsonPath = path.join(repoRoot, CANONICAL_JSON_REL);
+  if (!fs.existsSync(jsonPath)) {
+    throw new Error(`Canonical pricing source not found: ${jsonPath}`);
+  }
+  const raw = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+  const types = raw.membership_types || {};
+  const tiers = (obj) => [obj['1'], obj['2'], obj['3']];
+
+  const family = {};
+  const byChildren = (types.family || {}).base_monthly_dues_by_children || {};
+  Object.keys(byChildren).forEach((n) => {
+    family[n] = tiers(byChildren[n]);
+  });
+
+  const discountValue = (t) => {
+    const d = ((types[t] || {}).enrollment_fee || {}).discount;
+    return d && typeof d === 'object' ? d.value : d;
+  };
+
+  return {
+    pricing: {
+      single: tiers(types.single.monthly_dues),
+      couple: tiers(types.couple.monthly_dues),
+      family,
+    },
+    minimumAmounts: {
+      single: `$${types.single.monthly_food_and_beverage_minimum}`,
+      couple: `$${types.couple.monthly_food_and_beverage_minimum}`,
+      family: `$${types.family.monthly_food_and_beverage_minimum}`,
+    },
+    enrollmentFees: {
+      single: tiers(types.single.enrollment_fee.original),
+      couple: tiers(types.couple.enrollment_fee.original),
+      family: tiers(types.family.enrollment_fee.original),
+    },
+    discounts: {
+      single: discountValue('single'),
+      couple: discountValue('couple'),
+      family: discountValue('family'),
+    },
+  };
+}
+
+function sameTiers(a, b) {
+  return Array.isArray(a) && Array.isArray(b) && a.length === b.length
+    && a.every((v, i) => v === b[i]);
+}
+
+/**
+ * Compare a builder's constants against the canonical pricing source.
+ *
+ * This is the check that makes the guard mean something. Shape validation alone
+ * passes any internally-consistent set of numbers, so a dues figure edited in
+ * one place and not the other would sail through. Real drift fails here.
+ *
+ * @returns {string[]} errors (empty when the builder agrees with canonical)
+ */
+function comparePricingToCanonical(data, canonical, expect = {}) {
+  const errors = [];
+  const where = 'differs from membership-pricing-source.json';
+
+  ['single', 'couple'].forEach((t) => {
+    if (!sameTiers(data.pricing[t], canonical.pricing[t])) {
+      errors.push(
+        `pricing.${t}: [${data.pricing[t]}] ${where} ([${canonical.pricing[t]}]).`
+      );
+    }
+  });
+
+  Object.keys(canonical.pricing.family).forEach((n) => {
+    const got = (data.pricing.family || {})[n];
+    if (!sameTiers(got, canonical.pricing.family[n])) {
+      errors.push(
+        `pricing.family[${n}]: [${got}] ${where} ([${canonical.pricing.family[n]}]).`
+      );
+    }
+  });
+
+  ['single', 'couple', 'family'].forEach((t) => {
+    if (!sameTiers(data.enrollmentFees[t], canonical.enrollmentFees[t])) {
+      errors.push(
+        `enrollmentFees.${t}: [${data.enrollmentFees[t]}] ${where} ([${canonical.enrollmentFees[t]}]).`
+      );
+    }
+    if (data.minimumAmounts[t] !== canonical.minimumAmounts[t]) {
+      errors.push(
+        `minimumAmounts.${t}: "${data.minimumAmounts[t]}" ${where} ("${canonical.minimumAmounts[t]}").`
+      );
+    }
+  });
+
+  if (expect.discounts === 'required' && (data.discountsMode || 'none') !== 'none') {
+    ['single', 'couple', 'family'].forEach((t) => {
+      if (data.discounts[t] !== canonical.discounts[t]) {
+        errors.push(
+          `discounts.${t}: ${data.discounts[t]} ${where} (${canonical.discounts[t]}).`
+        );
+      }
+    });
+  }
+
+  return errors;
 }
 
 /**
@@ -101,12 +223,15 @@ function computePricingDigest(data) {
       family: data.enrollmentFees.family,
       single: data.enrollmentFees.single,
     },
-    discounts: {
-      mode: data.discountsMode || 'amount',
-      couple: data.discounts.couple,
-      family: data.discounts.family,
-      single: data.discounts.single,
-    },
+    discounts:
+      data.discountsMode === 'none' || !data.discounts
+        ? { mode: 'none' }
+        : {
+            mode: data.discountsMode || 'amount',
+            couple: data.discounts.couple,
+            family: data.discounts.family,
+            single: data.discounts.single,
+          },
   };
   const json = JSON.stringify(canonical);
   return crypto.createHash('sha256').update(json, 'utf8').digest('hex');
@@ -135,14 +260,34 @@ function assertTierOrderDesc(label, arr, errors) {
 }
 
 /**
+ * @param {object} data Parsed builder constants from loadMembershipBuilderPricing.
+ * @param {{ discounts?: 'forbidden'|'required'|'any' }} [expect]
+ *   Asserts the KIND of builder this file is. 'forbidden' = the normal join
+ *   page, which must carry no discount const; 'required' = a promo builder,
+ *   which must. Without this a file could lose its discounts entirely and
+ *   still pass, which is the failure mode this guard exists to catch.
  * @returns {{ ok: boolean, errors: string[] }}
  */
-function validateMembershipPricing(data) {
+function validateMembershipPricing(data, expect = {}) {
   const errors = [];
+  const mode = data.discountsMode || 'none';
+  const expectDiscounts = expect.discounts || 'any';
 
-  if (!data.pricing || !data.minimumAmounts || !data.enrollmentFees || !data.discounts) {
-    errors.push('Missing top-level keys: pricing, minimumAmounts, enrollmentFees, discounts.');
+  if (!data.pricing || !data.minimumAmounts || !data.enrollmentFees) {
+    errors.push('Missing top-level keys: pricing, minimumAmounts, enrollmentFees.');
     return { ok: false, errors };
+  }
+
+  if (expectDiscounts === 'required' && mode === 'none') {
+    errors.push(
+      'discounts: expected a discount const (discounts or discountRates) in this builder, found none.'
+    );
+  }
+  if (expectDiscounts === 'forbidden' && mode !== 'none') {
+    errors.push(
+      `discounts: this builder must not define discounts (found "${mode}" mode). ` +
+        'Promo pricing belongs in the Discounted Enrollment builder.'
+    );
   }
 
   assertTierOrderDesc('pricing.single', data.pricing.single, errors);
@@ -160,7 +305,7 @@ function validateMembershipPricing(data) {
   assertTierOrderDesc('enrollmentFees.couple', data.enrollmentFees.couple, errors);
   assertTierOrderDesc('enrollmentFees.family', data.enrollmentFees.family, errors);
 
-  ['single', 'couple', 'family'].forEach((t) => {
+  if (mode !== 'none') ['single', 'couple', 'family'].forEach((t) => {
     const d = data.discounts[t];
     if (typeof d !== 'number' || !Number.isFinite(d) || d < 0) {
       errors.push(`discounts.${t}: expected non-negative number.`);
@@ -174,7 +319,7 @@ function validateMembershipPricing(data) {
     }
   });
 
-  ['single', 'couple', 'family'].forEach((t) => {
+  if (mode !== 'none') ['single', 'couple', 'family'].forEach((t) => {
     const orig = data.enrollmentFees[t];
     const d = data.discounts[t];
     if (!orig || d === undefined) return;
@@ -201,8 +346,8 @@ function validateMembershipPricing(data) {
   return { ok: errors.length === 0, errors };
 }
 
-function assertValidMembershipPricing(data) {
-  const r = validateMembershipPricing(data);
+function assertValidMembershipPricing(data, expect = {}) {
+  const r = validateMembershipPricing(data, expect);
   if (!r.ok) {
     const msg = ['[membership-pricing guard] Validation failed:', ...r.errors.map((e) => `  - ${e}`)].join('\n');
     throw new Error(msg);
@@ -211,6 +356,10 @@ function assertValidMembershipPricing(data) {
 
 module.exports = {
   SOURCE_REL,
+  DISCOUNTED_ENROLLMENT_SOURCE_REL,
+  GUARD_TARGETS,
+  loadCanonicalPricing,
+  comparePricingToCanonical,
   loadMembershipBuilderPricing,
   validateMembershipPricing,
   assertValidMembershipPricing,

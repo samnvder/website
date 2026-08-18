@@ -38,7 +38,8 @@
     "audit:membership-pricing": "node scripts/audit/membership-pricing-guard.js && node scripts/audit/membership-pricing-audit-pdf.js",
     "pricing:apply": "node scripts/audit/membership-pricing-apply.js",
     "pricing-change": "node scripts/audit/membership-pricing-change.js",
-    "guard:pickleball-header": "node scripts/audit/pickleball-header-guard.js"
+    "guard:pickleball-header": "node scripts/audit/pickleball-header-guard.js",
+    "guard:membership-pricing:prove": "node scripts/audit/testing/prove-pricing-drift.js"
   },
   "keywords": [
     "south-end-club",
