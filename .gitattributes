@@ -1,0 +1,5 @@
+# The GTM container export is a restore point, not source: it must survive a
+# checkout byte-for-byte identical to the file Google Tag Manager served.
+# core.autocrlf is true on Windows here, which would otherwise rewrite its LF
+# line endings on checkout and break that guarantee.
+analytics/gtm-container-export.json -text
