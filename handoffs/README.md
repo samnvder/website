@@ -8,11 +8,12 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 
 | # | Handoff | What it does | Time | Blocked? |
 |---|---|---|---|---|
-| 1 | **[tour-conversion-tracking](tour-conversion-tracking.md)** | Makes tour bookings visible to GA4 and Google Ads. **Highest value on the board after GBP.** | ~1h | Part C only — no Google Ads account exists |
+| 0 | **[publish-tour-tracking-gtm](publish-tour-tracking-gtm.md)** | 🔴 **Do this first.** Verify + publish the `tour_booked` GTM build and register it in GA4. **12 unpublished changes are sitting in the container.** | ~30 min | no |
+| 1 | **[tour-conversion-tracking](tour-conversion-tracking.md)** | Makes tour bookings visible to GA4 and Google Ads. Part A ✅ done 2026-08-18; Part B built but unpublished → see #0. | ~1h | Part C only — no Google Ads account exists |
 | 2 | **[ga4-hygiene](ga4-hygiene.md)** | Clears MonsterInsights residue. **Low priority — moves no numbers.** | ~20 min | no |
 | 3 | **[gtm-conversion-linker](gtm-conversion-linker.md)** | Adds the missing Conversion Linker so Ads can attribute clicks. **Parked on purpose** — must run *before* Part C, never after. | ~10 min | yes — no Google Ads account exists |
 
-**Do conversion tracking next** — it's the one that changes what you can know. Hygiene is whenever you're next in the account.
+**Do #0 next.** Part A is live and verified, but GA4 still records nothing until the GTM build is published — and 12 unpublished changes sitting in a shared container is a state worth closing quickly. Hygiene is whenever you're next in the account.
 
 Backlog context for all three: [SEO/TODO.md](../SEO/TODO.md) §14. Property config and the pre-tracking baseline: [analytics/GA4-SNAPSHOT.md](../analytics/GA4-SNAPSHOT.md).
 
@@ -44,6 +45,46 @@ Two rules that apply to every handoff touching the website:
 ---
 
 ## Kickoff prompts
+
+### 0 · Publish the tour_booked GTM build
+
+```
+Execute handoffs/publish-tour-tracking-gtm.md in this repo.
+
+Read it in full first, along with CLAUDE.md.
+
+CRITICAL: the GTM work is ALREADY BUILT and saved but not published —
+container GTM-WLRX58RN, workspace 7, showing "Workspace Changes: 12".
+Do NOT rebuild it. Creating a second CE - tour_booked trigger or a second
+GA4 - tour_booked tag would double-count every booking, which is worse
+than no tracking. Your first action is to confirm the existing inventory
+matches what the handoff lists.
+
+Your job: verify it in Preview, publish it, then register it in GA4.
+
+Rules:
+- If GTM Preview will not connect, check the BROWSER before the site. Run
+  in the page console:
+  fetch('https://www.googletagmanager.com/gtm.js?id=GTM-WLRX58RN')
+  If that fails while other requests succeed, an ad blocker is blocking
+  googletagmanager.com. That is exactly what happened on 2026-08-18 and it
+  cost a whole verification cycle. Use a clean profile.
+- Tag Assistant's "Connect" opens a popup. If popups are blocked the
+  handshake never completes, and opening the URL by hand does NOT work —
+  it needs window.opener. Ask me to click Connect.
+- tagmanager.google.com's account list may show zero accounts even when
+  access is fine. Navigate straight to the container URL instead.
+- Record whether tour_booking_id resolves or is null. It is unverified and
+  it determines whether Ads dedup will work later.
+- Stop and ask me at every HUMAN GATE — the test booking (it sends a real
+  email and SMS and writes a real Supabase row) and the publish.
+- After publishing you are NOT done. Mark tour_booked as a key event and
+  register the five custom dimensions. Unregistered parameters are
+  collected but unreportable, and every report shows (not set).
+
+Report what you verified with what output, whether tour_booking_id was
+null, and anything you left undone.
+```
 
 ### 1 · Tour conversion tracking
 
