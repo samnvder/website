@@ -53,9 +53,9 @@ The booking data itself is fine — `book-tour` already writes `utm_source`, `ut
 | WordPress admin + Thrive Architect | Part A | assumed |
 | GoDaddy Quick Links → Flush Cache | Part A | assumed |
 | GTM edit access to `GTM-WLRX58RN` | Parts B, C | assumed |
-| **Google Ads account** | **Part C only** | **⚠️ unconfirmed — no `AW-` tag exists in the container, so there may be no account at all** |
+| **Google Ads account** | **Part C only** | 🔴 **CONFIRMED ABSENT 2026-08-17** — GA4 Product links → Google Ads shows *"No links yet"*, and no `AW-` tag exists in the container. **Part C is blocked.** |
 
-**If there's no Ads account, Part C is blocked and A + B are not.** Do A and B regardless — the `dataLayer` push is what unblocks everything, and Ads wires to the same event later with zero code change. Don't let a missing login stall the hour.
+**Part C is blocked — A + B are not.** Verified against the live property; see [analytics/GA4-SNAPSHOT.md](./analytics/GA4-SNAPSHOT.md). Do A and B regardless — the `dataLayer` push is what unblocks everything, and Ads wires to the same event later with zero code change. Don't let a missing login stall the hour.
 
 ---
 
@@ -138,6 +138,8 @@ Drive `tagmanager.google.com` for container `GTM-WLRX58RN`.
 `tour_booking_id` · `tour_is_reschedule` · `tour_date` · `tour_time` · `tour_heard_about` · `tour_source_page` · `tour_device` · `tour_utm_source` · `tour_utm_medium` · `tour_utm_campaign`
 
 **3. Tag** — GA4 Event · name `GA4 - tour_booked` · Measurement ID `G-SJN8S5QWXE` · Event Name `tour_booked` · map each variable above to a same-named parameter · trigger `CE - tour_booked`
+
+**Confirmed against the live property 2026-08-17** ([analytics/GA4-SNAPSHOT.md](./analytics/GA4-SNAPSHOT.md)): measurement ID `G-SJN8S5QWXE` is correct — but the property has a **second, dormant stream `G-KSB6ZBR8FS`** left over from MonsterInsights. Don't use it. 12 of 50 custom-dimension slots are used, so all five below will fit.
 
 **4. In GA4** — Admin → Events → mark `tour_booked` as a **key event**. Then Admin → Custom definitions → register `tour_source_page`, `tour_utm_source`, `tour_utm_campaign`, `tour_heard_about`, `tour_device` as custom dimensions. **Unregistered parameters are collected but not reportable** — this is the step that makes the data usable, and the one people skip.
 
