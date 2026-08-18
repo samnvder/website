@@ -1,6 +1,6 @@
 # Handoff — Back up the GTM container, and extend the backup law to cover it
 
-**Created:** 2026-08-18 · **Status:** OPEN · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
+**Created:** 2026-08-18 · **Status:** ✅ **DONE 2026-08-18** — published version 7 exported, verified and committed; backup law extended. No live system was touched. · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
 **Est.:** ~15 min. No live change of any kind — export and commit only.
 
 > **Execution convention:** written to be run by a Claude Code agent in Cowork. See [CLAUDE.md § Handoffs](../CLAUDE.md).
@@ -19,10 +19,35 @@ The `se-bk-floating` widget is the cautionary tale the law was written from — 
 
 ## Done means
 
-- [ ] `analytics/gtm-container-export.json` committed, containing published version 7
-- [ ] The export verified to contain the `tour_booked` trigger, ten variables and the GA4 tag
-- [ ] [live/README.md](../live/README.md) extended so the backup law explicitly covers tag-manager and analytics configuration
-- [ ] The re-export trigger written down, so this doesn't silently rot
+- [x] `analytics/gtm-container-export.json` committed, containing published version 7
+- [x] The export verified to contain the `tour_booked` trigger, ten variables and the GA4 tag
+- [x] [live/README.md](../live/README.md) extended so the backup law explicitly covers tag-manager and analytics configuration
+- [x] The re-export trigger written down, so this doesn't silently rot
+
+### What was exported and verified
+
+Admin → Export Container → **Version 7**, `tour_booked conversion tracking (GA4)`. The
+picker offers *Default Workspace* directly above it; the version was chosen, not the
+workspace. 30,718 bytes, byte-identical to the file GTM served.
+
+| Checked | Found |
+|---|---|
+| `containerVersionId` | `7` |
+| Tags (4) | `Google Tag - G-SJN8S5QWXE`, `Click - Virtual Tour!`, `Click - Message Us Button`, **`GA4 - tour_booked`** |
+| Triggers (3) | `Click - Virtual Tour!`, `Click - All Elements`, **`CE - tour_booked`** (id 12, custom event, `{{_event}}` equals `tour_booked`) |
+| User-defined variables | **10**, `DLV - tour_booking_id` … `DLV - tour_utm_campaign` (the 20 shown in the export UI include 10 built-ins) |
+| `GA4 - tour_booked` wiring | `firingTriggerId: ["12"]`, measurement ID `G-SJN8S5QWXE`, **10** event parameters each mapped `<name>` → `{{DLV - <name>}}` |
+| `grep -c tour_booked` | `6` |
+| Credentials / PII scan | none — no emails, tokens, keys. Only `accountId 6261176694`, `containerId 201877150`, `GTM-WLRX58RN`, `G-SJN8S5QWXE`, all already public |
+
+One extra step not in the plan: `.gitattributes` pins the export to `-text`. `core.autocrlf`
+is `true` here, so a checkout would otherwise hand back CRLF and the file would no longer be
+the bytes Google served — which is the entire point of it.
+
+Two notes contradicting earlier records, both harmless: the GTM account list **did** show the
+account (the [publish handoff](publish-tour-tracking-gtm.md) reports it empty), and the
+container is now on **workspace 8 with 0 pending changes**, consistent with v7 published and
+nothing since.
 
 ---
 
