@@ -22,14 +22,14 @@ Routing rules (see [the handoff](../../handoffs/component-structure-reorg.md)):
 | 3 | `Components/Buttons/Static Buttons/virtual-tour-button.html` | index | `Components/Homepage/` | YES |
 | 4 | `Components/CTA/Homepage Hero Summer Offer CTA.html` | ABSENT | `Components/Homepage/` **seasonal** | YES |
 | 5 | `Components/CTA/Ready To Experience South End Footer CTA.html` | 20 pages | `Components/Shared/` | YES |
-| 6 | `Components/CTA/Special Membership Promo CTA (Zapier).html` | ABSENT | `Components/Archive/` ⚠️ | YES |
+| 6 | `Components/CTA/Special Membership Promo CTA (Zapier).html` | **20 pages** | `Components/Shared/` ⚠️ **stale vs live** | YES |
 | 7 | `Components/Footer.html` | 20 pages | `Components/Shared/` | YES |
 | 8 | `Components/Header.html` (+ `.js`, `.readme`) | 20 pages | `Components/Shared/` | YES |
 | 9 | `Components/Index/carousel-pickleball-homepage.html` | index, racquet-sports | `Components/Shared/` | YES |
 | 10 | `Components/Carousel/Pickleball/*` (css, js, readme) | supports #9 | `Components/Shared/` | YES |
 | 11 | `Templates/.../Floating Section Nav/*` (2 html + assets) | ABSENT | `Components/Archive/` | YES |
 | 12 | `Templates/.../Left Upper CTA/*` (2 html + assets) | youth-programs | `Components/youth-programs/` | YES |
-| 13 | `Templates/.../General Button/general-button.html` | ABSENT | `Components/_scaffolds/` ⚠️ | YES |
+| 13 | `Templates/.../General Button/general-button.html` | ABSENT | `Components/Archive/` | YES |
 | 14 | `Website/Pages/youth-programs/Homepage Youth Camp Banner.html` | ABSENT | `Components/Homepage/` **seasonal** | YES |
 | 15 | `Website/Pages/.../summer-membership/Homepage Summer Banner.html` | ABSENT | `Components/Homepage/` **seasonal** | YES |
 | 16 | `Website/Pages/.../memberships/Memberships Nav Block.html` | 10 pages | `Components/Shared/` | YES |
@@ -66,26 +66,59 @@ but it should be surfaced to the owner.
    Rule A. Row 18 (`Carousel/template/`) has live lineage — `Carousel/Pickleball/`
    is derived from it — so it is a starting point, not dead code.
 
-## ⚠️ Two flagged for confirmation
+## Both flagged rows resolved 2026-08-18
 
-- **Row 13, `general-button.html`** — routed to `_scaffolds/` by extension of
-  decision 3, since it reads as a generic starter. **Unlike the carousel it has
-  no demonstrated derived instance**, so the case is weaker; it may simply be
-  dead. Confirm, or send it to `Archive/`.
-- **Row 6, `Special Membership Promo CTA (Zapier)`** — ABSENT with no stated
-  date window, so Rule A-bis sends it to `Archive/`. But "Special Membership
-  Promo" *may* be seasonal with an unrecorded window. It also carries a Zapier
-  integration, so archiving it may strand a live hook. **Confirm with the owner
-  before archiving.**
+- **Row 13, `general-button.html` -> `Archive/`.** Decided by the owner. Confirmed
+  independently: `sec-btn-glow` returns 0/20 on a second fingerprint pass. No live
+  instance, no derived instance -- dead, not a scaffold.
+- **Row 6, `Special Membership Promo CTA (Zapier)` -> `Shared/`, NOT Archive.**
+  The hook check inverted this one. See below.
 
-## Notable corrections from measurement
+## 🚨 The Zapier row was a false negative, and the method that produced it is flawed
 
-- `carousel-pickleball-homepage.html` renders on **index *and* racquet-sports**,
-  not homepage-only as the handoff assumed. Rule B sends it to `Shared/`.
-- `Memberships Nav Block.html` renders on **10 pages** including fitness, pools,
-  wellness, and youth-programs. Named for memberships, filed under memberships,
-  shared across a third of the site — the same mis-filing-by-name as the youth
-  banner.
-- `Homepage Youth Camp Banner.html` is **ABSENT from all 20 live pages**, not
-  live on the homepage as the handoff's worked example claimed. The example
-  still holds — the filing error was linked-page-vs-intent, never liveness.
+Checking the hook before archiving (as instructed) found the component is **live
+on all 20 pages**. The render map said ABSENT because it fingerprinted the block
+by the repo file's wrapper class:
+
+| Fingerprint | Live |
+|---|---|
+| `zapierFormContainer` (repo file's div id) | **0/20** |
+| `cm1jxql2l001o8bubfm2nwb35` (Zapier interface id) | **20/20** |
+| `interfaces.zapier.com` | **20/20** |
+
+Same Zapier interface, **different wrapper markup**. Live uses a
+`<zapier-interfaces-page-embed>` web component plus the official
+`zapier-interfaces.esm.js`; the repo file uses a hand-rolled `zapierFormContainer`
+div with a manually-assigned `iframe.src`. **The repo copy is a stale earlier
+implementation of something running site-wide** -- the same drift class as
+`se-bk-floating` in CLAUDE.md.
+
+Archiving it would have buried the repo's only record of a site-wide component.
+It goes to `Shared/`, and its contents must **not** be treated as current: get a
+paste from the live editor per the backup law before anyone edits it.
+
+### The systematic flaw
+
+**A block re-implemented live with different wrapper markup reads as ABSENT.**
+Class-name fingerprints only detect blocks whose live markup still matches the
+repo's. Every ABSENT verdict is therefore a *possible* false negative rather than
+a finding.
+
+Second-pass results using stable identifiers -- external URLs, form ids, embed
+ids, things that survive a re-skin:
+
+| Block | Stable fingerprint | Live | Verdict |
+|---|---|---|---|
+| Special Promo (Zapier) | `cm1jxql2l001o8bubfm2nwb35` | 20/20 | **false negative, corrected** |
+| Homepage Youth Camp Banner | `250416539351152` (jotform) | 1/20 | banner absent; its CTA target is live on `youth-programs` via row 12 |
+| tour-button / virtual-tour | `se-bk-floating`, "Book a Tour" | 20/20 | tour booking is live, but via the **`se-bk-floating` widget**; these two files are superseded implementations. Archive stands. |
+| general-button | `sec-btn-glow` | 0/20 | genuinely absent |
+| Floating Section Nav | `sec-floating-nav` | 0/20 | ⚠️ class-only, no stable id available |
+| Hero Offer CTA | `se-hero-offer-cta` | 0/20 | ⚠️ class-only, no stable id available |
+| Homepage Summer Banner | `se-home-summer-banner` | 0/20 | ⚠️ class-only, no stable id available |
+
+The three marked ⚠️ **could not be verified by any re-skin-proof
+identifier**. They are treated as absent, but that verdict is weaker than the
+others. Rule A-bis routes all three to `Homepage/` (seasonal) rather than
+`Archive/`, so nothing is buried on the strength of an unverified negative --
+the risk is contained, not resolved.

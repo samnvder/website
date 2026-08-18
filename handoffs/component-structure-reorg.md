@@ -151,6 +151,35 @@ done < patches/component-structure-reorg/block-inventory.tsv \
 cat patches/component-structure-reorg/render-map.txt
 ```
 
+### 1.4 Second pass — re-verify every ABSENT by a stable identifier
+
+**A class-name fingerprint only finds blocks whose live markup still matches the
+repo's.** If a block was re-implemented live with different wrapper markup, it
+reads as ABSENT while running on every page. **ABSENT from 1.3 is a hypothesis,
+not a finding.**
+
+This is not hypothetical. On 2026-08-18 the Zapier promo CTA measured `0/20` by
+its repo class `zapierFormContainer` and `20/20` by its Zapier interface id
+`cm1jxql2l001o8bubfm2nwb35`. Live had been rebuilt on the
+`<zapier-interfaces-page-embed>` web component; the repo copy was a stale
+hand-rolled iframe. Archiving on the class-name verdict would have buried the
+repo's only record of a site-wide component.
+
+For every ABSENT row, extract identifiers that **survive a re-skin** — external
+URLs, form ids, embed ids, third-party script srcs — and re-grep:
+
+```bash
+# stable identifiers = things a redesign cannot rename
+grep -ohE 'https?://[^"'"'"' )]+|[0-9]{10,}' "<the-absent-file>" | sort -u
+# then, per identifier:
+grep -l -- "<identifier>" patches/component-structure-reorg/live/*.html | wc -l
+```
+
+**Any row that turns up > 0 on a stable identifier is a false negative** — route
+it by the real count, and flag the repo copy as stale-vs-live. A block with **no
+re-skin-proof identifier** must be reported as *unverified absent*, never as
+confirmed dead.
+
 This produces the authoritative destination for every block:
 
 | Live page count | Destination |
@@ -165,7 +194,9 @@ This produces the authoritative destination for every block:
 **Present `render-map.txt` and the derived move list. Do not move anything yet.**
 
 Flag explicitly:
-- every block resolving to `ABSENT` (in repo, not on any live page)
+- every block resolving to `ABSENT` **after the 1.4 second pass**, stating which
+  stable identifier was used, or that none existed (unverified absent)
+- every false negative 1.4 caught, with the repo copy marked stale-vs-live
 - every block whose measured destination differs from its current directory
 - `Homepage Youth Camp Banner.html` — expected `ABSENT`; confirm and treat
   under Rule A-bis (seasonal), **not** as Archive
