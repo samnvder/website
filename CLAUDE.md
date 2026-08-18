@@ -39,6 +39,29 @@ So fixing Appearance → Menus does **not** clear dead links from the rendered p
 
 **Saving a WP menu is unreliable under automation:** the Save button's element reference goes stale and the click silently does nothing — the form looks saved but isn't. Confirm every save by the *"X has been updated."* notice, never by reading back the field values.
 
+## ⚠️ The backup law — mirror every block of code you paste
+
+**Any code pasted into the live site gets committed to [`live/`](./live/) in the same session.** No exceptions, and no "I'll capture it after."
+
+This repo is *not* a backup of the site — that is the standing warning throughout these docs. Code is the one part of the live configuration that **can** be kept here losslessly, so it is. Anything not mirrored exists in exactly one place: a database row nobody can diff, review, or restore.
+
+The `se-bk-floating` booking widget is the cautionary tale. It ran on every page of production for months, was the source of a documented repo/live drift warning, and existed nowhere in this repo until 2026-08-18.
+
+The layout and naming rules are in **[live/README.md](./live/README.md)**:
+
+| Code lives on the site as | Mirror it to |
+|---|---|
+| WPCode snippet | `live/wpcode/<id>-<kebab-name>.<php\|html>` |
+| Custom HTML element in a Thrive page | `live/thrive/pages/<page-slug>/<widget-id>.js` |
+
+Three rules that make the mirror trustworthy:
+
+1. **Capture from production, not from the repo.** `curl` the live page and slice out the block. The repo lags live; assuming otherwise is how the drift above happened.
+2. **Commit the unpatched capture first, then the patched version.** Two commits. Git history becomes the restore point, so a bad paste is `git show HEAD~1:<path>` away from being undone.
+3. **Prove the capture is exact.** Match the byte count the live editor reports, and confirm that stripping your change reproduces the original byte-for-byte. A mirror nobody verified is worse than none — it will be trusted.
+
+Store the **inner JS only** for Thrive elements: no `<script>` tags, no wrapper markup. Thrive's `<code class="tve_js_placeholder">` closing line carries trailing layout `<div>`s, and re-pasting those corrupts page structure.
+
 ## SEO
 
 Start at **[SEO/TODO.md](./SEO/TODO.md)** — current status, what's done, what's open, who's blocked.

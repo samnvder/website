@@ -2,6 +2,13 @@
 
 Source of truth for the PHP snippets running on the live site via **WPCode**.
 
+> **New snippets go in [`live/wpcode/`](../../live/wpcode/), not here.** That
+> directory is the general home for every block of code mirrored from
+> production — see [the backup law](../../CLAUDE.md). This directory keeps the
+> four *SEO* snippets below, where the existing TODO and CLAUDE.md references
+> already point them. Merging the two is worth doing; it is a docs-wide rename
+> and should be its own change.
+
 ## Why this directory exists
 
 Almost all live SEO configuration lives in the WordPress database, not in this
