@@ -1,3 +1,20 @@
+/* ========================================================================== */
+/* JS - BUILD YOUR MEMBERSHIP (DISCOUNTED ENROLLMENT)      (WPCode #7315)   */
+/* - with email notification                                               */
+/* ========================================================================== */
+/* Runs on: discounted-enrollment / promo membership pages.                */
+/* Status:  ACTIVE (toggle confirmed ON in WPCode 2026-08-18).             */
+/*                                                                         */
+/* Carries enrollment discounts: single $100, couple $100, family $150.     */
+/* This builder MUST keep its discounts const -- the guard fails if it      */
+/* disappears, which is how a promo page would silently start quoting       */
+/* sticker enrollment.                                                      */
+/*                                                                         */
+/* Verify: captured 2026-08-18 and byte-identical (ignoring line endings)   */
+/* to .../memberships/Discounted Enrollment/membership builder JS.js.       */
+/* Re-check with:                                                           */
+/*   npm run guard:membership-pricing                                       */
+/* ========================================================================== */
 document.addEventListener("DOMContentLoaded", function () {
     const membershipType = document.getElementById("membershipType");
     const tierSelect = document.getElementById("tier");

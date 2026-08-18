@@ -1,3 +1,19 @@
+/* ========================================================================== */
+/* JS - BUILD YOUR MEMBERSHIP - WITH EMAIL NOTIFICATION   (WPCode #9926)   */
+/* ========================================================================== */
+/* Runs on: the normal join page membership builder.                       */
+/* Status:  ACTIVE (verified in WPCode 2026-08-18).                        */
+/*                                                                         */
+/* Sticker enrollment only -- this builder has NO discount const, and must  */
+/* not gain one. Commit 3fc792b removed the promo UI; promo pricing lives   */
+/* in #7315. npm run guard:membership-pricing FAILS if discounts appear     */
+/* here, or if any figure drifts from membership-pricing-source.json.       */
+/*                                                                         */
+/* Verify: captured 2026-08-18 and byte-identical (ignoring line endings)   */
+/* to Website/Pages/Memberships (Category)/memberships/membership builder   */
+/* JS.js. Re-check with:                                                    */
+/*   npm run guard:membership-pricing                                       */
+/* ========================================================================== */
 document.addEventListener("DOMContentLoaded", function () {
     const membershipType = document.getElementById("membershipType");
     const tierSelect = document.getElementById("tier");
