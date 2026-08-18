@@ -1,6 +1,9 @@
 # Handoff — Lock down Supabase RLS on `tour_bookings` and `tour_referrals`
 
-**Created:** 2026-08-18 · **Status:** 🔴 **OPEN — priority zero** · **Est.:** ~30 min, most of it verification
+**Created:** 2026-08-18 · **Status:** ✅ **CLOSED 2026-08-18 — remediated and verified in production** · **Est.:** ~30 min
+
+> **Audit record:** [security/2026-08-18-supabase-rls-exposure.pdf](../security/2026-08-18-supabase-rls-exposure.pdf)
+> (PII-free, shareable). Regenerate via `python security/generate-rls-audit-record.py`.
 
 > **Execution convention:** written to be run by a Claude Code agent in Cowork. See [CLAUDE.md § Handoffs](../CLAUDE.md).
 
@@ -187,22 +190,146 @@ The PostgREST root returns an OpenAPI document listing every table the anon role
 
 ## When it is done
 
-- [ ] Restore point confirmed or dump taken (step 1)
-- [ ] Pre-change `pg_policies` output recorded below
-- [ ] RLS enabled / permissive policy dropped on all three tables
-- [ ] All nine status codes in step 4 are `401`/`403`
-- [ ] `check-availability` still returns `"success":true`
-- [ ] Real booking placed, confirmed, then cleaned up from **both** Supabase and Engage Pro
-- [ ] PostgREST root walked; no other table exposes personal data
-- [ ] Outcome recorded here and the row in [handoffs/README.md](README.md) moved to Closed
+- [x] Restore point checked — **none exists** (Free plan: no scheduled backups, no PITR).
+      Owner decided to proceed without a dump. Recorded, and still open as its own risk.
+- [x] Pre-change `pg_policies` output recorded above
+- [x] Miswritten policies dropped and replaced with `{service_role}`-scoped equivalents
+- [x] Verified — see corrected criteria below. `tour_bookings` and `tour_referrals`
+      return `200` with count `0` and body `[]`, down from 231 and 30.
+- [x] `check-availability` returns `"success":true` — and proven positively, see below
+- [ ] Real booking placed — **NOT DONE, requires owner authorisation** (writes a real
+      row, sends a real email, books a real slot in Engage Pro)
+- [x] Schema enumerated — the PostgREST root walk **does not work** with the anon key
+      (401, service-role only). Enumerated by `pg_class` query instead: 45 tables, of
+      which 34 correctly deny anon. See §5 of the audit PDF.
+- [x] Outcome recorded here and in [security/](../security/)
+
+### Outcome
+
+**Fix applied** — two `drop policy` / `create policy` pairs, scoping the service-role
+policies to `service_role`. `"Anon can insert bookings"` was deliberately **left in
+place**: it grants INSERT only with no `USING` clause, so it cannot disclose or destroy
+anything, and leaving it meant the change could not break the booking flow under any
+hypothesis. It remains open as a low-severity spam vector.
+
+**Two corrections to this handoff's own method**, both load-bearing:
+
+1. **`204` on DELETE proves nothing.** Under RLS a DELETE matching no visible row
+   succeeds against zero rows and returns `204` — identical to an open table. Control:
+   `central_departments` has only an anon *SELECT* policy and still returns
+   `DELETE(no-match)=204`. The write exposure here was real, but it was established from
+   the policy definitions, **not** from the status codes this handoff cited as proof.
+   Likewise HTTP 400 on INSERT reflects a `NOT NULL` check running before the RLS
+   `WITH CHECK`, so it does not prove insert was permitted.
+2. **"All nine codes must be 401/403" is wrong** and would make a *successful* fix look
+   failed. A protected table returns `200` with an empty body — that is exactly how the
+   34 locked-down tables behave. The correct criterion is **`401`/`403`, or `200` with a
+   count of `0`**, confirmed by reading the response body.
+
+**Production proof of the load-bearing assumption.** A `"success":true` from
+`check-availability` is *weak* evidence on its own — a function silently reading as
+`anon` would now see zero bookings and report every slot free, succeeding while
+double-booking tours. Sweeping dates found one with a real booking:
+
+```
+2026-08-23    "booked_slots":["10:30 AM"]
+```
+
+The edge function returned a row `anon` provably cannot see. Service-role bypass is
+therefore confirmed **in production**, not merely in the repo — which also settles the
+question of whether `anon` needs table access for bookings to work. It does not.
+
+**Still open:** the booking *write* path is untested (needs owner sign-off); the
+`Anon can insert bookings` policy; and the absence of any Supabase backup, which is
+independent of this finding and outlasts it.
 
 ### Pre-change policy state
 
-> Paste the step 2 output here before changing anything.
+**Captured 2026-08-18 before any change.** RLS was **already enabled on all 45
+tables** — so neither case 3a nor 3b applied as written. The exposure came from
+the *content* of two policies:
 
 ```
-(not yet captured)
+tablename       policyname                             roles     cmd  qual  with_check
+tour_bookings   Service role full access               {public}  ALL  true  true
+tour_bookings   Anon can insert bookings               {anon}    INSERT  null  true
+tour_referrals  Service role full access on referrals  {public}  ALL  true  true
 ```
+
+Both service-role policies were granted **`TO public`** — which in Postgres means
+*every* role including `anon`, not the service role their names claim. With
+`cmd = ALL` and `qual = true` that is unrestricted anon SELECT/INSERT/UPDATE/DELETE.
+The other 43 tables are written correctly as `{service_role}`.
+
+**This is the whole bug.** A policy that was present, permissive, and reassuringly
+named. Any review reading policy *names* instead of policy *roles* would have
+passed this database.
+
+**Pre-change exposure baseline, measured 2026-08-18 via `/rest/v1` with the anon key.**
+Count-only probe (`select=id`, `Prefer: count=exact`, `Range: 0-0`) — no rows returned:
+
+```
+tour_bookings          HTTP/1.1 206 Partial Content   Content-Range: 0-0/231
+tour_referrals         HTTP/1.1 206 Partial Content   Content-Range: 0-0/30
+central_departments    HTTP/1.1 206 Partial Content   Content-Range: 0-0/12
+```
+
+Reproduces the original finding exactly. This is the "before" side of the
+verification; after the fix each line must be `401`/`403`, or `200` with a count
+of `0`. A count of `231` after the change means the policy did not apply to the
+anon role regardless of what the dashboard shows.
+
+**Step 5 note — the PostgREST root document is NOT reachable with the anon key.**
+`GET /rest/v1/` returns `401`:
+
+```
+{"message":"Invalid API key","hint":"Only the `service_role` API key can be used for this endpoint."}
+```
+
+So the handoff's step 5 command cannot enumerate the schema as written; it needs
+the service-role key or the dashboard. As a fallback, ~60 plausible table names
+were probed (`tours`, `bookings`, `members`, `leads`, `prospects`, `users`,
+`profiles`, `contacts`, `appointments`, `availability`, `slots`, `staff`,
+`courts`, `reservations`, `memberships`, `payments`, `audit_log`, …). **Only the
+three known tables responded**; every other name returned `404`. That narrows the
+exposure but does not close step 5 — a name-guessing probe is not an enumeration,
+which is the same weakness that left this list incomplete in the first place.
+
+### Load-bearing assumption — re-verified 2026-08-18
+
+Both greps pass. `grep -rn "rest/v1" live/ patches/ "Website/Pages"` returns
+nothing; the edge-function grep returns exactly `book-tour`,
+`check-availability`, `validate-referral`. Additionally checked for supabase-js
+SDK usage (`createClient`, `.from(`), which would build `/rest/v1` URLs without
+the literal string appearing — **no SDK is loaded anywhere**; the only `.from(`
+hit is `Buffer.from` in an unrelated build script.
+
+All three call sites pass the anon key as a header on a **`POST` to
+`/functions/v1/book-tour`**, not to a table:
+
+```js
+fetch(SE_URL + '/functions/v1/book-tour', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'apikey': SE_KEY, 'Authorization': 'Bearer ' + SE_KEY },
+  body: JSON.stringify(payload)
+})
+```
+
+(`live/wpcode/8309-floating-book-tour-button.html:1177`,
+`live/thrive/pages/memberships/se-cal.html:1414`,
+`live/thrive/pages/schedule-a-tour/se-cal.html:1414` — identical in all three.)
+
+The anon key here authenticates to the **edge-function gateway**, not to the
+table. The function supplies its own service-role credential server-side, which
+bypasses RLS. **This is why `anon` needs no table privileges at all — including
+no `INSERT`.** Granting `anon INSERT` to "keep bookings working" would leave the
+table writable by anyone on the internet and is the permissive-policy trap step
+3a warns against.
+
+Caveat, unchanged: the edge-function source is **not** in this repo
+(`Components/Backend/supabase/functions/book-tour/` exists but is empty), and the
+repo lags live. The greps prove the repo. The production proof is the
+`check-availability` curl in step 4, run *after* RLS is on.
 
 ---
 
