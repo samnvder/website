@@ -1,6 +1,6 @@
 # Handoff — Mirror the three membership builder snippets into `live/wpcode/`
 
-**Created:** 2026-08-18 · **Status:** 🟡 IN PROGRESS — #9926 and #7315 mirrored 2026-08-18; **#7966 outstanding** · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
+**Created:** 2026-08-18 · **Status:** 🟡 ALL THREE MIRRORED 2026-08-18 — open only on **#7966's toggle state** and two owner decisions · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
 **Est.:** ~25 min. No live-site *change*; read-only in WP Admin.
 
 > **Execution convention:** written to be run by a Claude Code agent in Cowork. See [CLAUDE.md § Handoffs](../CLAUDE.md).
@@ -9,7 +9,7 @@
 
 ## Why
 
-Three WPCode snippets compute **every membership price the site quotes**. Two are now mirrored (2026-08-18); #7966 is not:
+Three WPCode snippets compute **every membership price the site quotes**. All three are now mirrored (2026-08-18):
 
 | Snippet | What it is | Repo copy (paste-source, may lag) |
 |---|---|---|
@@ -21,21 +21,25 @@ Three WPCode snippets compute **every membership price the site quotes**. Two ar
 
 There is a sharper reason than tidiness. `npm run guard:membership-pricing` now validates the two repo builder files and cross-checks them against `scripts/audit/membership-pricing-source.json`, so it fails on real pricing drift (proved 12/12 by `npm run guard:membership-pricing:prove`). But **it validates the repo copies, and the repo is known to lag live.** Until the live snippets are captured and diffed, a green guard means "the repo agrees with itself", not "the site quotes the right prices."
 
-**Outcome for the two captured so far: live is byte-identical to the repo paste-source copies** (ignoring line endings), and live pricing matches `membership-pricing-source.json`. Live #9926 has no `discounts` const; live #7315 has `$100/$100/$150`. Both match what the guard asserts.
+**Outcome for #9926 and #7315: live is byte-identical to the repo paste-source copies** (ignoring line endings), and live pricing matches `membership-pricing-source.json`. Live #9926 has no `discounts` const; live #7315 has `$100/$100/$150`. Both match what the guard asserts.
 
 This handoff originally predicted the opposite, reasoning that both snippets are titled "…with email notification" while the repo copies supposedly lacked that code. They did not — the repo has had it since `3fc792b`. A snippet **title is not evidence about its contents**; only the diff is.
+
+**#7966 is the one that drifted.** Live runs the **July 31** offer wording; `6a347b1` changed the repo copy to July 22 and was never pasted. The repo's `offer:` tag reads `summer-special-2026-jul21`, matching neither. **No pricing figure differs.** Live is the authority — do not paste the repo copy over live without deciding which date was intended.
+
+Its young-family discounts are confirmed live as `{1: 25, 2: 15}` where #9926 and #7315 use 30/20, so a family with one young child pays **$5/month more** on the special-offer page. That is a genuine behavioural difference, not repo staleness.
 
 ## Done means
 
 - [x] `live/wpcode/9926-membership-builder.js` — captured 2026-08-18 (`dbafa08`)
 - [x] `live/wpcode/7315-membership-builder-discounted-enrollment.js` — captured 2026-08-18 (`dbafa08`)
-- [ ] `live/wpcode/7966-membership-builder-summer-offer.js`
+- [x] `live/wpcode/7966-membership-builder-summer-offer.js` — captured 2026-08-18
 - [x] Headers added as a separate commit, so stripping them reproduces the editor contents (`dbafa08` → headers)
 - [x] Diff of live vs repo paste-source for #9926 and #7315 — **identical**
-- [ ] Same for #7966
-- [ ] #7966's toggle state recorded — on or off
-- [ ] `live/README.md` layout block updated to list them
-- [ ] CLAUDE.md's "not mirrored" gap note replaced with the outcome
+- [x] Same for #7966 — **differs**: dates + comment + `offer:` tag; no pricing figure
+- [ ] #7966's toggle state recorded — on or off ⟵ **the only capture item still open**
+- [x] `live/README.md` layout block updated to list them
+- [x] CLAUDE.md's "not mirrored" gap note replaced with the outcome
 
 ---
 

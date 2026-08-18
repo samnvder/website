@@ -164,6 +164,13 @@ A handoff must have:
 
   A caution that turned out to be wrong, recorded because the reasoning was tempting: both snippets are titled "…with email notification", and that title was taken as evidence the live #7315 carried code the repo lacked. It does not — the repo copy has had the Dropbox-Sign/notify-admin block since `3fc792b`. **A snippet title is not evidence about its contents.** The diff was the evidence, and it took thirty seconds.
 
-  **Still open:** **#7966** (summer offer) is not yet mirrored. See [handoffs/mirror-membership-builders.md](./handoffs/mirror-membership-builders.md).
+  **#7966 mirrored too, and it *does* differ from the repo.** Live still runs the **July 31** offer wording; commit `6a347b1` changed the repo copy to July 22 and **that change was never pasted**. No pricing figure differs — the drift is dates, one comment, and the `offer:` tag (repo `summer-special-2026-jul21`, which does not even match its own July 22 text; live `…-jul31`). **Live is the authority here: do not "fix" live to match the repo without deciding which date was intended.**
+
+  Two things the #7966 capture settled, both against what was assumed:
+
+  - **Do not apply the `{1: 25, 2: 15}` → `{1: 30, 2: 20}` change.** Live #7966 really does use 25/15, so this is not repo staleness — it is a genuine behavioural difference between builders. A family with one young child pays **$5/month more** on the special-offer page than on the join page. Deliberate or forgotten is an owner question; the guard does not check #7966.
+  - **`npm run pricing:apply` would now rewrite live behaviour, not correct drift.** Both its remaining pending edits are settled as *do not apply*.
+
+  Every membership builder is now mirrored: [`live/wpcode/`](./live/wpcode/) holds **9926**, **7315** and **7966**. #7966's WPCode toggle state is still unconfirmed — if it is enabled, an expired offer is being advertised. See [handoffs/mirror-membership-builders.md](./handoffs/mirror-membership-builders.md).
 - **All-in-One WP Migration Unlimited Extension is flagged by WordPress as likely pirated** and throws a fatal error against the current core version. Currently deactivated. Should be deleted — nulled plugins are a malware vector.
 - Backups exist on the server (2 × 6.72 GB) but **cannot be restored** with the free plugin's ~512 MB import cap. GoDaddy's own managed backups have not been checked.

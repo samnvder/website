@@ -1,3 +1,22 @@
+/* ========================================================================== */
+/* JS - BUILD YOUR MEMBERSHIP - DISCOUNTED ENROLLMENT %    (WPCode #7966)   */
+/* ========================================================================== */
+/* Runs on: the summer special-offer membership page.                      */
+/* Status:  OFFER EXPIRED. Toggle state NOT YET CONFIRMED -- if this is     */
+/*          still enabled it advertises "through July 31 at midnight" on a  */
+/*          date long past. Confirm in WPCode and move this file to         */
+/*          live/wpcode/retired/ if it is off.                              */
+/*                                                                          */
+/* Captured 2026-08-18. Unlike #9926 and #7315, this one DOES differ from    */
+/* its repo paste-source copy -- live still runs the July 31 wording while   */
+/* the repo was edited to July 22 in commit 6a347b1 and never pasted.        */
+/* No pricing figure differs; the drift is dates and comments only.          */
+/*                                                                          */
+/* NOTE: young-family discounts here are { 1: 25, 2: 15 }, where #9926 and   */
+/* #7315 both use 30/20. Confirmed live, not a capture error -- so a family  */
+/* with one young child pays $5/month MORE on this page than on the join     */
+/* page. Deliberate or stale is an owner question; it is NOT guarded.        */
+/* ========================================================================== */
 /**
  * Special Offer membership builder pricing (WPCode #7966).
  * Offer: flat $100 enrollment + 10 guest passes through July 31, 2026 (midnight Pacific).
