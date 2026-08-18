@@ -257,7 +257,7 @@ Thrive emits duplicate `<title>`, description, canonical and `og:` tags inside `
 ### 8. Plugin hygiene — **Sam** · small
 ShortPixel and Converter for Media are both still installed. Converter for Media is deactivated; ShortPixel is active but inert (all WebP/CDN options off). CompressX warns about conflicts. Consider removing both.
 
-### 9. Sitewide broken navigation — **WP menus fixed ✅ · 404s fixed ✅ · 10 stale anchors left ⚠️**
+### 9. Sitewide navigation — **WP menus fixed ✅ · 404s fixed ✅ · 3 legacy URLs 301-hop ⚠️ · 10 stale anchors left ⚠️**
 
 > ### 🔻 RE-MEASURED 2026-08-13 — this is much smaller than it was
 >
@@ -592,6 +592,8 @@ Nothing links to it, so there's no live dead link and no SEO harm today. But a p
 > **One thing this item missed: inbound links.** "Nothing links to it" is true of the *site*, but the summer email campaign (`email-campaign-summer-2026-final.html`) pointed at `/special-offer/`, and those emails are already delivered. Snippet **9951** redirects `junior-programs`, `food-services` and `banquets` — **not** `special-offer`.
 >
 > **Fix:** add `'special-offer' => 'memberships'` to snippet 9951 and mirror the edit to [live/wpcode/9951-renamed-page-redirects.php](../live/wpcode/9951-renamed-page-redirects.php) in the same session (backup law). Then move the offer sources under an `Expired/` folder.
+>
+> **Patch prepared 2026-08-18 — ready to paste:** [patches/special-offer-redirect/](../patches/special-offer-redirect/). Full snippet with the line applied, one-line diff against the live mirror, 2,535 → 2,574 bytes, with the `curl` verification and a regression check on the existing three redirects. Needs a human at the WPCode screen.
 
 ---
 
@@ -694,7 +696,18 @@ Found 2026-08-18 in the same parity audit. Every other published page matches li
 
 **⚠️ Pasting `Index.html` into Thrive today would put a Christmas banner and a dead countdown timer on the homepage in August.** This is the concrete instance of the *"never paste a repo page file into Thrive"* rule in [CLAUDE.md](../CLAUDE.md) — previously stated as a general risk, now a specific one with a date on it.
 
-**Fix:** resolve per block, not wholesale. For the seasonal two, live is right — move them to a clearly-marked `Website/Pages/index/Seasonal/` folder so they are reusable in December without sitting in the paste path. For the Zapier form and the CTA/questions sections, confirm with Sam whether they were deliberately removed from live or lost.
+**Root cause, found on closer inspection — this is not ordinary drift.** `Index.html` is the **only file in `Website/Pages/` that embeds the Thrive header symbol** (`id="thrive-header"`); every other page file is a content fragment. It is a **full-page snapshot**, and a stale one: its countdown reads `new Date("January 1, 2026 23:59:59")` and it carries `<title>Holiday Special - South End Club</title>`. It is a December 2025 capture of the whole homepage, not a paste-source that drifted.
+
+That reframes the fix. Surgically deleting the Christmas blocks would yield a *still-wrong* snapshot — eight months stale in every other respect, and missing `se-bk-inline` entirely (§24). The blocks are not the problem; the file's category is.
+
+**Done 2026-08-18:** both seasonal blocks extracted to `Website/Pages/index/Seasonal/` — `holiday-video-banner.html` and `promotion-countdown-banner.html`, each with a header stating it is not on live and its countdown is expired. They are preserved for reuse without sitting in the paste path.
+
+**Still open — needs a decision, not a script:**
+
+1. **What is `Index.html` for?** Either (a) declare it a deliberate whole-page mirror, note the embedded theme symbols in the file, and add a row for that frame to the mirror map in [live/README.md](../live/README.md); or (b) replace it with a content-fragment paste-source captured from the Thrive editor, matching every other page. Do not leave it undeclared — that ambiguity is what let a Christmas banner sit in the paste path for eight months.
+2. **The Zapier form and the CTA/questions sections** (`contactButton2`, `zapierForm`, `questions-section`, `sec-cta-*`) are absent from live. Confirm with Sam: removed deliberately, or lost?
+
+⚠️ Whichever way (1) goes, `Index.html` **must not be pasted into Thrive** in its current state.
 
 ---
 
