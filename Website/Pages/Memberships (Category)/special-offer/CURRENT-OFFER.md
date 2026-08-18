@@ -19,7 +19,7 @@
 3. [ ] Preview: Couple + Tier 3 → enrollment **$100**, Monthly Due **$335** (not `$0`)
 4. [ ] Confirm countdown targets July 31 midnight Pacific
 5. [ ] Confirm no console 404 for `membership builder JS.js` or `Memberships Page CSS.css`
-6. [ ] Paste homepage hero CTA from `Homepage Hero Offer CTA.html`
+6. [ ] Paste homepage hero CTA from `Components/CTA/Homepage Hero Summer Offer CTA.html`
 
 ## Email
 
