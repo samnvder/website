@@ -19,30 +19,43 @@ node patches/fitness-add-trainer-ana/build-artifact.js
 | `preview.html` | Standalone render (section + full page CSS) for eyeballing layout |
 | `build-artifact.js` | Regenerates all three from the page file |
 
-## 🛑 BLOCKER — the photo is not uploaded yet
+## Photo — uploaded, but oversized
 
 The card points at:
 
 ```
-https://southendclub.com/wp-content/uploads/2026/08/SouthEndAnaSampaio-Headshot.jpg
+https://southendclub.com/wp-content/uploads/2026/08/Ana.png
 ```
 
-**That URL does not exist yet.** Until the photo is in the WordPress Media
-Library at that exact path, the card renders with a broken image.
+Verified live: `HTTP/1.1 200`, `Content-Type: image/png`. CompressX has already
+generated its derivatives, so browsers get AVIF/WebP rather than the PNG.
 
-Existing trainers follow the naming pattern `SouthEndEddieLopez-Headshot.jpg`,
-`SouthEndkaren-merrell-Headshot.jpg`, `SouthEndJustinStulerPhoto-Small.jpg`, so
-`SouthEndAnaSampaio-Headshot.jpg` matches. If WordPress assigns a different
-month folder or appends a suffix on upload, fix the source file and regenerate
-rather than hand-editing the artifact:
+**It is far heavier than it needs to be**, and worth fixing before or soon after
+publishing:
+
+| | Source | Delivered (AVIF) |
+|---|---|---|
+| `Ana.png` | 2.29 MB | 105 KB |
+| `SouthEndEddieLopez-Headshot.jpg` | 7.5 KB | — |
+| `SouthEndkaren-merrell-Headshot.jpg` | 5.5 KB | — |
+
+It renders inside `.trainer-photo`, which is **140x140 px**. Even after
+CompressX, Ana's headshot is roughly 14x the weight of the other three combined,
+for the same rendered size. A ~300x300 JPG (2x for retina) would land around
+15-25 KB and be visually identical at display size.
+
+This is a content fix, not a code one — resize and re-upload, keeping the same
+filename so no markup has to change. If the filename does change, edit the page
+file and regenerate rather than hand-editing the artifact:
 
 ```bash
 node scripts/convert/live-capture-to-source.js "Website/Pages/fitness/fitness HTML.html" --check
 node patches/fitness-add-trainer-ana/build-artifact.js
 ```
 
-Do **not** paste this into Thrive before the photo exists — you would ship a
-broken image to a live page.
+Note the source is a PNG where the other three are JPGs. PNG is the wrong format
+for a photograph — it is why the original is 2.29 MB. CompressX hides most of
+that, but the Media Library still carries it.
 
 ## ⚠️ Verify the phone number before publishing
 
@@ -113,8 +126,8 @@ artifacts crept in.
 
 ## 🛑 HUMAN GATE — publishing
 
-1. Upload the headshot to the WP Media Library as `SouthEndAnaSampaio-Headshot.jpg`
-2. `curl -sI https://southendclub.com/wp-content/uploads/2026/08/SouthEndAnaSampaio-Headshot.jpg | head -1` → expect `HTTP/2 200`
+1. ~~Upload the headshot~~ — done, `Ana.png`, verified 200
+2. Consider resizing it first (see above) — same filename, no markup change
 3. Confirm the phone number with Ana
 4. Open `/fitness/` in Thrive Architect and paste `trainer-card-ana.html`
    directly after Justin Stuler's card, inside `.trainers-grid`
