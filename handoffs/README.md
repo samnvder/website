@@ -16,6 +16,7 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 | 4 | **[gtm-conversion-linker](gtm-conversion-linker.md)** | Adds the missing Conversion Linker so Ads can attribute clicks. **Parked on purpose** — must run *before* the Ads conversion tag, never after. | ~10 min | yes — no Google Ads account exists |
 | 5 | **[read-tour-volume](read-tour-volume.md)** | Reads the first real month of `tour_booked`: how many tours, from which pages, what fraction GA4 sees, and whether volume supports smart bidding. Read-only. **Unblocks #6.** | ~20 min | yes — not before ~2026-09-18 |
 | 6 | **[google-ads-account-setup](google-ads-account-setup.md)** | Optimal Ads account from zero. **Not ready** — needs #5 first, and argues GBP §1 should come before any spend. | ~30 min | yes — 6 prerequisites unmet |
+| 7 | **[component-structure-reorg](component-structure-reorg.md)** | Repo-only. Collapses the four competing homes for reusable blocks into one axis: where the block *renders*. Fixes a byte-identical duplicated CTA, 5 homepage blocks scattered across 3 parents, READMEs pointing at a `Dev/` that does not exist, and an unenforceable Commandment 5. Adds the component index whose absence hid the youth camp banner. | ~1.5h | no |
 
 **Do `!` before anything else.** It is the only open item that is a live data-protection failure rather than a reporting gap, it was found by accident on 2026-08-18, and the exposure is unbounded until it is closed.
 
@@ -248,4 +249,28 @@ Rules:
   site. That exact thing happened on 2026-08-18.
 
 Report what you created, what you verified, and whether you published.
+```
+
+### 7 · Component structure reorg
+
+
+
+```
+Execute handoffs/component-structure-reorg.md in this repo.
+
+This is a repo-only reorganization — it moves files and rewrites docs, and
+never touches the live site except to read it with curl. Read CLAUDE.md first.
+
+Start with Phase 1 and stop at HUMAN GATE 1. Do not move any file before I
+approve the render map.
+
+Phase 1 is the whole point: the destination of every block is decided by
+measuring which live pages actually contain it, not by what its filename or
+current directory implies. A block that advertises youth programs but renders
+on the homepage is a homepage component. Report anything that resolves to
+ABSENT rather than quietly archiving it.
+
+When you reach the gate, show me render-map.txt, the derived move list, and
+specifically flag every block whose measured destination differs from where it
+currently lives.
 ```
