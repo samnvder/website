@@ -162,6 +162,17 @@ on output as well. None of that exists in the editor. Slicing `/schedule-a-tour/
 wrapper div, and three placeholder opens against two closes. Paste that back and
 you inject junk markup into the page.
 
+**That paragraph is about an _element_ capture, and the wrapper claim does not
+travel.** Everything above compares a slice of served HTML against one Custom
+HTML block's code box - the frame this directory mirrors. A capture of a whole
+**page tree**, which is what `Website/Pages/*.html` holds, contains that block
+as a node, and `thrv_wrapper thrv_custom_html_shortcode` *is* that node,
+sitting among `thrv-page-section` and `thrv_text_element` siblings. Stripping
+it there deletes real editor structure. The converter derives which frame it
+is in from the path - `live/thrive/` is element, `Website/Pages/` is page -
+prints it in every summary, and warns accordingly; `--frame element|page`
+overrides. Only the warnings are frame-sensitive, never the rewrites.
+
 WPCode is the easy case — it injects its snippet raw into the footer, so what is
 served is what is stored, give or take one stray `</div>` from the surrounding
 template.
