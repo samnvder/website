@@ -14,7 +14,8 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 | 2 | **[ga4-hygiene](ga4-hygiene.md)** | Clears MonsterInsights residue. **Low priority — moves no numbers.** | ~20 min | no |
 | 3 | **[backup-gtm-container](backup-gtm-container.md)** | ✅ **Done 2026-08-18.** Published v7 exported to [`analytics/gtm-container-export.json`](../analytics/gtm-container-export.json) and verified; backup law extended to cover configuration. **Re-export after every container publish** — the next one is the Ads tag (#4/#5). | — | done |
 | 4 | **[gtm-conversion-linker](gtm-conversion-linker.md)** | Adds the missing Conversion Linker so Ads can attribute clicks. **Parked on purpose** — must run *before* the Ads conversion tag, never after. | ~10 min | yes — no Google Ads account exists |
-| 5 | **[google-ads-account-setup](google-ads-account-setup.md)** | Optimal Ads account from zero. **Not ready** — needs a month of `tour_booked` data first, and argues GBP §1 should come before any spend. | ~30 min | yes — 6 prerequisites unmet |
+| 5 | **[read-tour-volume](read-tour-volume.md)** | Reads the first real month of `tour_booked`: how many tours, from which pages, what fraction GA4 sees, and whether volume supports smart bidding. Read-only. **Unblocks #6.** | ~20 min | yes — not before ~2026-09-18 |
+| 6 | **[google-ads-account-setup](google-ads-account-setup.md)** | Optimal Ads account from zero. **Not ready** — needs #5 first, and argues GBP §1 should come before any spend. | ~30 min | yes — 6 prerequisites unmet |
 
 **Do `!` before anything else.** It is the only open item that is a live data-protection failure rather than a reporting gap, it was found by accident on 2026-08-18, and the exposure is unbounded until it is closed.
 
