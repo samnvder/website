@@ -40,8 +40,29 @@ Naming rules:
 
 | Path | Lives on the site as | Applied |
 |---|---|---|
-| [`wpcode/8309-floating-book-tour-button.html`](wpcode/8309-floating-book-tour-button.html) | WPCode snippet **8309**, "Floating Book Tour Button (Desktop Only)" — site-wide footer, so it renders on *every* page | ✅ |
+| [`wpcode/8309-floating-book-tour-button.html`](wpcode/8309-floating-book-tour-button.html) | WPCode snippet **8309**, "Floating Book Tour Button (Desktop Only)" — site-wide footer, so it renders on *every* page | ✅ 2026-08-18 |
 | [`thrive/pages/schedule-a-tour/se-cal.js`](thrive/pages/schedule-a-tour/se-cal.js) | Custom HTML element on `/schedule-a-tour/` (page ID 7472) — inline booking calendar | ✅ 2026-08-17 |
+| [`thrive/pages/memberships/se-cal.js`](thrive/pages/memberships/se-cal.js) | Custom HTML element on `/memberships/` (page ID 8812) — inline booking calendar | ⏳ mirrored, paste pending |
+
+## Why Thrive elements are stored as inner JS, not whole elements
+
+It is tempting to store the whole Custom HTML element so it can be pasted back
+with a single select-all — that is exactly how `wpcode/8309` works, and it is by
+far the easier paste.
+
+**It does not work for Thrive**, and this was measured rather than assumed.
+Reconstructing the `/schedule-a-tour/` element from rendered HTML produced 1,472
+lines against the 1,471 the editor actually holds, and the reconstruction
+contained a leading `<div class="thrv_wrapper thrv_custom_html_shortcode">` plus
+three `<code class="tve_js_placeholder">` opens against only two `</code>`
+closes. Those are wrappers Thrive adds on *output*; they are not in the element.
+Pasting them back injects stray markup into the page.
+
+WPCode is different because it injects its snippet raw into the footer with no
+wrapper, so what is served is what is stored.
+
+So: **WPCode → whole snippet, paste with select-all. Thrive → inner JS only,
+replace the body between the `<script>` tags.**
 
 ## How a file here is verified
 
