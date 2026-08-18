@@ -245,9 +245,13 @@ Snippet is self-contained and `try/catch`-wrapped — delete between the two `/*
 ## Unblocks
 
 1. `/tour-confirmed/` thank-you page with add-to-calendar
-2. Dropping "How did you hear about us?" from the required path
-3. Booking form inline on `/pools/`, `/fitness/`, `/racquet-sports/`, `/youth-programs/`
-4. Meta pixel, if paid social is ever run
+2. **[google-ads-account-setup.md](google-ads-account-setup.md)** — paid acquisition, now that a conversion exists to bid toward
+3. Meta pixel, if paid social is ever run
+
+**Two items were removed from this list on 2026-08-18:**
+
+- ~~Dropping "How did you hear about us?" from the required path~~ — **dropped by decision**, not because it was wrong. It remains a real friction point: `how_heard` is a hard blocker (`if(!heard) return seFail(...)`) and the interests checklist is a whole step, neither needed to book. Revisit if booking completion looks weak once `tour_booked` has a month of data.
+- ~~Booking form inline on `/pools/`, `/fitness/`, `/racquet-sports/`, `/youth-programs/`~~ — **already true.** The original audit checked for `se-cal-form-content` only and missed the floating widget. Verified 2026-08-18: `se-bk-floating` is on **all ~26 pages including the homepage**, 140 references each. There was never anything to do here.
 
 ---
 
