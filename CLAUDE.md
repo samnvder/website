@@ -44,6 +44,22 @@ So fixing Appearance → Menus does **not** clear dead links from the rendered p
 Start at **[SEO/TODO.md](./SEO/TODO.md)** — current status, what's done, what's open, who's blocked.
 Also: [SEO/GUIDELINES.md](./SEO/GUIDELINES.md) (content rules, verified business facts) · [SEO/YOAST-SHEET.md](./SEO/YOAST-SHEET.md) (exact metadata applied to every page).
 
+## Handoffs
+
+**Handoffs in this repo are written to be executed by a Claude Code agent in Cowork, not by a human working a checklist.** That is the default for any new handoff — write for the agent.
+
+A handoff must have:
+
+- **Runnable steps.** Every step is a command the agent runs, a browser action it drives, or an explicitly marked **🛑 HUMAN GATE**.
+- **🛑 HUMAN GATE markers** on anything production-facing or hard to reverse: live Thrive edits, publishing a GTM container, creating an Ads conversion action, anything touching billing or outbound messaging. The agent stops and asks; it does not decide.
+- **Verification by `curl`, with expected output stated.** "Expect 2" beats "check it worked" — the agent can self-check and knows when it has failed. Never verify a live change in a browser (see below).
+- **A prepared-artifact directory** under `patches/<task>/` when the change needs pasting into Thrive, holding the exact paste-ready content plus the script that regenerated it. Hand-inserting into Thrive is where mistakes happen.
+- **A ready-to-paste kickoff prompt as the last section**, so starting the work is one copy-paste. Always include this.
+
+Live handoffs: [HANDOFF-tour-conversion-tracking.md](./HANDOFF-tour-conversion-tracking.md) · [SEO/HANDOFF.md](./SEO/HANDOFF.md) (closed, kept as a record).
+
+**Never paste a repo page file into Thrive.** The repo lags live — e.g. the `se-bk-floating` booking widget exists on production and not in the repo at all. Pasting a whole repo page over a live one silently deletes whatever live has and the repo doesn't.
+
 ## Working on the live site
 
 - **Always flush cache after a change**: GoDaddy Quick Links → Flush Cache. Without it you will verify stale HTML and reach wrong conclusions.

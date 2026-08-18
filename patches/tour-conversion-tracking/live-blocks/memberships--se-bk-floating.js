@@ -1,0 +1,754 @@
+(function(){
+  function init(){
+    if(!document.getElementById('se-bk-floating-btn')) return;
+    var modal = document.getElementById('se-bk-floating-modal');
+    if(modal && modal.parentNode !== document.body) document.body.appendChild(modal);
+  /* ── Config ─────────────────────────────────────────────────────── */
+  var SE_URL = 'https://zngbawafqjntciafhxgr.supabase.co';
+  var SE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuZ2Jhd2FmcWpudGNpYWZoeGdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2ODE3NTgsImV4cCI6MjA4NjI1Nzc1OH0.NtH0Cm6gENkkYki2LUMMYlPsFvrdg8CDt63iNP7Xi4o';
+  var SE_REF_ID = null, SE_REF_REFID = null, SE_REF_NAME = '', SE_REF_EMAIL = null, SE_REF_PHONE = null;
+  var SE_MODE = 'pick';
+  var SE_PARSED_DATE = '', SE_PARSED_TIME = '', SE_PARSED_LABEL = '';
+
+  /* Tour hours: Mon-Fri 11am-7pm, Sat-Sun 8am-4pm */
+  var HOURS = {0:[8,16],1:[11,19],2:[11,19],3:[11,19],4:[11,19],5:[11,19],6:[8,16]};
+  var DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  function pad2(n){ return n < 10 ? '0' + n : '' + n; }
+  function fmtDate(d){ return DAYS[d.getDay()] + ', ' + MONTHS[d.getMonth()] + ' ' + d.getDate(); }
+
+  /* ── Modal Open / Close ──────────────────────────────────────────── */
+  function openModal(){
+    var m = document.getElementById('se-bk-floating-modal');
+    m.style.display = 'flex';
+    m.setAttribute('aria-hidden', 'false');
+    document.documentElement.style.overflow = 'hidden';
+    var heardSelect = document.getElementById('se-bk-floating-heard');
+    if(heardSelect) heardSelect.selectedIndex = 0;
+  }
+  function closeModal(){
+    var m = document.getElementById('se-bk-floating-modal');
+    m.style.display = 'none';
+    m.setAttribute('aria-hidden', 'true');
+    document.documentElement.style.overflow = '';
+  }
+
+  document.getElementById('se-bk-floating-btn').addEventListener('click', openModal);
+  document.getElementById('se-bk-floating-close-btn').addEventListener('click', closeModal);
+  document.getElementById('se-bk-floating-modal').addEventListener('click', function(e){
+    if(e.target !== this) return;
+    var active = document.activeElement;
+    if(active && this.contains(active) && ['INPUT','SELECT','TEXTAREA'].indexOf(active.tagName) !== -1) return;
+    closeModal();
+  });
+  document.getElementById('se-bk-floating-card').addEventListener('click', function(e){
+    e.stopPropagation();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key !== 'Escape') return;
+    var active = document.activeElement;
+    if(active && ['SELECT','INPUT','TEXTAREA'].indexOf(active.tagName) !== -1) return;
+    closeModal();
+  });
+
+  /* ── Date input: native on desktop, Flatpickr on mobile (greys out past dates on iOS) ─ */
+  var di = document.getElementById('se-bk-floating-date');
+  if(di){
+    var t = new Date();
+    var minDate = t.getFullYear() + '-' + pad2(t.getMonth() + 1) + '-' + pad2(t.getDate());
+    var isMobile = window.innerWidth < 768;
+    if(isMobile && typeof flatpickr !== 'undefined'){
+      var parent = di.parentNode;
+      var newIn = document.createElement('input');
+      newIn.type = 'text'; newIn.id = di.id; newIn.required = true; newIn.readonly = true;
+      newIn.placeholder = 'Select date';
+      newIn.style.cssText = di.style.cssText;
+      newIn.onfocus = di.onfocus; newIn.onblur = di.onblur;
+      parent.replaceChild(newIn, di);
+      di = newIn;
+      flatpickr(di, {
+        minDate: t,
+        dateFormat: 'Y-m-d',
+        altInput: true,
+        altFormat: 'M j, Y',
+        disableMobile: true,
+        onOpen: function(){
+          var o = document.getElementById('se-bk-flatpickr-overlay');
+          if(!o){ o = document.createElement('div'); o.id = 'se-bk-flatpickr-overlay'; document.body.appendChild(o); }
+        },
+        onClose: function(){
+          var o = document.getElementById('se-bk-flatpickr-overlay');
+          if(o) o.remove();
+        }
+      });
+    } else {
+      di.setAttribute('min', minDate);
+    }
+  }
+
+  /* ── Populate time options based on selected date ─────────────── */
+  function populateTimeOptions(dateStr){
+    var sel = document.getElementById('se-bk-floating-time');
+    if(!sel) return;
+    sel.innerHTML = '<option value="" disabled selected style="color:#94a3b8;">\u2014 Select a time \u2014</option>';
+    if(!dateStr) return;
+    var parts = dateStr.split('-');
+    var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    var day = d.getDay();
+    var h = HOURS[day];
+    if(!h) {
+      sel.innerHTML = '<option value="" disabled selected>No tours available this day</option>';
+      return;
+    }
+    
+    var now = new Date();
+    var isToday = d.toDateString() === now.toDateString();
+    var currentHour = now.getHours();
+    var currentMin = now.getMinutes();
+    var MIN_HOURS_AHEAD = 2;
+    
+    sel.innerHTML = '<option value="" disabled selected style="color:#94a3b8;">Loading times...</option>';
+    sel.disabled = true;
+    
+    fetch(SE_URL + '/functions/v1/check-availability', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SE_KEY, 'Authorization': 'Bearer ' + SE_KEY },
+      body: JSON.stringify({ date: dateStr })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      sel.innerHTML = '<option value="" disabled selected style="color:#94a3b8;">\u2014 Select a time \u2014</option>';
+      sel.disabled = false;
+      
+      if(data.success && data.available_slots && data.available_slots.length > 0){
+        var bookedSet = {};
+        if(data.booked_slots){
+          for(var i = 0; i < data.booked_slots.length; i++){
+            bookedSet[data.booked_slots[i]] = true;
+          }
+        }
+        
+        var hasAvailable = false;
+        for(var hr = h[0]; hr < h[1]; hr++){
+          for(var min = 0; min < 60; min += 30){
+            var slotMins = hr * 60 + min;
+            var nowMins = currentHour * 60 + currentMin;
+            if(isToday && slotMins < nowMins + MIN_HOURS_AHEAD * 60) continue;
+            var ampm = hr >= 12 ? 'PM' : 'AM';
+            var h12 = hr > 12 ? hr - 12 : (hr === 0 ? 12 : hr);
+            var mStr = min === 0 ? '00' : '30';
+            var label = h12 + ':' + mStr + ' ' + ampm;
+            
+            if(bookedSet[label]){
+              sel.innerHTML += '<option value="' + label + '" disabled style="color:#ccc;">' + label + ' (Booked)</option>';
+            } else {
+              sel.innerHTML += '<option value="' + label + '">' + label + '</option>';
+              hasAvailable = true;
+            }
+          }
+        }
+        if(!hasAvailable) sel.innerHTML = '<option value="" disabled selected>No times available — try another day</option>';
+      } else if(data.success && (!data.available_slots || data.available_slots.length === 0)){
+        sel.innerHTML = '<option value="" disabled selected>Fully booked — try another day</option>';
+      } else {
+        var hasAvailable = false;
+        for(var hr = h[0]; hr < h[1]; hr++){
+          for(var min = 0; min < 60; min += 30){
+            var slotMins = hr * 60 + min;
+            var nowMins = currentHour * 60 + currentMin;
+            if(isToday && slotMins < nowMins + MIN_HOURS_AHEAD * 60) continue;
+            var ampm = hr >= 12 ? 'PM' : 'AM';
+            var h12 = hr > 12 ? hr - 12 : (hr === 0 ? 12 : hr);
+            var mStr = min === 0 ? '00' : '30';
+            var label = h12 + ':' + mStr + ' ' + ampm;
+            sel.innerHTML += '<option value="' + label + '">' + label + '</option>';
+            hasAvailable = true;
+          }
+        }
+        if(!hasAvailable) sel.innerHTML = '<option value="" disabled selected>No times available — try another day</option>';
+      }
+    })
+    .catch(function(){
+      sel.innerHTML = '<option value="" disabled selected style="color:#94a3b8;">\u2014 Select a time \u2014</option>';
+      sel.disabled = false;
+      var hasAvailable = false;
+      for(var hr = h[0]; hr < h[1]; hr++){
+        for(var min = 0; min < 60; min += 30){
+          if(isToday && (hr < currentHour || (hr === currentHour && min <= currentMin))) continue;
+          var ampm = hr >= 12 ? 'PM' : 'AM';
+          var h12 = hr > 12 ? hr - 12 : (hr === 0 ? 12 : hr);
+          var mStr = min === 0 ? '00' : '30';
+          var label = h12 + ':' + mStr + ' ' + ampm;
+          sel.innerHTML += '<option value="' + label + '">' + label + '</option>';
+          hasAvailable = true;
+        }
+      }
+      if(!hasAvailable) sel.innerHTML = '<option value="" disabled selected>No times available — try another day</option>';
+    });
+  }
+  if(di){
+    di.addEventListener('change', function(){ populateTimeOptions(this.value); });
+    populateTimeOptions('');
+  }
+
+  /* ── Phone auto-format ──────────────────────────────────────────── */
+  var phoneInput = document.getElementById('se-bk-floating-phone');
+  if(phoneInput){
+    phoneInput.addEventListener('input', function(){
+      var v = this.value.replace(/\D/g, '');
+      if(v.length >= 6) this.value = '(' + v.slice(0,3) + ') ' + v.slice(3,6) + '-' + v.slice(6,10);
+      else if(v.length >= 3) this.value = '(' + v.slice(0,3) + ') ' + v.slice(3);
+      else this.value = v;
+    });
+  }
+
+  /* ── Show Step ──────────────────────────────────────────────────── */
+  function showStep(n){
+    document.getElementById('se-bk-floating-s1pick').style.display = (n===1 && SE_MODE==='pick') ? 'block' : 'none';
+    document.getElementById('se-bk-floating-s1talk').style.display = (n===1 && SE_MODE==='talk') ? 'block' : 'none';
+    document.getElementById('se-bk-floating-s2').style.display = n===2 ? 'block' : 'none';
+    document.getElementById('se-bk-floating-s3').style.display = n===3 ? 'block' : 'none';
+    document.getElementById('se-bk-floating-success').style.display = 'none';
+    document.getElementById('se-bk-floating-tabs').style.display = n===1 ? 'flex' : 'none';
+    document.getElementById('se-bk-floating-dots').style.display = (n >= 1 && n <= 3) ? 'flex' : 'none';
+    document.getElementById('se-bk-floating-d1').style.background = n>=1 ? '#0b468c' : '#e2e8f0';
+    document.getElementById('se-bk-floating-d2').style.background = n>=2 ? '#0b468c' : '#e2e8f0';
+    document.getElementById('se-bk-floating-d3').style.background = n>=3 ? '#0b468c' : '#e2e8f0';
+  }
+
+  /* ── Tab Switching ──────────────────────────────────────────────── */
+  function switchTab(mode){
+    SE_MODE = mode;
+    var tPick = document.getElementById('se-bk-floating-tab-pick');
+    var tTalk = document.getElementById('se-bk-floating-tab-talk');
+    if(mode === 'pick'){
+      tPick.style.color = '#fff'; tPick.style.background = 'rgba(255,255,255,0.12)'; tPick.style.borderBottom = '3px solid #fff';
+      tTalk.style.color = 'rgba(255,255,255,0.55)'; tTalk.style.background = 'transparent'; tTalk.style.borderBottom = '3px solid transparent';
+    } else {
+      tTalk.style.color = '#fff'; tTalk.style.background = 'rgba(255,255,255,0.12)'; tTalk.style.borderBottom = '3px solid #fff';
+      tPick.style.color = 'rgba(255,255,255,0.55)'; tPick.style.background = 'transparent'; tPick.style.borderBottom = '3px solid transparent';
+      setTimeout(function(){ document.getElementById('se-bk-floating-nlp').focus(); }, 100);
+    }
+    showStep(1);
+  }
+  document.getElementById('se-bk-floating-tab-pick').addEventListener('click', function(){ switchTab('pick'); });
+  document.getElementById('se-bk-floating-tab-talk').addEventListener('click', function(){ switchTab('talk'); });
+
+  /* ── Pick Mode: Next ────────────────────────────────────────────── */
+  document.getElementById('se-bk-floating-pick-next').addEventListener('click', function(){
+    var d = document.getElementById('se-bk-floating-date').value;
+    var t = document.getElementById('se-bk-floating-time').value;
+    if(!d || !t){ alert('Please select a date and time.'); return; }
+    SE_PARSED_DATE = d; SE_PARSED_TIME = t;
+    var parts = d.split('-');
+    var dateObj = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    SE_PARSED_LABEL = fmtDate(dateObj) + ' at ' + t;
+    document.getElementById('se-bk-floating-chip-text').textContent = SE_PARSED_LABEL;
+    showStep(2);
+  });
+
+  /* ══════════════════════════════════════════════════════════════════ */
+  /* NATURAL LANGUAGE PARSER                                           */
+  /* ══════════════════════════════════════════════════════════════════ */
+  function parseNatural(input){
+    var s = input.toLowerCase().trim();
+    if(!s) return null;
+    var now = new Date();
+    var date = null, hour = null, minute = 0;
+
+    var tm = s.match(/(\d{1,2})[\s:.]?(\d{2})?\s*(am|pm)/i);
+    if(tm){
+      hour = parseInt(tm[1]); minute = tm[2] ? parseInt(tm[2]) : 0;
+      var ampm = tm[3].toLowerCase();
+      if(ampm === 'pm' && hour !== 12) hour += 12;
+      if(ampm === 'am' && hour === 12) hour = 0;
+    }
+    if(hour === null){
+      var tm3 = s.match(/\b(\d{3,4})\b/);
+      if(tm3){
+        var num = tm3[1];
+        if(num.length === 3){ hour = parseInt(num[0]); minute = parseInt(num.slice(1)); }
+        else if(num.length === 4){ hour = parseInt(num.slice(0,2)); minute = parseInt(num.slice(2)); }
+        if(hour >= 1 && hour <= 6) hour += 12;
+      }
+    }
+    if(hour === null){
+      var tm4 = s.match(/\b(\d{1,2})\s+(\d{2})\b/);
+      if(tm4){
+        hour = parseInt(tm4[1]); minute = parseInt(tm4[2]);
+        if(hour >= 1 && hour <= 6) hour += 12;
+      }
+    }
+    if(hour === null){
+      var tm2 = s.match(/(?:at\s+)?(\d{1,2})(?::(\d{2}))?(?:\s*o.?clock)?/);
+      if(tm2 && parseInt(tm2[1]) >= 1 && parseInt(tm2[1]) <= 12){
+        hour = parseInt(tm2[1]); minute = tm2[2] ? parseInt(tm2[2]) : 0;
+        if(hour >= 1 && hour <= 6) hour += 12;
+      }
+    }
+    if(hour === null){
+      if(/morning/.test(s)){ hour = 10; minute = 0; }
+      else if(/afternoon/.test(s)){ hour = 14; minute = 0; }
+      else if(/evening/.test(s)){ hour = 17; minute = 0; }
+      else if(/noon|lunch/.test(s)){ hour = 12; minute = 0; }
+    }
+
+    if(/tomorrow/.test(s)){ date = new Date(now); date.setDate(date.getDate() + 1); }
+    else if(/today/.test(s)){ date = new Date(now); }
+
+    var dayNames = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+    var dayMatch = null;
+    for(var i = 0; i < dayNames.length; i++){
+      var full = dayNames[i], short3 = full.slice(0,3);
+      var re = new RegExp('\\b' + full + '\\b|\\b' + short3 + '\\b');
+      if(re.test(s)){ dayMatch = i; break; }
+    }
+    if(dayMatch !== null && !date){
+      date = new Date(now);
+      var diff = dayMatch - date.getDay();
+      if(diff <= 0) diff += 7;
+      date.setDate(date.getDate() + diff);
+    }
+
+    var monthNames = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+    var mMatch = s.match(/(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(\d{1,2})/i);
+    if(mMatch){
+      var mi = -1;
+      for(var j = 0; j < monthNames.length; j++){
+        if(mMatch[1].toLowerCase().indexOf(monthNames[j]) === 0){ mi = j; break; }
+      }
+      if(mi >= 0){
+        var yr = now.getFullYear();
+        date = new Date(yr, mi, parseInt(mMatch[2]));
+        if(date < now) date.setFullYear(yr + 1);
+      }
+    }
+
+    var inDays = s.match(/in\s+(\d+)\s+day/);
+    if(inDays){ date = new Date(now); date.setDate(date.getDate() + parseInt(inDays[1])); }
+
+    if(/next\s+week/.test(s) && !date){
+      date = new Date(now);
+      var toMon = 1 - date.getDay(); if(toMon <= 0) toMon += 7;
+      date.setDate(date.getDate() + toMon + 7);
+    }
+
+    if(!date && hour === null) return null;
+    if(!date){ date = new Date(now); date.setDate(date.getDate() + 1); }
+    if(hour === null){ hour = 10; }
+
+    if(minute > 0 && minute < 15) minute = 0;
+    else if(minute >= 15 && minute < 45) minute = 30;
+    else if(minute >= 45){ minute = 0; hour++; }
+
+    return { date: date, hour: hour, minute: minute };
+  }
+
+  function formatHour12(h){
+    if(h === 0 || h === 24) return '12:00 AM';
+    if(h === 12) return '12:00 PM';
+    if(h < 12) return h + ':00 AM';
+    return (h - 12) + ':00 PM';
+  }
+
+  function findNextAvailable(fromDate, fromHour){
+    var d = new Date(fromDate);
+    var startHour = fromHour;
+    for(var i = 0; i < 14; i++){
+      if(i > 0){ d.setDate(d.getDate() + 1); startHour = 0; }
+      var today = new Date(); today.setHours(0,0,0,0);
+      var check = new Date(d); check.setHours(0,0,0,0);
+      if(check <= today) continue;
+      var day = d.getDay();
+      var h = HOURS[day];
+      if(!h) continue;
+      var tryHour = Math.max(startHour, h[0]);
+      if(tryHour < h[1]){
+        return {
+          date: new Date(d),
+          hour: tryHour,
+          label: DAYS[day] + ', ' + MONTHS[d.getMonth()] + ' ' + d.getDate() + ' at ' + formatHour12(tryHour)
+        };
+      }
+    }
+    return null;
+  }
+
+  function checkHours(date, hour){
+    var today = new Date(); today.setHours(0,0,0,0);
+    var check = new Date(date); check.setHours(0,0,0,0);
+    if(check <= today){
+      var next = findNextAvailable(new Date(), 0);
+      return { ok: false, reason: 'Please choose a future date.', suggestion: next };
+    }
+    var day = date.getDay();
+    var h = HOURS[day];
+    if(!h){
+      var next = findNextAvailable(date, 0);
+      return { ok: false, reason: "We're closed that day.", suggestion: next };
+    }
+    if(hour < h[0]){
+      var next = findNextAvailable(date, h[0]);
+      return { ok: false, reason: 'Tours start at ' + formatHour12(h[0]) + ' on ' + DAYS[day] + 's.', suggestion: next };
+    }
+    if(hour >= h[1]){
+      var nextDay = new Date(date);
+      nextDay.setDate(nextDay.getDate() + 1);
+      var next = findNextAvailable(nextDay, 0);
+      var lastSlotHour = h[1] - 1;
+      var lastSlotLabel = (lastSlotHour > 12 ? lastSlotHour - 12 : lastSlotHour) + ':30 ' + (lastSlotHour >= 12 ? 'PM' : 'AM');
+      if(hour - lastSlotHour <= 2){
+        next = { date: new Date(date), hour: lastSlotHour, minute: 30, label: DAYS[day] + ', ' + MONTHS[date.getMonth()] + ' ' + date.getDate() + ' at ' + lastSlotLabel };
+      }
+      return { ok: false, reason: 'Last tour is at ' + lastSlotLabel + ' on ' + DAYS[day] + 's.', suggestion: next };
+    }
+    return { ok: true };
+  }
+
+  function formatTime12(hour, minute){
+    var ampm = hour >= 12 ? 'PM' : 'AM';
+    var h12 = hour % 12; if(h12 === 0) h12 = 12;
+    return h12 + ':' + pad2(minute) + ' ' + ampm;
+  }
+
+  /* ── Live NLP Feedback ──────────────────────────────────────────── */
+  var nlpInput = document.getElementById('se-bk-floating-nlp');
+  nlpInput.addEventListener('input', function(){
+    var fb = document.getElementById('se-bk-floating-nlp-feedback');
+    var btn = document.getElementById('se-bk-floating-talk-next');
+    var parsed = parseNatural(this.value);
+
+    if(!parsed || !this.value.trim()){
+      fb.style.display = 'none'; btn.style.display = 'none';
+      SE_PARSED_DATE = ''; SE_PARSED_TIME = ''; SE_PARSED_LABEL = '';
+      return;
+    }
+
+    var valid = checkHours(parsed.date, parsed.hour);
+    var timeStr = formatTime12(parsed.hour, parsed.minute);
+    var dateStr = fmtDate(parsed.date);
+    fb.style.display = 'block';
+
+    if(valid.ok){
+      var y = parsed.date.getFullYear();
+      var m = pad2(parsed.date.getMonth() + 1);
+      var d = pad2(parsed.date.getDate());
+      var dateStrApi = y + '-' + m + '-' + d;
+      fb.style.background = '#f8fafc'; fb.style.border = '1px solid #e2e8f0'; fb.style.color = '#64748b';
+      fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" style="width:18px;height:18px;animation:seBkSpin 0.8s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="31" stroke-dashoffset="10"/></svg> Checking availability...</div>';
+      btn.style.display = 'none';
+      SE_PARSED_DATE = ''; SE_PARSED_TIME = ''; SE_PARSED_LABEL = '';
+      fetch(SE_URL + '/functions/v1/check-availability', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SE_KEY, 'Authorization': 'Bearer ' + SE_KEY },
+        body: JSON.stringify({ date: dateStrApi, time: timeStr })
+      })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        var booked = data.booked_slots || [];
+        var available = data.available_slots || [];
+        var suggestions = data.suggestions || [];
+        var isBooked = booked.indexOf(timeStr) >= 0;
+        if(isBooked){
+          fb.style.background = '#f0fdf4'; fb.style.border = '1px solid #bbf7d0'; fb.style.color = '#166534';
+          var suggHtml = '';
+          if(suggestions.length > 0){
+            suggHtml = '<div style="margin-top:12px;"><div style="font-size:13px;font-weight:600;color:#166534;margin-bottom:8px;">Times that might work for you:</div>';
+            for(var i = 0; i < suggestions.length; i++){
+              var s = suggestions[i];
+              suggHtml += '<div class="se-bk-floating-suggest-row" style="margin-bottom:6px;padding:10px 14px;background:#ffffff;border:2px solid #22c55e;border-radius:8px;color:#166534;font-size:14px;cursor:pointer;" data-date="' + s.date + '" data-time="' + s.time + '" data-label="' + s.label.replace(/"/g, '&quot;') + '">' + s.label + ' <span style="color:#0b468c;text-decoration:underline;">Book this instead?</span></div>';
+            }
+            suggHtml += '</div>';
+          } else if(available.length > 0){
+            var first = available[0];
+            suggHtml = '<div style="margin-top:10px;padding:10px 14px;background:#ffffff;border:2px solid #22c55e;border-radius:8px;color:#166534;font-size:14px;cursor:pointer;" id="se-bk-floating-suggest" data-date="' + dateStrApi + '" data-time="' + first + '" data-label="' + (fmtDate(parsed.date) + ' at ' + first).replace(/"/g, '&quot;') + '">' +
+              '<strong>That time is booked.</strong> Next available: ' + first + ' <span style="color:#0b468c;text-decoration:underline;margin-left:4px;">Book this instead?</span></div>';
+          } else {
+            suggHtml = '<div style="margin-top:8px;font-size:13px;">Fully booked that day — try another date.</div>';
+          }
+          fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" style="width:20px;height:20px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' +
+            '<div><span style="font-size:13px;color:#64748b;">That time is already booked.</span></div></div>' + suggHtml;
+          var rows = fb.querySelectorAll('.se-bk-floating-suggest-row, #se-bk-floating-suggest');
+          for(var r = 0; r < rows.length; r++){
+            rows[r].addEventListener('click', function(){
+              var sd = this.getAttribute('data-date');
+              var st = this.getAttribute('data-time');
+              var lbl = this.getAttribute('data-label');
+              SE_PARSED_DATE = sd; SE_PARSED_TIME = st; SE_PARSED_LABEL = lbl || (fmtDate(new Date(parseInt(sd.split('-')[0]), parseInt(sd.split('-')[1])-1, parseInt(sd.split('-')[2]))) + ' at ' + st);
+              fb.style.background = '#f0fdf4'; fb.style.border = '1px solid #bbf7d0'; fb.style.color = '#166534';
+              fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" style="width:20px;height:20px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><div><strong>Accepted!</strong> ' + SE_PARSED_LABEL + '</div></div>';
+              btn.style.display = 'flex';
+            });
+          }
+        } else {
+          fb.style.background = '#f0fdf4'; fb.style.border = '1px solid #bbf7d0'; fb.style.color = '#166534';
+          fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex-shrink:0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' +
+            '<div><strong style="font-size:15px;">' + dateStr + '</strong><br><span style="font-size:13px;opacity:0.8;">at ' + timeStr + '</span></div></div>';
+          btn.style.display = 'flex';
+          SE_PARSED_DATE = dateStrApi; SE_PARSED_TIME = timeStr; SE_PARSED_LABEL = dateStr + ' at ' + timeStr;
+        }
+      })
+      .catch(function(){
+        fb.style.background = '#f0fdf4'; fb.style.border = '1px solid #bbf7d0'; fb.style.color = '#166534';
+        fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" style="width:20px;height:20px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><div><strong>' + dateStr + '</strong><br><span style="font-size:13px;">at ' + timeStr + ' (availability check failed — you can continue)</span></div></div>';
+        btn.style.display = 'flex';
+        SE_PARSED_DATE = dateStrApi; SE_PARSED_TIME = timeStr; SE_PARSED_LABEL = dateStr + ' at ' + timeStr;
+      });
+    } else {
+      var suggHtml = '';
+      if(valid.suggestion){
+        var s = valid.suggestion;
+        fb.style.background = '#f0fdf4'; fb.style.border = '1px solid #bbf7d0'; fb.style.color = '#166534';
+        suggHtml = '<div style="margin-top:10px;padding:10px 14px;background:#ffffff;border:2px solid #22c55e;border-radius:8px;color:#166534;font-size:14px;cursor:pointer;" ' +
+          'id="se-bk-floating-suggest" data-date="' + s.date.getFullYear() + '-' + String(s.date.getMonth()+1).padStart(2,'0') + '-' + String(s.date.getDate()).padStart(2,'0') + '" ' +
+          'data-hour="' + s.hour + '">' +
+          '<strong>Next available:</strong> ' + s.label +
+          ' <span style="color:#0b468c;text-decoration:underline;margin-left:4px;">Book this instead?</span></div>';
+        fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" style="width:20px;height:20px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' +
+          '<div><span style="font-size:13px;color:#64748b;">' + valid.reason + '</span></div></div>' + suggHtml;
+      } else {
+        fb.style.background = '#fef2f2'; fb.style.border = '1px solid #fecaca'; fb.style.color = '#991b1b';
+        fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" style="width:20px;height:20px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>' +
+          '<div><strong>Time Not Available</strong><br><span style="font-size:13px;opacity:0.8;">' + valid.reason + '</span></div></div>';
+      }
+      var suggEl = document.getElementById('se-bk-floating-suggest');
+      if(suggEl){
+        suggEl.addEventListener('click', function(){
+          var sd = this.getAttribute('data-date');
+          var sh = parseInt(this.getAttribute('data-hour'));
+          var sMin = '00';
+          var sAmPm = sh >= 12 ? 'PM' : 'AM';
+          var sH12 = sh > 12 ? sh - 12 : (sh === 0 ? 12 : sh);
+          SE_PARSED_DATE = sd;
+          SE_PARSED_TIME = sH12 + ':' + sMin + ' ' + sAmPm;
+          SE_PARSED_LABEL = this.textContent.replace('Book this instead?','').replace('Next available:','').trim();
+          fb.style.background = '#f0fdf4'; fb.style.border = '1px solid #bbf7d0'; fb.style.color = '#166534';
+          fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" style="width:20px;height:20px;flex-shrink:0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' +
+            '<div><strong>Accepted!</strong> ' + SE_PARSED_LABEL + '</div></div>';
+          btn.style.display = 'block';
+        });
+      }
+      btn.style.display = 'none';
+      SE_PARSED_DATE = ''; SE_PARSED_TIME = ''; SE_PARSED_LABEL = '';
+    }
+  });
+
+  nlpInput.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); talkNext(); }
+  });
+
+  function talkNext(){
+    if(!SE_PARSED_DATE || !SE_PARSED_TIME) return;
+    document.getElementById('se-bk-floating-chip-text').textContent = SE_PARSED_LABEL;
+    showStep(2);
+  }
+  document.getElementById('se-bk-floating-talk-next').addEventListener('click', talkNext);
+
+  /* ── Step 2 Back ────────────────────────────────────────────────── */
+  document.getElementById('se-bk-floating-s2-back').addEventListener('click', function(){ showStep(1); });
+
+  /* ── How Heard → show/hide referral ─────────────────────────────── */
+  document.getElementById('se-bk-floating-heard').addEventListener('change', function(){
+    document.getElementById('se-bk-floating-ref-wrap').style.display = this.value === 'Friends/Family' ? 'block' : 'none';
+  });
+
+  document.getElementById('se-bk-floating-referral').addEventListener('input', function(){
+    document.getElementById('se-bk-floating-ref-status').style.display = 'none';
+  });
+
+  /* ── Go to Step 3 ───────────────────────────────────────────────── */
+  document.getElementById('se-bk-floating-s2-next').addEventListener('click', function(){
+    var fn = document.getElementById('se-bk-floating-fname').value.trim();
+    var ln = document.getElementById('se-bk-floating-lname').value.trim();
+    var em = document.getElementById('se-bk-floating-email').value.trim();
+    var ph = document.getElementById('se-bk-floating-phone').value.trim();
+    if(!fn || !ln){ alert('Please enter your name.'); return; }
+    if(!em || em.indexOf('@') < 0){ alert('Please enter a valid email.'); return; }
+    if(ph.replace(/\D/g,'').length !== 10){ alert('Please enter a valid 10-digit phone number.'); return; }
+    var heard = document.getElementById('se-bk-floating-heard').value;
+    if(!heard){ alert('Please let us know how you heard about us.'); return; }
+
+    var parts = SE_PARSED_DATE.split('-');
+    var dateObj = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    document.getElementById('se-bk-floating-sum-date').textContent = fmtDate(dateObj);
+    document.getElementById('se-bk-floating-sum-time').textContent = SE_PARSED_TIME;
+    document.getElementById('se-bk-floating-sum-name').textContent = fn + ' ' + ln;
+    document.getElementById('se-bk-floating-sum-email').textContent = em;
+    document.getElementById('se-bk-floating-sum-phone').textContent = ph;
+
+    var rl = document.getElementById('se-bk-floating-sum-ref-l');
+    var rv = document.getElementById('se-bk-floating-sum-ref-v');
+    if(SE_REF_NAME){ rl.style.display = 'block'; rv.style.display = 'block'; rv.textContent = SE_REF_NAME; }
+    else { rl.style.display = 'none'; rv.style.display = 'none'; }
+
+    showStep(3);
+  });
+
+  document.getElementById('se-bk-floating-s3-back').addEventListener('click', function(){ showStep(2); });
+
+  /* ── Referral Verification ──────────────────────────────────────── */
+  function detectSearchType(val){
+    if(val.indexOf('@') >= 0) return 'email';
+    if(val.replace(/\D/g,'').length >= 7) return 'phone';
+    return 'name';
+  }
+
+  document.getElementById('se-bk-floating-ref-btn').addEventListener('click', function(){
+    var input = document.getElementById('se-bk-floating-referral');
+    var status = document.getElementById('se-bk-ref-status');
+    var btn = document.getElementById('se-bk-floating-ref-btn');
+    var val = input.value.trim();
+    if(!val){
+      status.style.display = 'block'; status.style.background = '#fef2f2'; status.style.color = '#dc2626';
+      status.textContent = 'Please enter the member\'s email or phone number.'; return;
+    }
+
+    var matchBtnIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:12px;height:12px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Match';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px;animation:seBkSpin 0.8s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="31" stroke-dashoffset="10"/></svg>';
+    status.style.display = 'block'; status.style.background = '#f8fafc'; status.style.color = '#64748b';
+    status.textContent = 'Searching...';
+
+    var searchType = detectSearchType(val);
+    fetch(SE_URL + '/functions/v1/validate-referral', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SE_KEY, 'Authorization': 'Bearer ' + SE_KEY },
+      body: JSON.stringify({ search_type: searchType, search_value: val })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      btn.innerHTML = matchBtnIcon;
+      if(d.found){
+        SE_REF_ID = d.member.id;
+        SE_REF_REFID = d.member.ref_id || null;
+        SE_REF_NAME = (d.member.first_name || '') + ' ' + (d.member.last_name || '');
+        SE_REF_EMAIL = d.member.email || null;
+        SE_REF_PHONE = d.member.cell_phone || null;
+        status.style.background = '#f0fdf4'; status.style.color = '#16a34a';
+        status.innerHTML = '<span style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Member matched: <strong>' + SE_REF_NAME.trim() + '</strong></span>';
+        input.style.borderColor = '#22c55e';
+      } else if(d.noted){
+        SE_REF_ID = null; SE_REF_REFID = null; SE_REF_NAME = ''; SE_REF_EMAIL = null; SE_REF_PHONE = null;
+        status.style.background = '#fef2f2'; status.style.color = '#dc2626';
+        status.textContent = 'Please enter the member\'s email or phone number to verify.';
+        input.style.borderColor = '#e2e8f0';
+      } else {
+        SE_REF_ID = null; SE_REF_REFID = null; SE_REF_NAME = ''; SE_REF_EMAIL = null; SE_REF_PHONE = null;
+        status.style.background = '#fffbeb'; status.style.color = '#b45309';
+        status.textContent = "No member found with that email or phone.";
+        input.style.borderColor = '#f59e0b';
+      }
+    })
+    .catch(function(){
+      btn.innerHTML = matchBtnIcon;
+      status.style.background = '#fffbeb'; status.style.color = '#b45309';
+      status.textContent = "Could not verify right now — we'll follow up.";
+    });
+  });
+
+  /* ── Submit ─────────────────────────────────────────────────────── */
+  document.getElementById('se-bk-floating-submit').addEventListener('click', function(){
+    var consent = document.getElementById('se-bk-floating-consent');
+    var errEl = document.getElementById('se-bk-error');
+    var submitBtn = document.getElementById('se-bk-floating-submit');
+
+    if(!consent.checked){
+      errEl.textContent = 'Please accept the terms to continue.';
+      errEl.style.display = 'block'; return;
+    }
+    errEl.style.display = 'none';
+
+    submitBtn.style.pointerEvents = 'none'; submitBtn.style.opacity = '0.7';
+    submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;animation:seBkSpin 0.8s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="31" stroke-dashoffset="10"/></svg> Booking...';
+
+    var refInput = document.getElementById('se-bk-floating-referral');
+    var heardVal = document.getElementById('se-bk-floating-heard').value;
+
+    var payload = {
+      first_name: document.getElementById('se-bk-floating-fname').value.trim(),
+      last_name: document.getElementById('se-bk-floating-lname').value.trim(),
+      email: document.getElementById('se-bk-floating-email').value.trim(),
+      cell_phone: document.getElementById('se-bk-floating-phone').value,
+      preferred_date: SE_PARSED_DATE,
+      preferred_time: SE_PARSED_TIME,
+      how_heard: heardVal || null,
+      referral_member: (refInput && refInput.value.trim()) ? (SE_REF_NAME || refInput.value.trim()) : null,
+      referral_member_id: SE_REF_ID || null,
+      referral_member_ref_id: SE_REF_REFID || null,
+      referral_member_email: SE_REF_EMAIL || null,
+      referral_member_phone: SE_REF_PHONE || null,
+      send_texts: '1',
+      send_calls: '1',
+      send_emails: 'now',
+      source_page: window.location.href,
+      device_type: window.innerWidth < 768 ? 'mobile' : 'desktop',
+      utm_source: (new URLSearchParams(window.location.search)).get('utm_source'),
+      utm_medium: (new URLSearchParams(window.location.search)).get('utm_medium'),
+      utm_campaign: (new URLSearchParams(window.location.search)).get('utm_campaign')
+    };
+
+    fetch(SE_URL + '/functions/v1/book-tour', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SE_KEY, 'Authorization': 'Bearer ' + SE_KEY },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+    .then(function(res){
+      if(res.ok && res.data.success){
+        /* --- GA4 / Google Ads conversion — added 2026-08-17, see HANDOFF-tour-conversion-tracking.md --- */
+        try {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: 'tour_booked',
+            tour_booking_id: res.data.appointment_id || res.data.id || null,
+            tour_is_reschedule: !!res.data.appointment_rescheduled,
+            tour_date: payload.preferred_date || null,
+            tour_time: payload.preferred_time || null,
+            tour_heard_about: payload.how_heard || null,
+            tour_source_page: payload.source_page || null,
+            tour_device: payload.device_type || null,
+            tour_utm_source: payload.utm_source || null,
+            tour_utm_medium: payload.utm_medium || null,
+            tour_utm_campaign: payload.utm_campaign || null
+          });
+        } catch(e) { /* never let tracking break the booking confirmation */ }
+        /* --- end conversion tracking --- */
+        document.getElementById('se-bk-floating-s3').style.display = 'none';
+        document.getElementById('se-bk-floating-dots').style.display = 'none';
+        document.getElementById('se-bk-floating-tabs').style.display = 'none';
+        document.getElementById('se-bk-floating-success-detail').textContent = SE_PARSED_LABEL;
+        var headingEl = document.querySelector('#se-bk-floating-success h3');
+        if(headingEl && res.data.appointment_rescheduled){
+          headingEl.textContent = 'Rescheduled! See you then.';
+        }
+        document.getElementById('se-bk-floating-success').style.display = 'block';
+      } else {
+        errEl.textContent = res.data.error || 'Something went wrong. Please try again.';
+        errEl.style.display = 'block';
+        resetBtn();
+      }
+    })
+    .catch(function(){
+      errEl.textContent = 'Network error — please check your connection and try again.';
+      errEl.style.display = 'block';
+      resetBtn();
+    });
+
+    function resetBtn(){
+      submitBtn.style.pointerEvents = ''; submitBtn.style.opacity = '1';
+      submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><polyline points="20 6 9 17 4 12"/></svg> Confirm Tour';
+    }
+  });
+
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
