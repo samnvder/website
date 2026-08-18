@@ -141,6 +141,15 @@ A handoff must have:
 
   **`npm run guard:membership-pricing:prove` is the proof, and it is runnable.** It mutates real pricing files, asserts each mutation landed, runs the guard, and restores from git — 12/12 drift cases caught. It refuses to run if the pricing files are dirty. If you change the guard, run it; a guard that exits 0 without this passing is not known to check anything.
 
-  **Still broken, separately:** `npm run pricing:apply` throws — its codegen assumes every target builder has a `discounts` const and a `discountedPrice` calculation, which #9926 no longer does. Not in the `guard` chain, so CI is unaffected. Note also that WPCode **#9926**, **#7315** and **#7966** are *not* mirrored under [`live/wpcode/`](./live/wpcode/) — a standing gap against the backup law above. The live #7315 is titled "…with email notification", so it may already differ from the repo copy.
+  **`npm run pricing:apply` is fixed too (2026-08-18).** It threw the same way, then turned out to carry three further defects that all *wrote to live paste-in files*: indentation hardcoded to the join page's nesting depth (62 lines of churn on #7966 for a three-number change), multi-line blocks flattened, LF emitted into CRLF files, and a generated `membership-pricing-alterations.md` that overwrote the accurate per-builder discount text with a blanket false claim. Applying is now idempotent, and `require`-ing the module no longer runs `main()` — a bare import used to rewrite every pricing file. Covered by `scripts/audit/testing/test-pricing-apply.js` in `npm test`.
+
+  **Two pricing edits are pending and deliberately not applied** — applying obliges a WPCode re-paste, so it is an owner decision:
+
+  | Builder | Pending change | Stakes |
+  |---|---|---|
+  | #7966 summer offer | young-family discounts `{1: 25, 2: 15}` → canonical `{1: 30, 2: 20}` | real drift; low if the offer is toggled off |
+  | #9926 normal join | `additionalCharge -= numChildren === 1 ? 30 : 20;` → canonical map form | cosmetic, same numbers |
+
+  **Still open:** WPCode **#9926**, **#7315** and **#7966** are *not* mirrored under [`live/wpcode/`](./live/wpcode/) — a standing gap against the backup law above, and the reason the guard cannot yet claim it validates what is actually running. The live #7315 is titled "…with email notification", so it may already differ from the repo copy. See [handoffs/mirror-membership-builders.md](./handoffs/mirror-membership-builders.md).
 - **All-in-One WP Migration Unlimited Extension is flagged by WordPress as likely pirated** and throws a fatal error against the current core version. Currently deactivated. Should be deleted — nulled plugins are a malware vector.
 - Backups exist on the server (2 × 6.72 GB) but **cannot be restored** with the free plugin's ~512 MB import cap. GoDaddy's own managed backups have not been checked.
