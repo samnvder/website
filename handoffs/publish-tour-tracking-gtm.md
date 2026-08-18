@@ -1,6 +1,6 @@
 # Handoff — Verify and publish the `tour_booked` GTM build, then make GA4 report it
 
-**Created:** 2026-08-18 · **Status:** ✅ **DONE 2026-08-18** — published as container **version 7**; two follow-ups remain, see [Outcome](#outcome) · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
+**Created:** 2026-08-18 · **Status:** ⚠️ **PUBLISHED, NOT YET REPORTING** — container **version 7** is live and collecting, but `tour_booked` is **not marked as a key event**, so GA4 still reports `0.00`. Blocked on GA4 propagation until **2026-08-19**, then one click. See [Still open](#⚠️-still-open--do-these) · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
 **Est.:** ~30 min, most of it waiting on a test booking.
 
 > **Execution convention:** written to be run by a Claude Code agent in Cowork. See [CLAUDE.md § Handoffs](../CLAUDE.md).
@@ -177,11 +177,23 @@ Related, and worth knowing when reading GA4: **GA4 drops null-valued parameters 
 
 ## ⚠️ Still open — do these
 
-1. **Mark `tour_booked` as a key event.** Admin → Events → *Recent events* → star it. Until this is done GA4 still reports **0 key events**, which is the number the whole §14 backlog exists to change. Check back after ~24h.
+1. 🔴 **Mark `tour_booked` as a key event — BLOCKED UNTIL 2026-08-19, then one click.**
+
+   Admin → Data display → **Events** → *Recent events* tab → **star** `tour_booked`.
+
+   **Re-checked 2026-08-18 (afternoon): still not listed.** *Recent events* showed **11 of 11** — `click`, `Click - Message Us Button`, `file_download`, `first_visit`, `form_start`, `form_submit`, `page_view`, `scroll`, `session_start`, `user_engagement`, `view_search_results`. Identical to the 2026-08-17 baseline in [GA4-SNAPSHOT.md](../analytics/GA4-SNAPSHOT.md). No `tour_booked`.
+
+   **This is propagation lag, not a failure.** Three independent checks confirm the pipeline works: the published `gtm.js` contains `tour_booked`, DebugView received it at 01:35 with parameters attached, and the GA4 tag reported *Succeeded* in Preview. Admin → Events is simply the slowest surface to update, and the event has fired **exactly once in its life** — that single test booking is the entire history, which is the low-volume case where the full 24-hour window gets used.
+
+   There is **no manual route in this GA4 build.** The star is the only mechanism and it can only be applied to an event already listed, so this cannot be forced today.
+
+   ⚠️ **Until the star is clicked, GA4 reports `0.00` key events — the exact number the whole §14 backlog exists to move.** Everything else in this handoff is finished. This is the last checkbox, and it is the one that makes all the rest count.
 2. **Ask the `book-tour` owner to return the appointment id** so `tour_booking_id` stops being `null`. Needed before Ads dedup — see [gtm-conversion-linker.md](gtm-conversion-linker.md) and Part C of [tour-conversion-tracking.md](tour-conversion-tracking.md).
 3. **Reschedule path is untested.** Only a fresh booking was exercised (`tour_is_reschedule: false`). The `true` branch is unverified, and it is what Part C's Ads trigger is meant to exclude.
 4. **Delete the test booking row** (Sam Nader / `samnader21+1@gmail.com`, 2026-08-18 1:00 PM) from Supabase and the tour calendar.
-5. **Completeness check, once real bookings accrue:** count Supabase bookings for a window after publish and compare to `tour_booked` in GA4 for the same window. They should match; a persistent shortfall means a call site is missing the push.
+5. **Completeness check, once real bookings accrue:** count Supabase bookings for a window after publish and compare to `tour_booked` in GA4 for the same window.
+
+   ⚠️ **They will NOT match, and are not meant to** — an earlier draft of this line said they should, which contradicted § 5 above. Ad blockers block `googletagmanager.com` outright, as this very handoff proved, so those visitors book normally, write a Supabase row, and never reach GA4. **Expect GA4 at roughly 70–85% of Supabase, permanently.** Establish the ratio over the first fortnight and watch for movement in *that*, not for equality. A shortfall spread evenly across pages is ad blockers and is normal; **one `tour_source_page` value at zero while others report** means a call site is missing the push. Full detail in § 5.
 
 ### Note for whoever runs the next browser-based handoff
 
