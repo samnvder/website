@@ -9,10 +9,9 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 | # | Handoff | What it does | Time | Blocked? |
 |---|---|---|---|---|
 | 1 | **[tour-conversion-tracking](tour-conversion-tracking.md)** | Makes tour bookings visible to GA4 and Google Ads. **Highest value on the board after GBP.** | ~1h | Part C only — no Google Ads account exists |
-| 2 | **[link-search-console](link-search-console.md)** | Joins search queries to site behaviour. No code, no site changes. | ~5 min | no |
-| 3 | **[ga4-hygiene](ga4-hygiene.md)** | Clears MonsterInsights residue. **Low priority — moves no numbers.** | ~20 min | no |
+| 2 | **[ga4-hygiene](ga4-hygiene.md)** | Clears MonsterInsights residue. **Low priority — moves no numbers.** | ~20 min | no |
 
-**Suggested order: 2 → 1 → 3.** Search Console is five minutes and pays off immediately. Conversion tracking is the one that changes what you can know. Hygiene is whenever you're next in the account.
+**Do conversion tracking next** — it's the one that changes what you can know. Hygiene is whenever you're next in the account.
 
 Backlog context for all three: [SEO/TODO.md](../SEO/TODO.md) §14. Property config and the pre-tracking baseline: [analytics/GA4-SNAPSHOT.md](../analytics/GA4-SNAPSHOT.md).
 
@@ -20,6 +19,7 @@ Backlog context for all three: [SEO/TODO.md](../SEO/TODO.md) §14. Property conf
 
 | Handoff | Outcome |
 |---|---|
+| [link-search-console](link-search-console.md) | ✅ Closed 2026-08-17. GSC linked to GA4, both reports published, query data live immediately. GSC owner access had to be added first. |
 | [SEO/HANDOFF.md](../SEO/HANDOFF.md) | Closed 2026-08-07. Kept as a record of hypothesis-vs-reality, plus two reusable verification scripts. |
 
 ---

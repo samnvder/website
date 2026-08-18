@@ -89,7 +89,6 @@ Verified on `master`: **0** dead page-links, **0** `tve-jump` references, **0** 
 | §12 | Homepage listed **twice** in `page-sitemap.xml` | Sam | small · new finding |
 | §13 | 🔴 **Pre-ticked SMS/calls consent on the tour form** — TCPA exposure | Sam | legal call · ~15 min to fix |
 | §14 | 🥈 **Tour bookings are invisible to GA4 and Ads** — handoff + patches ready to run | Claude + Sam | ~1 h · **highest ROI after §1** |
-| §17 | **Search Console is not linked to GA4** — handoff ready | Claude + Sam | ~5 min · no code |
 | §15 | Repo has no `se-bk-floating` widget that runs on live | Claude | medium · silent-loss risk |
 | §16 | `/special-offer/` 404s while its repo file exists | Sam | small |
 | §6 | Page weight 318–767 KB of Thrive HTML | — | deferred |
@@ -548,7 +547,7 @@ Consequences:
 
 ---
 
-### 17. Search Console not linked to GA4 — **handoff ready** · ~5 min
+### 17. Search Console not linked to GA4 — **DONE 2026-08-17** ✅
 
 Found 2026-08-17 during the GA4 audit. GA4 → Product links → Search Console reads *"No links yet."*
 
@@ -556,7 +555,13 @@ Search Console knows the **query**; GA4 knows the **behaviour**. Unlinked, "whic
 
 This is the data this file keeps deferring to: §4 defers content work pending query data, and the closing note says further metadata tuning "would be guessing" without it. **Not backfilled** — query data starts from the link date, so linking early costs nothing and waiting costs data.
 
-**Ready to run:** [handoffs/link-search-console.md](../handoffs/link-search-console.md). Needs verified-**owner** GSC access and GA4 editor on the same signed-in account.
+**Linked 2026-08-17.** Both reports published to the GA4 nav. Query data appeared immediately, not after the expected 48h — Queries pulls GSC's own history rather than waiting on new traffic.
+
+First view, same 28-day window: **1,811 queries**; top query `south end racquet & health club` at 250 clicks / 568 impressions / **44% CTR / position 1.33**; 34 landing pages, top `/` at 1,162 clicks.
+
+⚠️ **Read this before treating it as SEO performance: the top query is the club's own name.** That is brand demand being captured, not discovery. Split branded from non-branded before drawing conclusions — the non-branded tail is where §4 (no informational content) will actually show up, and it's the number worth tracking.
+
+Note for the record: **GSC owner access was not already in place** and had to be added during the prerequisite check. Handoff: [handoffs/link-search-console.md](../handoffs/link-search-console.md) (closed).
 
 ---
 

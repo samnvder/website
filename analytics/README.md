@@ -18,7 +18,7 @@ Records of the measurement stack for southendclub.com — what's configured, whe
 | Google Analytics 4 | `G-SJN8S5QWXE` | Live, receiving traffic. **Zero key events.** |
 | GA4 (second stream) | `G-KSB6ZBR8FS` | Orphaned MonsterInsights stream, no data. Do not use. |
 | Google Ads | — | **No account linked.** No `AW-` tag anywhere. |
-| Search Console | — | In use, but **not linked to GA4.** |
+| Search Console | `sc-domain:southendclub.com` | ✅ **Linked to GA4 2026-08-17.** Both reports published. |
 | Meta / TikTok pixels | — | None. |
 
 ## Open work

@@ -48,16 +48,27 @@ The MonsterInsights stream is a leftover from the WordPress plugin of that name.
 
 **Stream 1 detail:** Enhanced measurement **on** — page views, scrolls, outbound clicks, +4 more. Redact data: *email active*, *URL query parameter keys inactive*. Connected site tags: **0**.
 
-## Product links — nothing is linked
+## Product links
 
 | Product | Status |
 |---|---|
 | **Google Ads** | ❌ **No links.** "No links yet." |
-| **Search Console** | ❌ **No links.** "No links yet." |
+| **Search Console** | ✅ **Linked 2026-08-17** — `sc-domain:southendclub.com` → web stream `6675857159`. Both reports published. |
 
 **This answers the standing Google Ads question:** no Ads account is linked to this property, which alongside the absence of any `AW-` tag in container `GTM-WLRX58RN` means there is almost certainly no Google Ads account in use at all. Part C of the conversion-tracking handoff is genuinely blocked, not just unverified.
 
-**Search Console being unlinked is a separate, easy win.** GSC is in active use (see SEO/TODO.md §2), but because it isn't linked, organic *query* data doesn't appear in GA4 — so you can't see which search terms lead to which landing pages in one place. Linking is a few clicks and needs no code.
+**Search Console was linked on 2026-08-17** ([handoff](../handoffs/link-search-console.md), now closed). Query data appeared **immediately** rather than after the anticipated 48 hours — the Queries report pulls Search Console's own historical data, and the landing-page report joins by URL and date rather than per-session attribution, so neither had to wait for new traffic. The 48-hour lag applies to days going forward, not to this first view.
+
+First numbers, same 28-day window as the baseline below:
+
+| | |
+|---|---|
+| Distinct queries | **1,811** |
+| Top query | `south end racquet & health club` — 250 clicks · 568 impressions · 44% CTR · avg position **1.33** |
+| Landing pages | 34 |
+| Top landing page | `/` — 1,162 clicks · 1,010 users · 77% engagement rate |
+
+**The top query is the club's own name at position 1.33.** That's brand demand being captured, not discovery — people who already know South End typing it into Google. It's worth separating branded from non-branded before reading any of this as SEO performance; the non-branded tail is where [SEO/TODO.md](../SEO/TODO.md) §4 (no informational content) will actually show up.
 
 ## Key events — effectively none
 
@@ -139,7 +150,7 @@ Reading this list:
 Already logged as [SEO/TODO.md](../SEO/TODO.md) §14. This snapshot adds four things that weren't visible from outside:
 
 1. **Google Ads is confirmed absent**, not merely unverified — handoff Part C is blocked, Parts A/B are not.
-2. **Search Console is unlinked** — quick win, no code, unlocks query-level reporting.
+2. ~~Search Console is unlinked~~ — **done 2026-08-17.** Query data is now in GA4.
 3. **A dead second data stream and 12 orphaned MonsterInsights dimensions** — cleanup, plus a possible PII exposure in `email_address` that should be checked.
 4. **A pre-tracking baseline** that cannot be recreated later.
 

@@ -1,9 +1,11 @@
 # Handoff — Link Search Console to GA4
 
-**Created:** 2026-08-17 · **Status:** OPEN · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
+**Created:** 2026-08-17 · **Status:** ✅ **CLOSED — completed 2026-08-17** · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
 **Est.:** ~5 minutes. No code. No site changes.
 
 ---
+
+> **Outcome.** Linked and both reports published. Query data appeared **immediately** rather than after 48h — Queries pulls GSC's own history, and the landing-page report joins by URL/date rather than per-session, so neither waited on new traffic. First view: 1,811 queries, top one `south end racquet & health club` at position 1.33; 34 landing pages, top `/` at 1,162 clicks. Prerequisite note: GSC owner access had to be **added** during step 1 — it was not already in place.
 
 ## Why
 
