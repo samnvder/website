@@ -1,6 +1,6 @@
 # Handoff — Verify and publish the `tour_booked` GTM build, then make GA4 report it
 
-**Created:** 2026-08-18 · **Status:** OPEN — **12 unpublished changes are sitting in the container right now** · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
+**Created:** 2026-08-18 · **Status:** ✅ **DONE 2026-08-18** — published as container **version 7**; two follow-ups remain, see [Outcome](#outcome) · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
 **Est.:** ~30 min, most of it waiting on a test booking.
 
 > **Execution convention:** written to be run by a Claude Code agent in Cowork. See [CLAUDE.md § Handoffs](../CLAUDE.md).
@@ -130,6 +130,67 @@ The two failure modes look different, which is what makes this diagnosable:
 Segment by `tour_source_page` to tell them apart — which is why registering it as a custom dimension in step 4 is not optional.
 
 **The model to carry forward: Supabase is the source of truth for *how many* bookings happened. GA4 is for attribution — *where they came from*. Never use GA4 to count bookings.**
+
+---
+
+## Outcome
+
+Executed 2026-08-18. Container **published as version 7**, "tour_booked conversion tracking (GA4)".
+
+### What was verified, and with what output
+
+| Check | Result |
+|---|---|
+| Inventory before touching anything | Matched exactly — **Workspace Changes: 12**, one `CE - tour_booked` trigger (1 tag attached), 10 `DLV -` variables, one `GA4 - tour_booked` tag on `G-SJN8S5QWXE` with all 10 params mapped. **No duplicates.** |
+| Live page code (pre- and post-publish) | `schedule-a-tour 2` · `memberships 2` · `fitness 1` — unchanged, as expected |
+| GTM Preview | Connected; **Container Version: Preview** (workspace 7, not published v6) |
+| Test booking (real, on `/schedule-a-tour/`) | `tour_booked` fired; `GA4 - tour_booked` → **Succeeded**, 1× |
+| All 10 variables | All resolved through GTM — see table below |
+| GA4 DebugView | `tour_booked` received 1× at 1:35:04 AM with parameters attached |
+| Published version | v7 — 4 Tags, 3 Triggers, 20 Variables; all 12 changes recorded as *Added* |
+
+Values captured from the real booking:
+
+| Parameter | Value |
+|---|---|
+| `tour_booking_id` | **`null`** |
+| `tour_is_reschedule` | `false` |
+| `tour_date` | `2026-08-18` |
+| `tour_time` | `1:00 PM` |
+| `tour_heard_about` | `Drove By` |
+| `tour_source_page` | `https://southendclub.com/schedule-a-tour/?gtm_debug=…` |
+| `tour_device` | `desktop` |
+| `tour_utm_source` / `_medium` / `_campaign` | `null` (correct — no campaign params on the visit) |
+
+### ⚠️ `tour_booking_id` is confirmed `null`
+
+The DLV's return type is literally `null` — **the `book-tour` edge function does not return an appointment id.** This is now answered rather than assumed.
+
+It blocks nothing today (no Google Ads account exists, so nothing consumes it), but it **must be fixed before any Ads conversion work** or deduplication will be unreliable from day one. This is a request to the `book-tour` owner.
+
+Related, and worth knowing when reading GA4: **GA4 drops null-valued parameters entirely.** DebugView received only the six non-null `tour_*` parameters. So a booking with no UTMs contributes nothing to those dimensions rather than an empty value.
+
+### GA4 registration
+
+- ✅ **Five custom dimensions registered** (all Event-scoped): `tour_source_page`, `tour_utm_source`, `tour_utm_campaign`, `tour_heard_about`, `tour_device`. Property now has 17 of 50 slots used.
+- ❌ **`tour_booked` NOT yet marked as a key event.** It had not propagated to Admin → Events at time of execution (GA4 aggregates new event names on up to a 24-hour delay), and this GA4 build offers **no way to name a key event manually** — the star can only be applied to an event already listed. The dropdown beside *Custom configurations* contains only *Custom events* and *Modifications*.
+
+## ⚠️ Still open — do these
+
+1. **Mark `tour_booked` as a key event.** Admin → Events → *Recent events* → star it. Until this is done GA4 still reports **0 key events**, which is the number the whole §14 backlog exists to change. Check back after ~24h.
+2. **Ask the `book-tour` owner to return the appointment id** so `tour_booking_id` stops being `null`. Needed before Ads dedup — see [gtm-conversion-linker.md](gtm-conversion-linker.md) and Part C of [tour-conversion-tracking.md](tour-conversion-tracking.md).
+3. **Reschedule path is untested.** Only a fresh booking was exercised (`tour_is_reschedule: false`). The `true` branch is unverified, and it is what Part C's Ads trigger is meant to exclude.
+4. **Delete the test booking row** (Sam Nader / `samnader21+1@gmail.com`, 2026-08-18 1:00 PM) from Supabase and the tour calendar.
+5. **Completeness check, once real bookings accrue:** count Supabase bookings for a window after publish and compare to `tour_booked` in GA4 for the same window. They should match; a persistent shortfall means a call site is missing the push.
+
+### Note for whoever runs the next browser-based handoff
+
+The 2026-08-18 ad-blocker warning above is real and cost time again. Findings worth carrying forward:
+
+- **uBlock does not always "block" — it substitutes.** In one profile `gtm.js` reported `onload` **successfully** while `window.google_tag_manager` stayed `undefined`, because the extension served a neutered surrogate. Nothing looks broken; GTM simply never initializes. `fetch()` returned the real 369 KB file in the same profile, so **a passing `fetch` check does not prove GTM will load** — verify `window.google_tag_manager` is defined instead.
+- Pausing the blocker **for the site** was not enough in that profile; it had to be toggled off entirely.
+- Confirm which browser/profile you are actually driving before concluding anything — a cycle was lost testing one Chrome instance while the blocker was being disabled in another.
+- **Do not open the debug URL in a second tab with a `gtm_debug` parameter** to try to join a live Preview session. It does not join; it **drops** the existing session, which then has to be reconnected.
 
 ## What is deliberately out of scope
 

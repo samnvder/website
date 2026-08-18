@@ -8,12 +8,12 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 
 | # | Handoff | What it does | Time | Blocked? |
 |---|---|---|---|---|
-| 0 | **[publish-tour-tracking-gtm](publish-tour-tracking-gtm.md)** | 🔴 **Do this first.** Verify + publish the `tour_booked` GTM build and register it in GA4. **12 unpublished changes are sitting in the container.** | ~30 min | no |
-| 1 | **[tour-conversion-tracking](tour-conversion-tracking.md)** | Makes tour bookings visible to GA4 and Google Ads. Part A ✅ done 2026-08-18; Part B built but unpublished → see #0. | ~1h | Part C only — no Google Ads account exists |
+| 0 | **[publish-tour-tracking-gtm](publish-tour-tracking-gtm.md)** | 🟡 **Mostly done — 2 small follow-ups.** GTM published as v7 and verified; 5 custom dimensions registered. **Still open: star `tour_booked` as a key event** (it had not propagated yet), and get `tour_booking_id` fixed — it is confirmed `null`. | ~10 min | no — but the key-event star needs ~24h after publish |
+| 1 | **[tour-conversion-tracking](tour-conversion-tracking.md)** | Makes tour bookings visible to GA4 and Google Ads. Part A ✅ done 2026-08-18; **Part B ✅ published 2026-08-18** (container v7). | ~1h | Part C only — no Google Ads account exists |
 | 2 | **[ga4-hygiene](ga4-hygiene.md)** | Clears MonsterInsights residue. **Low priority — moves no numbers.** | ~20 min | no |
 | 3 | **[gtm-conversion-linker](gtm-conversion-linker.md)** | Adds the missing Conversion Linker so Ads can attribute clicks. **Parked on purpose** — must run *before* Part C, never after. | ~10 min | yes — no Google Ads account exists |
 
-**Do #0 next.** Part A is live and verified, but GA4 still records nothing until the GTM build is published — and 12 unpublished changes sitting in a shared container is a state worth closing quickly. Hygiene is whenever you're next in the account.
+**#0 is now mostly closed** — the container was published as version 7 on 2026-08-18 and `tour_booked` is collecting, verified in GA4 DebugView. **Two things still matter:** `tour_booked` is not yet a **key event**, so GA4 continues to report `0.00` key events until someone stars it; and **`tour_booking_id` is confirmed `null`**, which must be fixed by the `book-tour` owner before any Ads dedup work. Hygiene is whenever you're next in the account.
 
 Backlog context for all three: [SEO/TODO.md](../SEO/TODO.md) §14. Property config and the pre-tracking baseline: [analytics/GA4-SNAPSHOT.md](../analytics/GA4-SNAPSHOT.md).
 

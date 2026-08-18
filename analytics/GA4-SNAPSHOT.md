@@ -75,6 +75,9 @@ First numbers, same 28-day window as the baseline below:
 | Event | Status |
 |---|---|
 | `purchase` | "No stream data detected" — GA4's default placeholder, never fires |
+| `tour_booked` | ✅ **collecting since 2026-08-18** (GTM container v7) — ⚠️ **not yet marked as a key event**, see below |
+
+**2026-08-18 update — `tour_booked` now collects, but still counts as zero key events.** The GTM build was published (container **version 7**) and verified end to end: the tag fires, and GA4 DebugView received the event with its parameters attached. **It has not been marked as a key event yet** — the event had not propagated to Admin → Events, and this GA4 build gives no way to name a key event manually. **Until someone stars it, the number below stays 0.** See [handoffs/publish-tour-tracking-gtm.md](../handoffs/publish-tour-tracking-gtm.md) § Still open.
 
 **Key events counted over the last 28 days: `0.00`.** Across every channel, every row. This is §14 in the backlog, seen from the inside: the property is configured for the *Generate leads* objective and measures exactly zero leads.
 
@@ -86,7 +89,9 @@ All event-scoped, created Feb 2024 / Dec 2024, all described "MonsterInsights cu
 
 Two things worth knowing:
 
-- **Nothing here relates to the booking funnel.** The five dimensions the handoff needs (`tour_source_page`, `tour_utm_source`, `tour_utm_campaign`, `tour_heard_about`, `tour_device`) still need registering. 12 of 50 slots used, so there's plenty of room.
+- ~~**Nothing here relates to the booking funnel.**~~ **Resolved 2026-08-18:** all five booking-funnel dimensions were registered — `tour_source_page`, `tour_utm_source`, `tour_utm_campaign`, `tour_heard_about`, `tour_device`, all **Event**-scoped. Property is now at **17 of 50 slots**.
+
+  ⚠️ **GA4 drops null-valued parameters**, confirmed in DebugView on the first real booking: `tour_booking_id` and the three `tour_utm_*` params were `null` and simply did not arrive. So these dimensions show nothing at all for bookings without campaign parameters — not an empty string, no row.
 - ⚠️ **`email_address` is a PII-shaped custom dimension.** If MonsterInsights ever populated it with real addresses, that is personal data in GA4, which breaches Google's terms and is grounds for property suspension. The stream is dormant so it's probably never been filled, **but this should be checked rather than assumed.** It also reinforces the handoff rule: never push email or phone into `dataLayer`.
 
 ---
