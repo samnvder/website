@@ -25,6 +25,7 @@
     "convert:live": "node scripts/convert/convert-to-local.js --revert",
     "convert:capture": "node scripts/convert/live-capture-to-source.js",
     "check:capture": "node scripts/convert/live-capture-to-source.js --check",
+    "audit:capture": "node scripts/convert/live-capture-to-source.js Website/Pages --report Website/Pages/CAPTURE-AUDIT.md",
     "test:capture-converter": "node --test scripts/convert/testing/test-live-capture-to-source.js",
     "build:pickleball-carousel": "node scripts/build/build-carousel.js scripts/build/carousel-configs/pickleball.json",
     "build:tennis-carousel": "node scripts/build/build-carousel.js scripts/build/carousel-configs/tennis.json",

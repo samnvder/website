@@ -13,22 +13,36 @@
  *
  * See CLAUDE.md, "The backup law", rule 4.
  *
- * Usage:
+ * Usage (single file):
  *   node scripts/convert/live-capture-to-source.js <capture.html>
  *   node scripts/convert/live-capture-to-source.js <capture.html> -o <out.html>
  *   node scripts/convert/live-capture-to-source.js <capture.html> --in-place
  *   node scripts/convert/live-capture-to-source.js <capture.html> --check
  *   cat capture.html | node scripts/convert/live-capture-to-source.js
  *
+ * Usage (recursive — pass a directory):
+ *   node scripts/convert/live-capture-to-source.js Website/Pages --report AUDIT.md
+ *   node scripts/convert/live-capture-to-source.js Website/Pages --check
+ *   node scripts/convert/live-capture-to-source.js Website/Pages --in-place
+ *
+ * A directory argument recurses and emits a Markdown audit record instead of
+ * converted HTML. Nothing is written unless --in-place, so the default is a
+ * read-only survey that is always safe to run against the whole repo.
+ *
  * Flags:
  *   -o <file>          Write result to <file> (default: stdout)
- *   --in-place         Rewrite the input file
+ *   --report <file.md> Directory mode: write the Markdown audit record there
+ *   --in-place         Rewrite the input file(s)
  *   --check            Report only; exit 1 if output-only markup was found
  *   --diff <file>      Compare the result against <file>; exit 1 if they differ
  *   --trim-to-banner   Drop everything before the first comment banner
  *   --quiet            Suppress the report (stdout is always clean)
  *
- * The report goes to stderr, so stdout stays pipeable.
+ * The human-readable report goes to stderr, so stdout stays pipeable.
+ *
+ * The Markdown record is deterministic by construction — no timestamp, no
+ * absolute path, sorted paths and sorted table rows — so re-running it on an
+ * unchanged tree produces identical bytes and `git diff` shows only real drift.
  */
 
 const fs = require('fs');
@@ -58,7 +72,7 @@ const TRANSFORMS = [
         replace: '',
     },
     {
-        name: 'CompressX <picture> wrapper',
+        name: 'CompressX <picture> tags (open + close)',
         pattern: /<\/?picture>/gi,
         replace: '',
     },
@@ -175,13 +189,210 @@ function convert(html, opts) {
 }
 
 /* ------------------------------------------------------------------ *
+ * Recursive scan
+ *
+ * Determinism is the whole point of the Markdown report: it gets committed as
+ * an audit record, so the same tree must always produce byte-identical output.
+ * That rules out anything ambient — no timestamps, no absolute paths, no
+ * reliance on readdir order, no unsorted object keys.
+ * ------------------------------------------------------------------ */
+
+const SKIP_DIRS = new Set(['node_modules', '.git', '.claude', 'dist', 'build']);
+const SCAN_EXTENSIONS = new Set(['.html', '.htm']);
+
+/**
+ * Collect every candidate file under `dir`, depth-first. The result is sorted
+ * by POSIX relative path so traversal order never depends on the filesystem.
+ */
+function collectFiles(dir, root) {
+    const found = [];
+
+    const walk = (current) => {
+        const entries = fs.readdirSync(current, { withFileTypes: true });
+        for (const entry of entries) {
+            const full = path.join(current, entry.name);
+            if (entry.isDirectory()) {
+                if (!SKIP_DIRS.has(entry.name)) walk(full);
+            } else if (SCAN_EXTENSIONS.has(path.extname(entry.name).toLowerCase())) {
+                found.push(full);
+            }
+        }
+    };
+
+    walk(dir);
+
+    return found
+        .map(full => ({ full, rel: toPosix(path.relative(root, full)) }))
+        .sort((a, b) => (a.rel < b.rel ? -1 : a.rel > b.rel ? 1 : 0));
+}
+
+function toPosix(p) {
+    return p.split(path.sep).join('/');
+}
+
+/**
+ * Render a path for the report. Always relative to the working directory, so
+ * the same tree produces the same document on any machine.
+ */
+function displayPath(p) {
+    const rel = path.relative(process.cwd(), path.resolve(p));
+    return toPosix(rel === '' ? '.' : rel);
+}
+
+/**
+ * Convert every file under a directory. Nothing is written unless --in-place;
+ * the default is a read-only survey.
+ */
+function scan(root, opts) {
+    const files = collectFiles(root, root);
+    const results = [];
+
+    for (const file of files) {
+        const before = fs.readFileSync(file.full, 'utf8');
+        let result;
+        try {
+            result = convert(before, opts);
+        } catch (e) {
+            results.push({ rel: file.rel, error: e.message, counts: {}, warnings: [], changed: false });
+            continue;
+        }
+
+        const changed = result.output !== before;
+        if (changed && opts.inPlace) fs.writeFileSync(file.full, result.output);
+
+        results.push({
+            rel: file.rel,
+            counts: result.counts,
+            warnings: result.warnings,
+            changed,
+        });
+    }
+
+    return results;
+}
+
+/* ------------------------------------------------------------------ *
+ * Deterministic Markdown report
+ * ------------------------------------------------------------------ */
+
+function sortedEntries(counts) {
+    return Object.entries(counts)
+        .filter(([, n]) => n > 0)
+        .sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+}
+
+function mdEscape(s) {
+    // Table cells are the only place a stray pipe would break the layout.
+    return String(s).replace(/\|/g, '\\|');
+}
+
+/**
+ * Build the audit record. Deliberately contains no date, no absolute path and
+ * no machine detail: re-running it on an unchanged tree must produce an
+ * identical file, so `git diff` shows drift and nothing else.
+ */
+function renderReport(root, results, opts) {
+    const lines = [];
+    const touched = results.filter(r => r.changed);
+    const clean = results.filter(r => !r.changed && !r.error);
+    const failed = results.filter(r => r.error);
+
+    const totals = {};
+    for (const r of results) {
+        for (const [name, n] of Object.entries(r.counts)) {
+            totals[name] = (totals[name] || 0) + n;
+        }
+    }
+
+    lines.push('# Live capture → editor source');
+    lines.push('');
+    lines.push('Generated by `scripts/convert/live-capture-to-source.js`. This file is');
+    lines.push('deterministic: the same tree always produces the same bytes, so any diff');
+    lines.push('here is real drift, not noise. Do not edit it by hand.');
+    lines.push('');
+    lines.push('Content flows **from this repo into Thrive**. Every count below is markup the');
+    lines.push('server added on output, which would rot the source if it were committed. See');
+    lines.push('rule 4 of the backup law in `CLAUDE.md`.');
+    lines.push('');
+    lines.push('| | |');
+    lines.push('|---|---|');
+    lines.push(`| Scanned | \`${mdEscape(displayPath(root))}\` |`);
+    lines.push(`| Files examined | ${results.length} |`);
+    lines.push(`| Carrying output-only markup | ${touched.length} |`);
+    lines.push(`| Already editor-form | ${clean.length} |`);
+    if (failed.length) lines.push(`| Failed to convert | ${failed.length} |`);
+    lines.push(`| Mode | ${opts.inPlace ? 'rewritten in place' : 'read-only survey'} |`);
+    lines.push('');
+
+    const totalEntries = sortedEntries(totals);
+    if (totalEntries.length) {
+        lines.push('## What was found');
+        lines.push('');
+        lines.push('| Output-only markup | Count |');
+        lines.push('|---|---:|');
+        for (const [name, n] of totalEntries) {
+            lines.push(`| ${mdEscape(name)} | ${n} |`);
+        }
+        lines.push('');
+    }
+
+    if (touched.length) {
+        lines.push('## Files carrying output-only markup');
+        lines.push('');
+        for (const r of touched) {
+            lines.push(`### \`${mdEscape(r.rel)}\``);
+            lines.push('');
+            lines.push('| Removed | Count |');
+            lines.push('|---|---:|');
+            for (const [name, n] of sortedEntries(r.counts)) {
+                lines.push(`| ${mdEscape(name)} | ${n} |`);
+            }
+            lines.push('');
+            for (const w of [...r.warnings].sort()) {
+                lines.push(`> **Warning:** ${w}`);
+                lines.push('');
+            }
+        }
+    }
+
+    if (failed.length) {
+        lines.push('## Failed');
+        lines.push('');
+        for (const r of failed) {
+            lines.push(`- \`${mdEscape(r.rel)}\` — ${mdEscape(r.error)}`);
+        }
+        lines.push('');
+    }
+
+    if (clean.length) {
+        lines.push('## Already editor-form');
+        lines.push('');
+        for (const r of clean) {
+            const warned = r.warnings.length ? ' — see warnings below' : '';
+            lines.push(`- \`${mdEscape(r.rel)}\`${warned}`);
+        }
+        lines.push('');
+        const withWarnings = clean.filter(r => r.warnings.length);
+        for (const r of withWarnings) {
+            lines.push(`> \`${mdEscape(r.rel)}\`:`);
+            for (const w of [...r.warnings].sort()) {
+                lines.push(`> **Warning:** ${w}`);
+            }
+            lines.push('');
+        }
+    }
+
+    return lines.join('\n');
+}
+
+/* ------------------------------------------------------------------ *
  * CLI
  * ------------------------------------------------------------------ */
 
 function parseArgs(argv) {
     const opts = {
         input: null, output: null, inPlace: false, check: false,
-        diff: null, trimToBanner: false, quiet: false,
+        diff: null, trimToBanner: false, quiet: false, report: null,
     };
 
     for (let i = 0; i < argv.length; i++) {
@@ -192,6 +403,7 @@ function parseArgs(argv) {
         else if (a === '--check') opts.check = true;
         else if (a === '--trim-to-banner') opts.trimToBanner = true;
         else if (a === '--quiet') opts.quiet = true;
+        else if (a === '--report') opts.report = argv[++i];
         else if (a.startsWith('-')) throw new Error('Unknown flag: ' + a);
         else if (!opts.input) opts.input = a;
         else throw new Error('Unexpected argument: ' + a);
@@ -201,6 +413,40 @@ function parseArgs(argv) {
     if (opts.inPlace && opts.output) throw new Error('Use either --in-place or -o, not both.');
 
     return opts;
+}
+
+/**
+ * Directory mode. Recurses, converts, and reports. Writes only with --in-place,
+ * so the default is always safe to run against the whole repo.
+ */
+function runDirectory(root, opts) {
+    const results = scan(root, opts);
+    const markdown = renderReport(root, results, opts);
+    const touched = results.filter(r => r.changed);
+    const failed = results.filter(r => r.error);
+
+    if (opts.report) {
+        // Always \n, never the platform separator: this file is committed, and
+        // a CRLF flip would show up as a whole-file diff.
+        fs.writeFileSync(opts.report, markdown.replace(/\r\n/g, '\n'), 'utf8');
+        if (!opts.quiet) process.stderr.write('Wrote ' + opts.report + '\n');
+    } else if (opts.output) {
+        fs.writeFileSync(opts.output, markdown.replace(/\r\n/g, '\n'), 'utf8');
+        if (!opts.quiet) process.stderr.write('Wrote ' + opts.output + '\n');
+    } else {
+        process.stdout.write(markdown + '\n');
+    }
+
+    if (!opts.quiet) {
+        process.stderr.write('\n' + displayPath(root) + ': ' + results.length + ' files, ' +
+            touched.length + ' carrying output-only markup' +
+            (opts.inPlace ? ' (rewritten)' : '') +
+            (failed.length ? ', ' + failed.length + ' failed' : '') + '\n\n');
+    }
+
+    if (failed.length) process.exit(2);
+    if (opts.check) process.exit(touched.length ? 1 : 0);
+    process.exit(0);
 }
 
 function readInput(opts) {
@@ -241,6 +487,21 @@ function main() {
     } catch (e) {
         process.stderr.write(e.message + '\n\nSee the header of ' +
             path.relative(process.cwd(), __filename) + ' for usage.\n');
+        process.exit(2);
+    }
+
+    // A directory argument switches to recursive mode.
+    if (opts.input && fs.existsSync(opts.input) && fs.statSync(opts.input).isDirectory()) {
+        if (opts.diff) {
+            process.stderr.write('--diff compares two files; it cannot take a directory.\n');
+            process.exit(2);
+        }
+        runDirectory(opts.input, opts);
+        return;
+    }
+
+    if (opts.report) {
+        process.stderr.write('--report is for directory scans. For one file, use -o or --check.\n');
         process.exit(2);
     }
 
@@ -296,4 +557,4 @@ function main() {
 
 if (require.main === module) main();
 
-module.exports = { convert, BOOLEAN_ATTRS, TRANSFORMS };
+module.exports = { convert, scan, renderReport, collectFiles, BOOLEAN_ATTRS, TRANSFORMS };

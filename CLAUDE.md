@@ -80,6 +80,12 @@ Four rules that make the mirror trustworthy:
    node scripts/convert/live-capture-to-source.js capture.html --diff "Website/Pages/fitness/fitness HTML.html"
    ```
 
+   Pass a **directory** instead of a file and it recurses, writing a deterministic Markdown audit record — no timestamp, no absolute paths, sorted throughout — so it can be committed and `git diff` shows only real drift. Nothing is written unless `--in-place`, so this is safe to run across the whole repo:
+
+   ```bash
+   npm run audit:capture
+   ```
+
 Mirror the **whole element or snippet**, not a fragment, so it can be pasted back with a single select-all. Partial selection inside a 1,400-line editor is where mistakes happen.
 
 ## SEO

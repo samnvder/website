@@ -47,7 +47,8 @@ npm run convert:capture -- capture.html -o clean.html
 | Flag | Effect |
 |---|---|
 | `-o <file>` | Write to `<file>` (default: stdout; the report goes to stderr) |
-| `--in-place` | Rewrite the input |
+| `--report <file.md>` | Directory mode: write the Markdown audit record there |
+| `--in-place` | Rewrite the input file(s) |
 | `--check` | Report only; exit 1 if output-only markup was present |
 | `--diff <file>` | Exit 1 unless the converted capture matches `<file>` exactly |
 | `--trim-to-banner` | Drop everything before the first `<!-- ====` banner |
@@ -55,8 +56,34 @@ npm run convert:capture -- capture.html -o clean.html
 `--diff` is the one that proves a mirror: convert the capture, point it at the
 page file, and a clean exit means the repo and live agree.
 
-Tests: `npm run test:capture-converter` (14 cases, most of them guarding against
-the converter eating real editor content).
+#### Recursive mode
+
+Pass a **directory** instead of a file and it recurses, emitting a Markdown
+audit record rather than converted HTML:
+
+```bash
+npm run audit:capture
+node scripts/convert/live-capture-to-source.js patches --report AUDIT.md
+node scripts/convert/live-capture-to-source.js Website/Pages --check
+```
+
+Nothing is written unless `--in-place`, so the default is a read-only survey
+that is always safe to run across the whole repo. `node_modules`, `.git`,
+`.claude`, `dist` and `build` are skipped; only `.html`/`.htm` are read.
+
+**The record is deterministic by construction** — no timestamp, no absolute
+path, paths sorted POSIX-style, table rows sorted, always `
+` line endings.
+Re-running it on an unchanged tree produces identical bytes, so it can be
+committed and `git diff` will only ever show real drift. That property is
+pinned by tests, including one that renders two separate temp trees with the
+same content and asserts the records match.
+
+Note the `<picture>` count is **tags, open + close** — 412 tags means 206
+wrapped images, not 412.
+
+Tests: `npm run test:capture-converter` (22 cases — the conversion rules, the
+recursion, and the byte-stability of the Markdown record).
 
 ## Advanced
 

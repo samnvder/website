@@ -108,7 +108,7 @@ test('reports what it removed, by name', () => {
     const { counts } = convert(capture, {});
 
     assert.strictEqual(counts['CompressX <source> (avif/webp)'], 1);
-    assert.strictEqual(counts['CompressX <picture> wrapper'], 2); // open + close
+    assert.strictEqual(counts['CompressX <picture> tags (open + close)'], 2);
 });
 
 test('warns rather than guessing when a wrapper needs a matching close tag', () => {
@@ -142,4 +142,127 @@ test('a clean editor-form file passes through untouched', () => {
     const { output, counts } = convert(source, {});
     assert.strictEqual(output, source);
     assert.deepStrictEqual(counts, {});
+});
+
+/* ------------------------------------------------------------------ *
+ * Recursive scan + deterministic Markdown record
+ *
+ * The record gets committed, so byte-stability is the property that matters:
+ * a diff must mean the tree drifted, never that the machine or the clock did.
+ * ------------------------------------------------------------------ */
+
+const fs = require('node:fs');
+const os = require('node:os');
+const nodePath = require('node:path');
+const { scan, renderReport, collectFiles } = require('../live-capture-to-source.js');
+
+/** Build a throwaway tree and return its root. */
+function fixture() {
+    const root = fs.mkdtempSync(nodePath.join(os.tmpdir(), 'capture-test-'));
+    const write = (rel, body) => {
+        const full = nodePath.join(root, rel);
+        fs.mkdirSync(nodePath.dirname(full), { recursive: true });
+        fs.writeFileSync(full, body);
+    };
+
+    write('zebra.html', '<picture><source type="image/avif"><img src="z.jpg"></picture>');
+    write('alpha.html', '<video controls=""></video>');
+    write('nested/deep/inner.html', '<div data-carousel=""></div>');
+    write('clean.html', '<p>Nothing to do here.</p>');
+    write('notes.txt', '<picture>ignored, not html</picture>');
+    write('node_modules/pkg/index.html', '<picture><img src="skip.jpg"></picture>');
+
+    return root;
+}
+
+test('recurses into subdirectories and skips node_modules and non-HTML', () => {
+    const root = fixture();
+    const found = collectFiles(root, root).map(f => f.rel);
+
+    assert.deepStrictEqual(found, [
+        'alpha.html',
+        'clean.html',
+        'nested/deep/inner.html',
+        'zebra.html',
+    ]);
+});
+
+test('scan reports per-file counts without writing anything', () => {
+    const root = fixture();
+    const before = fs.readFileSync(nodePath.join(root, 'zebra.html'), 'utf8');
+    const results = scan(root, {});
+
+    assert.strictEqual(results.length, 4);
+    assert.strictEqual(results.filter(r => r.changed).length, 3);
+    assert.strictEqual(
+        fs.readFileSync(nodePath.join(root, 'zebra.html'), 'utf8'),
+        before,
+        'a read-only survey must not touch the tree'
+    );
+});
+
+test('--in-place rewrites every file that carried output-only markup', () => {
+    const root = fixture();
+    scan(root, { inPlace: true });
+
+    assert.strictEqual(
+        fs.readFileSync(nodePath.join(root, 'zebra.html'), 'utf8'),
+        '<img src="z.jpg">'
+    );
+    assert.strictEqual(
+        fs.readFileSync(nodePath.join(root, 'nested/deep/inner.html'), 'utf8'),
+        '<div data-carousel></div>'
+    );
+    assert.strictEqual(
+        fs.readFileSync(nodePath.join(root, 'clean.html'), 'utf8'),
+        '<p>Nothing to do here.</p>',
+        'an already-clean file must be left alone'
+    );
+});
+
+test('the Markdown record is byte-identical across runs', () => {
+    const root = fixture();
+    const first = renderReport(root, scan(root, {}), {});
+    const second = renderReport(root, scan(root, {}), {});
+
+    assert.strictEqual(first, second);
+});
+
+test('the Markdown record is identical for two trees with the same content', () => {
+    // Different temp directories, same files. If the record embedded an
+    // absolute path, a timestamp, or readdir order, these would diverge.
+    const a = renderReport(fixture(), scan(fixture(), {}), {});
+    const b = renderReport(fixture(), scan(fixture(), {}), {});
+
+    const stripRoot = (md) => md.replace(/\| Scanned \| .*/, '| Scanned | X |');
+    assert.strictEqual(stripRoot(a), stripRoot(b));
+});
+
+test('the Markdown record carries no timestamp or absolute path', () => {
+    const root = fixture();
+    const md = renderReport(root, scan(root, {}), {});
+
+    assert.ok(!/\d{4}-\d{2}-\d{2}/.test(md), 'must contain no date');
+    assert.ok(!/[A-Z]:[\\/]/.test(md), 'must contain no Windows absolute path');
+    assert.ok(!md.includes(os.tmpdir()), 'must not leak the temp root');
+});
+
+test('files and table rows are sorted, not filesystem-ordered', () => {
+    const root = fixture();
+    const md = renderReport(root, scan(root, {}), {});
+
+    // alpha.html was written after zebra.html but must be listed first.
+    assert.ok(md.indexOf('alpha.html') < md.indexOf('zebra.html'));
+});
+
+test('a fully clean tree reports zero and still renders', () => {
+    const root = fs.mkdtempSync(nodePath.join(os.tmpdir(), 'capture-clean-'));
+    fs.writeFileSync(nodePath.join(root, 'ok.html'), '<p>fine</p>');
+
+    const results = scan(root, {});
+    const md = renderReport(root, results, {});
+
+    assert.strictEqual(results.filter(r => r.changed).length, 0);
+    assert.ok(md.includes('| Carrying output-only markup | 0 |'));
+    assert.ok(md.includes('## Already editor-form'));
 });
