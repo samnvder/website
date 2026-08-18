@@ -24,7 +24,7 @@ Live configuration lives in the WordPress database:
 | robots.txt | Yoast → Tools → File editor |
 | **Nav links** | Appearance → **Menus** — and *also* the Thrive header/footer (see below) |
 
-Snippet source is mirrored in **[SEO/snippets/](./SEO/snippets/)**. As of 2026-08-13 **all live snippets are exported there**, 9934/9935/9936 verbatim from WPCode, plus **9951** (renamed-page 301s, added and active). A fifth file, `fix-stale-phone-in-jsonld.php`, was applied as snippet 9952 and then deliberately deleted — it masked a problem instead of fixing it. See [SEO/TODO.md](./SEO/TODO.md) §10.
+Snippet source is mirrored in **[live/wpcode/](./live/wpcode/)**, alongside every other block of code running on the site — see the backup law below. As of 2026-08-13 **all live snippets are exported there**, 9934/9935/9936 verbatim from WPCode, plus **9951** (renamed-page 301s, added and active). A fifth file, `9952-fix-stale-phone-in-jsonld.php`, was applied as snippet 9952 and then deliberately deleted; it lives in [live/wpcode/retired/](./live/wpcode/retired/) because it masked a problem instead of fixing it. See [SEO/TODO.md](./SEO/TODO.md) §10.
 
 Everything *else* still lives only in the database — Yoast's per-page titles and descriptions, the 7 WP menus, Site representation. A restore from an old backup still loses all of that silently.
 

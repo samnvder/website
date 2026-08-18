@@ -39,7 +39,7 @@ After any change: **GoDaddy Quick Links → Flush Cache**, then verify with `cur
 
 **This means the repo is not a backup.** Restoring an old site backup would wipe all of the above. Keep All-in-One WP Migration exports current.
 
-> **Partly mitigated 2026-08-13:** all live WPCode snippets are now exported to [snippets/](snippets/), 9934/9935/9936 verbatim from the WPCode editor plus 9951. The PHP half of the configuration is recoverable from this repo. **Yoast's per-page metadata and the 7 WP menus still are not** — those remain database-only, so the warning above still holds for everything except the snippets.
+> **Partly mitigated 2026-08-13:** all live WPCode snippets are now exported to [../live/wpcode/](../live/wpcode/), 9934/9935/9936 verbatim from the WPCode editor plus 9951. The PHP half of the configuration is recoverable from this repo. **Yoast's per-page metadata and the 7 WP menus still are not** — those remain database-only, so the warning above still holds for everything except the snippets.
 
 ---
 
@@ -114,7 +114,7 @@ Verified on `master`: **0** dead page-links, **0** `tve-jump` references, **0** 
 | Item | Section |
 |---|---|
 | Full live-vs-sheet metadata audit, all 18 pages — **zero drift** | §11 |
-| **All 3 live WPCode snippets exported verbatim** — 9934, 9935 and 9936 were unbacked-up | [snippets/](snippets/) |
+| **All 3 live WPCode snippets exported verbatim** — 9934, 9935 and 9936 were unbacked-up | [../live/wpcode/](../live/wpcode/) |
 | Basketball/volleyball added to `/racquet-sports/` schema + amenity inventory | §5 |
 | GUIDELINES.md corrected — body JSON-LD **is** read by Google; "Required elements" and the checklist no longer teach the inert-tag trap | — |
 | Duplicate homepage entry in sitemap found | §12 |
@@ -336,7 +336,7 @@ The replacement pages carry proper **semantic** anchor ids (`#sports-camp`, `#ba
 
 **Karate is a content gap, not a link bug:** it appears only in the `/youth-programs/` meta description, with no section on the page. The page promises karate and doesn't deliver it.
 
-~~Also add 301s for the three dead paths~~ — **done 2026-08-13.** Applied as WPCode snippet **9951** from [snippets/renamed-page-redirects.php](snippets/renamed-page-redirects.php) and verified: all three return 301 to the correct target. **GoDaddy ignores `.htaccess`**, so it runs on `template_redirect`, guarded by `is_404()`.
+~~Also add 301s for the three dead paths~~ — **done 2026-08-13.** Applied as WPCode snippet **9951** from [9951-renamed-page-redirects.php](../live/wpcode/9951-renamed-page-redirects.php) and verified: all three return 301 to the correct target. **GoDaddy ignores `.htaccess`**, so it runs on `template_redirect`, guarded by `is_404()`.
 
 **Same bug, wider than the nav:** 24 further anchor links across `/fitness/`, `/pools/`, `/racquet-sports/` and `/services/` also pointed at `#tve-jump-…` ids that no longer exist. Those pages return 200, so the links weren't 404 — they silently landed at page top instead of the section the label promised. Repo side is fixed; the live menu has the same stale ids. Two things surfaced there worth your judgement:
 
@@ -387,7 +387,7 @@ All five must become `+1-310-530-0630`.
 > output via `the_content` and all 6 vanished from live HTML. It was then removed
 > deliberately, because it *masked* the problem: while active, the verification
 > command below passes whether or not the source was ever fixed. Its source is
-> still in [fix-stale-phone-in-jsonld.php](snippets/fix-stale-phone-in-jsonld.php)
+> still in [9952-fix-stale-phone-in-jsonld.php](../live/wpcode/retired/9952-fix-stale-phone-in-jsonld.php)
 > if a temporary cover-up is ever wanted, but **it is not the fix.**
 
 #### ❌ Approaches that were tried and did NOT work — don't repeat these
@@ -588,4 +588,4 @@ Then: **stop optimising, start measuring.** Give Google 2–3 weeks to recrawl a
 
 > **On metadata specifically — that work is finished and now fully applied.** The 2026-08-13 audit compared all 18 live pages to the sheet character by character and found zero drift; the two under-length descriptions and the organisation-name inconsistency it surfaced have since been fixed live. Titles, descriptions, keyphrases, canonicals, robots, the sitemap and the organisation entity are all correct and all match. Further title/description tuning without query data from Search Console would be guessing.
 >
-> **All three live WPCode snippets are now backed up** in [snippets/](snippets/), exported verbatim. That closes the silent-data-loss risk flagged at the top of this file — though the warning still stands, because Yoast's per-page metadata and the WP menus still live only in the database.
+> **All three live WPCode snippets are now backed up** in [../live/wpcode/](../live/wpcode/), exported verbatim. That closes the silent-data-loss risk flagged at the top of this file — though the warning still stands, because Yoast's per-page metadata and the WP menus still live only in the database.

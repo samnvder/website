@@ -64,7 +64,7 @@ Set these in **WP Admin → Pages → [page] → Yoast SEO panel**, and record w
 
 ### 2. Set once site-wide, in a WPCode snippet
 
-Do **not** repeat these per page. Address, phone, geo, hours, `areaServed` and `sameAs` come from snippet **9935** — mirrored at [snippets/localbusiness-schema.php](snippets/localbusiness-schema.php). Repeating them per page creates competing LocalBusiness nodes.
+Do **not** repeat these per page. Address, phone, geo, hours, `areaServed` and `sameAs` come from snippet **9935** — mirrored at [../live/wpcode/9935-localbusiness-schema.php](../live/wpcode/9935-localbusiness-schema.php). Repeating them per page creates competing LocalBusiness nodes.
 
 Geo constants, when you legitimately need them: `33.8358, -118.3406` · `US-CA` · Torrance.
 

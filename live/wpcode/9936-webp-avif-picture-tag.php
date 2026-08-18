@@ -39,9 +39,9 @@
  *
  * ⚠️ It buffers the entire front-end response (ob_start on template_redirect,
  * priority 1). Anything else that also buffers and rewrites HTML will
- * interact with this — see SEO/snippets/fix-stale-phone-in-jsonld.php, whose
- * optional fallback does exactly that and carries a warning pointing back
- * here.
+ * interact with this — see live/wpcode/retired/9952-fix-stale-phone-in-jsonld.php,
+ * whose optional fallback does exactly that and carries a warning pointing
+ * back here.
  *
  * Verify: GoDaddy Quick Links → Flush Cache, then curl (NOT the browser):
  *

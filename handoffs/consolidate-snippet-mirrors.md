@@ -1,6 +1,6 @@
 # Handoff — Consolidate WPCode snippet mirrors into `live/wpcode/`
 
-**Created:** 2026-08-18 · **Status:** OPEN · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
+**Created:** 2026-08-18 · **Status:** ✅ CLOSED 2026-08-18 · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
 **Est.:** ~20 min. No live-site change, no account access needed.
 
 > **Execution convention:** written to be run by a Claude Code agent in Cowork. See [CLAUDE.md § Handoffs](../CLAUDE.md).
@@ -13,7 +13,7 @@ There are now **two homes for WPCode snippet mirrors**, and that is one too many
 
 | Directory | Holds | Created |
 |---|---|---|
-| [`SEO/snippets/`](../SEO/snippets/) | 4 live PHP snippets + 1 record of a deleted one | 2026-08-13 |
+| `SEO/snippets/` | 4 live PHP snippets + 1 record of a deleted one | 2026-08-13 |
 | [`live/wpcode/`](../live/wpcode/) | Snippet 8309 (HTML) | 2026-08-18 |
 
 The split happened for a defensible reason — [the backup law](../CLAUDE.md) landed mid-paste during the tour-tracking work, and doing a docs-wide rename at that moment risked breaking references while a production edit was half-applied. That reason has expired.
@@ -52,7 +52,7 @@ Expect **5 files** and **10 references across 5 files** (`CLAUDE.md` 1, `SEO/GUI
 
 ### 2 · Move with `git mv`, applying the ID-prefix convention
 
-Use `git mv` so history follows the file. The ID comes from the table in [`SEO/snippets/README.md`](../SEO/snippets/README.md):
+Use `git mv` so history follows the file. The ID comes from the table in `SEO/snippets/README.md`:
 
 | From `SEO/snippets/` | To |
 |---|---|

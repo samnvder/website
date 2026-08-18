@@ -7,7 +7,7 @@ Documentation for southendclub.com search optimisation.
 | [TODO.md](TODO.md) | **Start here.** Live backlog — what's done, what's open, who's blocked on what |
 | [GUIDELINES.md](GUIDELINES.md) | Content rules — audience, positioning, keywords, verified business facts |
 | [YOAST-SHEET.md](YOAST-SHEET.md) | The exact title, description and keyphrase applied to every page |
-| [snippets/](snippets/) | Source mirror of the WPCode PHP snippets, and what's applied vs staged |
+| [../live/wpcode/](../live/wpcode/) | Source mirror of the WPCode snippets — the SEO ones (9934, 9935, 9936, 9951) live here with every other block of code running on the site |
 | [HANDOFF.md](HANDOFF.md) | **Closed.** Record of the 2026-08-07 indexing alert + reusable verification scripts |
 
 ## ⚠️ The one thing to know
