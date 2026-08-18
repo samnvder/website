@@ -10,8 +10,9 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 |---|---|---|---|---|
 | 1 | **[tour-conversion-tracking](tour-conversion-tracking.md)** | Makes tour bookings visible to GA4 and Google Ads. **Highest value on the board after GBP.** | ~1h | Part C only — no Google Ads account exists |
 | 2 | **[ga4-hygiene](ga4-hygiene.md)** | Clears MonsterInsights residue. **Low priority — moves no numbers.** | ~20 min | no |
+| 3 | **[consolidate-snippet-mirrors](consolidate-snippet-mirrors.md)** | Merges the two WPCode mirror directories into one. **Repo-only — touches no live system.** | ~20 min | no |
 
-**Do conversion tracking next** — it's the one that changes what you can know. Hygiene is whenever you're next in the account.
+**Do conversion tracking next** — it's the one that changes what you can know. Hygiene is whenever you're next in the account, and the mirror consolidation is safe to run anytime since it never touches production.
 
 Backlog context for all three: [SEO/TODO.md](../SEO/TODO.md) §14. Property config and the pre-tracking baseline: [analytics/GA4-SNAPSHOT.md](../analytics/GA4-SNAPSHOT.md).
 
@@ -124,4 +125,36 @@ Rules:
   it couldn't track the booking widgets anyway.
 
 Report what you changed, what you verified, and anything you left undone.
+```
+
+### 4 · Consolidate snippet mirrors
+
+```
+Execute handoffs/consolidate-snippet-mirrors.md in this repo.
+
+Read it in full first, along with CLAUDE.md and live/README.md.
+
+This is a repo-only change: move the WPCode snippet mirrors out of
+SEO/snippets/ into live/wpcode/, prefix each with its snippet ID, and
+update every reference. Nothing about the live site changes.
+
+Rules:
+- Use git mv so history follows the files.
+- fix-stale-phone-in-jsonld.php (was snippet 9952) is NOT on the site — it
+  was deliberately deleted. It goes in live/wpcode/retired/, not alongside
+  the live ones. live/ means "running on the site right now" and that
+  promise is the point of the directory.
+- SEO/TODO.md has 6 references, some inside past-tense historical narrative.
+  Do not rewrite history to point at new paths — only update references that
+  are directing a reader to go open a file now.
+- Fold the "why this directory exists" reasoning from SEO/snippets/README.md
+  into live/README.md rather than deleting it with the directory.
+- Do not verify anything against the live site. No WP Admin, no curl, no
+  cache flush. If you find yourself opening a browser, you've left scope.
+- Verify with: grep -rn "SEO/snippets" --include="*.md" .
+  Expect no hits outside genuine historical references in SEO/TODO.md.
+
+Work on a branch. Report what you moved, what you rewrote, and any
+reference you judged historical and deliberately left pointing at the old
+path.
 ```
