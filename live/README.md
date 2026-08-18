@@ -141,12 +141,20 @@ no `srcset`, which silently kills AVIF/WebP delivery for every image in the
 element. What *does* belong in the repo is a real editor-level change; the test
 is whether it exists in the Thrive editor, or only in what the server serves.
 
-If a paste genuinely isn't available, a rendered capture can be cleaned: drop
-everything before the opening comment banner, strip every
-`<code class="tve_js_placeholder">` and `</code>`, unwrap CompressX's
-`<picture>`/`<source>` around each image, collapse the boolean attributes a DOM
-copy expands (`controls=""`, `playsinline=""`, `data-carousel=""`) back to the
-bare form the editor stores, then **prove the result** by
+If a paste genuinely isn't available, a rendered capture can be cleaned — and
+that cleanup is now a script rather than a checklist, because doing it by hand
+is where the mistakes are:
+
+    npm run convert:capture -- capture.html -o clean.html
+
+[`scripts/convert/live-capture-to-source.js`](../scripts/convert/live-capture-to-source.js)
+strips every `<code class="tve_js_placeholder">` and `</code>`, unwraps
+CompressX's `<picture>`/`<source>` around each image, and collapses the boolean
+attributes a DOM copy expands (`controls=""`, `playsinline=""`,
+`data-carousel=""`) back to the bare form the editor stores. It declines to guess
+at anything needing a matching close tag, warns instead, and asserts its own
+idempotency on every run. Pass `--trim-to-banner` to also drop everything before
+the opening comment banner. Then **prove the result** by
 checking its inner JS against a copy already known to be exact, and by matching
 the character count the editor itself reports. Both `se-cal` mirrors here were
 built that way and verified against the patched artifacts in
