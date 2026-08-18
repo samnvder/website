@@ -175,7 +175,13 @@ grep -ohE 'https?://[^"'"'"' )]+|[0-9]{10,}' "<the-absent-file>" | sort -u
 grep -l -- "<identifier>" patches/component-structure-reorg/live/*.html | wc -l
 ```
 
-**Any row that turns up > 0 on a stable identifier is a false negative** — route
+**The identifier must be unique to the component, not merely re-skin-proof.**
+A third-party embed id is a *shared resource*: on 2026-08-18 the Zapier interface
+`cm1jxql2l001o8bubfm2nwb35` read 20/20, but because the **Footer CTA** embeds it,
+not the promo CTA being tested — which was genuinely absent. Corroborate with a
+marker the component alone owns: a wrapper id, a button label, a handler name.
+
+**Any row that turns up > 0 on a stable, component-unique identifier is a false negative** — route
 it by the real count, and flag the repo copy as stale-vs-live. A block with **no
 re-skin-proof identifier** must be reported as *unverified absent*, never as
 confirmed dead.

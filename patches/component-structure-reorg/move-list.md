@@ -22,7 +22,7 @@ Routing rules (see [the handoff](../../handoffs/component-structure-reorg.md)):
 | 3 | `Components/Buttons/Static Buttons/virtual-tour-button.html` | index | `Components/Homepage/` | YES |
 | 4 | `Components/CTA/Homepage Hero Summer Offer CTA.html` | ABSENT | `Components/Homepage/` **seasonal** | YES |
 | 5 | `Components/CTA/Ready To Experience South End Footer CTA.html` | 20 pages | `Components/Shared/` | YES |
-| 6 | `Components/CTA/Special Membership Promo CTA (Zapier).html` | **20 pages** | `Components/Shared/` ⚠️ **stale vs live** | YES |
+| 6 | `Components/CTA/Special Membership Promo CTA (Zapier).html` | ABSENT | `Components/Archive/` — safe, see below | YES |
 | 7 | `Components/Footer.html` | 20 pages | `Components/Shared/` | YES |
 | 8 | `Components/Header.html` (+ `.js`, `.readme`) | 20 pages | `Components/Shared/` | YES |
 | 9 | `Components/Index/carousel-pickleball-homepage.html` | index, racquet-sports | `Components/Shared/` | YES |
@@ -71,54 +71,78 @@ but it should be surfaced to the owner.
 - **Row 13, `general-button.html` -> `Archive/`.** Decided by the owner. Confirmed
   independently: `sec-btn-glow` returns 0/20 on a second fingerprint pass. No live
   instance, no derived instance -- dead, not a scaffold.
-- **Row 6, `Special Membership Promo CTA (Zapier)` -> `Shared/`, NOT Archive.**
-  The hook check inverted this one. See below.
+- **Row 6, `Special Membership Promo CTA (Zapier)` -> `Archive/`. Archiving is
+  safe.** Investigated in full below, through one wrong turn.
 
-## 🚨 The Zapier row was a false negative, and the method that produced it is flawed
+## Row 6: the Zapier question, resolved
 
-Checking the hook before archiving (as instructed) found the component is **live
-on all 20 pages**. The render map said ABSENT because it fingerprinted the block
-by the repo file's wrapper class:
+**Verdict: genuinely ABSENT. Archive it. Nothing is stranded.**
 
-| Fingerprint | Live |
-|---|---|
-| `zapierFormContainer` (repo file's div id) | **0/20** |
-| `cm1jxql2l001o8bubfm2nwb35` (Zapier interface id) | **20/20** |
-| `interfaces.zapier.com` | **20/20** |
+Every marker unique to this component is absent from all 20 live pages:
 
-Same Zapier interface, **different wrapper markup**. Live uses a
-`<zapier-interfaces-page-embed>` web component plus the official
-`zapier-interfaces.esm.js`; the repo file uses a hand-rolled `zapierFormContainer`
-div with a manually-assigned `iframe.src`. **The repo copy is a stale earlier
-implementation of something running site-wide** -- the same drift class as
-`se-bk-floating` in CLAUDE.md.
+| Fingerprint | Live | Unique to this component? |
+|---|---|---|
+| `zapierFormContainer` | 0/20 | yes |
+| `contactButton2` | 0/20 | yes |
+| `"Submit a Form"` | 0/20 | yes |
+| `cm1jxql2l001o8bubfm2nwb35` | **20/20** | **no -- shared Zapier interface** |
 
-Archiving it would have buried the repo's only record of a site-wide component.
-It goes to `Shared/`, and its contents must **not** be treated as current: get a
-paste from the live editor per the backup law before anyone edits it.
+**Why archiving does not strand the hook.** The Zapier interface
+`cm1jxql2l001o8bubfm2nwb35` is live and in active use -- but by a *different*
+component: the **Ready To Experience South End Footer CTA** (row 5), which embeds
+the same interface through `secFooterCtaIframe` / `sec-cta-open` / "Notify Me",
+all 20/20. That component is staying, in `Shared/`. The interface keeps its
+caller; only a superseded second wrapper around it goes to `Archive/`.
 
-### The systematic flaw
+### The wrong turn, recorded
 
-**A block re-implemented live with different wrapper markup reads as ABSENT.**
-Class-name fingerprints only detect blocks whose live markup still matches the
-repo's. Every ABSENT verdict is therefore a *possible* false negative rather than
-a finding.
+An earlier pass read `cm1jxql2l001o8bubfm2nwb35` at 20/20 and concluded row 6 was
+a false negative that belonged in `Shared/`. **That was wrong.** A third-party
+interface id is a *shared resource*, not a component fingerprint -- two different
+components can embed the same Zapier page, and here two do.
 
-Second-pass results using stable identifiers -- external URLs, form ids, embed
-ids, things that survive a re-skin:
+So the Phase 1.4 rule needs its own guard: a stable identifier must be **unique to
+the component**, not merely re-skin-proof. External URLs and embed ids fail this
+when a resource is reused. Corroborate with a marker the component alone owns --
+a wrapper id, a button label, a handler name.
 
-| Block | Stable fingerprint | Live | Verdict |
+## 🚨 Found while investigating: an unmirrored sitewide component
+
+Not part of this reorg, but it surfaced and should not be dropped.
+
+A **"Message Us" floating modal** runs on **20/20 live pages**: `se-crm-btn`,
+`se-crm-modal`, embedding Zapier interface `cm4kje8hw001hp13agzjz9ul9`. Its own
+markup says how it gets there:
+
+> `<!-- Modal (kept out of Thrive wrappers by inserting sitewide via Code Snippets) -->`
+
+That makes it a **WPCode snippet**, and the backup law requires it at
+`live/wpcode/<id>-<kebab-name>.html`. **It is mirrored nowhere in `live/`.**
+`grep -rl "se-crm-btn\|cm4kje8hw" live/` returns nothing.
+
+It does appear inside four page files -- `Contact Us Page HTML.html`,
+`Memberships Page HTML.html`, `Special Offer.html`, `Event Tour Booking Page.html`
+-- but those are page sources, not the snippet, and cannot be the mirror for
+something injected globally. A block on `privacy-policy` and `terms-conditions`
+was not hand-pasted into those pages.
+
+**This is the `se-bk-floating` pattern repeating**: a component running on every
+page of production, existing in this repo only as incidental fragments. Capturing
+it needs an editor paste from the WPCode screen -- out of scope here, since this
+handoff does not touch the live site.
+
+### The second-pass results in full
+
+| Block | Fingerprint | Live | Verdict |
 |---|---|---|---|
-| Special Promo (Zapier) | `cm1jxql2l001o8bubfm2nwb35` | 20/20 | **false negative, corrected** |
+| Special Promo (Zapier) | `zapierFormContainer`, `contactButton2` | 0/20 | absent; shared interface id misled the first pass |
 | Homepage Youth Camp Banner | `250416539351152` (jotform) | 1/20 | banner absent; its CTA target is live on `youth-programs` via row 12 |
-| tour-button / virtual-tour | `se-bk-floating`, "Book a Tour" | 20/20 | tour booking is live, but via the **`se-bk-floating` widget**; these two files are superseded implementations. Archive stands. |
+| tour-button / virtual-tour | `se-bk-floating`, "Book a Tour" | 20/20 | booking is live via the **`se-bk-floating` widget**; these files are superseded. Archive stands. |
 | general-button | `sec-btn-glow` | 0/20 | genuinely absent |
-| Floating Section Nav | `sec-floating-nav` | 0/20 | ⚠️ class-only, no stable id available |
-| Hero Offer CTA | `se-hero-offer-cta` | 0/20 | ⚠️ class-only, no stable id available |
-| Homepage Summer Banner | `se-home-summer-banner` | 0/20 | ⚠️ class-only, no stable id available |
+| Floating Section Nav | `sec-floating-nav` | 0/20 | ⚠️ class-only, no unique stable id |
+| Hero Offer CTA | `se-hero-offer-cta` | 0/20 | ⚠️ class-only, no unique stable id |
+| Homepage Summer Banner | `se-home-summer-banner` | 0/20 | ⚠️ class-only, no unique stable id |
 
-The three marked ⚠️ **could not be verified by any re-skin-proof
-identifier**. They are treated as absent, but that verdict is weaker than the
-others. Rule A-bis routes all three to `Homepage/` (seasonal) rather than
-`Archive/`, so nothing is buried on the strength of an unverified negative --
-the risk is contained, not resolved.
+The three marked ⚠️ have no unique re-skin-proof identifier. Rule A-bis
+routes them to `Homepage/` (seasonal) rather than `Archive/`, so nothing is buried
+on an unverified negative.
