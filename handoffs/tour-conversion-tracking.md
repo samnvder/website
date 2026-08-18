@@ -9,7 +9,18 @@
 
 ## Why
 
-The tour booking form reports **nothing**. On success it hides one div and shows another — no redirect, no URL change, no `dataLayer` push. Container `GTM-WLRX58RN` loads exactly one tag: GA4 `G-SJN8S5QWXE`. No Google Ads conversion tag, no Meta pixel.
+The tour booking form reports **nothing**. On success it hides one div and shows another — no redirect, no URL change, no `dataLayer` push.
+
+~~Container `GTM-WLRX58RN` loads exactly one tag.~~ **Corrected 2026-08-18 from inside the container** — it carries **four**, of which three predate this work:
+
+| Tag | Type | Fires on |
+|---|---|---|
+| `Google Tag - G-SJN8S5QWXE` | Google Tag | All Pages |
+| `Click - Message Us Button` | GA4 Event | Click Text contains "Message Us" |
+| `Click - Virtual Tour!` | GA4 Event | Click Text contains "Virtual Tour!" |
+| `GA4 - tour_booked` | GA4 Event | `CE - tour_booked` — **added by this handoff** |
+
+So **click tracking on two buttons already existed** and nobody mentioned it. Worth knowing before anyone concludes "nothing was ever tracked." Still absent: any Google Ads conversion tag, any Meta pixel, and a **Conversion Linker** — see [gtm-conversion-linker.md](gtm-conversion-linker.md).
 
 GA4 has therefore recorded **zero tour bookings, ever**. Nobody can answer "which page drives tours," no paid campaign can optimize toward bookings, and no future funnel change can be measured.
 

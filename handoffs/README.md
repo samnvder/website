@@ -10,6 +10,7 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 |---|---|---|---|---|
 | 1 | **[tour-conversion-tracking](tour-conversion-tracking.md)** | Makes tour bookings visible to GA4 and Google Ads. **Highest value on the board after GBP.** | ~1h | Part C only — no Google Ads account exists |
 | 2 | **[ga4-hygiene](ga4-hygiene.md)** | Clears MonsterInsights residue. **Low priority — moves no numbers.** | ~20 min | no |
+| 3 | **[gtm-conversion-linker](gtm-conversion-linker.md)** | Adds the missing Conversion Linker so Ads can attribute clicks. **Parked on purpose** — must run *before* Part C, never after. | ~10 min | yes — no Google Ads account exists |
 
 **Do conversion tracking next** — it's the one that changes what you can know. Hygiene is whenever you're next in the account.
 
@@ -157,4 +158,34 @@ Rules:
 Work on a branch. Report what you moved, what you rewrote, and any
 reference you judged historical and deliberately left pointing at the old
 path.
+```
+
+### 5 · GTM Conversion Linker
+
+```
+Execute handoffs/gtm-conversion-linker.md in this repo.
+
+Read it in full first, along with CLAUDE.md.
+
+FIRST: confirm with me that a Google Ads account now exists. If it does not,
+STOP and tell me — this handoff is deliberately parked until then, and adding
+a Conversion Linker with no Ads account to link to is a no-op tag on every
+page.
+
+If Ads does exist, add a Conversion Linker tag to container GTM-WLRX58RN.
+
+Rules:
+- Use the "Initialization - All Pages" trigger, NOT "All Pages". The linker
+  must capture the click ID before any conversion tag reads it.
+- Check first that no Conversion Linker already exists. Two is not harmless.
+- Leave cross-domain linking off — booking does not leave the domain.
+- Stop and ask me before publishing the container. Publishing is a production
+  change.
+- If GTM Preview will not connect, check whether the browser is blocking
+  googletagmanager.com before you debug the site. Run this in the page
+  console: fetch('https://www.googletagmanager.com/gtm.js?id=GTM-WLRX58RN')
+  If that fails while other requests succeed, it is an ad blocker, not the
+  site. That exact thing happened on 2026-08-18.
+
+Report what you created, what you verified, and whether you published.
 ```

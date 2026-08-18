@@ -523,7 +523,7 @@ The label also bundles calls in with SMS without naming calls prominently.
 
 Found 2026-08-17. **Highest-value item on the board after §1.**
 
-The booking form reports nothing. On success it swaps two divs — no redirect, no URL change, no `dataLayer` push. `GTM-WLRX58RN` carries exactly one tag: GA4 `G-SJN8S5QWXE`. No Google Ads conversion tag, no Meta pixel, no Conversion Linker.
+The booking form reports nothing. On success it swaps two divs — no redirect, no URL change, no `dataLayer` push. ~~`GTM-WLRX58RN` carries exactly one tag.~~ **Corrected 2026-08-18 from inside the container:** it carries the `G-SJN8S5QWXE` Google Tag on All Pages **plus two pre-existing GA4 click-tracking tags** (`Click - Message Us Button`, `Click - Virtual Tour!`). Still no Google Ads conversion tag, no Meta pixel, no Conversion Linker.
 
 **GA4 has recorded zero tour bookings, ever.** Nobody can say which page drives tours, no paid campaign can optimise toward one, and no funnel change can be measured. Note what this means for the rest of this backlog: **everything below §1 is being prioritised without conversion data.**
 
