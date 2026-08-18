@@ -31,6 +31,8 @@ live/
 │   ├── 9935-localbusiness-schema.php
 │   ├── 9936-webp-avif-picture-tag.php
 │   ├── 9951-renamed-page-redirects.php
+│   ├── 9926-membership-builder.js               Normal join page pricing
+│   ├── 7315-membership-builder-discounted-enrollment.js  Promo pricing
 │   └── retired/                   Applied once, then removed from the site
 │       └── 9952-fix-stale-phone-in-jsonld.php
 └── thrive/

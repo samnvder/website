@@ -1,6 +1,6 @@
 # Handoff — Mirror the three membership builder snippets into `live/wpcode/`
 
-**Created:** 2026-08-18 · **Status:** 🔴 OPEN — blocked on one human paste · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
+**Created:** 2026-08-18 · **Status:** 🟡 IN PROGRESS — #9926 and #7315 mirrored 2026-08-18; **#7966 outstanding** · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
 **Est.:** ~25 min. No live-site *change*; read-only in WP Admin.
 
 > **Execution convention:** written to be run by a Claude Code agent in Cowork. See [CLAUDE.md § Handoffs](../CLAUDE.md).
@@ -9,7 +9,7 @@
 
 ## Why
 
-Three WPCode snippets compute **every membership price the site quotes**, and none of them is mirrored in this repo:
+Three WPCode snippets compute **every membership price the site quotes**. Two are now mirrored (2026-08-18); #7966 is not:
 
 | Snippet | What it is | Repo copy (paste-source, may lag) |
 |---|---|---|
@@ -21,14 +21,18 @@ Three WPCode snippets compute **every membership price the site quotes**, and no
 
 There is a sharper reason than tidiness. `npm run guard:membership-pricing` now validates the two repo builder files and cross-checks them against `scripts/audit/membership-pricing-source.json`, so it fails on real pricing drift (proved 12/12 by `npm run guard:membership-pricing:prove`). But **it validates the repo copies, and the repo is known to lag live.** Until the live snippets are captured and diffed, a green guard means "the repo agrees with itself", not "the site quotes the right prices."
 
-The live #7315 is titled **"JS - Build Your Membership (Discounted Enrollment) - with email notification"**. The repo copy has no email-notification code. That title alone is evidence the two differ.
+**Outcome for the two captured so far: live is byte-identical to the repo paste-source copies** (ignoring line endings), and live pricing matches `membership-pricing-source.json`. Live #9926 has no `discounts` const; live #7315 has `$100/$100/$150`. Both match what the guard asserts.
+
+This handoff originally predicted the opposite, reasoning that both snippets are titled "…with email notification" while the repo copies supposedly lacked that code. They did not — the repo has had it since `3fc792b`. A snippet **title is not evidence about its contents**; only the diff is.
 
 ## Done means
 
-- [ ] `live/wpcode/9926-membership-builder.js`, `7315-membership-builder-discounted-enrollment.js`, `7966-membership-builder-summer-offer.js` exist, byte-exact from the editor
-- [ ] Each carries the standard header comment: where it runs, current status, why, how to verify
-- [ ] Each committed **unpatched first** (see the two-commit rule), before any cleanup
-- [ ] A written diff of live vs the repo paste-source copy, for all three
+- [x] `live/wpcode/9926-membership-builder.js` — captured 2026-08-18 (`dbafa08`)
+- [x] `live/wpcode/7315-membership-builder-discounted-enrollment.js` — captured 2026-08-18 (`dbafa08`)
+- [ ] `live/wpcode/7966-membership-builder-summer-offer.js`
+- [x] Headers added as a separate commit, so stripping them reproduces the editor contents (`dbafa08` → headers)
+- [x] Diff of live vs repo paste-source for #9926 and #7315 — **identical**
+- [ ] Same for #7966
 - [ ] #7966's toggle state recorded — on or off
 - [ ] `live/README.md` layout block updated to list them
 - [ ] CLAUDE.md's "not mirrored" gap note replaced with the outcome
@@ -84,7 +88,7 @@ git diff --no-index "Website/Pages/Memberships (Category)/memberships/membership
 
 Expect differences — the question is *which*. Classify every hunk as one of:
 
-- **Live has code the repo lacks** (e.g. #7315's email notification) → the repo paste-source is incomplete. Record it; do **not** paste the repo file over live to "fix" it, that deletes the live-only code.
+- **Live has code the repo lacks** → the repo paste-source is incomplete. Record it; do **not** paste the repo file over live to "fix" it, that deletes the live-only code. (Predicted for #9926/#7315 and did **not** happen — they matched exactly.)
 - **Repo has pricing live lacks** → live is stale; a pricing change was never pasted. This is the case the guard exists to catch. Report it loudly.
 - **Cosmetic** (whitespace, comments) → note and move on.
 
@@ -109,9 +113,11 @@ Move its mirror to `live/wpcode/retired/` and say why. `live/wpcode/` top level 
 - This file — flip Status to ✅ CLOSED with the outcome
 - `handoffs/README.md` — move this row to **Closed**
 
-### 8 · Decide the two pending pricing edits
+### 8 · Decide the pending pricing edits
 
-`npm run pricing:apply -- --dry-run` reports two pending changes (see CLAUDE.md § Known issues): #7966's young-family discounts `{1: 25, 2: 15}` → `{1: 30, 2: 20}`, and a cosmetic normalization in #9926. **The live captures settle these** — whichever the live snippets show is what is actually being charged. 🛑 **HUMAN GATE** before applying: applying rewrites paste-in files, which obliges a re-paste into WPCode.
+The #9926 one is **settled: do not apply it.** Live #9926 uses `additionalCharge -= numChildren === 1 ? 30 : 20;`, exactly as the repo does. `pricing:apply` would rewrite it to an equivalent map form — identical behaviour, but it would put the repo out of step with live for no gain.
+
+Still open: #7966's young-family discounts read `{1: 25, 2: 15}` in the repo where canonical says `{1: 30, 2: 20}`. **The #7966 capture settles it** — whatever live shows is what is being charged. 🛑 **HUMAN GATE** before applying: applying rewrites paste-in files, which obliges a re-paste into WPCode.
 
 ---
 
@@ -133,25 +139,27 @@ Paste into a fresh Claude Code (Cowork) session in this repo:
 ```
 Execute handoffs/mirror-membership-builders.md in this repo.
 
-Three WPCode snippets compute every membership price the site quotes --
-#9926 (normal join), #7315 (discounted enrollment, confirmed ON) and
-#7966 (summer offer, expired) -- and none is mirrored under live/wpcode/,
-against the backup law in CLAUDE.md.
+Two of three are done. #9926 and #7315 were captured on 2026-08-18 and
+both proved byte-identical to their repo paste-source copies, so the
+pricing guard demonstrably checks what is actually running for those two.
 
-Step 1 is a human gate: you need the owner to paste each snippet's editor
-contents. Do not curl them -- Thrive adds wrapper markup on output and the
-capture would be corrupt. Do not proceed on fewer than all three.
+What is left is #7966 (summer offer, WPCode). Step 1 is a human gate: ask
+the owner to open it, Ctrl+A, Ctrl+C, paste it, and report its toggle
+state and character count. Do not curl it -- Thrive adds wrapper markup
+on output and the capture would be corrupt.
 
-Commit the unpatched captures first, then diff each against its repo
-paste-source copy and classify every difference. The live #7315 is titled
-"...with email notification" and the repo copy has no such code, so expect
-live to carry code the repo lacks -- record it, never paste the repo file
-over live to reconcile.
+Commit the unpatched capture first, then add the header in a second
+commit, then diff against
+"Website/Pages/Memberships (Category)/memberships/Discounted Enrollment/membership builder JS-discount-enrollment.js".
 
-The question this handoff answers: npm run guard validates the repo copies
-and the repo lags live, so a green guard currently means the repo agrees
-with itself, not that the site quotes the right prices. Say plainly whether
-live agrees with scripts/audit/membership-pricing-source.json.
+Do not assume it will differ. The same prediction was made for #7315 on
+the strength of its snippet title and was wrong -- a title is not evidence
+about contents.
+
+One known discrepancy to settle: the repo copy has young-family discounts
+{1: 25, 2: 15} where membership-pricing-source.json says {1: 30, 2: 20}.
+Whatever the live capture shows is what is being charged. If #7966 is
+toggled OFF, mirror it to live/wpcode/retired/ instead.
 
 Stop at the human gate in step 8 before applying any pricing change.
 ```

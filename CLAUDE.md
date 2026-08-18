@@ -160,6 +160,10 @@ A handoff must have:
   | #7966 summer offer | young-family discounts `{1: 25, 2: 15}` → canonical `{1: 30, 2: 20}` | real drift; low if the offer is toggled off |
   | #9926 normal join | `additionalCharge -= numChildren === 1 ? 30 : 20;` → canonical map form | cosmetic, same numbers |
 
-  **Still open:** WPCode **#9926**, **#7315** and **#7966** are *not* mirrored under [`live/wpcode/`](./live/wpcode/) — a standing gap against the backup law above, and the reason the guard cannot yet claim it validates what is actually running. The live #7315 is titled "…with email notification", so it may already differ from the repo copy. See [handoffs/mirror-membership-builders.md](./handoffs/mirror-membership-builders.md).
+  **Mirrored 2026-08-18 — and live matches the repo.** #9926 and #7315 are now in [`live/wpcode/`](./live/wpcode/), captured from the WPCode editors. Both are **byte-identical to their repo paste-source copies** (ignoring line endings), so for these two the guard is validating what is actually running, not just the repo agreeing with itself. Live #9926 has no `discounts` const and live #7315 has `$100/$100/$150` — exactly the expectations the guard encodes. Live pricing matches `membership-pricing-source.json` throughout.
+
+  A caution that turned out to be wrong, recorded because the reasoning was tempting: both snippets are titled "…with email notification", and that title was taken as evidence the live #7315 carried code the repo lacked. It does not — the repo copy has had the Dropbox-Sign/notify-admin block since `3fc792b`. **A snippet title is not evidence about its contents.** The diff was the evidence, and it took thirty seconds.
+
+  **Still open:** **#7966** (summer offer) is not yet mirrored. See [handoffs/mirror-membership-builders.md](./handoffs/mirror-membership-builders.md).
 - **All-in-One WP Migration Unlimited Extension is flagged by WordPress as likely pirated** and throws a fatal error against the current core version. Currently deactivated. Should be deleted — nulled plugins are a malware vector.
 - Backups exist on the server (2 × 6.72 GB) but **cannot be restored** with the free plugin's ~512 MB import cap. GoDaddy's own managed backups have not been checked.

@@ -22,7 +22,7 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 | **10** | **Capture `/get-answers/`** — [§26](../SEO/TODO.md). Live, indexed, in the sitemap, with no source in this repo. Do it in the same Thrive session as #8. | ~15 min | no |
 | **11** | **Decide what `Website/Pages/index/Index.html` is** — [§25](../SEO/TODO.md). It is the only page file embedding the Thrive header symbol, and it is a **December 2025 snapshot** (countdown targets Jan 1 2026). Either declare it a whole-page mirror **and re-capture it**, or replace it with a content fragment. ⚠️ Declaring it authoritative *without* re-capturing is worse than leaving it. Needs a Sam decision. | ~30 min | needs decision |
 | **12** | **Fix or retire `npm run convert:local`** — `DIRECTORIES_TO_SCAN` is `['Pages','Components']`, but pages live at `Website/Pages`. From the repo root it silently skips every page and rewrites `Components/` only, leaving the tree half-converted with no warning. Demonstrated accidentally 2026-08-18. Retiring it likely takes the three root `index-*.html` variants and `dev-index.html` with it. | ~20 min | needs decision — is local preview still used? |
-| 8 | **[mirror-membership-builders](mirror-membership-builders.md)** | Captures WPCode **#9926 / #7315 / #7966** — the three snippets that compute every membership price quoted on the site — into `live/wpcode/`, where none of them has ever been mirrored. Then diffs each against its repo paste-source. Until this runs, a green `npm run guard` means the repo agrees with itself, not that live quotes the right prices. | ~25 min | needs 3 owner pastes |
+| 8 | **[mirror-membership-builders](mirror-membership-builders.md)** | 🟡 **Two of three done 2026-08-18.** #9926 and #7315 captured into `live/wpcode/` and both are **byte-identical to their repo copies**, so the pricing guard now demonstrably checks what is running. **#7966 (summer offer) still outstanding** — needs one owner paste plus its toggle state. | ~10 min left | needs 1 owner paste |
 
 > ### ⚠️ Read this before picking anything up
 >
@@ -299,25 +299,27 @@ currently lives.
 ```
 Execute handoffs/mirror-membership-builders.md in this repo.
 
-Three WPCode snippets compute every membership price the site quotes --
-#9926 (normal join), #7315 (discounted enrollment, confirmed ON) and
-#7966 (summer offer, expired) -- and none is mirrored under live/wpcode/,
-against the backup law in CLAUDE.md.
+Two of three are done. #9926 and #7315 were captured on 2026-08-18 and
+both proved byte-identical to their repo paste-source copies, so the
+pricing guard demonstrably checks what is actually running for those two.
 
-Step 1 is a human gate: you need the owner to paste each snippet's editor
-contents. Do not curl them -- Thrive adds wrapper markup on output and the
-capture would be corrupt. Do not proceed on fewer than all three.
+What is left is #7966 (summer offer, WPCode). Step 1 is a human gate: ask
+the owner to open it, Ctrl+A, Ctrl+C, paste it, and report its toggle
+state and character count. Do not curl it -- Thrive adds wrapper markup
+on output and the capture would be corrupt.
 
-Commit the unpatched captures first, then diff each against its repo
-paste-source copy and classify every difference. The live #7315 is titled
-"...with email notification" and the repo copy has no such code, so expect
-live to carry code the repo lacks -- record it, never paste the repo file
-over live to reconcile.
+Commit the unpatched capture first, then add the header in a second
+commit, then diff against
+"Website/Pages/Memberships (Category)/memberships/Discounted Enrollment/membership builder JS-discount-enrollment.js".
 
-The question this handoff answers: npm run guard validates the repo copies
-and the repo lags live, so a green guard currently means the repo agrees
-with itself, not that the site quotes the right prices. Say plainly whether
-live agrees with scripts/audit/membership-pricing-source.json.
+Do not assume it will differ. The same prediction was made for #7315 on
+the strength of its snippet title and was wrong -- a title is not evidence
+about contents.
+
+One known discrepancy to settle: the repo copy has young-family discounts
+{1: 25, 2: 15} where membership-pricing-source.json says {1: 30, 2: 20}.
+Whatever the live capture shows is what is being charged. If #7966 is
+toggled OFF, mirror it to live/wpcode/retired/ instead.
 
 Stop at the human gate in step 8 before applying any pricing change.
 ```
