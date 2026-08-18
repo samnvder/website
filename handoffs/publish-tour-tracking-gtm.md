@@ -60,17 +60,34 @@ This has an implication worth carrying into any future analytics work: **anyone 
 
 Open [the container](https://tagmanager.google.com/#/container/accounts/6261176694/containers/201877150/workspaces/7/tags) and check the inventory table above, and that Workspace Changes is still **12**. A different number means someone else has been in here — stop and report.
 
-### 2 · Preview and fire a real booking
+### 2 · Preview and fire a **synthetic** event — not a real booking
 
-Preview, then complete a **real tour booking** on `/schedule-a-tour/`. Confirm in Tag Assistant:
+A real booking is **not** required to verify the GTM half, and avoiding one skips the whole email/SMS/calendar problem. Part A is already verified independently: `curl` confirms the push is present at all four call sites, `node --check` passes on every block, and each push sits inside the success branch wrapped in `try/catch`.
+
+So start Preview, then paste this into the page console on `/schedule-a-tour/`:
+
+```js
+dataLayer.push({event:'tour_booked', tour_date:'2026-09-01', tour_time:'10:00 AM', tour_heard_about:'Web Search/Website', tour_source_page:'https://southendclub.com/schedule-a-tour/', tour_device:'desktop', tour_utm_source:'preview-test', tour_utm_medium:'test', tour_utm_campaign:'verify', tour_is_reschedule:false, tour_booking_id:'TEST-001'})
+```
+
+Confirm in Tag Assistant:
 
 - the `tour_booked` event appears
 - `GA4 - tour_booked` **fired**
 - every one of the ten variables **resolves to a value**
 
-> **The single most important thing to record here is whether `tour_booking_id` is `null`.** It is still unverified. It is what makes Google Ads deduplication reliable later, and if the edge function does not return an appointment id, that is a request to the `book-tour` owner — not something to paper over.
+That exercises trigger, variables and tag end to end. It writes no Supabase row, sends no email and no SMS.
 
-> **🛑 HUMAN GATE — a real booking has real consequences.** It writes a Supabase row and sends a real confirmation email and probably a real SMS. Tell whoever staffs the tour calendar *before* testing, and delete the row afterwards.
+**What it cannot prove — and how to close that later.** A synthetic push *supplies* `tour_booking_id` rather than reading it from the edge function, so it says nothing about whether `book-tour` actually returns an appointment id. **Do not record this as verified.** Check it on the first *organic* booking after publish, via DebugView or Realtime. It only affects Google Ads deduplication, which is blocked anyway with no Ads account — safe to defer, not safe to forget.
+
+> **Filter the test out.** `tour_utm_source: 'preview-test'` is there so the synthetic hit is identifiable afterwards. Preview traffic still reaches GA4. One event distorts nothing, but know it is in there before anyone queries day-one numbers.
+
+<details>
+<summary>If you would rather verify with a real booking anyway</summary>
+
+> **HUMAN GATE — a real booking has real consequences.** It writes a Supabase row and sends a real confirmation email and probably a real SMS. Tell whoever staffs the tour calendar *before* testing, and delete the row afterwards. The only thing this buys over the synthetic push is confirming `tour_booking_id` immediately rather than on the first organic booking.
+
+</details>
 
 ### 3 · Publish
 
@@ -95,7 +112,24 @@ for p in schedule-a-tour memberships fitness; do printf "%-18s " "$p"; curl -s -
 
 Expect `2`, `2`, `1` — unchanged by this handoff, since it touches no page code. Then confirm in **GA4 DebugView** that the event lands with all parameters attached, and in **Realtime** that it appears at all.
 
-Finally, the check that proves completeness rather than mere function: **count bookings in Supabase for a window after publish and compare to `tour_booked` in GA4 for the same window. They should match.** A persistent shortfall means a widget is missing the push — the failure mode that looks like success.
+Finally, the check that proves completeness rather than mere function: **count bookings in Supabase for a window after publish and compare to `tour_booked` in GA4 for the same window.**
+
+> **They will NOT match, and they are not supposed to.** An earlier draft of this handoff said they should — that was wrong, and acting on it would send someone hunting a bug that does not exist.
+>
+> The 2026-08-18 Preview session proved browser extensions block `googletagmanager.com` outright. Every visitor running one books normally, writes a Supabase row, and is invisible to GA4. **Expect GA4 to read roughly 70–85% of Supabase, permanently.**
+
+**Expect `GA4 ≤ Supabase` at a stable ratio.** Establish the ratio over the first fortnight and treat *that* as the baseline. What matters afterwards is whether the ratio moves — not whether the numbers are equal.
+
+The two failure modes look different, which is what makes this diagnosable:
+
+| Symptom | Meaning |
+|---|---|
+| Shortfall spread evenly across pages | Ad blockers. Normal. Do nothing. |
+| One `tour_source_page` value at zero while others report | **A widget is missing the push.** Investigate that page. |
+
+Segment by `tour_source_page` to tell them apart — which is why registering it as a custom dimension in step 4 is not optional.
+
+**The model to carry forward: Supabase is the source of truth for *how many* bookings happened. GA4 is for attribution — *where they came from*. Never use GA4 to count bookings.**
 
 ## What is deliberately out of scope
 

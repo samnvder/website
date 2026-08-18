@@ -211,7 +211,13 @@ Source presence is necessary but not sufficient — a broken paste still greps a
 
 **4. Google Ads** → Conversions → status moves from "No recent conversions" to "Recording." Can take hours. Don't declare victory first.
 
-**5. Cross-check against Supabase — the only check that proves the numbers are *complete*.** Everything above proves the event fires; none of it proves all four widgets fire. Count bookings in Supabase for a window after go-live and compare to `tour_booked` in GA4 for the same window. **They should match.** A persistent shortfall means a widget was missed — which is exactly the failure mode that looks like success.
+**5. Cross-check against Supabase.** Everything above proves the event fires; none of it proves *every* widget fires.
+
+> **Corrected 2026-08-18.** This step originally said the two counts should match. **They should not.** Browser extensions block `googletagmanager.com` outright — proven during the 2026-08-18 Preview session — so every visitor running one books normally, writes a Supabase row, and never reaches GA4.
+
+**Expect `GA4 ≤ Supabase` at a stable ratio, roughly 70–85%.** Establish the ratio over the first fortnight and watch for movement in it, not for equality. A shortfall spread evenly across pages is ad blockers and is normal; one `tour_source_page` value at zero while others report means a widget is missing the push. Segment by `tour_source_page` to tell them apart.
+
+**Supabase is the source of truth for how many bookings happened; GA4 is for attribution. Never count bookings in GA4.** Full detail in [publish-tour-tracking-gtm.md](publish-tour-tracking-gtm.md) § 5.
 
 > Don't confuse `tour_booked` with GA4's built-in `form_start` / `form_submit`. Both sat at **5 events per 28 days** pre-launch ([GA4 snapshot](../analytics/GA4-SNAPSHOT.md)) and neither counts tour bookings — GA4's automatic form tracking can't see these widgets at all. Ignore them.
 
