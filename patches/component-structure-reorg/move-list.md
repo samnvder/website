@@ -25,7 +25,7 @@ Routing rules (see [the handoff](../../handoffs/component-structure-reorg.md)):
 | 6 | `Components/CTA/Special Membership Promo CTA (Zapier).html` | ABSENT | `Components/Archive/` — safe, see below | YES |
 | 7 | `Components/Footer.html` | 20 pages | `Components/Shared/` | YES |
 | 8 | `Components/Header.html` (+ `.js`, `.readme`) | 20 pages | `Components/Shared/` | YES |
-| 9 | `Components/Index/carousel-pickleball-homepage.html` | index, racquet-sports | `Components/Shared/` | YES |
+| 9 | `Components/Index/carousel-pickleball-homepage.html` | index, racquet-sports | `Components/Shared/` ⚠️ **convert first** | YES |
 | 10 | `Components/Carousel/Pickleball/*` (css, js, readme) | supports #9 | `Components/Shared/` | YES |
 | 11 | `Templates/.../Floating Section Nav/*` (2 html + assets) | ABSENT | `Components/Archive/` | YES |
 | 12 | `Templates/.../Left Upper CTA/*` (2 html + assets) | youth-programs | `Components/youth-programs/` | YES |
@@ -146,3 +146,66 @@ handoff does not touch the live site.
 The three marked ⚠️ have no unique re-skin-proof identifier. Rule A-bis
 routes them to `Homepage/` (seasonal) rather than `Archive/`, so nothing is buried
 on an unverified negative.
+
+---
+
+## Capture audit — flags (run 2026-08-18, before Phase 3)
+
+`scripts/convert/live-capture-to-source.js` over all three trees:
+
+| Tree | Files | Carrying output-only markup |
+|---|---|---|
+| `Website/Pages` | 33 | 9 |
+| `Components` | 9 | **1** |
+| `Templates` | 5 | 0 |
+
+**Phase 3 is clear apart from one file.** None of the 9 dirty files under
+`Website/Pages` are in the move list — all are whole-page sources that stay put.
+Every move-list entry there came back **already editor-form**, including all
+three seasonal blocks and the duplicate slated for deletion. That independently
+confirms the repo's youth camp banner is clean editor source.
+
+### FLAG 1 — Row 9 must be converted before it moves
+
+`Components/Index/carousel-pickleball-homepage.html`, 5 attribute expansions,
+15 bytes:
+
+```
+- data-carousel="" data-carousel-dynamic=""  hidden=""
++ data-carousel   data-carousel-dynamic      hidden
+```
+
+Semantically identical HTML; the editor stores them bare, so the committed form
+is the source-rot rule 4 describes. Fix with:
+
+```bash
+node scripts/convert/live-capture-to-source.js "Components/Index/carousel-pickleball-homepage.html" --in-place
+```
+
+### FLAG 2 — `npm run audit:capture` does not cover the component trees
+
+The npm script hardcodes `Website/Pages`. `Components/` and `Templates/` — where
+components actually live, and what this handoff moves — are outside it. They were
+audited here by invoking the script directly. **Widen the script or add a second
+target**, or the component tree is permanently unaudited. Most relevant *after*
+this reorg, when `Components/` holds every block.
+
+### FLAG 3 — `index/Index.html` carries Thrive header/footer symbol markup
+
+The tool warns this means the capture is wider than the element intended to be
+mirrored — template chrome, not page content. Notable given three homepage
+variants exist (`index.html`, `index-complete.html`, `Website/Pages/index/Index.html`).
+Not blocking; not this handoff's job.
+
+### FLAG 4 — Four files carry `thrv_wrapper thrv_custom_html_shortcode`
+
+`Memberships Page HTML.html`, `Special Offer.html`, both Tour Booking pages, and
+`Testimonials HTML.html`. The tool **refuses to strip these automatically**
+because removing the wrapper means matching its closing div. Hand work, flagged
+not fixed.
+
+### FLAG 5 — Nine page sources carry output-only markup
+
+44 boolean and 26 `data-*` attribute expansions across the Membership Builders,
+Memberships Page, Special Offer, both Tour Booking pages, Contact Us and Index.
+Real drift, but **out of scope**: none are in the move list.
