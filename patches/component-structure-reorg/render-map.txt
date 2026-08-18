@@ -1,0 +1,20 @@
+SELECTOR               N    CURRENT PATH                                               RENDERS ON
+------------------------------------------------------------------------------------------------------------------------
+se-sify-btn            0    Components/Archive/tour-button-google.html                 ABSENT
+se-sify-btn            0    Components/Buttons/Static Buttons/tour-button.html         ABSENT
+vt-btn-glow            1    Components/Buttons/Static Buttons/virtual-tour-button.html index
+se-hero-offer-cta      0    Components/CTA/Homepage Hero Summer Offer CTA.html         ABSENT
+sec-fcta-section       20   Components/CTA/Ready To Experience South End Footer CTA.html contact-us,corporate-membership,events,fitness,food-beverage,index,lounge-rentals,memberships,pools,privacy-policy,racquet-sports,schedule-a-tour,schedule-an-event-viewing,services,special-offer,subscribe,summer-membership,terms-conditions,wellness,youth-programs
+zapierFormContainer    0    Components/CTA/Special Membership Promo CTA (Zapier).html  ABSENT
+sec-footer-grid        20   Components/Footer.html                                     contact-us,corporate-membership,events,fitness,food-beverage,index,lounge-rentals,memberships,pools,privacy-policy,racquet-sports,schedule-a-tour,schedule-an-event-viewing,services,special-offer,subscribe,summer-membership,terms-conditions,wellness,youth-programs
+sec-header             20   Components/Header.html                                     contact-us,corporate-membership,events,fitness,food-beverage,index,lounge-rentals,memberships,pools,privacy-policy,racquet-sports,schedule-a-tour,schedule-an-event-viewing,services,special-offer,subscribe,summer-membership,terms-conditions,wellness,youth-programs
+carousel-pickleball    2    Components/Index/carousel-pickleball-homepage.html         index,racquet-sports
+sec-floating-nav       0    Templates/Components/Buttons/Floating Buttons/Floating Section Nav/floating-section-nav.html ABSENT
+sec-floating-nav       0    Templates/Components/Buttons/Floating Buttons/Floating Section Nav/floating-section-nav-combined.html ABSENT
+sec-float-cta          1    Templates/Components/Buttons/Floating Buttons/Left Upper CTA/left-upper-cta.html youth-programs
+sec-float-cta          1    Templates/Components/Buttons/Floating Buttons/Left Upper CTA/left-upper-cta-combined.html youth-programs
+sec-btn-glow           0    Templates/Components/Buttons/General Button/general-button.html ABSENT
+youth-camp-promo       0    Website/Pages/youth-programs/Homepage Youth Camp Banner.html ABSENT
+se-home-summer-banner  0    Website/Pages/Memberships (Category)/summer-membership/Homepage Summer Banner.html ABSENT
+floatingNav            10   Website/Pages/Memberships (Category)/memberships/Memberships Nav Block.html corporate-membership,events,fitness,food-beverage,memberships,pools,racquet-sports,services,wellness,youth-programs
+se-hero-offer-cta      0    Website/Pages/Memberships (Category)/special-offer/Homepage Hero Offer CTA.html ABSENT
