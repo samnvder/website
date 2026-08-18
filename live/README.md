@@ -58,7 +58,7 @@ Naming rules:
 | [`wpcode/9951-renamed-page-redirects.php`](wpcode/9951-renamed-page-redirects.php) | WPCode snippet **9951**, "SEO - Renamed-page 301 redirects" — 301s for three renamed pages | ✅ applied & verified 2026-08-13 |
 | [`wpcode/retired/9952-fix-stale-phone-in-jsonld.php`](wpcode/retired/9952-fix-stale-phone-in-jsonld.php) | Was WPCode snippet **9952**, "SEO - Fix stale phone number in JSON-LD" | ⛔ applied, verified, then deleted 2026-08-13 — **not on the site**. It masked the problem instead of fixing it; see [SEO/TODO.md](../SEO/TODO.md) §10 |
 | [`thrive/pages/schedule-a-tour/se-cal.html`](thrive/pages/schedule-a-tour/se-cal.html) | Custom HTML element on `/schedule-a-tour/` (page ID 7472) — inline booking calendar | ✅ 2026-08-17 |
-| [`thrive/pages/memberships/se-cal.html`](thrive/pages/memberships/se-cal.html) | Custom HTML element on `/memberships/` (page ID 8812) — inline booking calendar | ⏳ mirrored, paste pending |
+| [`thrive/pages/memberships/se-cal.html`](thrive/pages/memberships/se-cal.html) | Custom HTML element on `/memberships/` (page ID 8812) — inline booking calendar | ✅ 2026-08-18 |
 
 The two `se-cal` files are currently **byte-identical** — the same widget is
 deployed on both pages. They are kept as separate files anyway, because they are

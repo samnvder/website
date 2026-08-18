@@ -17,7 +17,7 @@ The booking data itself is fine — `book-tour` already writes `utm_source`, `ut
 
 ## Done means
 
-- [ ] `tour_booked` fires on all **4** live form instances
+- [x] `tour_booked` fires on all **4** live form instances — ✅ **done 2026-08-18**, see [Part D](#part-d--verification)
 - [ ] GA4 records it as a key event with UTM + source page as registered custom dimensions
 - [ ] Google Ads records a deduplicated "Tour Booked" conversion, excluding reschedules
 - [ ] Verified with a live test booking; test booking then deleted from Supabase
@@ -33,16 +33,22 @@ The booking data itself is fine — `book-tour` already writes `utm_source`, `ut
 
 **3. Never paste a repo page file into Thrive.** Because of #2, pasting `Membership Tour Booking Page.html` over the live page would **delete the floating widget from production**. Paste only the prepared per-widget blocks in `patches/tour-conversion-tracking/live-blocks/`.
 
-**4. There are 4 live instances, not 1.** Miss one and the numbers are quietly ~half right, which is worse than none, because they'll be trusted.
+**4. There are 4 live instances, but only 3 things to edit.** ✅ **All applied 2026-08-18.** Miss one and the numbers are quietly ~half right, which is worse than none, because they'll be trusted.
 
-| Page | Widget | Paste-ready file |
+The original framing here was wrong in a way worth recording: `se-bk-floating` is **not** a per-page widget. It is **WPCode snippet 8309**, injected into the site-wide footer, so one edit covers both pages — and in fact renders on *every* published page.
+
+| What to edit | Covers | Mirror |
 |---|---|---|
-| `/schedule-a-tour/` | `se-cal` | `live-blocks/schedule-a-tour--se-cal.js` |
-| `/schedule-a-tour/` | `se-bk-floating` | `live-blocks/schedule-a-tour--se-bk-floating.js` |
-| `/memberships/` | `se-cal` | `live-blocks/memberships--se-cal.js` |
-| `/memberships/` | `se-bk-floating` | `live-blocks/memberships--se-bk-floating.js` |
+| WPCode snippet **8309** | `se-bk-floating` on **all ~26 pages** | [`live/wpcode/8309-floating-book-tour-button.html`](../live/wpcode/8309-floating-book-tour-button.html) |
+| Thrive Custom HTML on `/schedule-a-tour/` | `se-cal` | [`live/thrive/pages/schedule-a-tour/se-cal.html`](../live/thrive/pages/schedule-a-tour/se-cal.html) |
+| Thrive Custom HTML on `/memberships/` | `se-cal` | [`live/thrive/pages/memberships/se-cal.html`](../live/thrive/pages/memberships/se-cal.html) |
 
-`/special-offer/` is a fifth instance but currently **404s**. Its repo file is patched for consistency; nothing to do live.
+Consequences of the site-wide finding, both good:
+
+- **Coverage is broader than planned.** A booking started from the floating button on `/fitness/`, `/pools/` or anywhere else is now tracked. Confirmed by `curl`: those pages return 1.
+- **`tour_source_page` matters more than expected.** It is no longer "which of two pages" — it is which of ~26. That dimension is what turns this into a page-level attribution answer, so registering it in GA4 (Part B step 4) is not optional polish.
+
+`/special-offer/` is a further instance but currently **404s**. Its repo file is patched for consistency; nothing to do live.
 
 ---
 
@@ -176,6 +182,17 @@ for p in schedule-a-tour memberships; do printf "%-18s " "$p"; curl -s -A "Mozil
 ```
 
 Expect **2** for each. `0` → cache not flushed or Thrive didn't save. `1` → one widget patched, one missed.
+
+✅ **Passed 2026-08-18** — both returned `2`. Any other page returns `1`, from the site-wide floating widget:
+
+```
+schedule-a-tour    2
+memberships        2
+fitness            1
+pools              1
+```
+
+Source presence is necessary but not sufficient — a broken paste still greps as present. Each block was also extracted from the live HTML and checked to **parse under `node --check`**, contain **exactly one** `tour_booked` push, sit **inside** the `res.ok && res.data.success` branch, and be **`try/catch`-wrapped**. All four passed on both counts.
 
 **2. GTM Preview** on `/schedule-a-tour/`, complete a real booking. Confirm `tour_booked` appears; every variable resolves — **especially whether `tour_booking_id` is null**; the GA4 tag fired; the Ads tag fired and did *not* on a reschedule.
 
