@@ -3,3 +3,9 @@
 # core.autocrlf is true on Windows here, which would otherwise rewrite its LF
 # line endings on checkout and break that guarantee.
 analytics/gtm-container-export.json -text
+
+# Audit records are evidence: a PDF must survive a checkout byte-for-byte or
+# it will not open. core.autocrlf is true here, and git flagged this PDF as
+# text on commit, which means a fresh checkout would rewrite its line endings
+# and corrupt the file.
+*.pdf -text -diff
