@@ -25,6 +25,7 @@ byte-for-byte, so it can be diffed and restored.
 ```
 live/
 ├── wpcode/                        WPCode snippets, prefixed with their snippet ID
+│   ├── 8292-message-us-zapier-modal.html
 │   ├── 8309-floating-book-tour-button.html
 │   ├── 9934-noindex-utility-pages.php
 │   ├── 9935-localbusiness-schema.php
@@ -56,6 +57,7 @@ Naming rules:
 
 | Path | Lives on the site as | Applied |
 |---|---|---|
+| [`wpcode/8292-message-us-zapier-modal.html`](wpcode/8292-message-us-zapier-modal.html) | WPCode snippet **8292**, "South End Club • Message Us" — site-wide, so it renders on *every* page (verified on 20/20 live pages 2026-08-18). Floating bottom-right button + modal wrapping Zapier interface `cm4kje8hw001hp13agzjz9ul9` | ✅ mirrored 2026-08-18 |
 | [`wpcode/8309-floating-book-tour-button.html`](wpcode/8309-floating-book-tour-button.html) | WPCode snippet **8309**, "Floating Book Tour Button (Desktop Only)" — site-wide footer, so it renders on *every* page | ✅ 2026-08-18 |
 | [`wpcode/9934-noindex-utility-pages.php`](wpcode/9934-noindex-utility-pages.php) | WPCode snippet **9934**, "Noindex internal & utility pages" — `wpseo_robots_array` + `wpseo_exclude_from_sitemap_by_post_ids` for 8 utility pages | ✅ exported verbatim 2026-08-13 |
 | [`wpcode/9935-localbusiness-schema.php`](wpcode/9935-localbusiness-schema.php) | WPCode snippet **9935**, "LocalBusiness schema (NAP, geo, hours)" — NAP, geo, hours, `areaServed`, description, TikTok in `sameAs` | ✅ exported verbatim 2026-08-13 |
@@ -69,6 +71,37 @@ The two `se-cal` files are currently **byte-identical** — the same widget is
 deployed on both pages. They are kept as separate files anyway, because they are
 separate things on the site and either can be edited independently; collapsing
 them into one shared file would hide the day they diverge.
+
+### How `8292` was verified — and why `curl` was valid for it, once
+
+**Do not generalise this.** Every other component here must be captured by
+paste, never by scraping the rendered page. 8292 is the one case where the
+served HTML and the editor source are provably the same bytes, and it is worth
+recording *why*, because the reason is exactly what makes it an exception:
+
+- It is inserted **sitewide via Code Snippets, outside Thrive** — its own markup
+  says so (`Modal (kept out of Thrive wrappers by inserting sitewide via Code
+  Snippets)`). So Thrive never wraps it in `thrv_wrapper` or
+  `tve_js_placeholder`.
+- It contains **no `<img>`**. So CompressX never wraps anything in
+  `<picture>`/`<source>`.
+
+With both output-only transforms out of the picture, the block served on
+`/terms-conditions/` diffs **byte-for-byte clean** against the pasted capture:
+4,052 bytes, 111 lines, LF, zero differences. That is a stronger proof than the
+character count CLAUDE.md rule 3 asks for, and it is available *only* because
+of the two conditions above. Anything inside a Thrive page, or carrying an
+image, fails both — capture those by paste.
+
+To re-verify against the WPCode editor's own character counter: **4,049
+characters** excluding the trailing newline (4,052 bytes − 2, since the `•` in
+line 1 is 3-byte UTF-8), or 4,050 including it.
+
+Note that **8292 and 8309 are a pair** — adjacent IDs, both floating widgets,
+both site-wide, both fixed to a bottom corner (8292 right, 8309 left). 8309 ran
+unmirrored in production for months and is the cautionary tale in
+[CLAUDE.md](../CLAUDE.md); 8292 was found the same way and had the same gap.
+If a third floating widget turns up, look for it here first.
 
 ## The law is broader than this directory
 

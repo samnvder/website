@@ -106,9 +106,21 @@ the component**, not merely re-skin-proof. External URLs and embed ids fail this
 when a resource is reused. Corroborate with a marker the component alone owns --
 a wrapper id, a button label, a handler name.
 
-## 🚨 Found while investigating: an unmirrored sitewide component
+## ✅ Found while investigating: an unmirrored sitewide component — now mirrored
 
 Not part of this reorg, but it surfaced and should not be dropped.
+
+> **RESOLVED 2026-08-18.** Captured by paste from the WPCode editor and mirrored
+> to [`live/wpcode/8292-message-us-zapier-modal.html`](../../live/wpcode/8292-message-us-zapier-modal.html)
+> — WPCode snippet **8292**, site-wide. Proven byte-for-byte against the block
+> served on `/terms-conditions/`. The finding below stands as written; only the
+> “mirrored nowhere” claim is now out of date.
+>
+> One correction to the analysis below: the four page files are **not** stale
+> copies of the snippet. Two (`Memberships`, `Special Offer`) are *consumers* —
+> FAQ CTAs that call `.click()` on the sitewide button. Two (`Contact Us`,
+> `Event Tour Booking`) embed the same Zapier page inline as an on-page form,
+> unrelated to the modal. All four are live features; none should be removed.
 
 A **"Message Us" floating modal** runs on **20/20 live pages**: `se-crm-btn`,
 `se-crm-modal`, embedding Zapier interface `cm4kje8hw001hp13agzjz9ul9`. Its own
