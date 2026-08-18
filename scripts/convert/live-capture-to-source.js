@@ -35,8 +35,19 @@
  *   --in-place         Rewrite the input file(s)
  *   --check            Report only; exit 1 if output-only markup was found
  *   --diff <file>      Compare the result against <file>; exit 1 if they differ
+ *   --frame <f>        element | page. Overrides the frame derived from the
+ *                      path; see the frame note below the flag list.
  *   --trim-to-banner   Drop everything before the first comment banner
  *   --quiet            Suppress the report (stdout is always clean)
+ *
+ * Frames: some markup is junk in one kind of capture and load-bearing in
+ * another. A capture of ONE Custom HTML block (its code box, mirrored under
+ * live/thrive/) gets the thrv_custom_html_shortcode wrapper added around it on
+ * output, so there the wrapper is junk. A capture of a whole PAGE TREE
+ * (mirrored under Website/Pages/) contains that block as a node, and the
+ * wrapper IS that node, so there it is structure. The frame is derived from
+ * the path and reported in every summary; --frame overrides it. Only warnings
+ * are frame-sensitive - every transform is output-only in both frames.
  *
  * The human-readable report goes to stderr, so stdout stays pipeable.
  *
@@ -92,7 +103,62 @@ const TRANSFORMS = [
     },
 ];
 
+/* ------------------------------------------------------------------ *
+ * Frames
+ *
+ * The same markup can be junk or load-bearing depending on what the capture
+ * is meant to mirror, so "which frame am I in" has to be an input, not
+ * something the reader re-derives per file.
+ *
+ *   element - one Custom HTML block, i.e. the contents of its code box.
+ *             Thrive wraps that block in thrv_wrapper thrv_custom_html_shortcode
+ *             ON OUTPUT, so the wrapper is junk here.
+ *   page    - a whole page tree: thrv-page-section elements, thrv_text_element
+ *             siblings, and Custom HTML blocks present AS nodes. The wrapper is
+ *             the editor's node for the block, so it is structure, not junk.
+ *
+ * The repo already encodes the frame in its layout (see the mirror map in
+ * live/README.md), so it is derived from the path and only overridden by
+ * --frame. Nothing is guessed from the markup itself.
+ * ------------------------------------------------------------------ */
+
+const FRAMES = ['element', 'page'];
+
+// Longest match wins, so a more specific path can override a broader one.
+const FRAME_BY_PATH = [
+    { segment: 'live/thrive/', frame: 'element' },
+    { segment: 'Website/Pages/', frame: 'page' },
+];
+
+/**
+ * Derive the frame from where a file lives. Returns 'unknown' rather than
+ * guessing: an unplaced capture gets warnings written for a reader who still
+ * has to decide, which is strictly better than silently picking one.
+ */
+function frameForPath(p) {
+    if (!p) return 'unknown';
+    const posix = toPosix(path.resolve(p)) + '/';
+    let best = { frame: 'unknown', len: 0 };
+    for (const rule of FRAME_BY_PATH) {
+        if (posix.includes(rule.segment) && rule.segment.length > best.len) {
+            best = { frame: rule.frame, len: rule.segment.length };
+        }
+    }
+    return best.frame;
+}
+
+const FRAME_LABEL = {
+    element: 'element (one Custom HTML code box)',
+    page: 'page tree',
+    unknown: 'unknown - not under a path that declares one',
+};
+
 // Things we will not silently rewrite, but must not let pass unmentioned.
+//
+// A warning carries either `message` (frame-independent) or `byFrame`, whose
+// keys are frames and whose value may be null to mean "expected here, say
+// nothing". Frame-independent is the default because most output-only markup
+// is output-only in every frame; only structural questions are frame-bound.
 const WARNINGS = [
     {
         pattern: /<picture\s[^>]*>/i,
@@ -100,14 +166,15 @@ const WARNINGS = [
     },
     {
         pattern: /thrv_custom_html_shortcode/,
-        // Whether this wrapper is junk depends entirely on what the capture is
-        // meant to mirror, so the warning has to state both frames. Relative to
-        // one Custom HTML block - the code box, which is what live/thrive/pages/
-        // holds - Thrive adds it on output and it must go. Relative to the page
-        // tree, which is what Website/Pages/ holds, it IS the editor's node for
-        // that block, sitting among sibling thrv_wrapper elements that everyone
-        // agrees are editor state. Stripping it there deletes real structure.
-        message: 'thrv_wrapper thrv_custom_html_shortcode div present. Whether it belongs depends on what this capture mirrors. Mirroring one Custom HTML element (its code box, as under live/thrive/pages/): the wrapper is added on output and should go. Mirroring a page tree (as under Website/Pages/, alongside thrv-page-section and thrv_text_element siblings): it is the editor node for that block and must stay. Either way this script will not touch it, because removing one means matching its closing div - settle the frame first, then do it by hand.',
+        byFrame: {
+            // Junk: Thrive added it around the block on output.
+            element: 'thrv_wrapper thrv_custom_html_shortcode div present in an element capture. Thrive adds that wrapper around the block on output, so it does not belong here - but removing it means matching its closing div, which this script will not guess at. Strip it by hand.',
+            // Structure: it IS the editor's node for the block. Saying nothing
+            // is the point - the old blanket warning is what made six page
+            // files look like they needed fixing when they did not.
+            page: null,
+            unknown: 'thrv_wrapper thrv_custom_html_shortcode div present, and this capture is not under a path that declares its frame. In an element capture the wrapper is added on output and should go; in a page tree it is the editor node for the block and must stay. Settle which this is - see the frame note in the script header - then do it by hand, because removing one means matching its closing div.',
+        },
     },
     {
         pattern: /compressx-nextgen/,
@@ -115,9 +182,30 @@ const WARNINGS = [
     },
     {
         pattern: /thrive-(header|footer)|thrv_symbol/,
-        message: 'Thrive header/footer symbol markup present. That is template chrome, not page content - the capture is probably wider than the element you mean to mirror.',
+        byFrame: {
+            element: 'Thrive header/footer symbol markup present. That is template chrome, not page content - the capture is probably wider than the element you mean to mirror.',
+            // In a page tree the chrome is real, so the question is scope
+            // rather than junk: does this file mean to mirror the theme
+            // template too, or only the page's own sections?
+            page: 'Thrive header/footer symbol markup present in a page-tree capture. The symbols are theme template shared across every page, not the content of this page, so the capture is wider than the page. Whether that is wanted is an ownership question - decide what this file is meant to mirror rather than trimming on sight.',
+            unknown: 'Thrive header/footer symbol markup present. That is template chrome, not page content - the capture is probably wider than the element you mean to mirror.',
+        },
     },
 ];
+
+/**
+ * The warnings that apply in a given frame, in declaration order.
+ */
+function warningsFor(html, frame) {
+    const out = [];
+    for (const w of WARNINGS) {
+        if (!w.pattern.test(html)) continue;
+        if (w.message) { out.push(w.message); continue; }
+        const m = w.byFrame[frame in w.byFrame ? frame : 'unknown'];
+        if (m) out.push(m);
+    }
+    return out;
+}
 
 /* ------------------------------------------------------------------ *
  * Conversion
@@ -197,11 +285,10 @@ function convert(html, opts) {
         );
     }
 
-    const warnings = WARNINGS
-        .filter(w => w.pattern.test(once))
-        .map(w => w.message);
+    const frame = options.frame || 'unknown';
+    const warnings = warningsFor(once, frame);
 
-    return { output: once, counts, warnings };
+    return { output: once, counts, warnings, frame };
 }
 
 /* ------------------------------------------------------------------ *
@@ -265,11 +352,14 @@ function scan(root, opts) {
 
     for (const file of files) {
         const before = fs.readFileSync(file.full, 'utf8');
+        // Per file, not per root: scanning a mixed tree must still apply the
+        // right frame to each file. An explicit --frame overrides all of it.
+        const frame = opts.frame || frameForPath(file.full);
         let result;
         try {
-            result = convert(before, opts);
+            result = convert(before, Object.assign({}, opts, { frame }));
         } catch (e) {
-            results.push({ rel: file.rel, error: e.message, counts: {}, warnings: [], changed: false });
+            results.push({ rel: file.rel, error: e.message, counts: {}, warnings: [], frame, changed: false });
             continue;
         }
 
@@ -280,6 +370,7 @@ function scan(root, opts) {
             rel: file.rel,
             counts: result.counts,
             warnings: result.warnings,
+            frame: result.frame,
             changed,
         });
     }
@@ -295,6 +386,18 @@ function sortedEntries(counts) {
     return Object.entries(counts)
         .filter(([, n]) => n > 0)
         .sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+}
+
+/**
+ * Say which frame the record was built under. A scan of a mixed tree lists
+ * every frame it saw, sorted, so the line stays deterministic.
+ */
+function describeFrames(results, opts) {
+    const seen = [...new Set(results.map(r => r.frame || 'unknown'))].sort();
+    const how = opts.frame ? 'forced by --frame' : 'from path';
+    if (seen.length === 0) return 'none (' + how + ')';
+    if (seen.length === 1) return FRAME_LABEL[seen[0]] + ' (' + how + ')';
+    return 'mixed - ' + seen.join(', ') + ' (' + how + ', per file)';
 }
 
 function mdEscape(s) {
@@ -333,6 +436,7 @@ function renderReport(root, results, opts) {
     lines.push('| | |');
     lines.push('|---|---|');
     lines.push(`| Scanned | \`${mdEscape(displayPath(root))}\` |`);
+    lines.push(`| Frame | ${mdEscape(describeFrames(results, opts))} |`);
     lines.push(`| Files examined | ${results.length} |`);
     lines.push(`| Carrying output-only markup | ${touched.length} |`);
     lines.push(`| Already editor-form | ${clean.length} |`);
@@ -420,6 +524,7 @@ function parseArgs(argv) {
         else if (a === '--trim-to-banner') opts.trimToBanner = true;
         else if (a === '--quiet') opts.quiet = true;
         else if (a === '--report') opts.report = argv[++i];
+        else if (a === '--frame') opts.frame = argv[++i];
         else if (a.startsWith('-')) throw new Error('Unknown flag: ' + a);
         else if (!opts.input) opts.input = a;
         else throw new Error('Unexpected argument: ' + a);
@@ -427,6 +532,9 @@ function parseArgs(argv) {
 
     if (opts.inPlace && !opts.input) throw new Error('--in-place needs a file argument, not stdin.');
     if (opts.inPlace && opts.output) throw new Error('Use either --in-place or -o, not both.');
+    if (opts.frame && !FRAMES.includes(opts.frame)) {
+        throw new Error('Unknown frame: ' + opts.frame + ' (expected ' + FRAMES.join(' or ') + ')');
+    }
 
     return opts;
 }
@@ -478,6 +586,8 @@ function report(result, opts, changed) {
     log('Live capture -> editor source');
     log('-'.repeat(52));
     log('Source: ' + (opts.input || '<stdin>'));
+    log('Frame:  ' + FRAME_LABEL[result.frame] +
+        (opts.frame ? ' (forced by --frame)' : ' (from path)'));
 
     const entries = Object.entries(result.counts).filter(([, n]) => n > 0);
     if (entries.length === 0) {
@@ -531,7 +641,9 @@ function main() {
 
     let result;
     try {
-        result = convert(html, opts);
+        result = convert(html, Object.assign({}, opts, {
+            frame: opts.frame || frameForPath(opts.input),
+        }));
     } catch (e) {
         process.stderr.write(e.message + '\n');
         process.exit(2);
@@ -573,4 +685,4 @@ function main() {
 
 if (require.main === module) main();
 
-module.exports = { convert, scan, renderReport, collectFiles, BOOLEAN_ATTRS, TRANSFORMS };
+module.exports = { convert, scan, renderReport, collectFiles, frameForPath, BOOLEAN_ATTRS, TRANSFORMS, FRAMES };

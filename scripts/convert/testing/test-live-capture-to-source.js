@@ -13,7 +13,9 @@
 const test = require('node:test');
 const assert = require('node:assert');
 
-const { convert } = require('../live-capture-to-source.js');
+const path = require('node:path');
+
+const { convert, frameForPath, FRAMES } = require('../live-capture-to-source.js');
 
 const run = (html) => convert(html, {}).output;
 
@@ -319,4 +321,76 @@ test('counts both placeholder open and close', () => {
     const { counts } = convert(capture, {});
 
     assert.strictEqual(counts['Thrive tve_js_placeholder wrapper'], 2);
+});
+
+/* ------------------------------------------------------------------ *
+ * Frames
+ *
+ * The wrapper below is the whole reason frames exist: identical bytes, junk
+ * in one frame and load-bearing in the other. These tests pin BOTH readings,
+ * because a regression in either direction is silent - too eager and it
+ * deletes editor structure from page files, too timid and it lets output-only
+ * markup into an element mirror.
+ * ------------------------------------------------------------------ */
+
+const WRAPPER = '<div class="thrv_wrapper thrv_custom_html_shortcode"><p>x</p></div>';
+const wrapperWarnings = (frame) =>
+    convert(WRAPPER, { frame }).warnings.filter(w => w.includes('thrv_custom_html_shortcode'));
+
+test('page frame: the shortcode wrapper is structure, so it is not flagged', () => {
+    assert.deepStrictEqual(wrapperWarnings('page'), [],
+        'a page tree contains the block as a node - warning about it sends the reader to delete it');
+});
+
+test('element frame: the shortcode wrapper is output-only, so it is flagged', () => {
+    const warnings = wrapperWarnings('element');
+
+    assert.strictEqual(warnings.length, 1);
+    assert.ok(warnings[0].includes('element capture'), 'must name the frame it is judging');
+});
+
+test('unknown frame: states both readings rather than picking one', () => {
+    const warnings = wrapperWarnings(undefined);
+
+    assert.strictEqual(warnings.length, 1);
+    assert.ok(warnings[0].includes('element capture'));
+    assert.ok(warnings[0].includes('page tree'));
+});
+
+test('no frame ever rewrites the wrapper - it needs a matching close tag', () => {
+    for (const frame of [...FRAMES, undefined]) {
+        assert.strictEqual(convert(WRAPPER, { frame }).output, WRAPPER,
+            'frame changes what is reported, never what is rewritten');
+    }
+});
+
+test('transforms are frame-independent - only warnings are frame-bound', () => {
+    const capture = '<video controls="" playsinline=""><source srcset="x.webp" type="image/webp"></video>';
+    const outputs = [...FRAMES, undefined].map(frame => convert(capture, { frame }).output);
+
+    assert.strictEqual(new Set(outputs).size, 1,
+        'the same capture must convert identically in every frame');
+});
+
+test('header/footer chrome is reported differently per frame, but always reported', () => {
+    const capture = '<div id="thrive-header" class="thrv_symbol"></div>';
+    const chrome = (frame) =>
+        convert(capture, { frame }).warnings.filter(w => w.includes('symbol markup'));
+
+    assert.strictEqual(chrome('element').length, 1);
+    assert.strictEqual(chrome('page').length, 1);
+    assert.notStrictEqual(chrome('element')[0], chrome('page')[0],
+        'an over-wide element capture and a page that includes theme chrome are different problems');
+});
+
+test('the frame comes from the path, never from the markup', () => {
+    assert.strictEqual(frameForPath(path.join('live', 'thrive', 'pages', 'x', 'y.html')), 'element');
+    assert.strictEqual(frameForPath(path.join('Website', 'Pages', 'x', 'y.html')), 'page');
+    assert.strictEqual(frameForPath(path.join('patches', 'x.html')), 'unknown');
+    assert.strictEqual(frameForPath(undefined), 'unknown');
+});
+
+test('convert reports the frame it applied', () => {
+    assert.strictEqual(convert(WRAPPER, { frame: 'page' }).frame, 'page');
+    assert.strictEqual(convert(WRAPPER, {}).frame, 'unknown');
 });

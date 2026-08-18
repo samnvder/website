@@ -11,6 +11,7 @@ rule 4 of the backup law in `CLAUDE.md`.
 | | |
 |---|---|
 | Scanned | `Website/Pages` |
+| Frame | page tree (from path) |
 | Files examined | 29 |
 | Carrying output-only markup | 0 |
 | Already editor-form | 29 |
@@ -23,16 +24,16 @@ rule 4 of the backup law in `CLAUDE.md`.
 - `Memberships (Category)/corporate-membership/Corporate HTML.html`
 - `Memberships (Category)/memberships/Discounted Enrollment/Membership Builder frontend.html`
 - `Memberships (Category)/memberships/Membership Builder frontend.html`
-- `Memberships (Category)/memberships/Memberships Page HTML.html` — see warnings below
+- `Memberships (Category)/memberships/Memberships Page HTML.html`
 - `Memberships (Category)/memberships/Old/Membership Builder snapshot.html`
 - `Memberships (Category)/special-offer/Brandon PB Offer/Brandon PB Offer.html`
 - `Memberships (Category)/special-offer/Brandon PB Offer/index.html`
-- `Memberships (Category)/special-offer/Special Offer.html` — see warnings below
+- `Memberships (Category)/special-offer/Special Offer.html`
 - `Memberships (Category)/special-offer/email-campaign-summer-2026-final.html`
 - `Memberships (Category)/special-offer/email-campaign-summer-2026.html`
 - `Memberships (Category)/summer-membership/Summer HTML.html`
-- `Tours (Category)/schedule-a-tour/Membership Tour Booking Page.html` — see warnings below
-- `Tours (Category)/schedule-an-event-viewing/Event Tour Booking Page.html` — see warnings below
+- `Tours (Category)/schedule-a-tour/Membership Tour Booking Page.html`
+- `Tours (Category)/schedule-an-event-viewing/Event Tour Booking Page.html`
 - `contact-us/Contact Us Page HTML.html`
 - `fitness/fitness HTML.html`
 - `food-beverage/Food & Beverage HTML.html`
@@ -44,25 +45,9 @@ rule 4 of the backup law in `CLAUDE.md`.
 - `services/services HTML.html`
 - `subscribe/subscribe.html`
 - `terms-conditions/Terms & Conditions.html`
-- `testimonials (draft)/Testimonials HTML.html` — see warnings below
+- `testimonials (draft)/Testimonials HTML.html`
 - `wellness/Wellness HTML.html`
 - `youth-programs/youth-programs.html`
 
-> `Memberships (Category)/memberships/Memberships Page HTML.html`:
-> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. Whether it belongs depends on what this capture mirrors. Mirroring one Custom HTML element (its code box, as under live/thrive/pages/): the wrapper is added on output and should go. Mirroring a page tree (as under Website/Pages/, alongside thrv-page-section and thrv_text_element siblings): it is the editor node for that block and must stay. Either way this script will not touch it, because removing one means matching its closing div - settle the frame first, then do it by hand.
-
-> `Memberships (Category)/special-offer/Special Offer.html`:
-> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. Whether it belongs depends on what this capture mirrors. Mirroring one Custom HTML element (its code box, as under live/thrive/pages/): the wrapper is added on output and should go. Mirroring a page tree (as under Website/Pages/, alongside thrv-page-section and thrv_text_element siblings): it is the editor node for that block and must stay. Either way this script will not touch it, because removing one means matching its closing div - settle the frame first, then do it by hand.
-
-> `Tours (Category)/schedule-a-tour/Membership Tour Booking Page.html`:
-> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. Whether it belongs depends on what this capture mirrors. Mirroring one Custom HTML element (its code box, as under live/thrive/pages/): the wrapper is added on output and should go. Mirroring a page tree (as under Website/Pages/, alongside thrv-page-section and thrv_text_element siblings): it is the editor node for that block and must stay. Either way this script will not touch it, because removing one means matching its closing div - settle the frame first, then do it by hand.
-
-> `Tours (Category)/schedule-an-event-viewing/Event Tour Booking Page.html`:
-> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. Whether it belongs depends on what this capture mirrors. Mirroring one Custom HTML element (its code box, as under live/thrive/pages/): the wrapper is added on output and should go. Mirroring a page tree (as under Website/Pages/, alongside thrv-page-section and thrv_text_element siblings): it is the editor node for that block and must stay. Either way this script will not touch it, because removing one means matching its closing div - settle the frame first, then do it by hand.
-
 > `index/Index.html`:
-> **Warning:** Thrive header/footer symbol markup present. That is template chrome, not page content - the capture is probably wider than the element you mean to mirror.
-> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. Whether it belongs depends on what this capture mirrors. Mirroring one Custom HTML element (its code box, as under live/thrive/pages/): the wrapper is added on output and should go. Mirroring a page tree (as under Website/Pages/, alongside thrv-page-section and thrv_text_element siblings): it is the editor node for that block and must stay. Either way this script will not touch it, because removing one means matching its closing div - settle the frame first, then do it by hand.
-
-> `testimonials (draft)/Testimonials HTML.html`:
-> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. Whether it belongs depends on what this capture mirrors. Mirroring one Custom HTML element (its code box, as under live/thrive/pages/): the wrapper is added on output and should go. Mirroring a page tree (as under Website/Pages/, alongside thrv-page-section and thrv_text_element siblings): it is the editor node for that block and must stay. Either way this script will not touch it, because removing one means matching its closing div - settle the frame first, then do it by hand.
+> **Warning:** Thrive header/footer symbol markup present in a page-tree capture. The symbols are theme template shared across every page, not the content of this page, so the capture is wider than the page. Whether that is wanted is an ownership question - decide what this file is meant to mirror rather than trimming on sight.
