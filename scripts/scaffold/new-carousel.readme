@@ -14,4 +14,4 @@ Generates the full carousel workflow: source markdown (media/.../name-images.md)
 
 ## Advanced
 
-Node.js, no deps. Args: name (kebab-case), --media-path (default media/<name>), --sections (default general). Writes: mediaPath/name-images.md, carousel-configs/name.json, carousel-configs/name.readme, Dev/carousel-name/carousel-name.html. HTML has trackSelector/trackCloseIndent compatible with build-carousel.js. CSS scoped to .carousel-{name}. HTML links to Components/Carousel/template/carousel.css and carousel.js.
+Node.js, no deps. Args: name (kebab-case), --media-path (default media/<name>), --sections (default general). Writes: mediaPath/name-images.md, carousel-configs/name.json, carousel-configs/name.readme, Dev/carousel-name/carousel-name.html. HTML has trackSelector/trackCloseIndent compatible with build-carousel.js. CSS scoped to .carousel-{name}. HTML links to Components/_scaffolds/carousel/carousel.css and carousel.js.

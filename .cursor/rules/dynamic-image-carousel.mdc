@@ -97,7 +97,7 @@ When `data-carousel-dynamic` is set, **never** update `wrap.style.height` or run
 5. **Image `load`** handlers for height: only run height sync if `carouselInView`.
 6. If `IntersectionObserver` is missing (very old browsers), fall back to **always on** (current behavior) so the carousel still works.
 
-**Reference implementation:** `Components/Carousel/template/carousel.js` (and any page-specific inlined carousel, e.g. fitness `initFitnessCarousel`).
+**Reference implementation:** `Components/_scaffolds/carousel/carousel.js` (and any page-specific inlined carousel, e.g. fitness `initFitnessCarousel`).
 
 Pickleball / other legacy **inline** carousels should be updated to this pattern when those files are next edited.
 
@@ -118,7 +118,7 @@ Carousels **may** support enhanced features (category tabs, photo albums, shuffl
 - Mobile: category tabs wrap; album grid uses `minmax(120px, 1fr)` at ≤480px, `minmax(140px, 1fr)` at 481–1024px, `minmax(160px, 1fr)` at ≥1025px
 - Touch: swipe, tap-friendly category buttons, tap-to-open lightbox in carousel and albums
 
-**Reference:** `Components/Index/carousel-pickleball-homepage.html`
+**Reference:** `Components/Shared/Pickleball Carousel/carousel-pickleball-homepage.html`
 
 ## Single Source of Truth (Law)
 
@@ -153,7 +153,7 @@ Example: `node scripts/scaffold/new-carousel.js tennis --sections=general,lesson
 Then:
 1. Add image URLs to the generated markdown
 2. Run `node scripts/build/build-carousel.js scripts/build/carousel-configs/<name>.json`
-3. Scaffolded HTML links to Components/Carousel/template/carousel.css and carousel.js
+3. Scaffolded HTML links to Components/_scaffolds/carousel/carousel.css and carousel.js
 
 **Manual alternative:** Create source markdown, config JSON+readme, and HTML with `data-carousel`/`data-carousel-dynamic`/`carousel-track`/`carousel-dots` per spec above.
 

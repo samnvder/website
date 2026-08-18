@@ -11,7 +11,7 @@ Homepage. index.html (or similar), uses js/index-page.js. May embed carousel-pic
 ## Advanced
 
 - **JS:** js/index-page.js
-- **Carousel:** Components/Index/carousel-pickleball-homepage.html
+- **Carousel:** Components/Shared/Pickleball Carousel/carousel-pickleball-homepage.html
 
 ## Advanced
 

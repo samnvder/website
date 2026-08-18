@@ -92,9 +92,9 @@ Config for \`scripts/build/build-carousel.js\`. Defines source markdown, target 
 function buildHtmlShell(name) {
   const title = toTitleCase(name);
   const scopeClass = `carousel-${name}`;
-  return `<!-- ${title} Carousel — Scaffolded. Uses template from Components/Carousel/template/ -->
+  return `<!-- ${title} Carousel — Scaffolded. Uses template from Components/_scaffolds/carousel/ -->
 <!-- Add image URLs to media/.../${name}-images.md, then run build script to inject. -->
-<link href="../../Components/Carousel/template/carousel.css" rel="stylesheet">
+<link href="../../Components/_scaffolds/carousel/carousel.css" rel="stylesheet">
 <div class="carousel ${scopeClass}">
   <div class="carousel-label-wrap">
     <div class="carousel-label">${title}</div>
@@ -105,7 +105,7 @@ function buildHtmlShell(name) {
     <div class="carousel-dots"></div>
   </div>
 </div>
-<script src="../../Components/Carousel/template/carousel.js"></script>
+<script src="../../Components/_scaffolds/carousel/carousel.js"></script>
 `;
 }
 
@@ -133,7 +133,7 @@ function main() {
   console.log('Next steps:');
   console.log(`  1. Add image URLs to ${mediaPath}/${name}-images.md`);
   console.log(`  2. Run: node scripts/build/build-carousel.js scripts/build/carousel-configs/${name}.json`);
-  console.log(`  3. Carousel uses template (Components/Carousel/template/carousel.css, carousel.js)`);
+  console.log(`  3. Carousel uses template (Components/_scaffolds/carousel/carousel.css, carousel.js)`);
   console.log('');
 }
 

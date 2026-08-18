@@ -2,7 +2,7 @@
   "name": "Pickleball Carousel",
   "source": "media/racquets/pickleball/pickleball-images.md",
   "targets": [
-    "Components/Index/carousel-pickleball-homepage.html",
+    "Components/Shared/Pickleball Carousel/carousel-pickleball-homepage.html",
     "Website/Pages/racquet-sports/Racquet Sports HTML.html"
   ],
   "sections": {

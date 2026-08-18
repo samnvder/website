@@ -6,9 +6,9 @@ Powers the floating left-upper CTA button (e.g. "Schedule a Tour"). Handles show
 
 ## Medium understanding
 
-Template component for the left-upper floating CTA pattern. May include scroll-triggered visibility, click handlers, or modal integration. Copy to Dev when building pages with this CTA style. Mirrors Components/Buttons/ structure.
+Template component for the left-upper floating CTA pattern. May include scroll-triggered visibility, click handlers, or modal integration. Copy to Dev when building pages with this CTA style. Mirrors the component structure in Components/README.md.
 
 ## Advanced
 
-- **Location:** Templates/Components/Buttons/Floating Buttons/Left Upper CTA/
+- **Location:** Components/youth-programs/Left Upper CTA/
 - **Template:** Not live; used as scaffold

@@ -2,7 +2,7 @@
 
 Label + image carousel for the pickleball community section. No Pong — carousel only.
 
-**Location:** `Components/Carousel/Pickleball/` (production components, not Create)
+**Location:** `Components/Shared/Pickleball Carousel/` (production components, not Create)
 
 ## Files
 
@@ -13,7 +13,7 @@ Label + image carousel for the pickleball community section. No Pong — carouse
 
 ## Homepage Variant
 
-The **standalone homepage carousel** lives in **Components/Index/carousel-pickleball-homepage.html**. Copy that file into your homepage.
+The **standalone homepage carousel** lives in **Components/Shared/Pickleball Carousel/carousel-pickleball-homepage.html**. Copy that file into your homepage.
 
 ## Embedded Usage
 
@@ -25,8 +25,8 @@ Pong is **not** part of the carousel. Use **Create/games/pickleball-pong.html** 
 
 ## Paths
 
-- **From project root:** `Components/Carousel/Pickleball/`
-- **Homepage carousel:** `Components/Index/carousel-pickleball-homepage.html`
+- **From project root:** `Components/Shared/Pickleball Carousel/`
+- **Homepage carousel:** `Components/Shared/Pickleball Carousel/carousel-pickleball-homepage.html`
 - **Pong (standalone):** `Create/games/pickleball-pong.html`
 
 ## Advanced

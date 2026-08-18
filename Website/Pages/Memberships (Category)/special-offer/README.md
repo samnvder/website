@@ -54,7 +54,7 @@ Promotional membership landing page (Thrive Custom HTML). Same builder/tour/FAQ 
 
 
 > The homepage hero CTA that used to live here was a byte-identical duplicate of
-> `Components/CTA/Homepage Hero Summer Offer CTA.html` and was removed 2026-08-18.
+> `Components/Homepage/Homepage Hero Summer Offer CTA.html` and was removed 2026-08-18.
 > **The component is the surviving copy** — this directory held it filed by the
 > offer it advertises, which is the mis-filing the component reorg exists to fix.
 > See [handoffs/component-structure-reorg.md](../../../../handoffs/component-structure-reorg.md).

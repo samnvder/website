@@ -28,7 +28,7 @@ This markdown file contains all pickleball carousel images organized by section:
 
 ## Target Files (auto-updated by build)
 
-- `Components/Index/carousel-pickleball-homepage.html`
+- `Components/Shared/Pickleball Carousel/carousel-pickleball-homepage.html`
 - `Pages/racquet-sports/Racquet Sports HTML.html`
 
 ## Config

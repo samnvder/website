@@ -11,9 +11,9 @@ rule 4 of the backup law in `CLAUDE.md`.
 | | |
 |---|---|
 | Scanned | `Website/Pages` |
-| Files examined | 33 |
+| Files examined | 29 |
 | Carrying output-only markup | 9 |
-| Already editor-form | 24 |
+| Already editor-form | 20 |
 | Mode | read-only survey |
 
 ## What was found
@@ -97,13 +97,10 @@ rule 4 of the backup law in `CLAUDE.md`.
 - `Events (Category)/events/Events HTML.html`
 - `Events (Category)/lounge-rentals/Lounge Rental HTML.html`
 - `Memberships (Category)/corporate-membership/Corporate HTML.html`
-- `Memberships (Category)/memberships/Memberships Nav Block.html`
 - `Memberships (Category)/special-offer/Brandon PB Offer/Brandon PB Offer.html`
 - `Memberships (Category)/special-offer/Brandon PB Offer/index.html`
-- `Memberships (Category)/special-offer/Homepage Hero Offer CTA.html`
 - `Memberships (Category)/special-offer/email-campaign-summer-2026-final.html`
 - `Memberships (Category)/special-offer/email-campaign-summer-2026.html`
-- `Memberships (Category)/summer-membership/Homepage Summer Banner.html`
 - `Memberships (Category)/summer-membership/Summer HTML.html`
 - `fitness/fitness HTML.html`
 - `food-beverage/Food & Beverage HTML.html`
@@ -116,7 +113,6 @@ rule 4 of the backup law in `CLAUDE.md`.
 - `terms-conditions/Terms & Conditions.html`
 - `testimonials (draft)/Testimonials HTML.html` — see warnings below
 - `wellness/Wellness HTML.html`
-- `youth-programs/Homepage Youth Camp Banner.html`
 - `youth-programs/youth-programs.html`
 
 > `testimonials (draft)/Testimonials HTML.html`:

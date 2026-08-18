@@ -6,7 +6,7 @@ Pickleball photos and the master list (pickleball-images.md). This is the source
 
 ## Medium understanding
 
-Source for pickleball carousel. pickleball-images.md lists image URLs and categories. build-carousel.js reads it, injects into Components/Index/ and Pages/racquet-sports/. Never edit those HTML files for images—edit this source and run build.
+Source for pickleball carousel. pickleball-images.md lists image URLs and categories. build-carousel.js reads it, injects into Components/Shared/Pickleball Carousel/ and Pages/racquet-sports/. Never edit those HTML files for images—edit this source and run build.
 
 ## Advanced
 

@@ -87,7 +87,7 @@ they do not affect behavior.
 ## Excluded (intentional)
 
 Files left in the parent repo because they have effects outside the hub:
-- `Components/Carousel/Pickleball/` — carousel build assets used by the
+- `Components/Shared/Pickleball Carousel/` — carousel build assets used by the
   marketing site (verified: no live/ or staging/ HTML references it).
 - `media/racquets/pickleball/` — carousel image source-of-truth, marketing-site only.
 - Repo-root `scripts/` — carousel build, audits, pricing, marketing helpers.

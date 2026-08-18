@@ -4,7 +4,7 @@
 <!-- BUILD:REFS -->
 | File | Purpose |
 |------|----------|
-| Components/Index/carousel-pickleball-homepage.html | Carousel target |
+| Components/Shared/Pickleball Carousel/carousel-pickleball-homepage.html | Carousel target |
 | Website/Pages/racquet-sports/Racquet Sports HTML.html | Carousel target |
 | media/racquets/pickleball/pickleball-images.md | Image source (markdown) |
 <!-- /BUILD:REFS -->
