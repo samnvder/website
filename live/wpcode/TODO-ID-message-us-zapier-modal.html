@@ -1,0 +1,111 @@
+<!-- South End Club • Message Us (Zapier modal, bottom-right, all devices) -->
+<script type="module" src="https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js"></script>
+
+<style>
+  /* Floating button (bottom-right) */
+  #se-crm-btn{
+    position: fixed;
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    min-height: 44px;
+    border-radius: 999px;
+    font: 600 16px/1 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    color: #fff;
+    background: #0b468c;               /* default color */
+    box-shadow: 0 10px 20px rgba(0,0,0,.18), 0 6px 8px rgba(0,0,0,.12);
+    cursor: pointer;
+    z-index: 2147483647;               /* top of page stack */
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color .2s ease;
+  }
+  #se-crm-btn.se-open{ background:#b0345a; } /* when modal open */
+
+  /* Modal overlay */
+  #se-crm-modal{
+    display:none; position:fixed; inset:0;
+    background: rgba(0,0,0,.5);
+    z-index: 2147483647;               /* above everything */
+    align-items:center; justify-content:center;
+    overflow-y:auto;
+  }
+  /* Modal content */
+  #se-crm-content{
+    background:#fff; border-radius:10px;
+    padding:20px; width: min(500px, 90vw); height: min(700px, 80vh);
+    position:relative; text-align:center;
+  }
+  /* Close button */
+  #se-crm-close{
+    position:absolute; top:10px; right:10px;
+    background:#0b468c; color:#fff; border:0;
+    padding:6px 10px; border-radius:6px; cursor:pointer;
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 768px){
+    #se-crm-content{ width: 90vw; height: 75vh; }
+  }
+</style>
+
+<!-- Floating button -->
+<button id="se-crm-btn" type="button" aria-haspopup="dialog" aria-controls="se-crm-modal">Message Us</button>
+
+<!-- Modal (kept out of Thrive wrappers by inserting sitewide via Code Snippets) -->
+<div id="se-crm-modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div id="se-crm-content">
+    <zapier-interfaces-page-embed
+      page-id="cm4kje8hw001hp13agzjz9ul9"
+      no-background="false"
+      style="max-width:100%; height:100%; display:block;">
+    </zapier-interfaces-page-embed>
+    <button id="se-crm-close" type="button">Close</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const btn = document.getElementById('se-crm-btn');
+  const modal = document.getElementById('se-crm-modal');
+  const closeBtn = document.getElementById('se-crm-close');
+
+  // Open/close helpers
+  function openModal(){
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden','false');
+    btn.classList.add('se-open');
+    document.documentElement.style.overflow = 'hidden'; // lock scroll
+  }
+  function closeModal(){
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden','true');
+    btn.classList.remove('se-open');
+    document.documentElement.style.overflow = ''; // restore scroll
+    btn.focus();
+  }
+
+  btn.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+
+  // Close when clicking backdrop
+  modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
+  // ESC to close
+  document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && modal.style.display === 'flex') closeModal(); });
+
+  // Optional: lift above fixed bottom bars (cookie notices, etc.)
+  const bumpSelectors = ['#cookie-law-info-bar','.cli-bar-container','.ctcc-inner','.tve-sticky-bottom','.thrv-sticky-bottom','footer'];
+  const extra = bumpSelectors.reduce((h, sel)=>{
+    const el = document.querySelector(sel); if(!el) return h;
+    const cs = getComputedStyle(el);
+    const fixedBottom = cs.position === 'fixed' && (cs.bottom === '0px' || cs.bottom === '0');
+    return fixedBottom ? Math.max(h, el.offsetHeight) : h;
+  }, 0);
+  if (extra > 0) {
+    const pad = `calc(${16+extra}px + env(safe-area-inset-bottom,0))`;
+    document.getElementById('se-crm-btn').style.bottom = pad;
+  }
+})();
+</script>

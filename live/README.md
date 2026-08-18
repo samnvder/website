@@ -26,6 +26,7 @@ byte-for-byte, so it can be diffed and restored.
 live/
 ├── wpcode/                        WPCode snippets, prefixed with their snippet ID
 │   ├── 8309-floating-book-tour-button.html
+│   ├── TODO-ID-message-us-zapier-modal.html   ⚠ snippet ID not yet confirmed
 │   ├── 9934-noindex-utility-pages.php
 │   ├── 9935-localbusiness-schema.php
 │   ├── 9936-webp-avif-picture-tag.php
@@ -57,6 +58,7 @@ Naming rules:
 | Path | Lives on the site as | Applied |
 |---|---|---|
 | [`wpcode/8309-floating-book-tour-button.html`](wpcode/8309-floating-book-tour-button.html) | WPCode snippet **8309**, "Floating Book Tour Button (Desktop Only)" — site-wide footer, so it renders on *every* page | ✅ 2026-08-18 |
+| [`wpcode/TODO-ID-message-us-zapier-modal.html`](wpcode/TODO-ID-message-us-zapier-modal.html) | WPCode snippet **ID not yet confirmed**, "South End Club • Message Us" — site-wide, so it renders on *every* page (verified on 20/20 live pages 2026-08-18). Floating bottom-right button + modal wrapping Zapier interface `cm4kje8hw001hp13agzjz9ul9` | ⚠ mirrored 2026-08-18 — **filename pending the WPCode snippet ID**, see note below |
 | [`wpcode/9934-noindex-utility-pages.php`](wpcode/9934-noindex-utility-pages.php) | WPCode snippet **9934**, "Noindex internal & utility pages" — `wpseo_robots_array` + `wpseo_exclude_from_sitemap_by_post_ids` for 8 utility pages | ✅ exported verbatim 2026-08-13 |
 | [`wpcode/9935-localbusiness-schema.php`](wpcode/9935-localbusiness-schema.php) | WPCode snippet **9935**, "LocalBusiness schema (NAP, geo, hours)" — NAP, geo, hours, `areaServed`, description, TikTok in `sameAs` | ✅ exported verbatim 2026-08-13 |
 | [`wpcode/9936-webp-avif-picture-tag.php`](wpcode/9936-webp-avif-picture-tag.php) | WPCode snippet **9936**, "Serve WebP/AVIF via picture tag" — rewrites `<img>` to `<picture>` against `/wp-content/compressx-nextgen/` | ✅ exported verbatim 2026-08-13 |
@@ -69,6 +71,35 @@ The two `se-cal` files are currently **byte-identical** — the same widget is
 deployed on both pages. They are kept as separate files anyway, because they are
 separate things on the site and either can be edited independently; collapsing
 them into one shared file would hide the day they diverge.
+
+### ⚠ `TODO-ID-message-us-zapier-modal.html` — rename this when the ID is known
+
+Every other file here leads with its WPCode snippet ID, because the ID is what
+you search for in WP Admin. This one does not: the ID was not supplied with the
+capture. **The bytes were mirrored anyway rather than waiting** — the whole
+lesson of `se-bk-floating` is that "capture it once we have the details" is how
+a component runs unmirrored in production for months. A missing ID is visibly
+incomplete; a guessed one would be quietly wrong.
+
+To finish: find the snippet in WP Admin → Code Snippets (search `se-crm-btn`),
+read the ID out of the edit URL (`&snippet_id=…`), then `git mv` the file to
+`<id>-message-us-zapier-modal.html` and update the row above.
+
+**The capture itself is proven exact, by a stronger check than the usual
+character count.** This snippet is injected sitewide *outside* Thrive — its own
+markup says so (`Modal (kept out of Thrive wrappers by inserting sitewide via
+Code Snippets)`) — and it contains no `<img>`, so neither Thrive's
+`tve_js_placeholder`/`thrv_wrapper` markup nor CompressX's `<picture>`/`<source>`
+wrappers touch it. Its rendered output is therefore identical to its editor
+source, and the capture diffs **byte-for-byte clean** (4,052 bytes, 111 lines,
+LF) against the block served on `/terms-conditions/`. To re-verify against the
+WPCode editor's own character counter: **4,049 characters** excluding the
+trailing newline (4,052 bytes − 2, since the `•` in line 1 is 3-byte UTF-8), or
+4,050 including it.
+
+This is the exception, not a new rule. **Do not capture other components by
+`curl`** — anything inside a Thrive page, or carrying an image, comes back
+wrapped in output-only markup that corrupts the mirror. See the section below.
 
 ## The law is broader than this directory
 

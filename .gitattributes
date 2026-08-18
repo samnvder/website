@@ -9,3 +9,11 @@ analytics/gtm-container-export.json -text
 # text on commit, which means a fresh checkout would rewrite its line endings
 # and corrupt the file.
 *.pdf -text -diff
+
+# WPCode / Thrive mirrors are paste-back restore points, and the backup law
+# proves them exact by character count (CLAUDE.md rule 3). core.autocrlf is
+# true on Windows here, so a checkout would rewrite their LF endings to CRLF
+# and silently change every count — the working copy would no longer be the
+# file that was verified against live.
+live/wpcode/** -text
+live/thrive/** -text
