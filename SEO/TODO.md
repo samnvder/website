@@ -2,7 +2,7 @@
 
 Working backlog for southendclub.com. Companion to [GUIDELINES.md](GUIDELINES.md) (content rules) and [YOAST-SHEET.md](YOAST-SHEET.md) (exact metadata applied).
 
-**Last updated:** 2026-08-13
+**Last updated:** 2026-08-17
 
 Owner key: **Claude** = doable without you · **Sam** = needs your access or a judgement call
 
@@ -87,6 +87,10 @@ Verified on `master`: **0** dead page-links, **0** `tve-jump` references, **0** 
 | §4 | No blog / informational content | Sam | large · biggest gap |
 | §8 | Pirated All-in-One WP Migration extension — delete | Sam | irreversible |
 | §12 | Homepage listed **twice** in `page-sitemap.xml` | Sam | small · new finding |
+| §13 | 🔴 **Pre-ticked SMS/calls consent on the tour form** — TCPA exposure | Sam | legal call · ~15 min to fix |
+| §14 | 🥈 **Tour bookings are invisible to GA4 and Ads** — handoff + patches ready to run | Claude + Sam | ~1 h · **highest ROI after §1** |
+| §15 | Repo has no `se-bk-floating` widget that runs on live | Claude | medium · silent-loss risk |
+| §16 | `/special-offer/` 404s while its repo file exists | Sam | small |
 | §6 | Page weight 318–767 KB of Thrive HTML | — | deferred |
 | §7 | Body-level duplicate meta | — | cosmetic |
 
@@ -484,12 +488,83 @@ Two defects surfaced, both **in the sheet itself** rather than drift from it —
 
 ---
 
+### 13. 🔴 Pre-ticked SMS & calls consent on the tour form — **Sam** · legal judgement call
+
+Found 2026-08-17 while wiring conversion tracking. Not SEO; logged here because this is the live backlog.
+
+The tour booking form's consent checkbox ships **pre-ticked**:
+
+```html
+<input type="checkbox" id="se-cal-consent" checked="">
+```
+
+Its label covers the Privacy Policy, the Terms, **and** agreement to receive SMS. Separately, the payload posted to `book-tour` hardcodes the channel flags regardless of what the box says:
+
+```js
+send_texts: '1',
+send_calls: '1',
+send_emails: 'now',
+```
+
+Two distinct problems:
+
+1. **Pre-ticked is not affirmative consent.** TCPA express written consent must be an affirmative act. A box already ticked on page load is the exact pattern the rule targets. Submission *is* gated on the box (`if(!consent.checked)`), so consent is technically collected — but it is collected by default, which is the part that doesn't hold up.
+2. **The stored record doesn't reflect the user's choice.** `send_texts`/`send_calls` are constants, so the database cannot evidence per-lead consent. In a dispute the record shows `'1'` for everyone, which is worth less than no record.
+
+The label also bundles calls in with SMS without naming calls prominently.
+
+**Fix:** un-tick by default; derive `send_texts`/`send_calls` from the checkbox state; consider splitting SMS and calls into separate opt-ins. Applies to **both** widgets on **both** live pages — 4 instances (see §15).
+
+**Why it's Sam's:** the remedy is a compliance decision, not a code one, and un-ticking will measurably reduce opt-in rate. That's a trade worth making deliberately. Worth 15 minutes of a lawyer's time before changing anything.
+
+---
+
+### 14. 🥈 Tour bookings invisible to GA4 and Google Ads — **handoff ready to execute**
+
+Found 2026-08-17. **Highest-value item on the board after §1.**
+
+The booking form reports nothing. On success it swaps two divs — no redirect, no URL change, no `dataLayer` push. `GTM-WLRX58RN` carries exactly one tag: GA4 `G-SJN8S5QWXE`. No Google Ads conversion tag, no Meta pixel, no Conversion Linker.
+
+**GA4 has recorded zero tour bookings, ever.** Nobody can say which page drives tours, no paid campaign can optimise toward one, and no funnel change can be measured. Note what this means for the rest of this backlog: **everything below §1 is being prioritised without conversion data.**
+
+Attribution data does exist — `book-tour` already writes `utm_source`, `utm_medium`, `utm_campaign`, `source_page` and `device_type` into Supabase. It has simply never been surfaced. A read-only report over that table is a quick separate win.
+
+**Ready to run:** [HANDOFF-tour-conversion-tracking.md](../HANDOFF-tour-conversion-tracking.md) with paste-ready blocks in [patches/tour-conversion-tracking/](../patches/tour-conversion-tracking/). Repo edits applied; live, GTM and Ads untouched. Part C needs a Google Ads account, which is unconfirmed — **Parts A and B are not blocked on it.**
+
+---
+
+### 15. Repo has no `se-bk-floating` widget that runs on live — **Claude** · silent-loss risk
+
+Found 2026-08-17. Live `/schedule-a-tour/` and `/memberships/` each run **two** booking widgets: the inline calendar (`se-cal-*`) and a floating one (`se-bk-floating-*`, 140 refs/page). **The floating widget appears nowhere in this repo.**
+
+Consequences:
+
+- **Pasting a repo page into Thrive would delete it from production.** Now warned about in [CLAUDE.md](../CLAUDE.md), the handoff, and the patches README — but the underlying drift is unfixed.
+- Any repo-side change to booking silently covers only half of live.
+- It's a variant of the §"repo is not a backup" problem, one level deeper: not just config missing, but **shipped functionality**.
+
+**Fix:** extract the live floating widget into the repo as proper paste-source, the way the `se-cal` pages already are. Then audit whether anything else on live is missing here.
+
+---
+
+### 16. `/special-offer/` returns 404 while its repo file exists — **Sam** · small
+
+Found 2026-08-17. `Website/Pages/Memberships (Category)/special-offer/Special Offer.html` is a complete page including a booking form, but `https://southendclub.com/special-offer/` returns **404**.
+
+Nothing links to it, so there's no live dead link and no SEO harm today. But a promo page exists in source and isn't published — either it was never published, or it was deleted from WP and the source outlived it.
+
+**Decide:** publish it, or mark the repo file clearly as retired. Leaving it ambiguous means the next person patches a page that doesn't exist — which already happened during the 2026-08-17 conversion-tracking work.
+
+---
+
 ## Recommended next step
 
 1. **Google Business Profile** (§1) — ~30 minutes and now clearly the highest-value thing left. It governs the local pack, which is a bigger lever than anything remaining on the website.
 2. **One WP-CLI pass over SSH clears §10, §9 and §5 together** — ~19 exact-string replacements: the stale JSON-LD phone (6), the stale nav anchors (10), and the racquet-sports schema (3). Every find-string is verified present in live HTML and every target verified to exist. **Don't start with the Search & Replace plugin** — it failed three times and never wrote to `post_content`. §10 has the commands and a post-mortem; §9 and §5 have the mapping tables.
 
    One content decision to make first: **Dance Studio** (§9) points at a section that does not exist anywhere on the site. Remove the link, or build the section.
+
+3. **Run the conversion-tracking handoff** (§14) — ~1 hour, and it's the prerequisite for measuring anything. Right now every priority call on this board is being made blind to what actually produces a booked tour.
 
 Then: **stop optimising, start measuring.** Give Google 2–3 weeks to recrawl and let real query data drive the content plan (§4).
 
