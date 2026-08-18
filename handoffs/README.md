@@ -8,6 +8,7 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 
 | # | Handoff | What it does | Time | Blocked? |
 |---|---|---|---|---|
+| **!** | **[lock-down-supabase-rls](lock-down-supabase-rls.md)** | 🔴 **Security — do this first.** The Supabase anon key grants public `SELECT`/`UPDATE`/`DELETE` on `tour_bookings` (231 prospects' name/email/phone) and `tour_referrals` (30 rows, two people each). Anyone can dump the PII or wipe the table, and no restore path is verified. Missing RLS, not a leaked key. | ~30 min | no |
 | 0 | **[publish-tour-tracking-gtm](publish-tour-tracking-gtm.md)** | ⚠️ **Published, not yet reporting.** v7 is live and collecting, but `tour_booked` is not starred as a key event so GA4 still reads `0.00`. **One click, from 2026-08-19.** Also open: delete the 2026-08-18 test booking, and `tour_booking_id` is confirmed `null`. | 1 min | GA4 propagation until 2026-08-19 |
 | 1 | **[tour-conversion-tracking](tour-conversion-tracking.md)** | Makes tour bookings visible to GA4 and Google Ads. Part A ✅ done 2026-08-18; **Part B ✅ published 2026-08-18** (container v7). | ~1h | Part C only — no Google Ads account exists |
 | 2 | **[ga4-hygiene](ga4-hygiene.md)** | Clears MonsterInsights residue. **Low priority — moves no numbers.** | ~20 min | no |
@@ -15,9 +16,11 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 | 4 | **[gtm-conversion-linker](gtm-conversion-linker.md)** | Adds the missing Conversion Linker so Ads can attribute clicks. **Parked on purpose** — must run *before* the Ads conversion tag, never after. | ~10 min | yes — no Google Ads account exists |
 | 5 | **[google-ads-account-setup](google-ads-account-setup.md)** | Optimal Ads account from zero. **Not ready** — needs a month of `tour_booked` data first, and argues GBP §1 should come before any spend. | ~30 min | yes — 6 prerequisites unmet |
 
+**Do `!` before anything else.** It is the only open item that is a live data-protection failure rather than a reporting gap, it was found by accident on 2026-08-18, and the exposure is unbounded until it is closed.
+
 **#0 is one checkbox from done — do not let it close until that box is ticked.** The container was published as v7 on 2026-08-18 and `tour_booked` is collecting, confirmed three ways (published `gtm.js` contains it, DebugView received it at 01:35, tag reported *Succeeded*). But **GA4 still reports `0.00` key events**, because `tour_booked` has not been starred — and it cannot be, until GA4 lists it. Re-checked 2026-08-18 afternoon: *Recent events* showed 11 of 11, unchanged from the 2026-08-17 baseline. That is propagation lag on an event that has fired exactly once. **Re-check from 2026-08-19; it is one click.**
 
-Two other open items: the **2026-08-18 test booking** is a live calendar entry that needs deleting, and **`tour_booking_id` is confirmed `null`**, which the `book-tour` owner must fix before any Ads dedup work. Hygiene is whenever you're next in the account.
+The **2026-08-18 test booking** is half cleared: the Supabase row was deleted 02:00 PDT and the public calendar slot is free, but **Engage Pro appointment `831` — the staff-facing calendar — is still live and needs cancelling by the owner.** Also open: **`tour_booking_id` is confirmed `null`**, which the `book-tour` owner must fix before any Ads dedup work. Hygiene is whenever you're next in the account.
 
 Backlog context for all three: [SEO/TODO.md](../SEO/TODO.md) §14. Property config and the pre-tracking baseline: [analytics/GA4-SNAPSHOT.md](../analytics/GA4-SNAPSHOT.md).
 
