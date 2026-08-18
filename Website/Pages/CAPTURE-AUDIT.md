@@ -49,20 +49,20 @@ rule 4 of the backup law in `CLAUDE.md`.
 - `youth-programs/youth-programs.html`
 
 > `Memberships (Category)/memberships/Memberships Page HTML.html`:
-> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. That wrapper is output-only, but removing it means matching its closing div - do that by hand, do not guess.
+> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. Whether it belongs depends on what this capture mirrors. Mirroring one Custom HTML element (its code box, as under live/thrive/pages/): the wrapper is added on output and should go. Mirroring a page tree (as under Website/Pages/, alongside thrv-page-section and thrv_text_element siblings): it is the editor node for that block and must stay. Either way this script will not touch it, because removing one means matching its closing div - settle the frame first, then do it by hand.
 
 > `Memberships (Category)/special-offer/Special Offer.html`:
-> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. That wrapper is output-only, but removing it means matching its closing div - do that by hand, do not guess.
+> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. Whether it belongs depends on what this capture mirrors. Mirroring one Custom HTML element (its code box, as under live/thrive/pages/): the wrapper is added on output and should go. Mirroring a page tree (as under Website/Pages/, alongside thrv-page-section and thrv_text_element siblings): it is the editor node for that block and must stay. Either way this script will not touch it, because removing one means matching its closing div - settle the frame first, then do it by hand.
 
 > `Tours (Category)/schedule-a-tour/Membership Tour Booking Page.html`:
-> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. That wrapper is output-only, but removing it means matching its closing div - do that by hand, do not guess.
+> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. Whether it belongs depends on what this capture mirrors. Mirroring one Custom HTML element (its code box, as under live/thrive/pages/): the wrapper is added on output and should go. Mirroring a page tree (as under Website/Pages/, alongside thrv-page-section and thrv_text_element siblings): it is the editor node for that block and must stay. Either way this script will not touch it, because removing one means matching its closing div - settle the frame first, then do it by hand.
 
 > `Tours (Category)/schedule-an-event-viewing/Event Tour Booking Page.html`:
-> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. That wrapper is output-only, but removing it means matching its closing div - do that by hand, do not guess.
+> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. Whether it belongs depends on what this capture mirrors. Mirroring one Custom HTML element (its code box, as under live/thrive/pages/): the wrapper is added on output and should go. Mirroring a page tree (as under Website/Pages/, alongside thrv-page-section and thrv_text_element siblings): it is the editor node for that block and must stay. Either way this script will not touch it, because removing one means matching its closing div - settle the frame first, then do it by hand.
 
 > `index/Index.html`:
 > **Warning:** Thrive header/footer symbol markup present. That is template chrome, not page content - the capture is probably wider than the element you mean to mirror.
-> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. That wrapper is output-only, but removing it means matching its closing div - do that by hand, do not guess.
+> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. Whether it belongs depends on what this capture mirrors. Mirroring one Custom HTML element (its code box, as under live/thrive/pages/): the wrapper is added on output and should go. Mirroring a page tree (as under Website/Pages/, alongside thrv-page-section and thrv_text_element siblings): it is the editor node for that block and must stay. Either way this script will not touch it, because removing one means matching its closing div - settle the frame first, then do it by hand.
 
 > `testimonials (draft)/Testimonials HTML.html`:
-> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. That wrapper is output-only, but removing it means matching its closing div - do that by hand, do not guess.
+> **Warning:** thrv_wrapper thrv_custom_html_shortcode div present. Whether it belongs depends on what this capture mirrors. Mirroring one Custom HTML element (its code box, as under live/thrive/pages/): the wrapper is added on output and should go. Mirroring a page tree (as under Website/Pages/, alongside thrv-page-section and thrv_text_element siblings): it is the editor node for that block and must stay. Either way this script will not touch it, because removing one means matching its closing div - settle the frame first, then do it by hand.
