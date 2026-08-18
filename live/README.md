@@ -28,7 +28,7 @@ live/
 │   └── retired/                   Applied once, then removed from the site
 │       └── 9952-fix-stale-phone-in-jsonld.php
 └── thrive/
-    └── pages/<page-slug>/<widget>.js    Custom HTML elements inside Thrive pages
+    └── pages/<page-slug>/<widget>.html  Custom HTML elements inside Thrive pages
 ```
 
 Naming rules:
@@ -41,11 +41,11 @@ Naming rules:
 - **`wpcode/retired/`** → snippets that were applied to the site and later
   removed. They are kept because the source is worth reading, but they are *not*
   running, and the top-level directory must only ever hold things that are.
-- **Thrive** → `pages/<page-slug>/<widget-id>.js`, where the widget id is the
+- **Thrive** → `pages/<page-slug>/<widget-id>.html`, where the widget id is the
   DOM prefix used by that widget (`se-cal`, `se-bk-floating`). One file per
-  Custom HTML element, holding the **inner JS only** — no `<script>` tags, no
-  Thrive wrapper markup (capturing the wrapper corrupts page structure on
-  re-paste).
+  Custom HTML element, holding the **complete element** exactly as the Thrive
+  code editor shows it: opening comment banner, `<style>`, markup, and every
+  `<script>` through the final `</script>`. Paste it back with select-all.
 
 ## Contents
 
@@ -57,28 +57,40 @@ Naming rules:
 | [`wpcode/9936-webp-avif-picture-tag.php`](wpcode/9936-webp-avif-picture-tag.php) | WPCode snippet **9936**, "Serve WebP/AVIF via picture tag" — rewrites `<img>` to `<picture>` against `/wp-content/compressx-nextgen/` | ✅ exported verbatim 2026-08-13 |
 | [`wpcode/9951-renamed-page-redirects.php`](wpcode/9951-renamed-page-redirects.php) | WPCode snippet **9951**, "SEO - Renamed-page 301 redirects" — 301s for three renamed pages | ✅ applied & verified 2026-08-13 |
 | [`wpcode/retired/9952-fix-stale-phone-in-jsonld.php`](wpcode/retired/9952-fix-stale-phone-in-jsonld.php) | Was WPCode snippet **9952**, "SEO - Fix stale phone number in JSON-LD" | ⛔ applied, verified, then deleted 2026-08-13 — **not on the site**. It masked the problem instead of fixing it; see [SEO/TODO.md](../SEO/TODO.md) §10 |
-| [`thrive/pages/schedule-a-tour/se-cal.js`](thrive/pages/schedule-a-tour/se-cal.js) | Custom HTML element on `/schedule-a-tour/` (page ID 7472) — inline booking calendar | ✅ 2026-08-17 |
-| [`thrive/pages/memberships/se-cal.js`](thrive/pages/memberships/se-cal.js) | Custom HTML element on `/memberships/` (page ID 8812) — inline booking calendar | ⏳ mirrored, paste pending |
+| [`thrive/pages/schedule-a-tour/se-cal.html`](thrive/pages/schedule-a-tour/se-cal.html) | Custom HTML element on `/schedule-a-tour/` (page ID 7472) — inline booking calendar | ✅ 2026-08-17 |
+| [`thrive/pages/memberships/se-cal.html`](thrive/pages/memberships/se-cal.html) | Custom HTML element on `/memberships/` (page ID 8812) — inline booking calendar | ⏳ mirrored, paste pending |
 
-## Why Thrive elements are stored as inner JS, not whole elements
+The two `se-cal` files are currently **byte-identical** — the same widget is
+deployed on both pages. They are kept as separate files anyway, because they are
+separate things on the site and either can be edited independently; collapsing
+them into one shared file would hide the day they diverge.
 
-It is tempting to store the whole Custom HTML element so it can be pasted back
-with a single select-all — that is exactly how `wpcode/8309` works, and it is by
-far the easier paste.
+## ⚠️ Capture by asking for a paste, not by scraping the rendered page
 
-**It does not work for Thrive**, and this was measured rather than assumed.
-Reconstructing the `/schedule-a-tour/` element from rendered HTML produced 1,472
-lines against the 1,471 the editor actually holds, and the reconstruction
-contained a leading `<div class="thrv_wrapper thrv_custom_html_shortcode">` plus
-three `<code class="tve_js_placeholder">` opens against only two `</code>`
-closes. Those are wrappers Thrive adds on *output*; they are not in the element.
-Pasting them back injects stray markup into the page.
+**Ask whoever has the admin screen open to copy the editor's contents and paste
+them to you.** The editor is the authoritative copy. Everything else is a
+reconstruction, and reconstructions of Thrive elements are wrong by default:
 
-WPCode is different because it injects its snippet raw into the footer with no
-wrapper, so what is served is what is stored.
+Thrive wraps script tags in `<code class="tve_js_placeholder">` **on output**,
+and the page renders the element inside a
+`<div class="thrv_wrapper thrv_custom_html_shortcode">`. None of that exists in
+the editor. Slicing `/schedule-a-tour/` straight out of `curl` output yielded
+1,472 lines against the editor's 1,471, carrying a stray leading `</div>`, that
+wrapper div, and three placeholder opens against two closes. Paste that back and
+you inject junk markup into the page.
 
-So: **WPCode → whole snippet, paste with select-all. Thrive → inner JS only,
-replace the body between the `<script>` tags.**
+WPCode is the easy case — it injects its snippet raw into the footer, so what is
+served is what is stored, give or take one stray `</div>` from the surrounding
+template.
+
+If a paste genuinely isn't available, a rendered capture can be cleaned: drop
+everything before the opening comment banner, strip every
+`<code class="tve_js_placeholder">` and `</code>`, then **prove the result** by
+checking its inner JS against a copy already known to be exact, and by matching
+the character count the editor itself reports. Both `se-cal` mirrors here were
+built that way and verified against the patched artifacts in
+[`patches/`](../patches/) before being committed. It works, but it is three
+extra steps and a chance to be subtly wrong — asking for the paste is better.
 
 ## Why the WPCode snippets in particular matter
 

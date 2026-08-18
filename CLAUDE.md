@@ -52,15 +52,15 @@ The layout and naming rules are in **[live/README.md](./live/README.md)**:
 | Code lives on the site as | Mirror it to |
 |---|---|
 | WPCode snippet | `live/wpcode/<id>-<kebab-name>.<php\|html>` |
-| Custom HTML element in a Thrive page | `live/thrive/pages/<page-slug>/<widget-id>.js` |
+| Custom HTML element in a Thrive page | `live/thrive/pages/<page-slug>/<widget-id>.html` |
 
 Three rules that make the mirror trustworthy:
 
-1. **Capture from production, not from the repo.** `curl` the live page and slice out the block. The repo lags live; assuming otherwise is how the drift above happened.
+1. **Get the current code by asking for a paste.** Whoever has the admin screen open should copy the editor's contents and paste them into the conversation. The editor is authoritative; the rendered page is not. Thrive adds `<code class="tve_js_placeholder">` wrappers and a `thrv_wrapper` div **on output** that exist nowhere in the editor, so a `curl` capture pasted back injects junk markup. Never take the repo's copy as current either — the repo lags live, which is how the drift above happened.
 2. **Commit the unpatched capture first, then the patched version.** Two commits. Git history becomes the restore point, so a bad paste is `git show HEAD~1:<path>` away from being undone.
-3. **Prove the capture is exact.** Match the byte count the live editor reports, and confirm that stripping your change reproduces the original byte-for-byte. A mirror nobody verified is worse than none — it will be trusted.
+3. **Prove the capture is exact.** Match the character count the live editor reports, and confirm that stripping your change reproduces the original byte-for-byte. A mirror nobody verified is worse than none — it will be trusted.
 
-Store the **inner JS only** for Thrive elements: no `<script>` tags, no wrapper markup. Thrive's `<code class="tve_js_placeholder">` closing line carries trailing layout `<div>`s, and re-pasting those corrupts page structure.
+Mirror the **whole element or snippet**, not a fragment, so it can be pasted back with a single select-all. Partial selection inside a 1,400-line editor is where mistakes happen.
 
 ## SEO
 
