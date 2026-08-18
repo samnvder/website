@@ -4,6 +4,11 @@
 This directory is the answer to the question *"what is actually running on
 southendclub.com right now?"* — see [CLAUDE.md § The backup law](../CLAUDE.md).
 
+Pasted code is the easiest case, not the whole law. The law covers **anything
+the live site depends on that lives in a single mutable place outside this
+repo** — tag-manager containers and analytics config included. See
+[The law is broader than this directory](#the-law-is-broader-than-this-directory).
+
 ## What this is, and what it is not
 
 **This is a mirror, not a deployment target.** Editing a file here changes
@@ -64,6 +69,50 @@ The two `se-cal` files are currently **byte-identical** — the same widget is
 deployed on both pages. They are kept as separate files anyway, because they are
 separate things on the site and either can be edited independently; collapsing
 them into one shared file would hide the day they diverge.
+
+## The law is broader than this directory
+
+The rule this directory exists to serve is not *"mirror pasted code"*. It is:
+
+> **Anything the live site depends on that lives in a single mutable place
+> outside this repo gets mirrored here, if it can be.**
+
+Pasted code is only the easiest case. The same reasoning covers tag-manager
+containers, analytics definitions, redirect tables — any configuration nobody
+can diff, review or restore, sitting in one editable place, which the site
+needs in order to work. `se-bk-floating` ran on every page of production for
+months and existed nowhere here; that is the failure mode, and it is not
+specific to code.
+
+What differs between cases is **how faithfully** the thing can be mirrored, and
+that difference matters enormously:
+
+| Fidelity | What you get | Examples |
+|---|---|---|
+| **Lossless copy** | The exact bytes. Paste back to restore. | WPCode snippets, Thrive Custom HTML elements |
+| **Restore point** | A platform export the platform will re-import. Not the bytes of a UI, but functionally the same configuration. | [`analytics/gtm-container-export.json`](../analytics/gtm-container-export.json) |
+| **Record only** | A written description. Restoring means a human recreating it by hand from the notes. | [`analytics/GA4-SNAPSHOT.md`](../analytics/GA4-SNAPSHOT.md), Yoast per-page metadata, the 7 WP menus |
+
+**Do not blur the last two.** A GTM export is a genuine restore point — Tag
+Manager has Admin → Import Container, and this file goes back in. `GA4-SNAPSHOT.md`
+is a **record, not a restore point**: GA4 offers no import at all, so if the
+custom dimensions or the key event are deleted, someone recreates all of it by
+hand from that file. Both are worth having. Only one of them is a backup.
+
+So the mirror map, extending the table in [CLAUDE.md](../CLAUDE.md):
+
+| It lives on the site as | Mirror it to | Fidelity |
+|---|---|---|
+| WPCode snippet | `live/wpcode/<id>-<kebab-name>.<php\|html>` | lossless |
+| Custom HTML element in a Thrive page | `live/thrive/pages/<page-slug>/<widget-id>.html` | lossless |
+| Tag Manager container config | [`analytics/gtm-container-export.json`](../analytics/gtm-container-export.json) — **published** version, re-exported after every publish | restore point |
+| GA4 property config | [`analytics/GA4-SNAPSHOT.md`](../analytics/GA4-SNAPSHOT.md) | record only |
+
+Two things follow. **Export the published version, never the workspace** — a
+workspace export captures unsaved in-progress edits, which is the opposite of a
+restore point. And **a stale export is worse than none**, because it reads as
+current and would restore the wrong configuration; re-export on every container
+publish.
 
 ## ⚠️ Capture by asking for a paste, not by scraping the rendered page
 

@@ -53,6 +53,15 @@ The layout and naming rules are in **[live/README.md](./live/README.md)**:
 |---|---|
 | WPCode snippet | `live/wpcode/<id>-<kebab-name>.<php\|html>` |
 | Custom HTML element in a Thrive page | `live/thrive/pages/<page-slug>/<widget-id>.html` |
+| Tag Manager container config | `analytics/gtm-container-export.json` — **published** version, re-exported after every publish |
+
+The law is broader than pasted code: **anything the live site depends on that
+lives in a single mutable place outside this repo gets mirrored here if it can
+be.** Code mirrors losslessly; configuration mirrors as a platform export where
+one exists (GTM), and as a written record where none does (GA4 — note that
+[analytics/GA4-SNAPSHOT.md](./analytics/GA4-SNAPSHOT.md) is a *record*, not a
+restore point, because GA4 has no import). See
+[live/README.md](./live/README.md#the-law-is-broader-than-this-directory).
 
 Three rules that make the mirror trustworthy:
 
