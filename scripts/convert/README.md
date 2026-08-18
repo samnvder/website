@@ -85,6 +85,41 @@ wrapped images, not 412.
 Tests: `npm run test:capture-converter` (28 cases — the conversion rules, the
 recursion, and the byte-stability of the Markdown record).
 
+#### The rules are a whitelist — verify by diff, not by tests
+
+This script strips **shapes we have actually observed**. It is not a general
+rule and cannot be: anything a plugin injects in an unrecognized shape passes
+through silently.
+
+That is not theoretical. Thrive emits `tve_js_placeholder` two ways:
+
+```html
+A  <script><code class="tve_js_placeholder">JS</code></script>
+B  <code class="tve_js_placeholder"><script>JS</script></code>
+```
+
+The original rule was written from the first sample seen and matched only A, so
+the fitness page's JSON-LD block kept a stray `</code>` through conversion
+(fixed in `3bbe574`). **Fourteen tests were green on the broken rule**, because
+they were written from the same sample the rule was. The gap surfaced only when
+a converted capture was diffed byte-for-byte against the whole page file.
+
+So after touching these rules, or before trusting a capture, run the diff and
+read what is left over:
+
+```bash
+node scripts/convert/live-capture-to-source.js <capture.html> --diff "<page file>"
+```
+
+A leftover close tag, an unbalanced wrapper, or a surviving `compressx-nextgen`
+URL each mean a **rule is incomplete**, not that the page drifted.
+
+When you add a shape, add two tests: one that would have failed before the fix,
+and one proving the new rule does not eat genuine page content. The second
+matters more — a rule that is too aggressive fails silently, and the existing
+guards (prose containing `<code>npm run guard</code>`, a `5 > 3` in body text,
+whitespace-only lines) all exist because a draft rule ate something real.
+
 ## Advanced
 
 - **Files:** convert-to-local.js, convert-to-local.readme, live-capture-to-source.js, testing/test-live-capture-to-source.js
