@@ -2,7 +2,7 @@
 
 Working backlog for southendclub.com. Companion to [GUIDELINES.md](GUIDELINES.md) (content rules) and [YOAST-SHEET.md](YOAST-SHEET.md) (exact metadata applied).
 
-**Last updated:** 2026-08-17
+**Last updated:** 2026-08-18
 
 Owner key: **Claude** = doable without you · **Sam** = needs your access or a judgement call
 
@@ -87,6 +87,12 @@ Verified on `master`: **0** dead page-links, **0** `tve-jump` references, **0** 
 | §4 | No blog / informational content | Sam | large · biggest gap |
 | §8 | Pirated All-in-One WP Migration extension — delete | Sam | irreversible |
 | §12 | Homepage listed **twice** in `page-sitemap.xml` | Sam | small · new finding |
+| §18 | 🔴 **No backup of the Supabase database.** 261 customer PII records in exactly one place | Sam | **highest unrecoverable risk on the board** |
+| §19 | ⚠️ **231 consent records cannot be substantiated** — extends §13, now with a row count | Sam | legal · see §13 |
+| §20 | Undocumented second application — 43 `central_*` tables; `central_clubs` repeats the RLS defect | Claude | medium |
+| §21 | `Anon can insert bookings` — anyone can flood the tour calendar | Claude | low · rate limit |
+| §22 | Engage Pro appointment **831** (test booking) still on the staff calendar | Sam | 2 min |
+| §23 | **Google Ads account** — handoff written, 6 prerequisites unmet | Sam | ~30 min · blocked until ~09-18 |
 | §13 | 🔴 **Pre-ticked SMS/calls consent on the tour form** — TCPA exposure | Sam | legal call · ~15 min to fix |
 | §14 | 🥈 **Tour bookings are invisible to GA4 and Ads** — handoff + patches ready to run | Claude + Sam | ~1 h · **highest ROI after §1** |
 | §15 | Repo has no `se-bk-floating` widget that runs on live | Claude | medium · silent-loss risk |
@@ -515,6 +521,10 @@ The label also bundles calls in with SMS without naming calls prominently.
 
 **Fix:** un-tick by default; derive `send_texts`/`send_calls` from the checkbox state; consider splitting SMS and calls into separate opt-ins. Applies to **both** widgets on **both** live pages — 4 instances (see §15).
 
+> ⚠️ **Escalated 2026-08-18 — this is no longer hypothetical.** The RLS audit (§18) established the table holds **231 real prospect records**. Every one of them carries `send_texts: '1'` and `send_calls: '1'`, because those are constants in the payload rather than a reading of the checkbox — which was itself **pre-ticked**. So the club holds 231 people recorded as having consented to SMS and calls, where the record cannot evidence any individual's actual choice.
+>
+> **If anyone is texting or calling that list, the consent record does not substantiate it.** That is the practical exposure, and it grows with every booking until the payload reads the checkbox. Tracked separately as §19 for visibility.
+
 **Why it's Sam's:** the remedy is a compliance decision, not a code one, and un-ticking will measurably reduce opt-in rate. That's a trade worth making deliberately. Worth 15 minutes of a lawyer's time before changing anything.
 
 ---
@@ -572,6 +582,68 @@ Found 2026-08-17. `Website/Pages/Memberships (Category)/special-offer/Special Of
 Nothing links to it, so there's no live dead link and no SEO harm today. But a promo page exists in source and isn't published — either it was never published, or it was deleted from WP and the source outlived it.
 
 **Decide:** publish it, or mark the repo file clearly as retired. Leaving it ambiguous means the next person patches a page that doesn't exist — which already happened during the 2026-08-17 conversion-tracking work.
+
+---
+
+### 18. 🔴 No backup of the Supabase database — **Sam** · highest unrecoverable risk here
+
+Found during the 2026-08-18 RLS audit ([record](../security/2026-08-18-supabase-rls-exposure.pdf)). **Not caused by that bug and not fixed by closing it** — it was true before and is true now.
+
+**261 records of customer personal data — 231 tour bookings, 30 referrals — exist in exactly one place.** No dump, no point-in-time recovery verified, no export in this repo.
+
+The irony is sharp enough to be worth stating: this repo has a written [backup law](../live/README.md) covering pasted code, WPCode snippets, Thrive elements and now GTM container config. **The actual customer data has nothing.** The law grew from a booking widget that existed in one place; the bookings themselves were never considered.
+
+Every other open item here is recoverable. This one is not — a dropped table, a bad migration, or a mistaken `DELETE` takes the club's entire prospect pipeline with it, and until 2026-08-18 anyone on the internet could have issued that `DELETE`.
+
+**Fix:** enable point-in-time recovery if the Supabase plan allows, otherwise a scheduled `pg_dump` to storage the database cannot itself reach. **Then restore it somewhere and confirm it works** — an unverified backup is a belief, not a backup. Note the same reasoning already applied to `se-bk-floating`.
+
+⚠️ **A dump of these tables is 261 people's names, emails and phone numbers. It does not go in this repo** — see [security/README.md](../security/README.md).
+
+---
+
+### 19. ⚠️ 231 consent records cannot be substantiated — **Sam** · see §13
+
+Split out from §13 because the RLS audit put a number on it. `send_texts: '1'` and `send_calls: '1'` are hardcoded constants, the consent checkbox ships pre-ticked, and there are **231 rows**. Full detail and the remedy are in §13; this exists so the scale is visible on the board rather than buried in a paragraph.
+
+---
+
+### 20. Undocumented second application — 43 `central_*` tables — **Claude** · medium
+
+The 2026-08-18 RLS enumeration (via `pg_class`, after the PostgREST root returned 401) found **45 tables, not the handful the handoffs assumed**. Forty-three are `central_*`, belonging to **a second application this repo never mentions**.
+
+Two things follow:
+
+1. **`central_clubs` repeats the root-cause defect.** Its policy is named *"Anon can read clubs by slug"* but has `qual = true`, so it returns every club. Only 3 non-sensitive rows today — but it is the same class of error as the two that exposed 261 people, which suggests the pattern rather than the instance is the problem.
+2. **34 of 45 tables correctly deny anon; nine are intentionally public** (events, classes, polls, surveys, reference data). That leaves no *known* exposure — but nobody has documented what this second application is, who owns it, or whether this repo's rules apply to it.
+
+**Do:** identify and document the `central_*` application, then audit its policies for the missing-`TO`-clause pattern.
+
+---
+
+### 21. `Anon can insert bookings` — spam vector — **Claude** · low
+
+Deliberately left in place during the 2026-08-18 fix, because removing it risked breaking the booking form and the priority was closing the disclosure hole without collateral damage. That was the right call.
+
+It is INSERT-only with no `USING` clause, so it cannot disclose or destroy anything. But the anon key is public in page source, so **anyone can write rows into `tour_bookings`** — flooding the tour calendar with fake appointments that staff would prepare for.
+
+**Do:** rate-limit at the edge function, add a CAPTCHA or a simple honeypot, or move the insert behind the edge function's service role entirely. Not urgent; it needs someone to bother.
+
+---
+
+### 22. Engage Pro appointment `831` still on the staff calendar — **Sam** · 2 min
+
+The 2026-08-18 verification booking is half cleared: the Supabase row was deleted and the public slot freed, but the **staff-facing Engage Pro appointment `831` is still live** and needs cancelling by the owner. Someone may prepare for a tour that is not happening.
+
+---
+
+### 23. Google Ads account — **Sam** · handoff written, deliberately blocked
+
+[handoffs/google-ads-account-setup.md](../handoffs/google-ads-account-setup.md) is written and ready, with **six prerequisites currently unmet**. It is blocked on purpose, for two reasons worth repeating here:
+
+1. **Smart bidding needs ~15–30 conversions/month and nobody knows South End's tour volume** — until 2026-08-18 it was unmeasurable. [handoffs/read-tour-volume.md](../handoffs/read-tour-volume.md) answers it from ~2026-09-18. **Do not pick a bid strategy before then.**
+2. **§1 (GBP) should happen first.** The club already ranks **1.33 for its own name**, 62.6% of sessions are organic, and the GBP has 192 reviews with an empty description. Buying clicks before fixing the free listing is buying what you already have.
+
+Also blocking: the Conversion Linker ([handoff](../handoffs/gtm-conversion-linker.md)) **must** run before any Ads conversion tag — it cannot backfill — and `tour_booking_id` is confirmed `null`, which weakens Ads deduplication until the `book-tour` owner returns an appointment id.
 
 ---
 
