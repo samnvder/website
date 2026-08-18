@@ -631,7 +631,10 @@ function main() {
   const canonicalJsonBefore = fs.existsSync(canonicalJsonPath)
     ? fs.readFileSync(canonicalJsonPath, 'utf8')
     : '';
-  const canonicalJsonAfter = `${JSON.stringify(model.raw, null, 2)}\n`;
+  // Keep the generated text on the file's existing line endings, or these two
+  // always report "would update" on a CRLF checkout even when nothing changed.
+  const canonicalJsonAfter = matchEol(`${JSON.stringify(model.raw, null, 2)}
+`, canonicalJsonBefore);
   changes.push({
     relPath: CANONICAL_JSON_REL,
     changed: canonicalJsonBefore !== canonicalJsonAfter,
@@ -644,7 +647,7 @@ function main() {
   const canonicalMdBefore = fs.existsSync(canonicalMdPath)
     ? fs.readFileSync(canonicalMdPath, 'utf8')
     : '';
-  const canonicalMdAfter = renderAlterationsMarkdown(model);
+  const canonicalMdAfter = matchEol(renderAlterationsMarkdown(model), canonicalMdBefore);
   changes.push({
     relPath: CANONICAL_MD_REL,
     changed: canonicalMdBefore !== canonicalMdAfter,
