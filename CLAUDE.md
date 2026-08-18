@@ -1,6 +1,16 @@
 # CLAUDE.md
 
-Entry point for a fresh session. Read this, then [README.md](./README.md) and [AI-RULES.md](./AI-RULES.md).
+Entry point for a fresh session. Read this, then [README.md](./README.md) and [AI-RULES.md](./AI-RULES.md). For **what to work on**, go to [handoffs/README.md](./handoffs/README.md) — it is the priority index, and it outranks the ordering claims in any other file.
+
+## ⚠️ You are probably not the only agent in this repo
+
+Sessions run concurrently here. On 2026-08-18 two agents committed within a minute of each other, and one of them swept another's uncommitted working-tree changes into an unrelated commit — so the change landed correctly but the history now attributes it to the wrong work.
+
+Three habits that avoid it:
+
+- **`git log --oneline -5` and `git status` before you start.** The tree may have moved since your context was built.
+- **Stage and commit in one step, straight after the edit.** Every second a change sits unstaged is a window for someone else's `git add`.
+- **An untracked file may be someone's work in progress.** `git status` showing `??` is not permission to overwrite it — read it first. This has already cost one file that had no git copy to restore from.
 
 ## What this repo is
 

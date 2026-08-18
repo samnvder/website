@@ -6,6 +6,12 @@ Working backlog for southendclub.com. Companion to [GUIDELINES.md](GUIDELINES.md
 
 Owner key: **Claude** = doable without you · **Sam** = needs your access or a judgement call
 
+> **This file is the backlog, not the running order.** It holds the full detail and the reasoning for every item, and its sections are referenced by number from elsewhere — but **[handoffs/README.md](../handoffs/README.md) is the priority index**, and it wins on ordering.
+>
+> §1 below is still the highest-*value* item on the board and that has not changed. But value is only one axis: a few items rank above it because losing them is permanent and cheap to prevent, not because they are worth more. The index reconciles those axes and states its rationale; this file deliberately does not.
+>
+> If you are an agent picking up work, start at the index. Come here for the *why*.
+
 ---
 
 ## 🥇 START HERE — Google Business Profile (§1)
