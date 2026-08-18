@@ -33,7 +33,7 @@ live/
 │   ├── 9951-renamed-page-redirects.php
 │   ├── 9926-membership-builder.js               Normal join page pricing
 │   ├── 7315-membership-builder-discounted-enrollment.js  Promo pricing
-│   ├── 7966-membership-builder-summer-offer.js   Expired offer; toggle TBC
+│   ├── 7966-membership-builder-summer-offer.js   Reusable offer template
 │   └── retired/                   Applied once, then removed from the site
 │       └── 9952-fix-stale-phone-in-jsonld.php
 └── thrive/

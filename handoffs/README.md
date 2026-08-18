@@ -22,7 +22,6 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 | **10** | **Capture `/get-answers/`** — [§26](../SEO/TODO.md). Live, indexed, in the sitemap, with no source in this repo. Do it in the same Thrive session as #8. | ~15 min | no |
 | **11** | **Decide what `Website/Pages/index/Index.html` is** — [§25](../SEO/TODO.md). It is the only page file embedding the Thrive header symbol, and it is a **December 2025 snapshot** (countdown targets Jan 1 2026). Either declare it a whole-page mirror **and re-capture it**, or replace it with a content fragment. ⚠️ Declaring it authoritative *without* re-capturing is worse than leaving it. Needs a Sam decision. | ~30 min | needs decision |
 | **12** | **Fix or retire `npm run convert:local`** — `DIRECTORIES_TO_SCAN` is `['Pages','Components']`, but pages live at `Website/Pages`. From the repo root it silently skips every page and rewrites `Components/` only, leaving the tree half-converted with no warning. Demonstrated accidentally 2026-08-18. Retiring it likely takes the three root `index-*.html` variants and `dev-index.html` with it. | ~20 min | needs decision — is local preview still used? |
-| 8 | **[mirror-membership-builders](mirror-membership-builders.md)** | 🟡 **Two of three done 2026-08-18.** #9926 and #7315 captured into `live/wpcode/` and both are **byte-identical to their repo copies**, so the pricing guard now demonstrably checks what is running. **#7966 (summer offer) still outstanding** — needs one owner paste plus its toggle state. | ~10 min left | needs 1 owner paste |
 
 > ### ⚠️ Read this before picking anything up
 >
@@ -49,6 +48,7 @@ Backlog context for all three: [SEO/TODO.md](../SEO/TODO.md) §14. Property conf
 
 | Handoff | Outcome |
 |---|---|
+| [mirror-membership-builders](mirror-membership-builders.md) | ✅ Closed 2026-08-18. All three membership builders (#9926, #7315, #7966) mirrored into `live/wpcode/`. #9926 and #7315 proved **byte-identical** to their repo copies, so the pricing guard is verified to check what is actually running. #7966 drifted (dates + `offer:` tag, no pricing) and is a **reusable offer template** — its header carries a pre-launch checklist. Two queued pricing edits settled as *do not apply*. |
 | [consolidate-snippet-mirrors](consolidate-snippet-mirrors.md) | ✅ Closed 2026-08-18. All five WPCode mirrors now live under `live/wpcode/` with ID-prefixed names, 9952 in `retired/`, `SEO/snippets/` gone. Repo-only — no live system touched. |
 | [link-search-console](link-search-console.md) | ✅ Closed 2026-08-17. GSC linked to GA4, both reports published, query data live immediately. GSC owner access had to be added first. |
 | [SEO/HANDOFF.md](../SEO/HANDOFF.md) | Closed 2026-08-07. Kept as a record of hypothesis-vs-reality, plus two reusable verification scripts. |
@@ -294,32 +294,7 @@ specifically flag every block whose measured destination differs from where it
 currently lives.
 ```
 
-### 8 · Mirror the membership builder snippets
+### 8 · Mirror the membership builder snippets — ✅ closed, kickoff retired
 
-```
-Execute handoffs/mirror-membership-builders.md in this repo.
+All three snippets are mirrored; see the [handoff](mirror-membership-builders.md) for the outcome.
 
-Two of three are done. #9926 and #7315 were captured on 2026-08-18 and
-both proved byte-identical to their repo paste-source copies, so the
-pricing guard demonstrably checks what is actually running for those two.
-
-What is left is #7966 (summer offer, WPCode). Step 1 is a human gate: ask
-the owner to open it, Ctrl+A, Ctrl+C, paste it, and report its toggle
-state and character count. Do not curl it -- Thrive adds wrapper markup
-on output and the capture would be corrupt.
-
-Commit the unpatched capture first, then add the header in a second
-commit, then diff against
-"Website/Pages/Memberships (Category)/memberships/Discounted Enrollment/membership builder JS-discount-enrollment.js".
-
-Do not assume it will differ. The same prediction was made for #7315 on
-the strength of its snippet title and was wrong -- a title is not evidence
-about contents.
-
-One known discrepancy to settle: the repo copy has young-family discounts
-{1: 25, 2: 15} where membership-pricing-source.json says {1: 30, 2: 20}.
-Whatever the live capture shows is what is being charged. If #7966 is
-toggled OFF, mirror it to live/wpcode/retired/ instead.
-
-Stop at the human gate in step 8 before applying any pricing change.
-```

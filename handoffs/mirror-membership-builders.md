@@ -1,6 +1,6 @@
 # Handoff — Mirror the three membership builder snippets into `live/wpcode/`
 
-**Created:** 2026-08-18 · **Status:** 🟡 ALL THREE MIRRORED 2026-08-18 — open only on **#7966's toggle state** and two owner decisions · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
+**Created:** 2026-08-18 · **Status:** ✅ CLOSED 2026-08-18 — all three mirrored and diffed · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
 **Est.:** ~25 min. No live-site *change*; read-only in WP Admin.
 
 > **Execution convention:** written to be run by a Claude Code agent in Cowork. See [CLAUDE.md § Handoffs](../CLAUDE.md).
@@ -37,7 +37,7 @@ Its young-family discounts are confirmed live as `{1: 25, 2: 15}` where #9926 an
 - [x] Headers added as a separate commit, so stripping them reproduces the editor contents (`dbafa08` → headers)
 - [x] Diff of live vs repo paste-source for #9926 and #7315 — **identical**
 - [x] Same for #7966 — **differs**: dates + comment + `offer:` tag; no pricing figure
-- [ ] #7966's toggle state recorded — on or off ⟵ **the only capture item still open**
+- [x] #7966's toggle state recorded — **enabled but inert**: reusable offer template, no page published to bind to
 - [x] `live/README.md` layout block updated to list them
 - [x] CLAUDE.md's "not mirrored" gap note replaced with the outcome
 
@@ -106,9 +106,9 @@ npm run guard:membership-pricing
 
 The guard reads the repo copies, so it will not see the live captures. State plainly in the report whether live agrees with canonical — that is the answer this whole handoff exists to produce.
 
-### 6 · If #7966 is toggled OFF
+### 6 · ~~If #7966 is toggled OFF~~ — resolved
 
-Move its mirror to `live/wpcode/retired/` and say why. `live/wpcode/` top level must only hold code that is *running* — the rule `9952` established.
+It is **enabled but inert**, and stays at the top level of `live/wpcode/`. `retired/` is for snippets *removed* from the site (the `9952` rule); #7966 was never removed and is expected to be reused. The owner re-edits it for each promotion, so it is a live template with a stale payload — the hazard is at the next launch, not now. Its header comment carries the pre-launch checklist.
 
 ### 7 · Update the docs
 

@@ -1,21 +1,45 @@
 /* ========================================================================== */
 /* JS - BUILD YOUR MEMBERSHIP - DISCOUNTED ENROLLMENT %    (WPCode #7966)   */
 /* ========================================================================== */
-/* Runs on: the summer special-offer membership page.                      */
-/* Status:  OFFER EXPIRED. Toggle state NOT YET CONFIRMED -- if this is     */
-/*          still enabled it advertises "through July 31 at midnight" on a  */
-/*          date long past. Confirm in WPCode and move this file to         */
-/*          live/wpcode/retired/ if it is off.                              */
+/* REUSABLE OFFER TEMPLATE. This snippet is not a one-off -- the owner      */
+/* re-edits it for each new promotion, then publishes a special-offer page  */
+/* that carries the builder markup. Treat it as a live template, not as     */
+/* expired code to retire.                                                  */
 /*                                                                          */
-/* Captured 2026-08-18. Unlike #9926 and #7315, this one DOES differ from    */
-/* its repo paste-source copy -- live still runs the July 31 wording while   */
-/* the repo was edited to July 22 in commit 6a347b1 and never pasted.        */
-/* No pricing figure differs; the drift is dates and comments only.          */
+/* Status:  ENABLED in WPCode, currently INERT. No "Run Everywhere"         */
+/*          location is set and no special-offer page is published, so it   */
+/*          binds to nothing right now (owner-confirmed 2026-08-18). It      */
+/*          fails safe: the guard clause below returns early unless          */
+/*          membershipType, tier, priceDisplay and purchaseButton all       */
+/*          exist. Not moved to retired/ -- it was never removed, and it     */
+/*          is expected to be used again.                                    */
 /*                                                                          */
-/* NOTE: young-family discounts here are { 1: 25, 2: 15 }, where #9926 and   */
-/* #7315 both use 30/20. Confirmed live, not a capture error -- so a family  */
-/* with one young child pays $5/month MORE on this page than on the join     */
-/* page. Deliberate or stale is an owner question; it is NOT guarded.        */
+/* ⚠ BEFORE THE NEXT OFFER GOES LIVE -- this snippet still holds the last    */
+/* campaign's values, and publishing a page activates them as-is:            */
+/*                                                                          */
+/*   1. SPECIAL_ENROLLMENT      -- flat enrollment for the new offer         */
+/*   2. limitedTimeText         -- still says "through July 31 at midnight"  */
+/*   3. header comment (below)  -- still says July 31, 2026                  */
+/*   4. offer: "..." in the payload -- still "summer-special-2026-jul31";    */
+/*      this is what lands in Heroku/Dropbox Sign, so a stale tag mislabels  */
+/*      every signup of the NEW campaign as the old one                      */
+/*   5. pricing / enrollmentFees / minimumAmounts -- must match the join     */
+/*      page unless the offer deliberately changes them                      */
+/*   6. young-family discounts (see NOTE) -- currently OUT OF STEP           */
+/*                                                                          */
+/* Then re-capture into this file. It is the only diffable record.           */
+/*                                                                          */
+/* NOTE -- young-family discounts here are { 1: 25, 2: 15 }, where #9926 and */
+/* #7315 both use 30/20. Confirmed live, not a capture error. A family with  */
+/* one young child pays $5/month MORE through this builder than through the  */
+/* join page. Most likely a leftover from an earlier pricing era that was    */
+/* never carried across. Decide deliberately before the next offer; the      */
+/* pricing guard does NOT cover this file.                                   */
+/*                                                                          */
+/* Captured 2026-08-18. Differs from its repo paste-source copy: live runs   */
+/* the July 31 wording, while commit 6a347b1 changed the repo to July 22 and */
+/* was never pasted. The repo tag reads "...jul21", matching neither. No     */
+/* pricing figure differs. Live is the authority.                            */
 /* ========================================================================== */
 /**
  * Special Offer membership builder pricing (WPCode #7966).

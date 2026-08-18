@@ -164,13 +164,17 @@ A handoff must have:
 
   A caution that turned out to be wrong, recorded because the reasoning was tempting: both snippets are titled "…with email notification", and that title was taken as evidence the live #7315 carried code the repo lacked. It does not — the repo copy has had the Dropbox-Sign/notify-admin block since `3fc792b`. **A snippet title is not evidence about its contents.** The diff was the evidence, and it took thirty seconds.
 
-  **#7966 mirrored too, and it *does* differ from the repo.** Live still runs the **July 31** offer wording; commit `6a347b1` changed the repo copy to July 22 and **that change was never pasted**. No pricing figure differs — the drift is dates, one comment, and the `offer:` tag (repo `summer-special-2026-jul21`, which does not even match its own July 22 text; live `…-jul31`). **Live is the authority here: do not "fix" live to match the repo without deciding which date was intended.**
+  **#7966 is a reusable offer template, and it *does* differ from the repo.** The owner re-edits it for each promotion and then publishes a special-offer page carrying the builder markup — it is not one-off code to retire. Right now it is **enabled but inert**: no "Run Everywhere" location, no special-offer page published, and it fails safe (returns early unless `membershipType`, `tier`, `priceDisplay` and `purchaseButton` all exist). Owner-confirmed 2026-08-18.
+
+  Live runs the **July 31** wording; commit `6a347b1` changed the repo copy to July 22 and **was never pasted**. The repo's `offer:` tag reads `summer-special-2026-jul21`, matching neither. No pricing figure differs. **Live is the authority.**
+
+  **Because it is reused, the stale values are a launch hazard, not dead text.** Publishing a special-offer page activates whatever the snippet currently holds — including `limitedTimeText` ("through July 31 at midnight") and `offer: "summer-special-2026-jul31"`, which is the tag that reaches Heroku and Dropbox Sign and would mislabel every signup of a *new* campaign as the old one. The full pre-launch checklist is in the mirror's header comment.
 
   Two things the #7966 capture settled, both against what was assumed:
 
-  - **Do not apply the `{1: 25, 2: 15}` → `{1: 30, 2: 20}` change.** Live #7966 really does use 25/15, so this is not repo staleness — it is a genuine behavioural difference between builders. A family with one young child pays **$5/month more** on the special-offer page than on the join page. Deliberate or forgotten is an owner question; the guard does not check #7966.
-  - **`npm run pricing:apply` would now rewrite live behaviour, not correct drift.** Both its remaining pending edits are settled as *do not apply*.
+  - **Do not apply the `{1: 25, 2: 15}` → `{1: 30, 2: 20}` change.** Live really does use 25/15, so it is a genuine behavioural difference, not repo staleness — a family with one young child pays **$5/month more** through this builder than through the join page. Most likely a leftover from an earlier pricing era. Decide deliberately before the next offer; the guard does **not** cover #7966.
+  - **`npm run pricing:apply` would now rewrite live behaviour, not correct drift.** Both remaining pending edits are settled as *do not apply*.
 
-  Every membership builder is now mirrored: [`live/wpcode/`](./live/wpcode/) holds **9926**, **7315** and **7966**. #7966's WPCode toggle state is still unconfirmed — if it is enabled, an expired offer is being advertised. See [handoffs/mirror-membership-builders.md](./handoffs/mirror-membership-builders.md).
+  Every membership builder is now mirrored: [`live/wpcode/`](./live/wpcode/) holds **9926**, **7315** and **7966**. See [handoffs/mirror-membership-builders.md](./handoffs/mirror-membership-builders.md).
 - **All-in-One WP Migration Unlimited Extension is flagged by WordPress as likely pirated** and throws a fatal error against the current core version. Currently deactivated. Should be deleted — nulled plugins are a malware vector.
 - Backups exist on the server (2 × 6.72 GB) but **cannot be restored** with the free plugin's ~512 MB import cap. GoDaddy's own managed backups have not been checked.
