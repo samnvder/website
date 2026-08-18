@@ -29,7 +29,7 @@ walked back to editor form before it is committed or pasted back.
 | Removed | Why |
 |---|---|
 | `<picture>` + `<source type="image/*">` | CompressX adds these on output. Paste them back and it double-wraps; a browser-copied `<source>` also tends to arrive with no `srcset`, which silently kills AVIF/WebP for every image in the element. |
-| `<code class="tve_js_placeholder">` | Thrive wraps script tags in it on output only. |
+| `<code class="tve_js_placeholder">` | Thrive wraps script tags in it on output only, in two shapes: the `<code>` inside the `<script>`, or wrapping it. Both are handled; the close is only removed when adjacent to a `<script>` tag, so a genuine `<code>` in page copy survives. |
 | `controls=""`, `playsinline=""`, `data-carousel=""` | A DOM copy expands boolean and empty `data-*` attributes; the editor stores them bare. |
 
 What it will **not** do is guess. A `thrv_custom_html_shortcode` wrapper needs its
@@ -82,7 +82,7 @@ same content and asserts the records match.
 Note the `<picture>` count is **tags, open + close** — 412 tags means 206
 wrapped images, not 412.
 
-Tests: `npm run test:capture-converter` (22 cases — the conversion rules, the
+Tests: `npm run test:capture-converter` (28 cases — the conversion rules, the
 recursion, and the byte-stability of the Markdown record).
 
 ## Advanced

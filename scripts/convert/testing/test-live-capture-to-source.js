@@ -266,3 +266,57 @@ test('a fully clean tree reports zero and still renders', () => {
     assert.ok(md.includes('| Carrying output-only markup | 0 |'));
     assert.ok(md.includes('## Already editor-form'));
 });
+
+/* ------------------------------------------------------------------ *
+ * tve_js_placeholder — both Thrive shapes
+ *
+ * Thrive wraps scripts two different ways and both are live. Matching only
+ * one left a stray </code> on the fitness page's JSON-LD block.
+ * ------------------------------------------------------------------ */
+
+test('strips the placeholder when <code> sits inside <script> (shape A)', () => {
+    const capture = '<script><code class="tve_js_placeholder">var a = 1;</code></script>';
+
+    assert.strictEqual(run(capture), '<script>var a = 1;</script>');
+});
+
+test('strips the placeholder when <code> wraps <script> (shape B)', () => {
+    // This is the fitness JSON-LD shape.
+    const capture =
+        '<code class="tve_js_placeholder"><script type="application/ld+json">\n' +
+        '  {"@type": "ExerciseGym"}\n' +
+        '  </script></code>';
+    const expected =
+        '<script type="application/ld+json">\n' +
+        '  {"@type": "ExerciseGym"}\n' +
+        '  </script>';
+
+    assert.strictEqual(run(capture), expected);
+});
+
+test('strips shape B even with whitespace between </script> and </code>', () => {
+    const capture = '<code class="tve_js_placeholder"><script>x</script>\n</code>';
+
+    assert.strictEqual(run(capture), '<script>x</script>\n');
+});
+
+test('leaves a genuine <code> element in page copy alone', () => {
+    // The close is only removed next to a <script> tag. Prose that happens to
+    // use <code> must survive untouched.
+    const capture = '<p>Run <code>npm run guard</code> before pushing.</p>';
+
+    assert.strictEqual(run(capture), capture);
+});
+
+test('leaves a <code> block that merely follows a script further down', () => {
+    const capture = '<script>var a = 1;</script>\n<p>then <code>npm test</code></p>';
+
+    assert.strictEqual(run(capture), capture);
+});
+
+test('counts both placeholder open and close', () => {
+    const capture = '<code class="tve_js_placeholder"><script>x</script></code>';
+    const { counts } = convert(capture, {});
+
+    assert.strictEqual(counts['Thrive tve_js_placeholder wrapper'], 2);
+});

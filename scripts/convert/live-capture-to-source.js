@@ -78,7 +78,16 @@ const TRANSFORMS = [
     },
     {
         name: 'Thrive tve_js_placeholder wrapper',
-        pattern: /<code class="tve_js_placeholder">|<\/code>(?=\s*<\/script>)/gi,
+        // Thrive emits this in two shapes, and both occur on the live site:
+        //   A  <script><code class="tve_js_placeholder">JS</code></script>
+        //   B  <code class="tve_js_placeholder"><script>JS</script></code>
+        // So the closing </code> can sit either just before </script> (A) or
+        // just after it (B). Matching only A left a stray </code> on the
+        // fitness page's JSON-LD block, which is shape B.
+        //
+        // The close is only removed when it is adjacent to a <script> tag, so
+        // a genuine <code> element in page copy is never touched.
+        pattern: /<code class="tve_js_placeholder">|<\/code>(?=\s*<\/script>)|(?<=<\/script>\s*)<\/code>/gi,
         replace: '',
     },
 ];
