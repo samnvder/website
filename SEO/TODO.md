@@ -685,6 +685,31 @@ The live homepage runs a **second, inline** booking widget — **62 distinct ids
 grep -rl "se-bk-inline" live/ Website/ Components/   →   no matches
 ```
 
+
+#### It is also untracked — measured on live 2026-08-19
+
+The homepage carries two booking widgets. Only one of them reports to GA4. Measured by byte-range on the
+served page, so it is attribution, not inference:
+
+```
+se-bk-inline    spans 539365-634111  ->  1 book-tour call, 0 tour_booked pushes
+se-bk-floating  spans 681197-752499  ->  1 book-tour call, 1 tour_booked push
+```
+
+**So a tour booked from the homepage inline widget is invisible to GA4.** The floating widget on the same
+page is tracked correctly, which is why nothing looks wrong.
+
+⚠️ **This will be misread as ad blockers.** [read-tour-volume](../handoffs/read-tour-volume.md) compares
+Supabase against GA4 and expects GA4 at 70–85% because blockers stop `googletagmanager.com`. This gap
+deepens that shortfall in a way that looks identical — **unless you segment by `tour_source_page`, where
+the homepage reads zero while every other page reports.** Handoff #0 recorded that exact signature as "a
+call site is missing the push", and this is it.
+
+**Fixing it is blocked behind capturing the widget** (below): you cannot add a `dataLayer` push to source
+that exists in no file. The push to add is the one already in
+[live/wpcode/8309-floating-book-tour-button.html](../live/wpcode/8309-floating-book-tour-button.html), and
+[handoffs/site-wide-event-tracking.md](../handoffs/site-wide-event-tracking.md) scopes the wider work.
+
 **It exists in exactly one place: a database row.** Same shape as the `se-bk-floating` incident, one page narrower.
 
 **Fix:** open the homepage in Thrive, find the custom HTML element containing `se-bk-inline-card`, copy the **whole element from the editor** (not `curl` — backup-law rule 1), and commit it to `live/thrive/pages/index/se-bk-inline.html`. Verify by the character count the editor reports (rule 3).

@@ -78,8 +78,29 @@ Diagnose a low ratio by shape, not size:
 | Shape | Meaning |
 |---|---|
 | Shortfall spread evenly across pages | Ad blockers. Normal. Do nothing. |
-| **One `tour_source_page` at zero while others report** | A call site is missing the push. Investigate that page. |
+| **One `tour_source_page` at zero while others report** | A call site is missing the push. **One is already known — see below.** |
 | Ratio far below 0.70 overall | Worth investigating — but check the shape first before assuming a bug. |
+
+
+### ⚠️ The homepage is already known to under-report — do not diagnose this as ad blockers
+
+Measured on live 2026-08-19, by byte-range on the served page:
+
+```
+se-bk-inline    ->  1 book-tour call, 0 tour_booked pushes   (homepage, untracked)
+se-bk-floating  ->  1 book-tour call, 1 tour_booked push     (homepage, tracked)
+```
+
+**The homepage runs two booking widgets and only one reports.** So expect `tour_source_page` for `/` to sit
+at or near zero while every other page reports normally, and expect the overall GA4:Supabase ratio to come
+in **below** the 70–85% band this handoff predicts.
+
+**That is this defect, not ad blockers, and the two are indistinguishable from the totals alone.** Subtract
+homepage bookings from the Supabase count before computing the ratio, or the baseline you establish will be
+wrong for as long as it is used.
+
+Tracked as [SEO/TODO.md §24](../SEO/TODO.md); the fix is blocked behind capturing the widget from the Thrive
+editor, because its source exists in no file.
 
 ### 5 · Check the reschedule branch
 
