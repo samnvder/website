@@ -4,17 +4,26 @@
 
 ---
 
-## The live problem, in one line
+## The problem — live for part of 2026-08-19, now unpublished
 
-`/special-offer/` **is published right now** and every submission sends
-`offer: "summer-special-2026-jul31"` to Heroku and Dropbox Sign — filing August signups under July's
-campaign — while showing visitors a dead countdown and quoting young-family discounts that are $5–10 off.
+`/special-offer/` was published while this was being investigated, and in that window every submission
+sent `offer: "summer-special-2026-jul31"` to Heroku and Dropbox Sign — filing August signups under July's
+campaign — while showing visitors a dead countdown and young-family discounts $5–10 off canonical.
 
-> ⚠️ **The bare URL returns a cached `404`.** That is GoDaddy's cache, not the page. Verify with a
-> cache-buster or you will conclude it is down when it is serving:
-> ```bash
-> curl -s -o /dev/null -w "%{http_code}\n" -A "Mozilla/5.0" "https://southendclub.com/special-offer/?cb=$RANDOM"
+**It returns 404 again as of 2026-08-19 evening, so there is no live exposure right now.** This patch
+exists so the *next* publish does not reintroduce it: the page source no longer carries a campaign at all.
+
+> ⚠️ **A 404 from the bare URL proves nothing on its own.** GoDaddy serves a cached 404 for a page that is
+> actually live — that is exactly what happened here, and it is why the page looked unpublished while it
+> was serving 476 KB. Always cache-bust:
+> ```powershell
+> curl.exe -s -o NUL -w "%{http_code}`n" -A "Mozilla/5.0" "https://southendclub.com/special-offer/?cb=$(Get-Random)"
 > ```
+>
+> **Shell is PowerShell 5.1 here** ([CLAUDE.md](../../CLAUDE.md)). Use `curl.exe`, not `curl` — bare
+> `curl` is an alias for `Invoke-WebRequest`, which takes different flags. `Invoke-WebRequest` itself
+> fails against this page on PS 5.1 (*"the connection was closed unexpectedly"*), and `grep` / `$RANDOM`
+> do not exist here at all.
 
 ## What this patch changes
 
@@ -63,11 +72,22 @@ a whole-page paste deletes whatever live has and the repo does not (CLAUDE.md).
 
 Then flush GoDaddy cache and verify:
 
-```bash
-curl -s -A "Mozilla/5.0" "https://southendclub.com/special-offer/?cb=$RANDOM" | grep -c "summer-special-2026-jul31"
+```powershell
+$u = "https://southendclub.com/special-offer/?cb=$(Get-Random)"
+$code = curl.exe -s -o NUL -w "%{http_code}" -A "Mozilla/5.0" $u
+if ($code -ne "200") { "NOT PUBLISHED (http $code) - nothing live to check"; return }
+$body = curl.exe -s -A "Mozilla/5.0" $u
+"offer tag  = " + ($body | Select-String 'summer-special-2026-jul31' -AllMatches).Matches.Count
+"stale disc = " + ($body | Select-String '1: 25, 2: 15' -AllMatches).Matches.Count
 ```
 
-Expect **`0`**. Also expect `0` for `1: 25, 2: 15`.
+Expect **`0`** and **`0`**.
+
+⚠️ **Check the status code first — the counts lie without it.** A 404 body contains neither string, so
+an unpublished page reports `0 / 0` and reads exactly like a successful fix. That is not hypothetical:
+it happened while writing this patch. The page had been taken down, the counts came back clean, and the
+only thing separating "fixed" from "gone" was the status line. The guard clause above makes that
+impossible to miss.
 
 ## Before the next campaign
 

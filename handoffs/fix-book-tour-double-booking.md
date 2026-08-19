@@ -255,7 +255,7 @@ they read has to hold the human text. The server cannot send them a code and a s
 
 - **[lock-down-supabase-rls.md](lock-down-supabase-rls.md)** — where this was found. Also documents that `anon` can no longer delete rows, which is why cleanup now needs the SQL editor.
 - **[security/2026-08-18-supabase-rls-exposure.pdf](../security/2026-08-18-supabase-rls-exposure.pdf)** — the probe that exposed this is recorded in §8.
-- **Engage Pro appointment `831`** — outstanding cleanup from an earlier test, noted in both handoffs.
+- **Engage Pro appointment `831`** — ✅ cancelled 2026-08-19. Kept as the worked example of why cleanup is two jobs: the Supabase row was gone a full day before the staff calendar was.
 
 ---
 
@@ -301,8 +301,10 @@ Rules:
   row, a REAL CRM prospect and a REAL staff-calendar appointment. Capture
   booking_id and engage_pro_prospect_id and clean up BOTH systems. anon
   cannot delete rows since the 2026-08-18 RLS lockdown, so removal needs the
-  SQL editor. Engage Pro appointment 831 is still outstanding from an earlier
-  test -- that is a standing example of exactly this cleanup being missed.
+  SQL editor. The last test booking's Engage Pro appointment (831) was cleaned
+  up 2026-08-19, a full day after its Supabase row, because deleting the row
+  does not touch the staff calendar. Do not leave the next one open the same
+  way -- cleanup is two jobs.
 - More than one agent writes this repo. git log --oneline -5 and git status
   before you start, and stage explicit paths -- never git add -A.
 

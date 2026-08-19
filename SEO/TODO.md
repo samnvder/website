@@ -97,7 +97,7 @@ Verified on `master`: **0** dead page-links, **0** `tve-jump` references, **0** 
 | §19 | ⚠️ **231 consent records cannot be substantiated** — extends §13, now with a row count | Sam | legal · see §13 |
 | §20 | Undocumented second application — 43 `central_*` tables; `central_clubs` repeats the RLS defect | Claude | medium |
 | §21 | `Anon can insert bookings` — anyone can flood the tour calendar | Claude | low · rate limit |
-| §22 | Engage Pro appointment **831** (test booking) still on the staff calendar | Sam | 2 min |
+| §22 | ✅ **Engage Pro appointment 831 cancelled 2026-08-19** — the last stray test artifact is gone | Sam | done |
 | §23 | **Google Ads account** — handoff written, 6 prerequisites unmet | Sam | ~30 min · blocked until ~09-18 |
 | §13 | 🔴 **Pre-ticked SMS/calls consent on the tour form** — TCPA exposure | Sam | legal call · ~15 min to fix |
 | §14 | ✅ **Tour bookings now tracked in GA4** — done 2026-08-18; Ads half blocked on having no Ads account | Claude + Sam | done · **read the first month ~2026-09-18** |
@@ -648,9 +648,13 @@ It is INSERT-only with no `USING` clause, so it cannot disclose or destroy anyth
 
 ---
 
-### 22. Engage Pro appointment `831` still on the staff calendar — **Sam** · 2 min
+### 22. ✅ Engage Pro appointment `831` cancelled — **done 2026-08-19**
 
-The 2026-08-18 verification booking is half cleared: the Supabase row was deleted and the public slot freed, but the **staff-facing Engage Pro appointment `831` is still live** and needs cancelling by the owner. Someone may prepare for a tour that is not happening.
+The 2026-08-18 verification booking is now fully cleared. The Supabase row was deleted 2026-08-18 02:00 PDT and the public slot freed; the staff-facing Engage Pro appointment `831` (prospect `34537`) was cancelled 2026-08-19. Nobody is preparing for a tour that is not happening.
+
+**This was the last stray test artifact across three sessions.** The RLS session's booking (`213e4bf7…`, prospect `34549`) and the double-booking repro (prospect `34548`) had already been removed from both systems.
+
+> **Why it took a day and a separate owner:** Supabase and Engage Pro are different systems, and deleting the row does not touch the calendar. Nothing in this repo documents how to reach Engage Pro, so an agent could verify the booking was gone from the database while the staff-facing half stayed live. **Any future test booking needs cleanup in both places** — that is why the double-booking handoff's kickoff prompt now says so explicitly.
 
 ---
 

@@ -386,8 +386,9 @@ anon key must return 401 or 403, and check-availability must still return
 
 Do NOT make a real test booking without asking me first — it writes a real
 row, sends a real email, and puts a fake tour on the staff calendar in Engage
-Pro. The last test booking's Engage Pro appointment (id 831) still has not
-been cleaned up.
+Pro. Clean up BOTH systems afterwards -- the last test booking's Engage Pro
+appointment (id 831) outlived its Supabase row by a day, because deleting the
+row does not touch the staff calendar. It was cancelled 2026-08-19.
 
 Finally, walk the PostgREST root document and check whether any OTHER table is
 exposed. tour_bookings was found by accident; the other two were found by
