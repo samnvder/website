@@ -100,7 +100,7 @@ Verified on `master`: **0** dead page-links, **0** `tve-jump` references, **0** 
 | §22 | Engage Pro appointment **831** (test booking) still on the staff calendar | Sam | 2 min |
 | §23 | **Google Ads account** — handoff written, 6 prerequisites unmet | Sam | ~30 min · blocked until ~09-18 |
 | §13 | 🔴 **Pre-ticked SMS/calls consent on the tour form** — TCPA exposure | Sam | legal call · ~15 min to fix |
-| §14 | 🥈 **Tour bookings are invisible to GA4 and Ads** — handoff + patches ready to run | Claude + Sam | ~1 h · **highest ROI after §1** |
+| §14 | ✅ **Tour bookings now tracked in GA4** — done 2026-08-18; Ads half blocked on having no Ads account | Claude + Sam | done · **read the first month ~2026-09-18** |
 | §15 | Repo has no `se-bk-floating` widget that runs on live | Claude | medium · silent-loss risk |
 | §16 | `/special-offer/` 404s while its repo file exists | Sam | small |
 | §6 | Page weight 318–767 KB of Thrive HTML | — | deferred |
@@ -535,17 +535,17 @@ The label also bundles calls in with SMS without naming calls prominently.
 
 ---
 
-### 14. 🥈 Tour bookings invisible to GA4 and Google Ads — **handoff ready to execute**
+### 14. ✅ Tour bookings now visible to GA4 — **tracking live 2026-08-18**; Ads half still blocked
 
-Found 2026-08-17. **Highest-value item on the board after §1.**
+Found 2026-08-17, **fixed 2026-08-18.** `tour_booked` fires on all four booking call sites, GTM container **v7** is published, and the event is **starred as a key event** in GA4 with five custom dimensions registered. **GA4 now reports tours.** What follows is the original finding, kept because the Ads half is still open and the reasoning still applies.
 
 The booking form reports nothing. On success it swaps two divs — no redirect, no URL change, no `dataLayer` push. ~~`GTM-WLRX58RN` carries exactly one tag.~~ **Corrected 2026-08-18 from inside the container:** it carries the `G-SJN8S5QWXE` Google Tag on All Pages **plus two pre-existing GA4 click-tracking tags** (`Click - Message Us Button`, `Click - Virtual Tour!`). Still no Google Ads conversion tag, no Meta pixel, no Conversion Linker.
 
-**GA4 has recorded zero tour bookings, ever.** Nobody can say which page drives tours, no paid campaign can optimise toward one, and no funnel change can be measured. Note what this means for the rest of this backlog: **everything below §1 is being prioritised without conversion data.**
+**GA4 had recorded zero tour bookings, ever** — true until 2026-08-18. Nobody could say which page drove tours, no paid campaign could optimise toward one, and no funnel change could be measured. Note what that meant for the rest of this backlog: **everything below §1 was prioritised without conversion data.** That is now being fixed forward, not retroactively — **GA4 does not backfill**, so the attribution history starts 2026-08-18 and the first useful read is a full 28 days later.
 
 Attribution data does exist — `book-tour` already writes `utm_source`, `utm_medium`, `utm_campaign`, `source_page` and `device_type` into Supabase. It has simply never been surfaced. A read-only report over that table is a quick separate win.
 
-**Ready to run:** [handoffs/tour-conversion-tracking.md](../handoffs/tour-conversion-tracking.md) with paste-ready blocks in [patches/tour-conversion-tracking/](../patches/tour-conversion-tracking/). All handoffs and their kickoff prompts are indexed in [handoffs/README.md](../handoffs/README.md). Repo edits applied; live, GTM and Ads untouched. Part C needs a Google Ads account, which is unconfirmed — **Parts A and B are not blocked on it.**
+**Status:** Parts A and B ✅ **done** — [handoffs/tour-conversion-tracking.md](../handoffs/tour-conversion-tracking.md) and [handoffs/publish-tour-tracking-gtm.md](../handoffs/publish-tour-tracking-gtm.md), both closed. **Part C (Google Ads) remains blocked** — no Ads account exists, and [gtm-conversion-linker.md](../handoffs/gtm-conversion-linker.md) must run *before* any Ads conversion tag, never after. Two loose ends survive and need their owners: **Engage Pro appointment `831`** from the test booking is still on the staff calendar, and **`tour_booking_id` returns `null`** because the `book-tour` edge function does not supply one — which must be fixed before Ads dedup. Reading the first month of volume is [read-tour-volume.md](../handoffs/read-tour-volume.md), not before ~2026-09-18.
 
 ---
 
@@ -744,7 +744,7 @@ Re-run after any Thrive paste; the script is small enough to rebuild from the me
 
    One content decision to make first: **Dance Studio** (§9) points at a section that does not exist anywhere on the site. Remove the link, or build the section.
 
-3. **Run the conversion-tracking handoff** (§14) — ~1 hour, and it's the prerequisite for measuring anything. Right now every priority call on this board is being made blind to what actually produces a booked tour.
+3. ✅ **Conversion tracking is running** (§14, done 2026-08-18) — this was the prerequisite for measuring anything, and until it landed every priority call on this board was being made blind to what actually produces a booked tour. **It does not answer anything yet.** GA4 does not backfill, so the record starts 2026-08-18 and the first non-noisy read is a full 28 days later — [read-tour-volume.md](../handoffs/read-tour-volume.md), ~2026-09-18. Until then, priorities here are still being set without conversion data; the difference is that the clock is now running.
 
 Then: **stop optimising, start measuring.** Give Google 2–3 weeks to recrawl and let real query data drive the content plan (§4).
 

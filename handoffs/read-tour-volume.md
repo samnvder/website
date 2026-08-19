@@ -141,10 +141,12 @@ needs a full 28-day window starting no earlier than 2026-08-19. If it is too
 early, say so and stop — a partial month produces a number too noisy to base
 a bidding decision on, and it will get treated as real anyway.
 
-Also confirm tour_booked was actually marked as a key event. If that star
-was never clicked, GA4 has been reporting 0.00 key events and the event data
-may still be queryable but the reporting will look wrong. Check before
-concluding anything about volume.
+tour_booked WAS marked as a key event on 2026-08-18 — confirmed on the Key
+events tab, not just by a toast. So you should not have to fix that. Do still
+glance at it: if the star is somehow off, GA4 reports 0.00 key events while the
+event data stays queryable, so volume looks like zero for a reporting reason
+rather than a real one. Also note nothing before 2026-08-18 is counted — GA4 is
+not retroactive and the star came after the only test booking.
 
 Rules:
 - Exclude the 2026-08-18 verification booking (samnader21+1@gmail.com) and

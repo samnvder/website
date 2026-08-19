@@ -1,6 +1,6 @@
 # Handoff — Verify and publish the `tour_booked` GTM build, then make GA4 report it
 
-**Created:** 2026-08-18 · **Status:** ⚠️ **PUBLISHED, NOT YET REPORTING** — container **version 7** is live and collecting, but `tour_booked` is **not marked as a key event**, so GA4 still reports `0.00`. Blocked on GA4 propagation until **2026-08-19**, then one click. See [Still open](#⚠️-still-open--do-these) · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
+**Created:** 2026-08-18 · **Status:** ✅ **CLOSED 2026-08-18** — container **version 7** is live and collecting, and `tour_booked` is **marked as a key event**, so GA4 reports it. Two follow-ups survive this handoff and belong to their owners, not to it: Engage Pro appointment `831` needs cancelling, and `tour_booking_id` returns `null`. See [Still open](#⚠️-still-open--do-these) · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
 **Est.:** ~30 min, most of it waiting on a test booking.
 
 > **Execution convention:** written to be run by a Claude Code agent in Cowork. See [CLAUDE.md § Handoffs](../CLAUDE.md).
@@ -173,25 +173,46 @@ Related, and worth knowing when reading GA4: **GA4 drops null-valued parameters 
 ### GA4 registration
 
 - ✅ **Five custom dimensions registered** (all Event-scoped): `tour_source_page`, `tour_utm_source`, `tour_utm_campaign`, `tour_heard_about`, `tour_device`. Property now has 17 of 50 slots used.
-- ❌ **`tour_booked` NOT yet marked as a key event.** It had not propagated to Admin → Events at time of execution (GA4 aggregates new event names on up to a 24-hour delay), and this GA4 build offers **no way to name a key event manually** — the star can only be applied to an event already listed. The dropdown beside *Custom configurations* contains only *Custom events* and *Modifications*.
+- ✅ **`tour_booked` marked as a key event — 2026-08-18, late evening PDT.** Not done in the first pass: the event had not propagated to Admin → Events, and this GA4 build offers **no way to name a key event manually** — the star can only be applied to an event already listed. It appeared once the 24-hour window had nearly elapsed (~22h after the single test booking), and was starred then.
 
 ## ⚠️ Still open — do these
 
-1. 🔴 **Mark `tour_booked` as a key event — BLOCKED UNTIL 2026-08-19, then one click.**
+**Item 1 is closed — the rest are not this handoff's to close.** Items 2 and 4 need someone with access this
+agent does not have (the `book-tour` owner, and whoever can reach Engage Pro); items 3 and 5 need booking
+volume that does not exist yet. They are kept here rather than dropped because each is a real, unfinished
+thing — but **nothing here blocks GA4 from reporting tours any more.**
 
-   Admin → Data display → **Events** → *Recent events* tab → **star** `tour_booked`.
+1. ✅ **`tour_booked` is a key event — DONE 2026-08-18, late evening PDT. This handoff's last checkbox.**
 
-   **Re-checked 2026-08-18 (afternoon): still not listed.** *Recent events* showed **11 of 11** — `click`, `Click - Message Us Button`, `file_download`, `first_visit`, `form_start`, `form_submit`, `page_view`, `scroll`, `session_start`, `user_engagement`, `view_search_results`. Identical to the 2026-08-17 baseline in [GA4-SNAPSHOT.md](../analytics/GA4-SNAPSHOT.md). No `tour_booked`.
+   Admin → Data display → **Events** → *Recent events* tab → **star** `tour_booked`. Confirmed two ways, not one:
+   the toast *"tour_booked has now been enabled as a key event"*, and — independently — the **Key events** tab
+   then listing `tour_booked` with a filled star against stream *South End Club*, alongside the inert default
+   `purchase`. The five custom dimensions were re-checked in the same pass and all five are present and
+   Event-scoped (17 of 17 definitions). `curl` still returns `2 · 2 · 1`, unchanged.
 
-   **This is propagation lag, not a failure.** Three independent checks confirm the pipeline works: the published `gtm.js` contains `tour_booked`, DebugView received it at 01:35 with parameters attached, and the GA4 tag reported *Succeeded* in Preview. Admin → Events is simply the slowest surface to update, and the event has fired **exactly once in its life** — that single test booking is the entire history, which is the low-volume case where the full 24-hour window gets used.
+   **The wait was real and it used nearly the whole window.** The event was absent from *Recent events* on two
+   checks during 2026-08-18 and appeared roughly **22 hours** after the single test booking that is its entire
+   history. Nothing was done differently on the third check — only later. **The lesson for the next new event:
+   with one hit of volume, budget the full 24 hours and do not go debugging a working pipeline in the meantime.**
+   Three signals said the pipeline was fine throughout (published `gtm.js` contained `tour_booked`, DebugView
+   received it at 01:35 with parameters, the tag reported *Succeeded*), and they were right.
 
-   There is **no manual route in this GA4 build.** The star is the only mechanism and it can only be applied to an event already listed, so this cannot be forced today.
+   ⚠️ **Keep the navigation trap — it still applies to every GA4 visit.** The account id is **`a300330852`**,
+   not `a424923833`. A GA4 URL naming a property you cannot reach **silently redirects to one you can** rather
+   than erroring, landing on a perfectly normal-looking screen for the **wrong property**; the same redirect
+   fires under the wrong signed-in account. **`authuser=2` holds property `424923833`.** The working URL, which
+   went straight there this time:
 
-   **Re-confirmed 2026-08-18 02:05 PDT, this time by testing the manual route directly rather than inferring it.** A *"New key event"* button that accepts a **typed** event name would have skipped the propagation wait entirely, so it was worth ruling out explicitly. It does not exist here. The **Key events** tab carries only *Create event*, *Attribution settings* and *Custom configurations*; the dropdown beside *Custom configurations* holds only *Custom events* and *Modifications*, neither of which creates a key event. The page banner states the mechanism outright: *"To mark an event as a key event, select the star next to the event name."* **The star is the only route, so propagation is a hard prerequisite — there is nothing to try before 2026-08-19.** Searching *Recent events* for `tour` returned **No results found**, and the *Key events by Event name* card in Realtime read *No data available*, i.e. still `0`.
+   ```
+   https://analytics.google.com/analytics/web/?authuser=2#/a300330852p424923833/admin/events/overview
+   ```
 
-   ⚠️ **Navigation trap — cost several minutes and looks exactly like a permissions failure.** The account id is **`a300330852`**, not `a424923833`. A GA4 URL naming a property you cannot reach **silently redirects to a property you can** instead of erroring: it landed on `a300348121p424937470` (`G-LYDVXGW996`, "no data received"), which is a perfectly normal-looking GA4 screen for the **wrong property**. The same redirect fires when the *correct* URL is opened under the *wrong* signed-in Google account — `authuser=0` bounced away, `authuser=1` had no GA4 at all, and **`authuser=2` is the account holding property `424923833`**. This compounds the existing warning about `tagmanager.google.com` showing zero accounts. **Confirm the property header reads "South End" before trusting anything on screen.**
+   **Confirm the property header reads "South End" (account `samnader`) before trusting anything on screen.**
 
-   ⚠️ **Until the star is clicked, GA4 reports `0.00` key events — the exact number the whole §14 backlog exists to move.** Everything else in this handoff is finished. This is the last checkbox, and it is the one that makes all the rest count.
+   ⚠️ **GA4 is not retroactive, so this does not backfill.** The 2026-08-18 test booking fired *before* the
+   star and is not counted. Key events will read `0.00` until an organic booking arrives — that is now correct
+   behaviour rather than the misconfiguration it was, and the two are indistinguishable from the number alone.
+
 2. **Ask the `book-tour` owner to return the appointment id** so `tour_booking_id` stops being `null`. Needed before Ads dedup — see [gtm-conversion-linker.md](gtm-conversion-linker.md) and Part C of [tour-conversion-tracking.md](tour-conversion-tracking.md).
 3. **Reschedule path is untested.** Only a fresh booking was exercised (`tour_is_reschedule: false`). The `true` branch is unverified, and it is what Part C's Ads trigger is meant to exclude.
 4. ✅ **Supabase test-booking row deleted 2026-08-18 02:00 PDT** — 🔴 **but the Engage Pro appointment is still live.**

@@ -9,7 +9,7 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 | # | Handoff | What it does | Time | Blocked? |
 |---|---|---|---|---|
 | ✅ | **[lock-down-supabase-rls](lock-down-supabase-rls.md)** | ✅ **CLOSED 2026-08-18 — remediated and verified in production.** Anon `SELECT`/`UPDATE`/`DELETE` on `tour_bookings` and `tour_referrals` is shut. One residual box unticked: a real booking has never been placed post-fix, which needs owner authorisation. **The data is still unbacked-up — that is `SEO/TODO.md` §18, a different problem.** | — | done |
-| 0 | **[publish-tour-tracking-gtm](publish-tour-tracking-gtm.md)** | ⚠️ **Published, not yet reporting.** v7 is live and collecting, but `tour_booked` is not starred as a key event so GA4 still reads `0.00`. **One click, from 2026-08-19.** Also open: delete the 2026-08-18 test booking, and `tour_booking_id` is confirmed `null`. | 1 min | GA4 propagation until 2026-08-19 |
+| ✅ | **[publish-tour-tracking-gtm](publish-tour-tracking-gtm.md)** | ✅ **CLOSED 2026-08-18 — GA4 now reports tours.** v7 is live and `tour_booked` is **starred as a key event**; the star was the last checkbox and it took ~22h of propagation to become clickable. Two follow-ups outlived the handoff and belong to their owners: **Engage Pro appointment `831` still needs cancelling**, and `tour_booking_id` is confirmed `null` (blocks Ads dedup, nothing else). | — | done |
 | 1 | **[tour-conversion-tracking](tour-conversion-tracking.md)** | Makes tour bookings visible to GA4 and Google Ads. Part A ✅ done 2026-08-18; **Part B ✅ published 2026-08-18** (container v7). | ~1h | Part C only — no Google Ads account exists |
 | 2 | **[ga4-hygiene](ga4-hygiene.md)** | Clears MonsterInsights residue. **Low priority — moves no numbers.** | ~20 min | no |
 | 3 | **[backup-gtm-container](backup-gtm-container.md)** | ✅ **Done 2026-08-18.** Published v7 exported to [`analytics/gtm-container-export.json`](../analytics/gtm-container-export.json) and verified; backup law extended to cover configuration. **Re-export after every container publish** — the next one is the Ads tag (#4/#5). | — | done |
@@ -73,9 +73,9 @@ once answered; neither should be guessed at.
 >
 > An agent should not re-rank these. If the order looks wrong, say so and ask.
 
-**#0 is one checkbox from done — do not let it close until that box is ticked.** The container was published as v7 on 2026-08-18 and `tour_booked` is collecting, confirmed three ways (published `gtm.js` contains it, DebugView received it at 01:35, tag reported *Succeeded*). But **GA4 still reports `0.00` key events**, because `tour_booked` has not been starred — and it cannot be, until GA4 lists it. Re-checked 2026-08-18 afternoon: *Recent events* showed 11 of 11, unchanged from the 2026-08-17 baseline. That is propagation lag on an event that has fired exactly once. **Re-check from 2026-08-19; it is one click.**
+**#0 is done — GA4 reports tours as of 2026-08-18.** The container was published as v7 and `tour_booked` was **starred as a key event** late on 2026-08-18, confirmed by the toast and, independently, by the **Key events** tab listing it against stream *South End Club*. The star had been blocked all day on propagation, not on anything anyone could do: the event was absent from *Recent events* on two checks and surfaced roughly 22 hours after the single test booking that is its whole history. **This does not backfill** — GA4 is not retroactive, the test booking fired before the star, so key events read `0.00` until an organic booking lands. That number now means "no bookings yet", not "not configured", and the two look identical from the outside.
 
-The **2026-08-18 test booking** is half cleared: the Supabase row was deleted 02:00 PDT and the public calendar slot is free, but **Engage Pro appointment `831` — the staff-facing calendar — is still live and needs cancelling by the owner.** Also open: **`tour_booking_id` is confirmed `null`**, which the `book-tour` owner must fix before any Ads dedup work. Hygiene is whenever you're next in the account.
+The **2026-08-18 test booking** is still half cleared: the Supabase row was deleted 02:00 PDT and the public calendar slot is free, but **Engage Pro appointment `831` — the staff-facing calendar — is still live and needs cancelling by the owner.** Also open: **`tour_booking_id` is confirmed `null`**, which the `book-tour` owner must fix before any Ads dedup work.
 
 Backlog context for all three: [SEO/TODO.md](../SEO/TODO.md) §14. Property config and the pre-tracking baseline: [analytics/GA4-SNAPSHOT.md](../analytics/GA4-SNAPSHOT.md).
 
@@ -109,56 +109,13 @@ Two rules that apply to every handoff touching the website:
 
 ## Kickoff prompts
 
-### 0 · Publish the tour_booked GTM build
+### 0 · Publish the tour_booked GTM build — ✅ closed, kickoff retired
 
-```
-Execute handoffs/publish-tour-tracking-gtm.md in this repo.
-
-Read it in full first, along with CLAUDE.md.
-
-CRITICAL: the GTM work is ALREADY BUILT and saved but not published —
-container GTM-WLRX58RN, workspace 7, showing "Workspace Changes: 12".
-Do NOT rebuild it. Creating a second CE - tour_booked trigger or a second
-GA4 - tour_booked tag would double-count every booking, which is worse
-than no tracking. Your first action is to confirm the existing inventory
-matches what the handoff lists.
-
-Your job: verify it in Preview, publish it, then register it in GA4.
-
-Rules:
-- If GTM Preview will not connect, check the BROWSER before the site. Run
-  in the page console:
-  fetch('https://www.googletagmanager.com/gtm.js?id=GTM-WLRX58RN')
-  If that fails while other requests succeed, an ad blocker is blocking
-  googletagmanager.com. That is exactly what happened on 2026-08-18 and it
-  cost a whole verification cycle. Use a clean profile.
-- Tag Assistant's "Connect" opens a popup. If popups are blocked the
-  handshake never completes, and opening the URL by hand does NOT work —
-  it needs window.opener. Ask me to click Connect.
-- tagmanager.google.com's account list may show zero accounts even when
-  access is fine. Navigate straight to the container URL instead.
-DO NOT make a real tour booking. Verify with the synthetic dataLayer.push in
-step 2 of the handoff. It exercises trigger, variables and tag end to end
-while writing no Supabase row and sending no email or SMS. A real booking
-would reach a real person on the tour calendar.
-
-- Stop and ask me before publishing the container. That is a production
-  change and it is the one HUMAN GATE here.
-- After publishing you are NOT finished. Mark tour_booked as a key event and
-  register the five custom dimensions (tour_source_page, tour_utm_source,
-  tour_utm_campaign, tour_heard_about, tour_device). Unregistered parameters
-  are collected but unreportable and every report shows (not set).
-- tour_booking_id stays UNVERIFIED after a synthetic push, because the push
-  supplies it rather than reading it from the edge function. Record it as
-  unverified. Do not claim otherwise.
-- Do not run the Supabase cross-check yet — there is no post-publish data.
-  Note that GA4 will read roughly 70-85% of Supabase because of ad blockers.
-  They are not supposed to match.
-
-Report: the inventory you confirmed, what fired in Preview and which
-variables resolved, whether you published, what you registered in GA4, and
-anything left undone.
-```
+Container published as v7 and `tour_booked` starred as a key event, both 2026-08-18. The
+[handoff](publish-tour-tracking-gtm.md) is kept for its record of what was verified and how — in particular
+the **GA4 navigation trap** (account `a300330852`, `authuser=2`, and a wrong-property URL that redirects
+silently instead of erroring) and the **ad-blocker findings**, both of which apply to any future analytics
+session and neither of which is obvious from the account screens.
 
 ### 1 · Tour conversion tracking
 
