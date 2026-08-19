@@ -19,7 +19,7 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 | 5 | **[read-tour-volume](read-tour-volume.md)** | Reads the first real month of `tour_booked`: how many tours, from which pages, what fraction GA4 sees, and whether volume supports smart bidding. Read-only. **Unblocks #6.** | ~20 min | yes — not before ~2026-09-18 |
 | 6 | **[google-ads-account-setup](google-ads-account-setup.md)** | Optimal Ads account from zero. **Not ready** — needs #5 first, and argues GBP §1 should come before any spend. | ~30 min | yes — 6 prerequisites unmet |
 | 7 | **[component-structure-reorg](component-structure-reorg.md)** | Repo-only. Collapses the four competing homes for reusable blocks into one axis: where the block *renders*. Fixes a byte-identical duplicated CTA, 5 homepage blocks scattered across 3 parents, READMEs pointing at a `Dev/` that does not exist, and an unenforceable Commandment 5. Adds the component index whose absence hid the youth camp banner. | ~1.5h | no |
-| **8** | 🔴 **[capture-and-track-se-bk-inline](capture-and-track-se-bk-inline.md)** — the homepage inline booking widget exists in **no file anywhere** (62 ids, one database row) **and reports nothing to GA4**: measured 2026-08-19, the homepage has 3 `book-tour` call sites and 1 `tour_booked` push. So every tour booked there is invisible, and it will read as ad blockers in September’s ratio. The two halves are one job — there is no file to add the push to until someone captures it. Editor paste only; `curl` rots the source. | ~35 min | no |
+| ✅ | **[capture-and-track-se-bk-inline](capture-and-track-se-bk-inline.md)** | ✅ **CLOSED 2026-08-19 — captured, tracked, verified on live.** The homepage inline booking widget existed in no file and reported nothing; it is now mirrored at [`live/thrive/pages/index/se-bk-inline.html`](../live/thrive/pages/index/se-bk-inline.html) and pushes `tour_booked`. Live: homepage `book-tour` = 3, `tour_booked` = 2; other pages unchanged at 2 · 2 · 1. Two findings outlive it: **the Thrive code box reports lines, not characters** (verify element captures by line count), and **`check:capture` exits 1 on this file by design** — its 10 `=""` boolean attributes are genuine editor content, not output-only markup. | — | done |
 | **9** | **Apply the `/special-offer/` redirect** — [patches/special-offer-redirect/](../patches/special-offer-redirect/), [§16](../SEO/TODO.md). Page 404s; the delivered summer email campaign links to it. Patch is paste-ready: full snippet, one-line diff, 2,535 → 2,574 bytes, with `curl` verification and a regression check. | ~5 min | no |
 | **10** | **Capture `/get-answers/`** — [§26](../SEO/TODO.md). Live, indexed, in the sitemap, with no source in this repo. Do it in the same Thrive session as #8. | ~15 min | no |
 | **11** | **Decide what `Website/Pages/index/Index.html` is** — [§25](../SEO/TODO.md). It is the only page file embedding the Thrive header symbol, and it is a **December 2025 snapshot** (countdown targets Jan 1 2026). Either declare it a whole-page mirror **and re-capture it**, or replace it with a content fragment. ⚠️ Declaring it authoritative *without* re-capturing is worse than leaving it. Needs a Sam decision. | ~30 min | needs decision |
@@ -51,10 +51,10 @@ pricing work, and is now merged twice over. It was briefly a trap — reading as
 already-merged while carrying 18 unmerged commits — which is worth knowing if a branch
 ever looks safe to delete again.
 
-**Blocked on a human at a screen** — items 8, 9 and 10 below, all doable in one Thrive
-session. Do **8** first: `se-bk-inline` runs on the live homepage and exists in no file
-anywhere, so it is one database row from being gone, and every other homepage decision
-is downstream of having it.
+**Blocked on a human at a screen** — items 9 and 10 below, both doable in one Thrive
+session. **8 is done** (2026-08-19): `se-bk-inline` was the one-database-row item, and it is
+now mirrored and reporting to GA4, so the homepage decisions downstream of it — item **11**
+in particular — are unblocked.
 
 **Blocked on a decision, not on work** — items 11 and 12 below. Both were put to the
 owner on 2026-08-18 and neither has an answer yet. Either can be executed immediately

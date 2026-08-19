@@ -1,6 +1,20 @@
 # Handoff — capture `se-bk-inline`, then make homepage tours report to GA4
 
-**Created:** 2026-08-19 · **Status:** 🔴 **OPEN — blocks two things at once** · **Est.:** ~35 min, most of it in the Thrive editor
+**Created:** 2026-08-19 · **Status:** ✅ **CLOSED 2026-08-19 — captured, tracked, verified on live** · **Est.:** ~35 min, most of it in the Thrive editor
+
+> **Outcome.** Mirrored at [live/thrive/pages/index/se-bk-inline.html](../live/thrive/pages/index/se-bk-inline.html)
+> — 1449 lines unpatched (`887b061`, the restore point), 1467 with the push (`ac907aa`). Pasted back and
+> verified by `curl`: homepage `book-tour` = 3, `tour_booked` = 2; `schedule-a-tour` · `memberships` ·
+> `fitness` unchanged at 2 · 2 · 1. `npm run guard` 5/5.
+>
+> **Two things worth carrying forward:**
+>
+> 1. **The Thrive code box reports LINES, not characters.** Step 1 below asks for a character count; it does
+>    not exist. Verify captures of Custom HTML elements by line count instead.
+> 2. **`npm run check:capture` exits 1 on this file and that is correct.** It flags 10 boolean attributes
+>    stored as `=""`. Those are genuine editor content here, not output-only markup — see
+>    [SEO/TODO.md §24](../SEO/TODO.md). The converter's boolean rule is a whitelist assumption that this file
+>    breaks. Do not strip them to make the check green.
 **Executed by:** Claude Code (Cowork) + a human at the Thrive editor — see [Kickoff prompt](#kickoff-prompt)
 
 > **Execution convention:** written to be run by a Claude Code agent in Cowork. See [CLAUDE.md § Handoffs](../CLAUDE.md).

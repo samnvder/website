@@ -12,9 +12,9 @@ rule 4 of the backup law in `CLAUDE.md`.
 |---|---|
 | Scanned | `Website/Pages` |
 | Frame | page tree (from path) |
-| Files examined | 31 |
+| Files examined | 29 |
 | Carrying output-only markup | 0 |
-| Already editor-form | 31 |
+| Already editor-form | 29 |
 | Mode | read-only survey |
 
 ## Already editor-form
@@ -29,8 +29,6 @@ rule 4 of the backup law in `CLAUDE.md`.
 - `Memberships (Category)/special-offer/Brandon PB Offer/Brandon PB Offer.html`
 - `Memberships (Category)/special-offer/Brandon PB Offer/index.html`
 - `Memberships (Category)/special-offer/Special Offer.html`
-- `Memberships (Category)/special-offer/email-campaign-summer-2026-final.html`
-- `Memberships (Category)/special-offer/email-campaign-summer-2026.html`
 - `Memberships (Category)/summer-membership/Summer HTML.html`
 - `Tours (Category)/schedule-a-tour/Membership Tour Booking Page.html`
 - `Tours (Category)/schedule-an-event-viewing/Event Tour Booking Page.html`

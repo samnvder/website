@@ -78,29 +78,27 @@ Diagnose a low ratio by shape, not size:
 | Shape | Meaning |
 |---|---|
 | Shortfall spread evenly across pages | Ad blockers. Normal. Do nothing. |
-| **One `tour_source_page` at zero while others report** | A call site is missing the push. **One is already known — see below.** |
+| **One `tour_source_page` at zero while others report** | A call site is missing the push. The homepage one was fixed 2026-08-19; a zero now means a *new* defect. |
 | Ratio far below 0.70 overall | Worth investigating — but check the shape first before assuming a bug. |
 
 
-### ⚠️ The homepage is already known to under-report — do not diagnose this as ad blockers
+### ✅ The homepage under-reporting is FIXED — but note the boundary date
 
-Measured on live 2026-08-19, by byte-range on the served page:
+**Resolved 2026-08-19.** The homepage ran two booking widgets and only one reported. `se-bk-inline` is now
+mirrored and pushes `tour_booked`; verified on live at `book-tour` = 3, `tour_booked` = 2, with every other
+page unchanged. See [SEO/TODO.md §24](../SEO/TODO.md).
 
-```
-se-bk-inline    ->  1 book-tour call, 0 tour_booked pushes   (homepage, untracked)
-se-bk-floating  ->  1 book-tour call, 1 tour_booked push     (homepage, tracked)
-```
+**Do not apply a correction for this.** An earlier revision of this handoff told you to subtract homepage
+bookings from the Supabase count before computing the ratio. That instruction is now wrong and would skew the
+baseline in the opposite direction.
 
-**The homepage runs two booking widgets and only one reports.** So expect `tour_source_page` for `/` to sit
-at or near zero while every other page reports normally, and expect the overall GA4:Supabase ratio to come
-in **below** the 70–85% band this handoff predicts.
+**The one boundary that still matters:** `tour_booked` tracking went live with container v7 on **2026-08-18**,
+and the inline widget only began reporting on **2026-08-19**. Any homepage inline booking in that ~one-day
+window is in Supabase and not in GA4. If your read window starts before 2026-08-19, say so in the verdict
+rather than silently averaging over it.
 
-**That is this defect, not ad blockers, and the two are indistinguishable from the totals alone.** Subtract
-homepage bookings from the Supabase count before computing the ratio, or the baseline you establish will be
-wrong for as long as it is used.
-
-Tracked as [SEO/TODO.md §24](../SEO/TODO.md); the fix is blocked behind capturing the widget from the Thrive
-editor, because its source exists in no file.
+So `tour_source_page` for `/` reading zero is no longer expected. If it *does* read zero across a window that
+starts after 2026-08-19, that is a new defect — treat it as one.
 
 ### 5 · Check the reschedule branch
 

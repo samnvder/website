@@ -673,7 +673,30 @@ Also blocking: the Conversion Linker ([handoff](../handoffs/gtm-conversion-linke
 
 ---
 
-### 24. 🔴 `se-bk-inline` booking widget on the homepage exists nowhere in the repo — **Claude** · silent-loss risk
+### 24. ✅ `se-bk-inline` booking widget on the homepage exists nowhere in the repo — **CLOSED 2026-08-19**
+
+**Both halves are done and verified on live.** The widget is mirrored at
+[live/thrive/pages/index/se-bk-inline.html](../live/thrive/pages/index/se-bk-inline.html), captured from the
+Thrive code box at 1449 lines — the count the editor reported — and committed unpatched first, so the
+pre-change element is recoverable with `git show 887b061:`. The `tour_booked` push was then added and pasted
+back. Live now reads **`book-tour` = 3, `tour_booked` = 2** on the homepage, with `schedule-a-tour`,
+`memberships` and `fitness` unchanged at 2 · 2 · 1.
+
+**One thing the capture settled, against expectation.** `npm run check:capture` exits **1** on this file and
+that is correct, not a defect to fix. It flags 10 boolean attributes stored as `=""` (6 `required`, plus
+`checked`, `selected`, `disabled`, `hidden`). The converter's rule assumes `=""` is always output-only markup
+— true for every capture seen before this one. Here it is genuine editor content: someone pasted
+DOM-serialized markup into this element at some point and saved it, so `=""` is what the editor holds. The
+same goes for the longhand inline styles on elements carrying `onfocus`/`onmouseover` handlers
+(`border-width: medium; border-style: none` where a sibling reads `border:none`). Per the backup law's rule 4,
+an editor-level difference belongs in the repo — stripping it would make the mirror disagree with the thing
+it mirrors. **Do not "fix" this file to make the check pass.**
+
+**Still open, and unrelated to the capture:** the header/footer widgets question at the bottom of this section.
+
+The original report follows.
+
+---
 
 Found 2026-08-18 during the full live↔repo parity audit ([checklist](../Website/Pages/LIVE-PARITY-CHECKLIST.md)).
 
@@ -712,7 +735,7 @@ that exists in no file. The push to add is the one already in
 
 **It exists in exactly one place: a database row.** Same shape as the `se-bk-floating` incident, one page narrower.
 
-**Fix:** open the homepage in Thrive, find the custom HTML element containing `se-bk-inline-card`, copy the **whole element from the editor** (not `curl` — backup-law rule 1), and commit it to `live/thrive/pages/index/se-bk-inline.html`. Verify by the character count the editor reports (rule 3).
+~~**Fix:** open the homepage in Thrive, find the custom HTML element containing `se-bk-inline-card`, copy the **whole element from the editor** (not `curl` — backup-law rule 1), and commit it to `live/thrive/pages/index/se-bk-inline.html`.~~ **Done 2026-08-19.** Verified by line count (1449, matching the editor) rather than character count — the Thrive code box reports lines, not characters.
 
 **Also decide:** the header/footer widgets (`secDrone*`, `secMenuWrapper`, `secFooterCta*`, `vtBtn*`) *are* in the repo, but under `Components/` — design source, not the `live/` mirror that [live/README.md](../live/README.md) specifies. Either declare `Components/` sufficient for Thrive symbols, or add a `live/thrive/templates/` mirror. Right now the law is ambiguous about them.
 
