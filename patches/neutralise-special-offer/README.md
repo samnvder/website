@@ -4,14 +4,18 @@
 
 ---
 
-## The live problem, in one line
+## The problem — live for part of 2026-08-19, now unpublished
 
-`/special-offer/` **is published right now** and every submission sends
-`offer: "summer-special-2026-jul31"` to Heroku and Dropbox Sign — filing August signups under July's
-campaign — while showing visitors a dead countdown and quoting young-family discounts that are $5–10 off.
+`/special-offer/` was published while this was being investigated, and in that window every submission
+sent `offer: "summer-special-2026-jul31"` to Heroku and Dropbox Sign — filing August signups under July's
+campaign — while showing visitors a dead countdown and young-family discounts $5–10 off canonical.
 
-> ⚠️ **The bare URL returns a cached `404`.** That is GoDaddy's cache, not the page. Verify with a
-> cache-buster or you will conclude it is down when it is serving:
+**It returns 404 again as of 2026-08-19 evening, so there is no live exposure right now.** This patch
+exists so the *next* publish does not reintroduce it: the page source no longer carries a campaign at all.
+
+> ⚠️ **A 404 from the bare URL proves nothing on its own.** GoDaddy serves a cached 404 for a page that is
+> actually live — that is exactly what happened here, and it is why the page looked unpublished while it
+> was serving 476 KB. Always cache-bust:
 > ```powershell
 > curl.exe -s -o NUL -w "%{http_code}`n" -A "Mozilla/5.0" "https://southendclub.com/special-offer/?cb=$(Get-Random)"
 > ```
