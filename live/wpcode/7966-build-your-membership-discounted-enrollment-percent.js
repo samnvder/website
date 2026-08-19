@@ -2,56 +2,41 @@
 /* WPCode #7966                                                             */
 /* Title: "JS - Build Your Membership - Discounted Enrollment %"            */
 /* ========================================================================== */
-/* REUSABLE OFFER TEMPLATE, percentage variant (per its title; it currently */
-/* runs a FLAT $100 via SPECIAL_ENROLLMENT, not a percentage). The owner     */
-/* re-edits it for each new promotion, then publishes a special-offer page  */
-/* that carries the builder markup. Treat it as a live template, not as     */
-/* expired code to retire.                                                  */
+/* REUSABLE OFFER TEMPLATE, percentage variant (per its title; it runs a    */
+/* FLAT amount via SPECIAL_ENROLLMENT, not a percentage). The owner re-edits*/
+/* it per promotion, then publishes a special-offer page carrying the       */
+/* builder markup. Treat it as a live template, not as code to retire.      */
 /*                                                                          */
-/* Status:  ENABLED in WPCode, currently INERT. No "Run Everywhere"         */
-/*          location is set and no special-offer page is published, so it   */
-/*          binds to nothing right now (owner-confirmed 2026-08-18). It      */
-/*          fails safe: the guard clause below returns early unless          */
-/*          membershipType, tier, priceDisplay and purchaseButton all       */
-/*          exist. Not moved to retired/ -- it was never removed, and it     */
-/*          is expected to be used again.                                    */
+/* Status:  ENABLED in WPCode, currently INERT and CARRYING NO OFFER.       */
+/*          No "Run Everywhere" location and no special-offer page is       */
+/*          published, so it binds to nothing. It fails safe: the guard     */
+/*          clause below returns early unless membershipType, tier,         */
+/*          priceDisplay and purchaseButton all exist.                      */
 /*                                                                          */
-/* ⚠ BEFORE THE NEXT OFFER GOES LIVE -- this snippet still holds the last    */
-/* campaign's values, and publishing a page activates them as-is:            */
+/* Captured 2026-08-18, AFTER the fix in patches/fix-7966-young-discounts/  */
+/* was pasted into WPCode. That paste did two things:                       */
+/*   - young-family discounts 25/15 -> 30/20, matching #9926 and #7315.     */
+/*     The 25/15 was an oversight (owner-confirmed), and cost a family with */
+/*     one young child $5/month more through this builder than the join page*/
+/*   - the expired July 31 campaign neutralised: the visitor wording and    */
+/*     the offer: tag now read as loud placeholders rather than a real-     */
+/*     looking past campaign, so an accidental publish fails obviously      */
 /*                                                                          */
-/*   1. SPECIAL_ENROLLMENT      -- flat enrollment for the new offer         */
-/*   2. limitedTimeText         -- still says "through July 31 at midnight"  */
-/*   3. header comment (below)  -- still says July 31, 2026                  */
-/*   4. offer: "..." in the payload -- still "summer-special-2026-jul31";    */
-/*      this is what lands in Heroku/Dropbox Sign, so a stale tag mislabels  */
-/*      every signup of the NEW campaign as the old one                      */
-/*   5. pricing / enrollmentFees / minimumAmounts -- must match the join     */
-/*      page unless the offer deliberately changes them                      */
-/*   6. young-family discounts (see NOTE) -- currently OUT OF STEP           */
-/*                                                                          */
-/* Then re-capture into this file. It is the only diffable record.           */
-/*                                                                          */
-/* ⏳ A FIX IS PREPARED AND NOT YET PASTED. This mirror still shows what is    */
-/* in the WPCode editor today. patches/fix-7966-young-discounts/ holds the    */
-/* paste-ready replacement: 30/20 discounts, and the expired campaign        */
-/* neutralised. Re-capture this file after pasting, then wire                */
-/* npm run guard:stale-offer into the guard chain.                          */
-/*                                                                          */
-/* NOTE -- young-family discounts here are { 1: 25, 2: 15 }, where #9926 and */
-/* #7315 both use 30/20. Confirmed live, not a capture error. A family with  */
-/* one young child pays $5/month MORE through this builder than through the  */
-/* join page. Most likely a leftover from an earlier pricing era that was    */
-/* never carried across. Decide deliberately before the next offer; the      */
-/* pricing guard does NOT cover this file.                                   */
-/*                                                                          */
-/* Captured 2026-08-18. Differs from its repo paste-source copy: live runs   */
-/* the July 31 wording, while commit 6a347b1 changed the repo to July 22 and */
-/* was never pasted. The repo tag reads "...jul21", matching neither. No     */
-/* pricing figure differs. Live is the authority.                            */
+/* ⚠ BEFORE THE NEXT OFFER GOES LIVE, set all of these:                      */
+/*   1. SPECIAL_ENROLLMENT      -- flat enrollment for the new offer        */
+/*   2. limitedTimeText         -- currently "OFFER NOT SET"                */
+/*   3. header comment (below)  -- currently "NONE ACTIVE"                  */
+/*   4. offer: "..." in payload -- currently "UNSET-set-before-launch".     */
+/*      This reaches Heroku and Dropbox Sign; a stale value would file      */
+/*      every signup of the new campaign under the old campaign name        */
+/*   5. pricing / enrollmentFees / minimumAmounts -- match the join page    */
+/*      unless the offer deliberately changes them                          */
+/* Then re-capture into this file. npm run guard:stale-offer fails if a     */
+/* date here has passed.                                                    */
 /* ========================================================================== */
 /**
  * Special Offer membership builder pricing (WPCode #7966).
- * Offer: flat $100 enrollment + 10 guest passes through July 31, 2026 (midnight Pacific).
+ * Offer: NONE ACTIVE. Template between campaigns - set the offer before publishing a page.
  * Monthly dues match current join-page rates (lock in before August increase).
  */
 (function () {
@@ -137,7 +122,7 @@
                 if (allFieldsFilled) {
                     const averageAge = childrenAges.reduce((a, b) => a + b, 0) / childrenAges.length;
                     if (averageAge <= 6 && numChildren <= 2) {
-                        const youngChildDiscounts = { 1: 25, 2: 15 };
+                        const youngChildDiscounts = { 1: 30, 2: 20 };
                         if (youngChildDiscounts[numChildren]) {
                             additionalCharge -= youngChildDiscounts[numChildren];
                         }
@@ -167,7 +152,7 @@
             originalPriceDisplay.textContent = `$${originalPrice}`;
             discountedPriceDisplay.textContent = `$${SPECIAL_ENROLLMENT}`;
             if (limitedTimeText) {
-                limitedTimeText.textContent = "through July 31 at midnight · 10 guest passes included";
+                limitedTimeText.textContent = "OFFER NOT SET — update this snippet before publishing";
                 limitedTimeText.style.display = "inline";
             }
         }
@@ -298,7 +283,7 @@
                 enrollmentFee,
                 monthlyDue,
                 foodBeverageMinimum,
-                offer: "summer-special-2026-jul31"
+                offer: "UNSET-set-before-launch"
             };
 
             console.log("Form data being sent:", data);

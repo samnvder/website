@@ -1,6 +1,6 @@
 # Patch — #7966 young-family discounts + neutralise the expired campaign
 
-**Prepared 2026-08-18.** Paste-ready. 🛑 Requires a human to paste into WPCode.
+**Prepared and APPLIED 2026-08-18.** ✅ Pasted into WPCode by the owner; mirror re-captured and verified identical. Kept as the record of what changed and why.
 
 ## What this changes
 
@@ -36,11 +36,12 @@ doing it during a campaign launch is a live pricing change under time pressure.
 4. Paste the saved editor contents back into the conversation so the mirror can
    be re-captured — the mirror is only worth having if it is true
 
-## After the paste
+## After the paste — done
 
-- Re-capture `live/wpcode/7966-build-your-membership-discounted-enrollment-percent.js`
-- `npm run guard:stale-offer` should then pass
-- Wire it into the chain: `"guard": "... && npm run guard:stale-offer"`
+- ✅ Mirror re-captured; stripping its header reproduces this file exactly, and the
+  repo paste-source matches too. Repo, live and mirror are one thing.
+- ✅ `npm run guard:stale-offer` passes
+- ✅ Wired into the chain — it was kept out while it was red, on purpose
 
 ## Regenerate
 
