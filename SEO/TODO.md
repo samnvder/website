@@ -103,6 +103,8 @@ Verified on `master`: **0** dead page-links, **0** `tve-jump` references, **0** 
 | §14 | ✅ **Tour bookings now tracked in GA4** — done 2026-08-18; Ads half blocked on having no Ads account | Claude + Sam | done · **read the first month ~2026-09-18** |
 | §15 | Repo has no `se-bk-floating` widget that runs on live | Claude | medium · silent-loss risk |
 | §16 | `/special-offer/` 404s while its repo file exists | Sam | small |
+| §28 | 🔴 **`/memberships/` embeds both builder shortcodes (#9926 + #7315)**; #7315 inert only because it throws first. Patch prepared, 2 gates | Sam | ~10 min · double-signature hazard |
+| §29 | ⚠️ `Special Offer.html` inline builder still has the pre-fix `25/15` young discounts and the July `offer:` tag | Claude | small · launch hazard |
 | §6 | Page weight 318–767 KB of Thrive HTML | — | deferred |
 | §7 | Body-level duplicate meta | — | cosmetic |
 
@@ -736,6 +738,33 @@ For the record, because it is the first time this has been measured. All 21 cand
 The two exceptions are §25 (homepage) and §16 (`/special-offer/`, 404). `/terms-conditions/` is not measurable by this method — it is pure Thrive builder markup with no authored ids or classes. `/testimonials/` is an unpublished draft.
 
 Re-run after any Thrive paste; the script is small enough to rebuild from the method note in the checklist.
+
+---
+
+### 28. 🔴 `/memberships/` renders BOTH membership builders; #7315 is inert only by accident — **Sam** (2 gates) · patch prepared 2026-08-19
+
+Found 2026-08-19 by `curl -s -A "Mozilla/5.0" https://southendclub.com/memberships/`: `grep -c create-signature-request` → **2**, `grep -c 'getElementById("purchaseButton").addEventListener'` → **2**. Both the sticker builder **#9926** and the discounted-enrollment builder **#7315** are on the page, each byte-identical to its `live/wpcode/` mirror, each attaching a click listener to `#purchaseButton`.
+
+**Mechanism — and why it is not what it looks like.** Both are **Shortcode**-mode snippets (confirmed in WP Admin, read-only: auto-insert off, conditional logic off, device any). WPCode's "Find Where This Shortcode Is Used" reports **both** `[wpcode id="9926"]` and `[wpcode id="7315"]` on exactly one page — **Join! (post 8812 = `/memberships/`)**. So this is not a WPCode insertion-settings problem; the **Thrive page embeds both shortcodes**. The repo page source is stale here (it shows `7186` in slot 1 and `9926` in slot 3; live renders `9926` in slot 1 and `7315` in slot 3, and #7186's code is not on the page at all). `memberships/Old/COMPARISON.txt` records the page as once carrying `7186` + `7315`: the 2026-08-02 move to sticker pricing added `[wpcode id="9926"]` and **never removed `[wpcode id="7315"]`**.
+
+**Why nothing double-fires today:** #7315 calls `updateEnrollmentFee()` before binding the click; it writes `originalPriceDisplay.textContent` and `#originalPrice` is absent from `/memberships/` (grep count **0**), so it throws a `TypeError` and never reaches the purchase listener. Its three `change` listeners *do* bind first, so every select change re-throws that error in the console.
+
+**Why it matters:** the moment the join page is given `#originalPrice` / `#discountedPrice` / `#limitedTimeText` — exactly what swapping in the Discounted Enrollment frontend for a fixed-dollar promo does — both bind and **every click creates two Dropbox Sign requests and two admin notifications.** The proof harness shows the live mirrors also double-bind on a discount-shaped page (#9926 tolerates a missing `#enrollmentFeeDisplay`), so the accident protects one page shape only. #7315 is *meant* for the join page during a fixed-dollar promo; the special-offer page does not use it (its builder is inlined, #7966-style).
+
+**Fix — prepared, NOT applied: [patches/membership-builder-single-bind/](../patches/membership-builder-single-bind/).** Two 🛑 HUMAN GATES:
+
+1. **Thrive:** delete the `[wpcode id="7315"]` Custom HTML element (`data-css="tve-u-693b313a87da28"`) from the `/memberships/` page. Root cause. Toggling #7315 off in WPCode instead would leave the shortcode armed for the next promo launch.
+2. **WPCode:** paste the two guarded builders. Each is the live mirror plus one inserted block — #9926 bails if `#discountedPrice` exists, #7315 bails unless it does, and both refuse to bind a `#purchaseButton` another builder has already stamped — so at most one binds on any page. `generate.js` proves each paste is mirror + block and still passes the pricing validator; `prove.js` shows 1 click listener on every page shape (was 2 on two of three).
+
+`curl` verification with expected counts, the post-paste mirror/repo chores, and a kickoff prompt are in the patch README.
+
+---
+
+### 29. ⚠️ `Special Offer.html` inline builder still carries the values the #7966 fix corrected — **Claude** · launch hazard, unpublished today
+
+Found 2026-08-19 while reading §28. The special-offer page (unpublished; §16) does not use WPCode for its builder — the #7966-style code is **inlined** in `Website/Pages/Memberships (Category)/special-offer/Special Offer.html`, and that inline copy still reads `youngChildDiscounts = { 1: 25, 2: 15 }` (line 2103) and `offer: "summer-special-2026-jul31"` (line 2264). Those are the two values [patches/fix-7966-young-discounts/](../patches/fix-7966-young-discounts/) fixed in WPCode #7966 on 2026-08-18 — but the page file was not in scope and `guard:stale-offer` scans only `live/wpcode/*.js`, so it cannot see this.
+
+Consequence: re-publishing the special-offer page from this file would quote a family with one young child $5/month more than the join page and file every signup under the July 2026 campaign — the exact hazard the #7966 patch closed, reopened through a different file. Fix: apply the same four substitutions to the inline copy, and either widen `guard:stale-offer` to cover page files that inline an `offer:` tag or note the gap in its header.
 
 ## Recommended next step
 
