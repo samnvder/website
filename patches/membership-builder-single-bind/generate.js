@@ -128,8 +128,12 @@ let failed = false;
 
 TARGETS.forEach((t) => {
   const mirrorPath = path.join(root, t.mirror);
-  const raw = fs.readFileSync(mirrorPath, 'utf8');
-  if (raw.includes('\r\n')) throw new Error(`${t.id}: mirror is CRLF; generator assumes LF`);
+  const rawOnDisk = fs.readFileSync(mirrorPath, 'utf8');
+  // core.autocrlf is on in this repo, so a fresh checkout may hand us CRLF.
+  // Work in LF and write the output in whatever the mirror used, so the paste
+  // file has the same line endings as the editor contents it derives from.
+  const eol = rawOnDisk.includes('\r\n') ? '\r\n' : '\n';
+  const raw = rawOnDisk.replace(/\r\n/g, '\n');
   const body = stripMirrorHeader(raw);
 
   // Refuse to run against a mirror that already carries the guard -- that means
@@ -146,7 +150,7 @@ TARGETS.forEach((t) => {
   }
 
   const outPath = path.join(__dirname, t.out);
-  fs.writeFileSync(outPath, out);
+  fs.writeFileSync(outPath, eol === '\n' ? out : out.replace(/\n/g, eol));
 
   // Proof 2: the output still validates under the guard's own expectations
   // (shape + canonical pricing + discounts forbidden/required).
