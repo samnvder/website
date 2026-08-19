@@ -8,7 +8,7 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 
 | # | Handoff | What it does | Time | Blocked? |
 |---|---|---|---|---|
-| **!** | **[lock-down-supabase-rls](lock-down-supabase-rls.md)** | 🔴 **Security — do this first.** The Supabase anon key grants public `SELECT`/`UPDATE`/`DELETE` on `tour_bookings` (231 prospects' name/email/phone) and `tour_referrals` (30 rows, two people each). Anyone can dump the PII or wipe the table, and no restore path is verified. Missing RLS, not a leaked key. | ~30 min | no |
+| ✅ | **[lock-down-supabase-rls](lock-down-supabase-rls.md)** | ✅ **CLOSED 2026-08-18 — remediated and verified in production.** Anon `SELECT`/`UPDATE`/`DELETE` on `tour_bookings` and `tour_referrals` is shut. One residual box unticked: a real booking has never been placed post-fix, which needs owner authorisation. **The data is still unbacked-up — that is `SEO/TODO.md` §18, a different problem.** | — | done |
 | 0 | **[publish-tour-tracking-gtm](publish-tour-tracking-gtm.md)** | ⚠️ **Published, not yet reporting.** v7 is live and collecting, but `tour_booked` is not starred as a key event so GA4 still reads `0.00`. **One click, from 2026-08-19.** Also open: delete the 2026-08-18 test booking, and `tour_booking_id` is confirmed `null`. | 1 min | GA4 propagation until 2026-08-19 |
 | 1 | **[tour-conversion-tracking](tour-conversion-tracking.md)** | Makes tour bookings visible to GA4 and Google Ads. Part A ✅ done 2026-08-18; **Part B ✅ published 2026-08-18** (container v7). | ~1h | Part C only — no Google Ads account exists |
 | 2 | **[ga4-hygiene](ga4-hygiene.md)** | Clears MonsterInsights residue. **Low priority — moves no numbers.** | ~20 min | no |
@@ -17,8 +17,26 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 | 5 | **[read-tour-volume](read-tour-volume.md)** | Reads the first real month of `tour_booked`: how many tours, from which pages, what fraction GA4 sees, and whether volume supports smart bidding. Read-only. **Unblocks #6.** | ~20 min | yes — not before ~2026-09-18 |
 | 6 | **[google-ads-account-setup](google-ads-account-setup.md)** | Optimal Ads account from zero. **Not ready** — needs #5 first, and argues GBP §1 should come before any spend. | ~30 min | yes — 6 prerequisites unmet |
 | 7 | **[component-structure-reorg](component-structure-reorg.md)** | Repo-only. Collapses the four competing homes for reusable blocks into one axis: where the block *renders*. Fixes a byte-identical duplicated CTA, 5 homepage blocks scattered across 3 parents, READMEs pointing at a `Dev/` that does not exist, and an unenforceable Commandment 5. Adds the component index whose absence hid the youth camp banner. | ~1.5h | no |
+| **8** | 🔴 **Capture `se-bk-inline` from the Thrive editor** — [SEO/TODO.md §24](../SEO/TODO.md). A 62-id inline booking widget runs on the live homepage and exists in **no file anywhere**; it is one database row from being gone. Same shape as the `se-bk-floating` incident. **Blocks all homepage work.** Editor paste only — `curl` rots the source. | ~10 min | no |
+| **9** | **Apply the `/special-offer/` redirect** — [patches/special-offer-redirect/](../patches/special-offer-redirect/), [§16](../SEO/TODO.md). Page 404s; the delivered summer email campaign links to it. Patch is paste-ready: full snippet, one-line diff, 2,535 → 2,574 bytes, with `curl` verification and a regression check. | ~5 min | no |
+| **10** | **Capture `/get-answers/`** — [§26](../SEO/TODO.md). Live, indexed, in the sitemap, with no source in this repo. Do it in the same Thrive session as #8. | ~15 min | no |
+| **11** | **Decide what `Website/Pages/index/Index.html` is** — [§25](../SEO/TODO.md). It is the only page file embedding the Thrive header symbol, and it is a **December 2025 snapshot** (countdown targets Jan 1 2026). Either declare it a whole-page mirror **and re-capture it**, or replace it with a content fragment. ⚠️ Declaring it authoritative *without* re-capturing is worse than leaving it. Needs a Sam decision. | ~30 min | needs decision |
+| **12** | **Fix or retire `npm run convert:local`** — `DIRECTORIES_TO_SCAN` is `['Pages','Components']`, but pages live at `Website/Pages`. From the repo root it silently skips every page and rewrites `Components/` only, leaving the tree half-converted with no warning. Demonstrated accidentally 2026-08-18. Retiring it likely takes the three root `index-*.html` variants and `dev-index.html` with it. | ~20 min | needs decision — is local preview still used? |
 
-**Do `!` before anything else.** It is the only open item that is a live data-protection failure rather than a reporting gap, it was found by accident on 2026-08-18, and the exposure is unbounded until it is closed.
+> ### ⚠️ Read this before picking anything up
+>
+> **This file is the priority index. If an item is not here, it is not scheduled** — check [SEO/TODO.md](../SEO/TODO.md) for the full backlog.
+>
+> **More than one agent writes this repo concurrently.** Two commits from separate sessions landed within a minute of each other on 2026-08-18. Before starting, `git log --oneline -5` and `git status` — the tree may have moved since your context was built, and a file you believe is untracked may be someone's uncommitted work.
+>
+> **On the competing "#1" claims:** several docs each nominate a different top item. They are ranked by different axes and all four are defensible. The ordering below reconciles them by *type of loss*:
+>
+> 1. **Unrecoverable-if-lost** beats everything — data that exists in exactly one mutable place. Cheap to fix, permanent if not.
+> 2. **Live users hitting a broken thing** next.
+> 3. **Business value** after that — this is where GBP (§1) sits, and it is genuinely the highest-ROI item on the board. It is a Sam decision, not an agent one.
+> 4. **Repo hygiene** last.
+>
+> An agent should not re-rank these. If the order looks wrong, say so and ask.
 
 **#0 is one checkbox from done — do not let it close until that box is ticked.** The container was published as v7 on 2026-08-18 and `tour_booked` is collecting, confirmed three ways (published `gtm.js` contains it, DebugView received it at 01:35, tag reported *Succeeded*). But **GA4 still reports `0.00` key events**, because `tour_booked` has not been starred — and it cannot be, until GA4 lists it. Re-checked 2026-08-18 afternoon: *Recent events* showed 11 of 11, unchanged from the 2026-08-17 baseline. That is propagation lag on an event that has fired exactly once. **Re-check from 2026-08-19; it is one click.**
 
@@ -30,6 +48,7 @@ Backlog context for all three: [SEO/TODO.md](../SEO/TODO.md) §14. Property conf
 
 | Handoff | Outcome |
 |---|---|
+| [mirror-membership-builders](mirror-membership-builders.md) | ✅ Closed 2026-08-18. All three membership builders (#9926, #7315, #7966) mirrored into `live/wpcode/`. #9926 and #7315 proved **byte-identical** to their repo copies, so the pricing guard is verified to check what is actually running. #7966 drifted (dates + `offer:` tag, no pricing) and is a **reusable offer template** — its header carries a pre-launch checklist. Two queued pricing edits settled as *do not apply*. |
 | [consolidate-snippet-mirrors](consolidate-snippet-mirrors.md) | ✅ Closed 2026-08-18. All five WPCode mirrors now live under `live/wpcode/` with ID-prefixed names, 9952 in `retired/`, `SEO/snippets/` gone. Repo-only — no live system touched. |
 | [link-search-console](link-search-console.md) | ✅ Closed 2026-08-17. GSC linked to GA4, both reports published, query data live immediately. GSC owner access had to be added first. |
 | [SEO/HANDOFF.md](../SEO/HANDOFF.md) | Closed 2026-08-07. Kept as a record of hypothesis-vs-reality, plus two reusable verification scripts. |
@@ -274,3 +293,8 @@ When you reach the gate, show me render-map.txt, the derived move list, and
 specifically flag every block whose measured destination differs from where it
 currently lives.
 ```
+
+### 8 · Mirror the membership builder snippets — ✅ closed, kickoff retired
+
+All three snippets are mirrored; see the [handoff](mirror-membership-builders.md) for the outcome.
+

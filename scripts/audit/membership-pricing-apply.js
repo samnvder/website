@@ -267,6 +267,9 @@ function normalizePricingModel(input) {
       },
       thirdChildOver4Surcharge: fpa.third_child_over_age_4_surcharge,
     },
+    stickerRateSource: Array.isArray(input.sticker_rate_source)
+      ? input.sticker_rate_source
+      : null,
     raw: input,
   };
 }
@@ -292,6 +295,74 @@ function objectLiteralFromMap(obj, level = 1) {
   lines.push(`${indent}}`);
   return lines.join('\n');
 }
+
+/**
+ * Indentation and line endings differ between builders: the join-page builder
+ * sits inside a DOMContentLoaded callback (4-space base) while the summer-offer
+ * builder is nested one level deeper inside an IIFE (8-space base), and the
+ * builder files are CRLF. The codegen used to emit one hardcoded shape, which
+ * reindented the whole of the deeper file on every run -- dozens of lines of
+ * churn for a pricing change that touched three numbers. These helpers make the
+ * emitted text adopt whatever shape the target file already uses.
+ */
+
+/** Leading whitespace of the line `index` falls on. */
+function indentAt(source, index) {
+  const lineStart = source.lastIndexOf('\n', index) + 1;
+  return (source.slice(lineStart, index).match(/^[ \t]*/) || [''])[0];
+}
+
+/** Smallest indentation across all lines after the first (the block's own base). */
+function baseIndentOf(text) {
+  const rest = text.split('\n').slice(1).filter((l) => l.trim() !== '');
+  if (rest.length === 0) return '';
+  return rest.reduce((min, l) => {
+    const lead = (l.match(/^[ \t]*/) || [''])[0];
+    return lead.length < min.length ? lead : min;
+  }, (rest[0].match(/^[ \t]*/) || [''])[0]);
+}
+
+/**
+ * Re-anchor generated text to `indent`, preserving relative nesting.
+ * The first line is left alone -- it follows `= ` or the match start.
+ */
+function reindent(text, indent) {
+  const base = baseIndentOf(text);
+  return text
+    .split('\n')
+    .map((line, i) => {
+      if (i === 0) return line;
+      if (line.trim() === '') return '';
+      // When the template's own base is column 0, its lines already carry the
+      // relative nesting we want -- keep it and just shift the whole block.
+      const stripped = base && line.startsWith(base) ? line.slice(base.length) : line;
+      return indent + stripped;
+    })
+    .join('\n');
+}
+
+/** Restore the file's original line endings after codegen (which emits \n). */
+function matchEol(next, raw) {
+  const crlf = (raw.match(/\r\n/g) || []).length;
+  const lf = (raw.match(/\n/g) || []).length - crlf;
+  const normalized = next.replace(/\r\n/g, '\n');
+  return crlf > lf ? normalized.replace(/\n/g, '\r\n') : normalized;
+}
+
+/**
+ * Replace a matched block, re-anchored to the indentation the block already had.
+ * `build` receives the RegExp match, so patterns with backreferences still work.
+ */
+function replaceBlockAtIndent(source, pattern, build, label) {
+  const m = source.match(pattern);
+  if (!m) {
+    throw new Error(`Pattern not found for ${label}.`);
+  }
+  const indent = indentAt(source, m.index);
+  const text = typeof build === 'function' ? build(m) : build;
+  return source.slice(0, m.index) + reindent(text, indent) + source.slice(m.index + m[0].length);
+}
+
 
 function findConstObjectBounds(source, constName) {
   const needle = `const ${constName}`;
@@ -326,7 +397,15 @@ function findConstObjectBounds(source, constName) {
 
 function replaceConstObject(source, constName, objectLiteralText) {
   const bounds = findConstObjectBounds(source, constName);
-  return source.slice(0, bounds.startObj) + objectLiteralText + ';\n\n    ' + source.slice(bounds.end);
+  const indent = indentAt(source, source.indexOf(`const ${constName}`));
+  return (
+    source.slice(0, bounds.startObj) +
+    reindent(objectLiteralText, indent) +
+    `;
+
+${indent}` +
+    source.slice(bounds.end)
+  );
 }
 
 function replaceFirstOrThrow(source, pattern, replacement, label) {
@@ -400,88 +479,165 @@ function buildYoungDiscountMapLiteral(youngDiscounts) {
   return `{ ${parts.join(', ')} }`;
 }
 
+/**
+ * Read the young-family discount rule already present in a builder, in either
+ * form it is written in the wild:
+ *
+ *   ternary:  additionalCharge -= numChildren === 1 ? 30 : 20;
+ *   map:      const youngChildDiscounts = { 1: 30, 2: 20 };
+ *
+ * Returns { gate: {maxAverageAge, maxChildren}, discounts } or null.
+ */
+function readExistingYoungRule(source) {
+  const gateMatch = source.match(
+    /if \(averageAge <= (\d+) && numChildren <= (\d+)\) \{([\s\S]*?)\n\s*\}/
+  );
+  if (!gateMatch) return null;
+  const gate = {
+    maxAverageAge: Number(gateMatch[1]),
+    maxChildren: Number(gateMatch[2]),
+  };
+  const body = gateMatch[3];
+
+  const mapForm = body.match(/const youngChildDiscounts = \{([^}]*)\}/);
+  if (mapForm) {
+    const discounts = {};
+    mapForm[1].split(',').forEach((pair) => {
+      const kv = pair.split(':');
+      if (kv.length === 2) discounts[kv[0].trim()] = Number(kv[1].trim());
+    });
+    return { gate, discounts };
+  }
+
+  const ternary = body.match(
+    /additionalCharge -= numChildren === 1 \? (\d+) : (\d+);/
+  );
+  if (ternary) {
+    return { gate, discounts: { 1: Number(ternary[1]), 2: Number(ternary[2]) } };
+  }
+
+  return null;
+}
+
+/** Same rule, expressed either way? */
+function youngRuleMatchesModel(existing, model) {
+  if (!existing) return false;
+  const young = model.familyAdjustments.youngAverage;
+  if (
+    existing.gate.maxAverageAge !== young.maxAverageAge ||
+    existing.gate.maxChildren !== young.maxChildren
+  ) {
+    return false;
+  }
+  const want = young.discounts;
+  const wantKeys = Object.keys(want).sort();
+  const gotKeys = Object.keys(existing.discounts).sort();
+  if (wantKeys.join() !== gotKeys.join()) return false;
+  return wantKeys.every((k) => Number(want[k]) === Number(existing.discounts[k]));
+}
+
+
 function updateMembershipBuilderJs(raw, model) {
   let next = raw;
   next = replaceConstObject(next, 'pricing', buildPricingObject(model));
   next = replaceConstObject(next, 'minimumAmounts', buildMinimumAmountsObject(model));
   next = replaceConstObject(next, 'enrollmentFees', buildEnrollmentObject(model));
 
-  const discountModel = buildDiscountObject(model);
-  const altConst = discountModel.constName === 'discounts' ? 'discountRates' : 'discounts';
+  // Discount codegen is OPTIONAL, and deliberately never *introduced*.
+  //
+  // The normal join-page builder (WPCode #9926) has carried no discount const
+  // since commit 3fc792b removed its promo UI, and the summer-offer builder
+  // (#7966) uses a flat SPECIAL_ENROLLMENT constant rather than a discounts
+  // map. Writing a discounts block into either would put promo pricing on a
+  // page that is not running one -- exactly what the guard now fails on. So we
+  // only rewrite discounts in builders that already have them (#7315).
+  if (/const\s+(discounts|discountRates)\s*=/.test(next)) {
+    const discountModel = buildDiscountObject(model);
+    const altConst = discountModel.constName === 'discounts' ? 'discountRates' : 'discounts';
 
-  try {
-    next = replaceConstObject(next, altConst, discountModel.objectText);
-    next = next.replace(`const ${altConst}`, `const ${discountModel.constName}`);
-  } catch {
-    next = replaceConstObject(next, discountModel.constName, discountModel.objectText);
+    try {
+      next = replaceConstObject(next, altConst, discountModel.objectText);
+      next = next.replace(`const ${altConst}`, `const ${discountModel.constName}`);
+    } catch {
+      next = replaceConstObject(next, discountModel.constName, discountModel.objectText);
+    }
+
+    next = replaceBlockAtIndent(
+      next,
+      /const originalPrice = enrollmentFees\[type\]\[tier - 1\];[\s\S]*?const discountedPrice = .*?;/,
+      discountModel.calcText,
+      'enrollment discounted price calculation'
+    );
   }
 
-  next = replaceFirstOrThrow(
-    next,
-    /const originalPrice = enrollmentFees\[type\]\[tier - 1\];[\s\S]*?const discountedPrice = .*?;/,
-    discountModel.calcText,
-    'enrollment discounted price calculation'
-  );
-
-  next = replaceFirstOrThrow(
+  next = replaceBlockAtIndent(
     next,
     /additionalCharge \+= \(i === 1\) \? .*?;/,
     `additionalCharge += (i === 1) ? ${model.familyAdjustments.over17.firstChild} : ${model.familyAdjustments.over17.additionalChildrenStart} - (i - 1) * ${model.familyAdjustments.over17.stepDownPerChild};`,
     'age > 17 pricing'
   );
 
-  next = replaceFirstOrThrow(
+  next = replaceBlockAtIndent(
     next,
     /if \(age > 13 && age <= 17\) \{\s*[\r\n]+\s*additionalCharge \+= \d+;\s*[\r\n]+\s*}/,
     `if (age > 13 && age <= 17) {
-                        additionalCharge += ${model.familyAdjustments.age14to17};
-                    }`,
+    additionalCharge += ${model.familyAdjustments.age14to17};
+}`,
     'age 14-17 pricing'
   );
 
   const youngDiscountMap = buildYoungDiscountMapLiteral(model.familyAdjustments.youngAverage.discounts);
   const youngBlock = `if (averageAge <= ${model.familyAdjustments.youngAverage.maxAverageAge} && numChildren <= ${model.familyAdjustments.youngAverage.maxChildren}) {
-                    const youngChildDiscounts = ${youngDiscountMap};
-                    if (youngChildDiscounts[numChildren]) {
-                        additionalCharge -= youngChildDiscounts[numChildren];
-                    }
-                }`;
+    const youngChildDiscounts = ${youngDiscountMap};
+    if (youngChildDiscounts[numChildren]) {
+        additionalCharge -= youngChildDiscounts[numChildren];
+    }
+}`;
 
-  next = replaceFirstOrThrow(
-    next,
-    /if \(averageAge <=[\s\S]*?(for \(let i = 3;)/,
-    `${youngBlock}
+  // Only rewrite this rule if it actually says something different. #9926
+  // writes the same 30/20 as a ternary rather than a map -- semantically
+  // identical, so rewriting it would churn a live paste-in file and put the
+  // repo out of step with what is running, for no behavioural change. A tool
+  // that always reports work to do trains people to skim past it.
+  if (!youngRuleMatchesModel(readExistingYoungRule(next), model)) {
+    next = replaceBlockAtIndent(
+      next,
+      /if \(averageAge <=[\s\S]*?(for \(let i = 3;)/,
+      (m) => `${youngBlock}\n\n${m[1]}`,
+      'young family discount block'
+    );
+  }
 
-                $1`,
-    'young family discount block'
-  );
-
-  next = replaceFirstOrThrow(
+  next = replaceBlockAtIndent(
     next,
     /if \(age > 4\) \{\s*[\r\n]+\s*additionalCharge \+= \d+;\s*[\r\n]+\s*}/,
     `if (age > 4) {
-                        additionalCharge += ${model.familyAdjustments.thirdChildOver4Surcharge};
-                    }`,
+    additionalCharge += ${model.familyAdjustments.thirdChildOver4Surcharge};
+}`,
     'third child surcharge'
   );
 
-  return next;
+  // Codegen emits \n; put the file back on the line endings it arrived with.
+  return matchEol(next, raw);
 }
 
 function renderAlterationsMarkdown(model) {
-  const discountHeader =
+  // The discount model is per-builder, not global. Saying "enrollment discounts
+  // are fixed dollar amounts" flat out was wrong for the normal join page, which
+  // has charged sticker enrollment since 3fc792b -- and this file regenerating
+  // that claim is how the doc drifted away from the code it documents.
+  const unit = (v) =>
     model.discounts.mode === 'amount'
-      ? 'Enrollment discounts are fixed dollar amounts by membership type.'
-      : 'Enrollment discounts are percentage rates by membership type.';
+      ? `$${v} off enrollment`
+      : `${(v * 100).toFixed(2).replace(/\.00$/, '')}% off enrollment`;
 
   const discountRows = ['single', 'couple', 'family']
-    .map((k) => {
-      const v = model.discounts.values[k];
-      return model.discounts.mode === 'amount'
-        ? `- ${k}: $${v} off enrollment`
-        : `- ${k}: ${(v * 100).toFixed(2).replace(/\.00$/, '')}% off enrollment`;
-    })
+    .map((k) => `- ${k}: ${unit(model.discounts.values[k])}`)
     .join('\n');
+
+  const stickerSource = model.stickerRateSource
+    ? `\n## Sticker rate source\n\n${model.stickerRateSource.map((l) => `- ${l}`).join('\n')}\n`
+    : '';
 
   return `# Membership Pricing Alterations
 
@@ -489,9 +645,13 @@ This file is generated by \`scripts/audit/membership-pricing-apply.js\`.
 
 ## Discount model
 
-${discountHeader}
+**Normal join page (WPCode #9926):** no enrollment discount. Sticker enrollment fees display as-is.
+
+**Discounted enrollment (WPCode #7315)** — \`memberships/Discounted Enrollment/membership builder JS.js\`:
 
 ${discountRows}
+
+**Special offer (WPCode #7966)** — \`membership builder JS-discount-enrollment.js\`: flat enrollment amount, set in the file as \`SPECIAL_ENROLLMENT\`.
 
 ## Family monthly adjustment rules
 
@@ -504,7 +664,7 @@ ${discountRows}
     .map((k) => `${k} child = -$${model.familyAdjustments.youngAverage.discounts[k]}`)
     .join(', ')}.
 - Third child+ surcharge: +$${model.familyAdjustments.thirdChildOver4Surcharge} for each child #3+ over age 4.
-`;
+${stickerSource}`;
 }
 
 function main() {
@@ -536,7 +696,10 @@ function main() {
   const canonicalJsonBefore = fs.existsSync(canonicalJsonPath)
     ? fs.readFileSync(canonicalJsonPath, 'utf8')
     : '';
-  const canonicalJsonAfter = `${JSON.stringify(model.raw, null, 2)}\n`;
+  // Keep the generated text on the file's existing line endings, or these two
+  // always report "would update" on a CRLF checkout even when nothing changed.
+  const canonicalJsonAfter = matchEol(`${JSON.stringify(model.raw, null, 2)}
+`, canonicalJsonBefore);
   changes.push({
     relPath: CANONICAL_JSON_REL,
     changed: canonicalJsonBefore !== canonicalJsonAfter,
@@ -549,7 +712,7 @@ function main() {
   const canonicalMdBefore = fs.existsSync(canonicalMdPath)
     ? fs.readFileSync(canonicalMdPath, 'utf8')
     : '';
-  const canonicalMdAfter = renderAlterationsMarkdown(model);
+  const canonicalMdAfter = matchEol(renderAlterationsMarkdown(model), canonicalMdBefore);
   changes.push({
     relPath: CANONICAL_MD_REL,
     changed: canonicalMdBefore !== canonicalMdAfter,
@@ -585,4 +748,16 @@ function main() {
     });
 }
 
-main();
+// Importing this module used to RUN it -- a bare `require` rewrote every live
+// pricing file as a side effect. Only execute when invoked directly.
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  updateMembershipBuilderJs,
+  renderAlterationsMarkdown,
+  normalizePricingModel,
+  reindent,
+  matchEol,
+};

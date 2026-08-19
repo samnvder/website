@@ -1,3 +1,39 @@
+/* ========================================================================== */
+/* WPCode #7966                                                             */
+/* Title: "JS - Build Your Membership - Discounted Enrollment %"            */
+/* ========================================================================== */
+/* REUSABLE OFFER TEMPLATE, percentage variant (per its title; it runs a    */
+/* FLAT amount via SPECIAL_ENROLLMENT, not a percentage). The owner re-edits*/
+/* it per promotion, then publishes a special-offer page carrying the       */
+/* builder markup. Treat it as a live template, not as code to retire.      */
+/*                                                                          */
+/* Status:  ENABLED in WPCode, currently INERT and CARRYING NO OFFER.       */
+/*          No "Run Everywhere" location and no special-offer page is       */
+/*          published, so it binds to nothing. It fails safe: the guard     */
+/*          clause below returns early unless membershipType, tier,         */
+/*          priceDisplay and purchaseButton all exist.                      */
+/*                                                                          */
+/* Captured 2026-08-18, AFTER the fix in patches/fix-7966-young-discounts/  */
+/* was pasted into WPCode. That paste did two things:                       */
+/*   - young-family discounts 25/15 -> 30/20, matching #9926 and #7315.     */
+/*     The 25/15 was an oversight (owner-confirmed), and cost a family with */
+/*     one young child $5/month more through this builder than the join page*/
+/*   - the expired July 31 campaign neutralised: the visitor wording and    */
+/*     the offer: tag now read as loud placeholders rather than a real-     */
+/*     looking past campaign, so an accidental publish fails obviously      */
+/*                                                                          */
+/* ⚠ BEFORE THE NEXT OFFER GOES LIVE, set all of these:                      */
+/*   1. SPECIAL_ENROLLMENT      -- flat enrollment for the new offer        */
+/*   2. limitedTimeText         -- currently "OFFER NOT SET"                */
+/*   3. header comment (below)  -- currently "NONE ACTIVE"                  */
+/*   4. offer: "..." in payload -- currently "UNSET-set-before-launch".     */
+/*      This reaches Heroku and Dropbox Sign; a stale value would file      */
+/*      every signup of the new campaign under the old campaign name        */
+/*   5. pricing / enrollmentFees / minimumAmounts -- match the join page    */
+/*      unless the offer deliberately changes them                          */
+/* Then re-capture into this file. npm run guard:stale-offer fails if a     */
+/* date here has passed.                                                    */
+/* ========================================================================== */
 /**
  * Special Offer membership builder pricing (WPCode #7966).
  * Offer: NONE ACTIVE. Template between campaigns - set the offer before publishing a page.

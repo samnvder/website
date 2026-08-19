@@ -1,6 +1,16 @@
 # CLAUDE.md
 
-Entry point for a fresh session. Read this, then [README.md](./README.md) and [AI-RULES.md](./AI-RULES.md).
+Entry point for a fresh session. Read this, then [README.md](./README.md) and [AI-RULES.md](./AI-RULES.md). For **what to work on**, go to [handoffs/README.md](./handoffs/README.md) — it is the priority index, and it outranks the ordering claims in any other file.
+
+## ⚠️ You are probably not the only agent in this repo
+
+Sessions run concurrently here. On 2026-08-18 two agents committed within a minute of each other, and one of them swept another's uncommitted working-tree changes into an unrelated commit — so the change landed correctly but the history now attributes it to the wrong work.
+
+Three habits that avoid it:
+
+- **`git log --oneline -5` and `git status` before you start.** The tree may have moved since your context was built.
+- **Stage and commit in one step, straight after the edit.** Every second a change sits unstaged is a window for someone else's `git add`.
+- **An untracked file may be someone's work in progress.** `git status` showing `??` is not permission to overwrite it — read it first. This has already cost one file that had no git copy to restore from.
 
 ## What this repo is
 
@@ -123,15 +133,57 @@ A handoff must have:
 
 ## Known issues (not SEO)
 
-- **`npm run guard` is broken on `master` — CI has been red on every PR since commit `3fc792b`.** The membership-pricing guard crashes with `Could not find "const discountRates" in source file.` Nothing to do with SEO, but it means **a red check is the normal state, so a genuinely broken build looks identical to a healthy one.** Fix it before trusting CI.
+- ~~**`npm run guard` is broken on `master`**~~ — **fixed 2026-08-18.** `npm run guard` exits 0, so **a red check now means something.** History, because the wrong fix here is tempting:
 
-  Verified cause — the refactor moved the discount files into a `Discounted Enrollment/` subdirectory and the guard's path config was never updated:
+  The guard crashed with `Could not find "const discountRates" in source file.` The obvious reading — repoint `SOURCE_REL` at the copy that still has `discounts` — would have been **wrong**, and would have left a guard that passes while validating the wrong page's pricing.
 
-  | | Path |
-  |---|---|
-  | `DISCOUNT_SOURCE_REL` expects | `…/memberships/membership builder JS-discount-enrollment.js` |
-  | File actually lives at | `…/memberships/`**`Discounted Enrollment/`**`membership builder JS-discount-enrollment.js` |
+  What was actually true: commit `3fc792b` deliberately removed the promo UI from the normal join-page builder, so its missing `discounts` const is correct, not a regression. The guard was demanding a constant the live file is supposed to not have. Two builders are live (owner-confirmed, WPCode toggles verified 2026-08-18):
 
-  Separately, `loadMembershipBuilderPricing` reads discounts out of `SOURCE_REL` (`…/memberships/membership builder JS.js`), which no longer defines `discounts` *or* `discountRates` — it only has `pricing`, `minimumAmounts`, `enrollmentFees`. The constant it wants, `const discounts`, is in `…/memberships/Discounted Enrollment/membership builder JS.js`. **Confirm which file is authoritative for live pricing before repointing it** — making the guard pass against the wrong file would silently stop validating real pricing drift, which is the whole point of the guard.
+  | Builder | WPCode | `discounts` |
+  |---|---|---|
+  | `memberships/membership builder JS.js` | **#9926** normal join | none, by design |
+  | `memberships/Discounted Enrollment/membership builder JS.js` | **#7315** discounted enrollment | `$100 / $100 / $150` |
+  | `memberships/Discounted Enrollment/…-discount-enrollment.js` | **#7966** summer offer | flat `SPECIAL_ENROLLMENT`, expired 2026-07-22 |
+
+  The fix: discounts became **optional** (`discountsMode: 'none'`); the guard checks **both** live builders and asserts the *kind* of each (`discounts: 'forbidden'` for #9926, `'required'` for #7315); and `DISCOUNT_SOURCE_REL` gained the missing `Discounted Enrollment/` segment.
+
+  It also closes a hole that predates the crash: the guard only ever checked **shape**, so any internally-consistent set of numbers passed. It now cross-checks both builders against `scripts/audit/membership-pricing-source.json`, so a dues figure changed in one place and not the other fails.
+
+  **`npm run guard:membership-pricing:prove` is the proof, and it is runnable.** It mutates real pricing files, asserts each mutation landed, runs the guard, and restores from git — 12/12 drift cases caught. It refuses to run if the pricing files are dirty. If you change the guard, run it; a guard that exits 0 without this passing is not known to check anything.
+
+  **`npm run pricing:apply` is fixed too (2026-08-18).** It threw the same way, then turned out to carry three further defects that all *wrote to live paste-in files*: indentation hardcoded to the join page's nesting depth (62 lines of churn on #7966 for a three-number change), multi-line blocks flattened, LF emitted into CRLF files, and a generated `membership-pricing-alterations.md` that overwrote the accurate per-builder discount text with a blanket false claim. Applying is now idempotent, and `require`-ing the module no longer runs `main()` — a bare import used to rewrite every pricing file. Covered by `scripts/audit/testing/test-pricing-apply.js` in `npm test`.
+
+  **Two pricing edits are pending and deliberately not applied** — applying obliges a WPCode re-paste, so it is an owner decision:
+
+  | Builder | Pending change | Stakes |
+  |---|---|---|
+  | #7966 summer offer | young-family discounts `{1: 25, 2: 15}` → canonical `{1: 30, 2: 20}` | real drift; low if the offer is toggled off |
+  | #9926 normal join | `additionalCharge -= numChildren === 1 ? 30 : 20;` → canonical map form | cosmetic, same numbers |
+
+  **Mirrored 2026-08-18 — and live matches the repo.** #9926 and #7315 are now in [`live/wpcode/`](./live/wpcode/), captured from the WPCode editors. Both are **byte-identical to their repo paste-source copies** (ignoring line endings), so for these two the guard is validating what is actually running, not just the repo agreeing with itself. Live #9926 has no `discounts` const and live #7315 has `$100/$100/$150` — exactly the expectations the guard encodes. Live pricing matches `membership-pricing-source.json` throughout.
+
+  A caution that turned out to be wrong, recorded because the reasoning was tempting: both snippets are titled "…with email notification", and that title was taken as evidence the live #7315 carried code the repo lacked. It does not — the repo copy has had the Dropbox-Sign/notify-admin block since `3fc792b`. **A snippet title is not evidence about its contents.** The diff was the evidence, and it took thirty seconds.
+
+  **Two of the three are reusable offer templates, not one-off code.** The owner re-edits #7315 and #7966 per promotion rather than replacing them, so each still holds the *last* campaign's values. Mirrors are named from their WPCode titles:
+
+  | File in [`live/wpcode/`](./live/wpcode/) | WPCode title | Role |
+  |---|---|---|
+  | `9926-build-your-membership-with-email-notification.js` | JS - Build Your Membership - with email notification | **The original.** No discount, sticker enrollment. The other two derive from it. |
+  | `7315-build-your-membership-discounted-enrollment-with-email-notification.js` | JS - Build Your Membership (Discounted Enrollment) - with email notification | Offer template, fixed-dollar. Currently $100/$100/$150. **Active.** |
+  | `7966-build-your-membership-discounted-enrollment-percent.js` | JS - Build Your Membership - Discounted Enrollment % | Offer template, "%" per its title though it currently runs a flat `SPECIAL_ENROLLMENT`. Enabled but **inert** — no page published to bind to, and it returns early unless all four builder elements exist. |
+
+  **All three mirrors are byte-identical to what is running**, so the guards check reality rather than the repo agreeing with itself. #7966 was the one that had drifted (live on July 31 wording, repo on July 22, `offer:` tag on `…jul21` — matching neither); it was reconciled by pasting the prepared patch on 2026-08-18, and repo, live and mirror are now one thing.
+
+  **Because the templates are reused, stale values are a launch hazard, not dead text.** Publishing an offer page activates whatever the snippet holds — including the `offer:` tag that reaches Heroku and Dropbox Sign, which would mislabel every signup of a *new* campaign as the old one. #7966 now rests carrying **no offer at all**: its wording and tag are loud placeholders (`OFFER NOT SET`, `UNSET-set-before-launch`), so an accidental publish fails obviously instead of plausibly. Each mirror's header carries its pre-launch checklist, and `guard:stale-offer` enforces the dates.
+
+  Two things the captures settled, both against what was assumed:
+
+  - **#7966's `{1: 25, 2: 15}` was an oversight — owner-confirmed — and is now `{1: 30, 2: 20}` everywhere: repo, live and mirror.** Pasted into WPCode 2026-08-18 via [`patches/fix-7966-young-discounts/`](./patches/fix-7966-young-discounts/), which also neutralised the expired campaign. **All three builders now agree on young-family discounts.**
+  - **`npm run pricing:apply -- --dry-run` is now clean** — "No file changes needed". It stopped proposing to rewrite #9926's young-discount ternary into an equivalent map, which was a permanent false positive. **So if it ever reports a change again, that is real.**
+
+  See [handoffs/mirror-membership-builders.md](./handoffs/mirror-membership-builders.md).
+- **`npm run guard:stale-offer` is in the `guard` chain and green (2026-08-18).** It scans `live/wpcode/*.js` for offer campaigns whose date has passed: the visitor-facing "through July 31" wording, and more importantly the `offer:` tag in the fetch payload, which reaches Heroku and Dropbox Sign. A stale tag files every signup of a *new* campaign under the *old* campaign's name — the page looks right and only the paperwork is wrong.
+
+  It found one real thing (#7966's `summer-special-2026-jul31`), that was fixed at source, and only then was it wired into the chain. It was deliberately kept out while red: a permanently-failing check is the exact disease that made the membership-pricing crash invisible for weeks. Covered by `scripts/audit/testing/test-stale-offer-guard.js` (9 tests, in `npm test`), with `today` injected so the tests do not themselves expire.
 - **All-in-One WP Migration Unlimited Extension is flagged by WordPress as likely pirated** and throws a fatal error against the current core version. Currently deactivated. Should be deleted — nulled plugins are a malware vector.
 - Backups exist on the server (2 × 6.72 GB) but **cannot be restored** with the free plugin's ~512 MB import cap. GoDaddy's own managed backups have not been checked.
