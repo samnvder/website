@@ -17,10 +17,22 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 
+const os = require('os');
+
 const REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
 const SCRIPT = path.join(REPO_ROOT, 'scripts', 'convert', 'convert-to-local.js');
 
+// Load the module from a throwaway cwd, NEVER from the repo root.
+//
+// This is not paranoia — it happened. While these tests were being written the
+// require.main guard was briefly absent, and requiring the module executed
+// main() against the real tree, rewriting 10 files in Components/. If the guard
+// ever regresses, the worst case must be a failing test, not a mutated repo:
+// from a temp cwd, main() cannot resolve its paths and exits non-zero instead.
+const originalCwd = process.cwd();
+process.chdir(os.tmpdir());
 const mod = require(SCRIPT);
+process.chdir(originalCwd);
 
 test('requiring the module does not execute main()', () => {
     // A bare `require` used to run main() as a side effect and rewrite every
@@ -31,8 +43,9 @@ test('requiring the module does not execute main()', () => {
 
     // If require() had run main(), it would have printed its banner. Prove the
     // guard by requiring it in a clean child process and checking for silence.
+    // Again from a temp cwd: if the guard regresses this must fail, not write.
     const out = execFileSync(process.execPath, ['-e', `require(${JSON.stringify(SCRIPT)})`], {
-        cwd: REPO_ROOT,
+        cwd: os.tmpdir(),
         encoding: 'utf8',
     });
     assert.strictEqual(out.trim(), '', 'requiring the module must print nothing');
