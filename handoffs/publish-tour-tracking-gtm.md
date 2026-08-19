@@ -1,6 +1,6 @@
 # Handoff — Verify and publish the `tour_booked` GTM build, then make GA4 report it
 
-**Created:** 2026-08-18 · **Status:** ✅ **CLOSED 2026-08-18** — container **version 7** is live and collecting, and `tour_booked` is **marked as a key event**, so GA4 reports it. Two follow-ups survive this handoff and belong to their owners, not to it: Engage Pro appointment `831` needs cancelling, and `tour_booking_id` returns `null`. See [Still open](#⚠️-still-open--do-these) · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
+**Created:** 2026-08-18 · **Status:** ✅ **CLOSED 2026-08-18** — container **version 7** is live and collecting, and `tour_booked` is **marked as a key event**, so GA4 reports it. One follow-up survives this handoff: `tour_booking_id` returns `null`. (Engage Pro appointment `831` was cancelled 2026-08-19.) See [Still open](#⚠️-still-open--do-these) · **Executed by:** Claude Code (Cowork) — see [Kickoff prompt](#kickoff-prompt)
 **Est.:** ~30 min, most of it waiting on a test booking.
 
 > **Execution convention:** written to be run by a Claude Code agent in Cowork. See [CLAUDE.md § Handoffs](../CLAUDE.md).
@@ -215,11 +215,11 @@ thing — but **nothing here blocks GA4 from reporting tours any more.**
 
 2. **Ask the `book-tour` owner to return the appointment id** so `tour_booking_id` stops being `null`. Needed before Ads dedup — see [gtm-conversion-linker.md](gtm-conversion-linker.md) and Part C of [tour-conversion-tracking.md](tour-conversion-tracking.md).
 3. **Reschedule path is untested.** Only a fresh booking was exercised (`tour_is_reschedule: false`). The `true` branch is unverified, and it is what Part C's Ads trigger is meant to exclude.
-4. ✅ **Supabase test-booking row deleted 2026-08-18 02:00 PDT** — 🔴 **but the Engage Pro appointment is still live.**
+4. ✅ **Test booking fully cleaned — both systems.** Supabase row deleted 2026-08-18 02:00 PDT; Engage Pro appointment cancelled 2026-08-19.
 
    Row `cc306a78-0594-433c-99a1-3a19827ab593` (Sam Nader / `samnader21+1@gmail.com`, 2026-08-18 1:00 PM) hard-deleted after confirmation. Identified by the **email alias**, not the name — matching on "Sam Nader" alone would have been ambiguous. Verified four ways: the alias query returns `[]`, `preferred_date=eq.2026-08-18` returns `[]`, `check-availability` for that date now returns `booked_slots: []` (was `["1:00 PM"]`), and the two unrelated `samnader21@gmail.com` rows on the **base** address (2026-04-08, 2026-08-11) are untouched. `check-availability` reads Supabase, so **the public booking calendar is clear** and the 1:00 PM slot is bookable again.
 
-   🔴 **Engage Pro appointment `831` (prospect `34537`) has NOT been cancelled.** Supabase and Engage Pro are separate systems and **Engage Pro is the staff-facing calendar** — the one someone would actually prepare a tour from. Nothing in this repo documents how to reach it, so this is **owner action**. Until it is done, the risk this item exists to remove is still present.
+   ✅ **Engage Pro appointment `831` (prospect `34537`) cancelled 2026-08-19.** It stayed open a day longer than the Supabase row because they are separate systems: deleting the row does not touch the staff calendar, and nothing in this repo documents how to reach Engage Pro. **The lesson for the next test booking is that cleanup is two jobs, not one** — the database half can look complete while staff are still holding a slot for a prospect who does not exist.
 
    ⚠️ **Deleting the row exposed a serious security hole.** It required no privileged access whatsoever: the **public anon key** embedded in the booking widgets grants full `SELECT`/`UPDATE`/`DELETE` on `tour_bookings` (231 rows of prospect PII) and `tour_referrals` (30 rows). Missing RLS, not a leaked key. Written up as **[lock-down-supabase-rls.md](lock-down-supabase-rls.md)**, which now outranks every other item in `handoffs/`.
 5. **Completeness check, once real bookings accrue:** count Supabase bookings for a window after publish and compare to `tour_booked` in GA4 for the same window.
