@@ -12,6 +12,7 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 | ✅ | **[publish-tour-tracking-gtm](publish-tour-tracking-gtm.md)** | ✅ **CLOSED 2026-08-18 — GA4 now reports tours.** v7 is live and `tour_booked` is **starred as a key event**; the star was the last checkbox and it took ~22h of propagation to become clickable. Two follow-ups outlived the handoff and belong to their owners: **Engage Pro appointment `831` still needs cancelling**, and `tour_booking_id` is confirmed `null` (blocks Ads dedup, nothing else). | — | done |
 | **13** | **[fix-book-tour-double-booking](fix-book-tour-double-booking.md)** | 🟡 **Mostly done 2026-08-18 — the server now rejects a taken slot (409); it accepted one before.** Numbered 13 to clear a collision with #6 Google Ads, which [read-tour-volume](read-tour-volume.md) references — **its position here is its priority, not its number.** Open: the **partial unique index** (app-level check narrows the race, the database would close it — run the duplicate query first, any rows are an owner call), and a **prepared, undeployed patch** stopping the word `slot_unavailable` reaching customers ([patches/booking-409-message/](../patches/booking-409-message/)). ⚠️ **The old kickoff prompt is retired** — it would send an agent to redo finished work. | ~20 min | index needs a decision; patch needs a deploy gate |
 | 1 | **[tour-conversion-tracking](tour-conversion-tracking.md)** | Makes tour bookings visible to GA4 and Google Ads. Part A ✅ done 2026-08-18; **Part B ✅ published 2026-08-18** (container v7). | ~1h | Part C only — no Google Ads account exists |
+| **14** | **[site-wide-event-tracking](site-wide-event-tracking.md)** | 🟡 **TODO, written 2026-08-19.** Everything still invisible after tours: **`membership_requested`** (the money event — all three WPCode builders end in an `alert()` and push nothing), phone / email / directions clicks (GTM only; only 4 of 23 `tel:` links are the club's number), and the Zapier contact/subscribe iframes GA4 cannot see. Ends in container **v8** + re-export. Scopes but defers Dropbox-Sign-signed, pickleball, Enhanced Conversions and the privacy-policy wording. **Found on the way:** two builders are served on `/memberships/` and #7315 is inert only because it throws on a missing element. Numbered after #13; sits here because it is what Google Ads (#6) will optimise toward. | ~2h | no — three 🛑 gates (WPCode pastes, MP secret, publish) |
 | 2 | **[ga4-hygiene](ga4-hygiene.md)** | Clears MonsterInsights residue. **Low priority — moves no numbers.** | ~20 min | no |
 | 3 | **[backup-gtm-container](backup-gtm-container.md)** | ✅ **Done 2026-08-18.** Published v7 exported to [`analytics/gtm-container-export.json`](../analytics/gtm-container-export.json) and verified; backup law extended to cover configuration. **Re-export after every container publish** — the next one is the Ads tag (#4/#5). | — | done |
 | 4 | **[gtm-conversion-linker](gtm-conversion-linker.md)** | Adds the missing Conversion Linker so Ads can attribute clicks. **Parked on purpose** — must run *before* the Ads conversion tag, never after. | ~10 min | yes — no Google Ads account exists |
@@ -290,4 +291,41 @@ currently lives.
 ### 8 · Mirror the membership builder snippets — ✅ closed, kickoff retired
 
 All three snippets are mirrored; see the [handoff](mirror-membership-builders.md) for the outcome.
+
+### 14 · Site-wide event tracking
+
+```
+Execute handoffs/site-wide-event-tracking.md in this repo.
+
+Read it in full first, along with CLAUDE.md, handoffs/tour-conversion-tracking.md
+(the pattern it copies) and handoffs/mirror-membership-builders.md (why the
+builders are guarded).
+
+This adds the events that are still invisible after tour tracking shipped:
+membership_requested (the money event, three WPCode builders), phone/email/
+directions clicks (GTM only), and the Zapier contact/subscribe forms. It ends
+with GTM container v8.
+
+Rules:
+- Do step A0 first and stop if the counts differ from what the handoff records.
+  Two builders are served on /memberships/ and one is inert by accident; the
+  handoff explains why that matters.
+- Generate the builder patches with a script under
+  patches/membership-requested-event/ and prove them with --verify. Preserve
+  CRLF. Never hand-edit a builder.
+- After editing builders run npm run guard (expect 5/5) and
+  npm run guard:membership-pricing:prove (expect 12/12). Commit the repo copies
+  and live/wpcode mirrors together.
+- No name, email or phone in dataLayer. Ever.
+- Stop and ask me at every 🛑 HUMAN GATE: the WPCode pastes, the Measurement
+  Protocol API secret, and publishing the container.
+- Flush GoDaddy cache after live edits, then verify with curl, not the browser.
+- The GTM Preview test on /memberships/ creates a real Dropbox Sign request —
+  use an email I control and tell me so I can void it.
+- After publishing, re-export the container to analytics/gtm-container-export.json
+  in the same session. That is the backup law.
+
+Work on a branch. Report what you changed, what you verified with what output,
+and anything you deliberately left undone.
+```
 
