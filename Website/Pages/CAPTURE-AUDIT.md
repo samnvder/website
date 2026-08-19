@@ -12,9 +12,9 @@ rule 4 of the backup law in `CLAUDE.md`.
 |---|---|
 | Scanned | `Website/Pages` |
 | Frame | page tree (from path) |
-| Files examined | 29 |
+| Files examined | 31 |
 | Carrying output-only markup | 0 |
-| Already editor-form | 29 |
+| Already editor-form | 31 |
 | Mode | read-only survey |
 
 ## Already editor-form
@@ -38,6 +38,8 @@ rule 4 of the backup law in `CLAUDE.md`.
 - `fitness/fitness HTML.html`
 - `food-beverage/Food & Beverage HTML.html`
 - `index/Index.html` — see warnings below
+- `index/Seasonal/holiday-video-banner.html`
+- `index/Seasonal/promotion-countdown-banner.html`
 - `pools/Pools HTML.html`
 - `pools/testing/instructor-pill-layout-test.html`
 - `privacy-policy/Privacy Policy HTML.html`
