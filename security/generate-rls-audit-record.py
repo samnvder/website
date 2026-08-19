@@ -322,27 +322,56 @@ p("<b>8.2 The booking flow still works, proven positively.</b> The "
   "every slot free -- succeeding while double-booking tours. A date sweep was therefore "
   "run to find a date with an existing booking:")
 mono("2026-08-23    \"booked_slots\":[\"10:30 AM\"]")
-p("<b>This is the decisive result.</b> The edge function returned a booking that the "
-  "<font face='Courier'>anon</font> role provably cannot see, since the same key returns "
-  "an empty array from the table. The function therefore reads with credentials that "
-  "bypass RLS, confirmed in production rather than inferred from the repository. It also "
-  "settles section 7.1 on evidence: the read path requires no anon table access.")
+p("<b>This is the decisive read-path result.</b> The edge function returned a booking "
+  "that the <font face='Courier'>anon</font> role provably cannot see, since the same key "
+  "returns an empty array from the table. The function therefore reads with credentials "
+  "that bypass RLS, confirmed in production rather than inferred from the repository.")
+
+p("<b>8.3 The write path is verified.</b> With owner authorisation, a probe was posted "
+  "to the <font face='Courier'>book-tour</font> edge function. It returned:")
+mono('{"success":true,"booking_id":"4a2f82a7-...","status":"confirmed",\n'
+     ' "crm_synced":true,"appointment_created":true,"supabase_available":true}')
+p("The function wrote to <font face='Courier'>tour_bookings</font>, synchronised the CRM "
+  "and created a calendar appointment <b>while <font face='Courier'>anon</font> held no "
+  "read or write access to the table</b>. This confirms the write path in production and "
+  "settles section 7.1 conclusively: the booking flow requires no anonymous table access "
+  "of any kind. The remaining <font face='Courier'>\"Anon can insert bookings\"</font> "
+  "policy is therefore unnecessary as well as undesirable, and can be removed.")
+p("<b>The probe was intended to be non-destructive and was not.</b> It targeted a slot "
+  "that <font face='Courier'>check-availability</font> reported as already booked, on the "
+  "expectation that the function would reject the conflict and thereby exercise the write "
+  "path without writing. The function accepted it, creating a real record, a real CRM "
+  "prospect and a real staff-calendar appointment. The risk had been identified and "
+  "accepted in advance; undeliverable <font face='Courier'>@example.invalid</font> test "
+  "data was used, so no message reached any person. All artefacts were removed the same "
+  "day: the database row by SQL (anonymous DELETE being correctly blocked by the "
+  "remediation), and CRM prospect 34548 with its appointment.")
+p("<b>The failed expectation is itself a finding.</b> That the function accepted a "
+  "double-booking is an unrelated production defect, recorded in section 9 and handed off "
+  "separately.")
 
 # ---------------------------------------------------------------- outstanding
 p("9. Outstanding items", H2)
 table([
     ["Item", "Severity", "Status"],
-    ["End-to-end booking write test (book-tour) not performed",
+    ["book-tour accepts double-bookings",
+     "High",
+     "UNRELATED DEFECT, found by the section 8.3 probe. The function accepts a "
+     "booking for a slot check-availability reports as taken. Slot conflict is "
+     "enforced only in browser JavaScript. Two prospects can be booked into one tour "
+     "by two simultaneous submissions, or by any request not originating from the "
+     "widget. Handed off: handoffs/fix-book-tour-double-booking.md"],
+    ["Edge-function source held outside version control",
      "Medium",
-     "Requires owner authorisation: writes a real record, sends a real "
-     "confirmation email and places an appointment on the staff calendar. The read "
-     "path is proven (8.2); the write path is inferred from the same function "
-     "deployment and remains formally untested."],
+     "book-tour, check-availability and validate-referral are load-bearing "
+     "production code existing in one mutable place outside the repository, and are "
+     "not mirrored. Repairing the defect above requires retrieving the source first."],
     ["\"Anon can insert bookings\" policy retained",
      "Low",
-     "Grants INSERT only, no read. Permits injection of spurious rows. Deliberately "
-     "left in place during remediation (section 6); should be removed once the write "
-     "path is confirmed to run through the edge function."],
+     "Grants INSERT only, no read, so it cannot disclose or destroy data; it permits "
+     "injection of spurious rows. Deliberately left in place during remediation "
+     "(section 6). Section 8.3 has since shown the booking flow does not need it, so "
+     "it can now be removed."],
     ["No backup or restore path for the Supabase project",
      "High",
      "Free plan provides neither scheduled backups nor point-in-time recovery. "
@@ -380,7 +409,8 @@ table([
     ["Two miswritten policies dropped and replaced", "DONE"],
     ["Post-change verification of anonymous access", "DONE -- closed"],
     ["Post-change verification of the booking read path", "DONE -- working"],
-    ["End-to-end booking write test", "NOT DONE -- not authorised by owner"],
+    ["End-to-end booking write path verified (book-tour)",
+     "DONE -- working; probe artefacts cleaned from both systems"],
     ["Rotation of the anon key", "NONE -- out of scope by design"],
     ["Customer personal data read, exported or copied at any point",
      "NONE -- counts and status codes only"],
