@@ -33,7 +33,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://southendclub.com/special-offer/">
 <meta property="og:title" content="Rates Rise in August — Lock In $100 Enrollment | South End Club">
-<meta property="og:description" content="Membership dues go up in August. Lock in today's rates — $100 enrollment + 10 guest passes through July 31 at midnight. Join or schedule a tour.">
+<meta property="og:description" content="Membership dues go up in August. Lock in today's rates — OFFER NOT SET. Join or schedule a tour.">
 <meta property="og:image" content="https://southendclub.com/wp-content/uploads/2024/09/Pool5.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -45,7 +45,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://southendclub.com/special-offer/">
 <meta name="twitter:title" content="Rates Rise in August — Lock In $100 Enrollment | South End Club">
-<meta name="twitter:description" content="Rates rise in August. $100 enrollment + 10 guest passes through July 31 at midnight. Lock in today's dues at South End Club.">
+<meta name="twitter:description" content="Rates rise in August. OFFER NOT SET. Lock in today's dues at South End Club.">
 <meta name="twitter:image" content="https://southendclub.com/wp-content/uploads/2024/09/Pool5.jpg">
 
 <!-- Canonical URL -->
@@ -432,10 +432,11 @@ body.admin-bar .timer-button-summer {
 
 <script>
 (function () {
-  var END = new Date('2026-08-01T06:59:59.000Z'); // July 31, 2026 11:59:59pm PDT
+  var END = null; // OFFER NOT SET — set the campaign end before launch
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
   function tick() {
     var now = new Date();
+    if (!END) { return; } // OFFER NOT SET — leave the digits at their markup value
     var diff = Math.max(0, END - now);
     var s = Math.floor(diff / 1000);
     var d = Math.floor(s / 86400); s %= 86400;
@@ -1107,7 +1108,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Summer Special | South End Club</title>
-<meta name="description" content="Rates rise in August. Lock in with $100 enrollment and 10 guest passes through July 31. Vitality, Elite, and Pinnacle memberships at South End Club.">
+<meta name="description" content="Rates rise in August. OFFER NOT SET. Vitality, Elite, and Pinnacle memberships at South End Club.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&amp;display=swap" rel="stylesheet">
@@ -1880,7 +1881,7 @@ for (var i = 0; i < tierLinks.length; i++) {
         </p>
         <p class="enrollment-fee-info">
             <span id="discountedPrice">$0</span>
-            <span id="limitedTimeText" class="limited-time">through July 31 at midnight · 10 guest passes included</span>
+            <span id="limitedTimeText" class="limited-time">OFFER NOT SET — do not publish</span>
         </p>
         <p id="priceDisplay" class="price-info bold-text">Monthly Due: $0</p>
         <p id="minimumAmount" class="price-info">Monthly Food &amp; Beverage Assessment: $20</p>
@@ -2014,7 +2015,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
 /**
  * Special Offer membership builder pricing (WPCode #7966).
- * Offer: flat $100 enrollment + 10 guest passes through July 31, 2026 (midnight Pacific).
+ * Offer: NOT SET. Set enrollment, wording, countdown and the offer: tag before launch.
  * Monthly dues match current join-page rates (lock in before August increase).
  */
 (function () {
@@ -2100,7 +2101,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (allFieldsFilled) {
                     const averageAge = childrenAges.reduce((a, b) => a + b, 0) / childrenAges.length;
                     if (averageAge <= 6 && numChildren <= 2) {
-                        const youngChildDiscounts = { 1: 25, 2: 15 };
+                        const youngChildDiscounts = { 1: 30, 2: 20 };
                         if (youngChildDiscounts[numChildren]) {
                             additionalCharge -= youngChildDiscounts[numChildren];
                         }
@@ -2130,7 +2131,7 @@ document.addEventListener('DOMContentLoaded', function() {
             originalPriceDisplay.textContent = `$${originalPrice}`;
             discountedPriceDisplay.textContent = `$${SPECIAL_ENROLLMENT}`;
             if (limitedTimeText) {
-                limitedTimeText.textContent = "through July 31 at midnight · 10 guest passes included";
+                limitedTimeText.textContent = "OFFER NOT SET — do not publish";
                 limitedTimeText.style.display = "inline";
             }
         }
@@ -2261,7 +2262,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 enrollmentFee,
                 monthlyDue,
                 foodBeverageMinimum,
-                offer: "summer-special-2026-jul31"
+                offer: "UNSET-set-before-launch"
             };
 
             console.log("Form data being sent:", data);
