@@ -114,9 +114,31 @@ npm run rules:sync
 a mirror that is **stale** (this file moved on) and a mirror that was **edited directly** (the edit is about
 to be lost). If the new wording only exists in a mirror, move it into this file first, then sync.
 
-**Sync is one-directional on purpose.** With several agents editing one tree, a two-way copier cannot tell
-an intentional edit from a stale one, and the loser is overwritten silently — which is how 1,399 unpushed
-lines nearly went missing. This refuses instead, and names the file to edit.
+### 🛑 Do not convert this to two-way sync — decision record, 2026-08-19
+
+**The owner asked for two-way ("one gets changed, the others mirror recursively"). This is deliberately
+one-way instead, and that deviation was flagged and accepted.** It is recorded here because the request
+is reasonable, will be made again, and the reasoning against it is not obvious from the code.
+
+A bidirectional copier works right up to the moment two agents edit different copies at once — which is
+the normal state of this repo. At that point it cannot distinguish an intentional edit from a stale one,
+and **silently overwrites the loser**. That is the same failure mode as the two branches found on
+2026-08-19 holding 1,399 lines that existed on one disk: nothing looked wrong, and the loss would have
+been discovered later, by someone else, with no way to tell what had been there.
+
+What is built instead never discards anything. It refuses, and names the file to edit:
+
+| You did this | It says | You do this |
+|---|---|---|
+| edited `CLAUDE.md` | `stale` | `npm run rules:sync` |
+| edited a mirror | `EDITED DIRECTLY` | move the wording into `CLAUDE.md`, then sync |
+
+**Editing a mirror still works.** That is the part that makes one-way acceptable: nobody is blocked, the
+edit is simply not silently reverted on the next run.
+
+**Before implementing two-way sync, ask the owner directly** — the cost is not the code, it is that a
+silent overwrite is unrecoverable and undetectable, and every mitigation for it re-invents the refusal
+this already does.
 
 Adding another tool is one entry in `TARGETS` in [`scripts/audit/sync-agent-rules.js`](./scripts/audit/sync-agent-rules.js).
 
