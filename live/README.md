@@ -138,6 +138,7 @@ So the mirror map, extending the table in [CLAUDE.md](../CLAUDE.md):
 |---|---|---|
 | WPCode snippet | `live/wpcode/<id>-<kebab-name>.<php\|html>` | lossless |
 | Custom HTML element in a Thrive page | `live/thrive/pages/<page-slug>/<widget-id>.html` | lossless |
+| Whole page tree in a Thrive page | `Website/Pages/<area>/<Page>.html` | paste-source - prove with `--diff` |
 | Tag Manager container config | [`analytics/gtm-container-export.json`](../analytics/gtm-container-export.json) — **published** version, re-exported after every publish | restore point |
 | GA4 property config | [`analytics/GA4-SNAPSHOT.md`](../analytics/GA4-SNAPSHOT.md) | record only |
 
@@ -146,6 +147,22 @@ workspace export captures unsaved in-progress edits, which is the opposite of a
 restore point. And **a stale export is worse than none**, because it reads as
 current and would restore the wrong configuration; re-export on every container
 publish.
+
+**The page-tree row is the one that used to be missing, and its absence cost
+real time.** Those two Thrive rows are the same content at two different
+scopes, and the scope decides what counts as junk: a `thrv_custom_html_shortcode`
+wrapper is added on output around an *element* capture, but in a *page tree* it
+is the editor node for that block. With no row naming the page-tree scope, that
+distinction had nowhere to live, so the converter warned unconditionally and
+the audit told readers to consider deleting real editor structure from six
+files. The converter now reads the scope off these paths - see the frame note
+below. Add a row here before mirroring a kind of artifact this table does not
+already name.
+
+It is also the one row that is **not** a capture. Content flows repo -> Thrive
+for page trees, so those files are paste-source; `--diff` is what proves one
+still matches live, and [SEO/TODO.md](../SEO/TODO.md) §27 is the standing
+record of which pages have been checked.
 
 ## ⚠️ Capture by asking for a paste, not by scraping the rendered page
 
