@@ -1,116 +1,146 @@
-# live/supabase/functions/
+# The tour booking flow
 
-Mirrors of the Supabase Edge Functions that run the tour booking system.
+How a visitor booking a tour on southendclub.com reaches the club's CRM.
 
-These are **the entire booking pipeline**. Before 2026-08-18 they existed in
-exactly one mutable place — the Supabase dashboard — with no copy anywhere.
-Nothing in this repo could rebuild them. That is precisely what the backup law
-in [CLAUDE.md](../../../CLAUDE.md) exists to prevent, and it is why fixing the
-double-booking defect was blocked until the source was retrieved.
+> **The source of truth for this system is a different repository:**
+> [`engagepro-booking-app`](https://github.com/samnvder/engagepro-booking-app)
+> (locally `Documents/Local Projects/engagepro-booking-app`). It holds the edge
+> functions, the database migrations and the frontend, with full git history and
+> a GitHub remote. **Edit there, not here.**
 
-| Function | Mirrored | Role |
+## Engage Pro is the system of record — not Supabase
+
+This is the thing to understand first, because the naming misleads.
+
+The booking system is **an Engage Pro (`api.vfpnext.com`) integration**. Supabase
+is used to *host* the three edge functions and to keep a **secondary log** of
+bookings. It is not the booking system.
+
+Concretely, in `book-tour`:
+
+- The Supabase insert is wrapped in a try/catch and is **explicitly non-blocking**.
+  If Supabase is down, the booking proceeds and a Resend alert is emailed to staff.
+- Success is decided solely by the CRM:
+
+  ```ts
+  const crmWorked = !!prospectId && !!appointmentId;
+  ```
+
+  A row in Supabase with no CRM appointment is reported to the visitor as a
+  **failure**. A CRM appointment with no Supabase row is reported as **success**.
+
+So the club's actual tour calendar lives in Engage Pro. `tour_bookings` is a
+marketing/analytics record of what was submitted.
+
+## The three functions
+
+| Function | Talks to | Purpose |
 |---|---|---|
-| [`book-tour/index.ts`](./book-tour/index.ts) | ⚠️ 2026-08-18 (lossy — see below) | Writes the booking, syncs Engage Pro, creates the calendar appointment |
-| [`check-availability/index.ts`](./check-availability/index.ts) | ✅ 2026-08-18 (clean) | Returns `all_slots` / `booked_slots` / `available_slots` for a date |
-| [`validate-referral/index.ts`](./validate-referral/index.ts) | ✅ 2026-08-18 (clean) | Verifies a referring member by email or phone |
+| `check-availability` | **Engage Pro only** | Which slots are free on a date |
+| `validate-referral` | **Engage Pro only** | Match a referring member by email or phone |
+| `book-tour` | Engage Pro **and** Supabase | Create the booking; Supabase write is best-effort |
 
-All three are mirrored. Only `book-tour` came through lossy; the other two
-captures retained their non-ASCII characters intact.
+**Two of the three never touch the database at all.**
 
----
+## Flow
 
-## ⚠️ The `book-tour` capture is NOT byte-exact — do not paste it back
-
-The source was captured by paste from the dashboard editor, and **the paste lost
-every non-ASCII character**. The file now contains **zero** non-ASCII bytes where
-the original had emoji and box-drawing characters; they arrived as `?`.
-
-Where this shows up:
-
-- **Comment banners** — `// ?? Config ????????...` was `// ── Config ─────...`.
-  Cosmetic.
-- **Staff email subjects and HTML** — `"?? Tour Booking: Supabase Down but CRM
-  Succeeded"` and the `? Failed` / `? Success` markers in the alert body were
-  emoji. These reach the inbox at `s@southendclub.com`. Degraded, not broken.
-
-**The logic is intact.** The corruption is confined to comments and string
-literals; no identifier, operator or control-flow token was affected. Note that
-many `?` in this file are legitimate TypeScript — optional chaining (`?.`),
-nullish coalescing (`??`), ternaries, optional properties — so a blind
-find-and-replace would destroy it.
-
-**Consequences, in order of importance:**
-
-1. **Never paste this file wholesale into the dashboard.** It would replace
-   working emoji with `?` in live staff notifications.
-2. **It is still a usable restore point.** If the function were lost tomorrow,
-   this file rebuilds it with correct behaviour and cosmetically degraded
-   comments — vastly better than the nothing that existed before.
-3. **Patches should be applied at the dashboard**, using this mirror to author
-   and review the change, then committed here to match.
-
-**To replace this with a byte-exact copy**, get the file rather than its text —
-`supabase functions download book-tour` (the CLI is not installed on this
-machine), or any dashboard download that yields a file rather than a selection.
-Then verify: a correct capture has non-zero non-ASCII characters and no `??`
-runs in the comment banners.
-
----
-
-## Known defect in `book-tour`
-
-**It does not check whether a requested slot is already taken.** Step 4-PRE
-searches the calendar, but filters on `String(m?.ID) === pid` — *does this
-prospect already have an appointment*. That is **reschedule detection**, not
-conflict detection. No code path asks whether the slot is occupied by anyone
-else, so two prospects can be booked into one tour.
-
-Confirmed against production 2026-08-18. Tracked in
-[handoffs/fix-book-tour-double-booking.md](../../../handoffs/fix-book-tour-double-booking.md).
-
-## What `check-availability` reads — and a correction it forced
-
-**`check-availability` never touches Supabase.** It contains zero references to
-`createClient`, `supabase` or `tour_bookings`. Its `booked_slots` come from the
-**Engage Pro CRM calendar** (`GET /api/calendar`), not from the database.
-
-This corrected a claim made during the RLS remediation on 2026-08-18. That work
-treated a populated `booked_slots` response as proof that the edge functions
-bypass RLS — reasoning that the function *must* be reading `tour_bookings`, and
-that returning a booking `anon` could not see therefore demonstrated service-role
-access. **The premise was false.** The function reads the CRM, so its response
-says nothing about database permissions either way.
-
-The conclusion survived on other evidence: `book-tour` demonstrably wrote a row
-while `anon` held no table access, and its source shows
-`createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)` outright. But the
-reasoning was unsound and is corrected in section 8.2 of the audit record. It is
-recorded here because it is the same failure the remediation itself was
-criticised for: an expectation about behaviour that nobody had checked against
-the implementation.
-
-There is a practical consequence. **`check-availability` is not a health check
-for database access.** It will keep returning `"success":true` with correct slot
-data even if Supabase is entirely unreachable, because it never asks Supabase
-anything. Do not use it to verify an RLS or database change.
-
-## What the `book-tour` mirror settles
-
-`book-tour` constructs its Supabase client with the service-role key:
-
-```ts
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+```
+Visitor on southendclub.com
+  │  (widget: WPCode 8309 site-wide, or the se-cal element on
+  │   /schedule-a-tour/ and /memberships/)
+  │
+  ├─1─ POST /functions/v1/check-availability   { date }
+  │      └─> GET api.vfpnext.com/api/calendar  (Engage Pro)
+  │          Builds all_slots from business hours, subtracts:
+  │            • Tour / Interview / Consultation events (non-cancelled)
+  │            • "Unavailable" blocks — staff out, holidays, early close
+  │          Returns all_slots / booked_slots / available_slots
+  │          Widget renders taken times as disabled "(Booked)"
+  │
+  ├─2─ POST /functions/v1/validate-referral    { search_type, search_value }
+  │      └─> POST api.vfpnext.com/api/member/search
+  │          Email or phone only. Name-only is "noted", never matched.
+  │
+  └─3─ POST /functions/v1/book-tour            { full payload }
+         ├─ validate: names, email, 10-digit phone, date/time,
+         │            and a 2-hour minimum lead time (club timezone)
+         ├─ INSERT tour_bookings                    [Supabase, best-effort]
+         ├─ POST /api/engage/start                  creates lead + starts Track 11
+         │                                          ("Web General Inquiry")
+         ├─ appointment:
+         │    • existing appointment for THIS prospect?  → reschedule it
+         │    • otherwise → /api/interview/schedule      → InterviewID
+         │                  GET /api/calendar            → find event (3 retries)
+         │                  /api/calendar/update         → Type="Tour",
+         │                                                 Status="Scheduled"
+         │      (Type must be exactly "Tour" or the CRM's appointment
+         │       tracks never fire)
+         ├─ if referred: /api/connection/create, Track 50 on the referrer,
+         │               INSERT tour_referrals, Resend notification to staff
+         └─ UPDATE tour_bookings with prospect id, appointment id, sync status
 ```
 
-That is the load-bearing assumption of the RLS remediation, now confirmed in
-source rather than inferred from behaviour. The booking flow needs no anonymous
-table access, which is why every `anon` grant on `tour_bookings` could be
-removed. See [security/](../../../security/) for the audit record.
+**Constants that matter:** Track 11 = Web General Inquiry, Track 50 = Tour
+Referral, `STAFF_ID` 1567364, 30-minute tours, hours 11–19 weekdays / 8–16
+weekends (mirrored in the widget — change both).
 
-No secret is committed here — every credential is read from `Deno.env`.
+## Consequences worth knowing
 
-## Adding the remaining two
+**`check-availability` is not a database health check.** It returns
+`"success":true` with correct slot data even if Supabase is entirely
+unreachable, because it never asks Supabase anything.
 
-Same procedure, and the same two-commit rule as the rest of [live/](../../README.md):
-commit the **unpatched capture first**, then any patch as a separate commit, so
-the pre-change state is always one `git show HEAD~1:` away.
+This corrected a claim made during the RLS remediation on 2026-08-18, which
+treated a populated `booked_slots` response as proof that edge functions bypass
+RLS — reasoning the function must be reading `tour_bookings`. **The premise was
+false.** The conclusion held on other evidence (`book-tour` wrote a row while
+`anon` had no table access, and its source uses `SUPABASE_SERVICE_ROLE_KEY`), but
+the reasoning was unsound. Recorded because it is the same failure the
+remediation itself was criticised for: an expectation about behaviour nobody had
+checked against the implementation.
+
+**A CRM outage fails the booking; a Supabase outage does not.** Alerts for the
+latter go to `s@southendclub.com` via Resend.
+
+**Availability fails open.** If the calendar fetch throws, `booked_slots` stays
+empty and every slot is offered. Deliberate — better to take a booking and sort
+it out than to show a visitor a fully-booked day.
+
+## Open defect: `book-tour` accepts double-bookings
+
+`book-tour` never checks whether a slot is taken **by someone else**. Its
+pre-check filters the calendar on `String(m?.ID) === pid` — *does this prospect
+already have an appointment* — which is reschedule detection. Slot conflict is
+enforced only in the widget's JavaScript, so two simultaneous submissions, or any
+request not made by the widget, book two prospects into one tour.
+
+Confirmed against production 2026-08-18. See
+[handoffs/fix-book-tour-double-booking.md](../../../handoffs/fix-book-tour-double-booking.md).
+
+## ⚠️ The migrations still contain the RLS bug
+
+`engagepro-booking-app/supabase/migrations/001_create_tour_bookings.sql` and
+`002_create_tour_referrals.sql` are **where the 2026-08-18 exposure came from**,
+and they are unfixed:
+
+```sql
+-- Allow Edge Functions (service_role) full access
+CREATE POLICY "Service role full access"
+  ON tour_bookings
+  FOR ALL
+  USING (true)
+  WITH CHECK (true);
+```
+
+There is no `TO service_role`. Omitting the `TO` clause defaults to `public`,
+which in Postgres means *every* role — including the anonymous role used by the
+public website. The comment states the intent; the SQL does the opposite. The
+next comment in the file reads "Block anon from reading/updating/deleting",
+which was never true.
+
+**Re-running these migrations against any fresh project reopens the hole.** They
+also no longer match production, where `Anon can insert bookings` has been
+dropped. A corrective migration is needed in that repo.
+
+Live state is guarded from this repo by `npm run guard:rls` — see
+[security/README.md](../../../security/README.md).
