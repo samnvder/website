@@ -102,9 +102,9 @@ Verified on `master`: **0** dead page-links, **0** `tve-jump` references, **0** 
 | §13 | 🔴 **Pre-ticked SMS/calls consent on the tour form** — TCPA exposure | Sam | legal call · ~15 min to fix |
 | §14 | ✅ **Tour bookings now tracked in GA4** — done 2026-08-18; Ads half blocked on having no Ads account | Claude + Sam | done · **read the first month ~2026-09-18** |
 | §15 | Repo has no `se-bk-floating` widget that runs on live | Claude | medium · silent-loss risk |
-| §16 | `/special-offer/` 404s while its repo file exists | Sam | small |
+| §16 | ✅ **`/special-offer/` now 301s to `/memberships/`** — applied & verified live 2026-08-19 | Sam + Claude | done |
 | §28 | 🔴 **`/memberships/` embeds both builder shortcodes (#9926 + #7315)**; #7315 inert only because it throws first. Patch prepared, 2 gates | Sam | ~10 min · double-signature hazard |
-| §29 | ⚠️ `Special Offer.html` inline builder still has the pre-fix `25/15` young discounts and the July `offer:` tag | Claude | small · launch hazard |
+| §29 | ✅ **`Special Offer.html` inline builder reconciled** — `30/20` and the tag parked; `guard:stale-offer` now scans page files too | Claude | done |
 | §6 | Page weight 318–767 KB of Thrive HTML | — | deferred |
 | §7 | Body-level duplicate meta | — | cosmetic |
 
@@ -587,7 +587,7 @@ Note for the record: **GSC owner access was not already in place** and had to be
 
 ---
 
-### 16. `/special-offer/` returns 404 while its repo file exists — **Sam** · small
+### 16. `/special-offer/` 404 — now 301s to `/memberships/` ✅ — **done 2026-08-19**
 
 Found 2026-08-17. `Website/Pages/Memberships (Category)/special-offer/Special Offer.html` is a complete page including a booking form, but `https://southendclub.com/special-offer/` returns **404**.
 
@@ -601,6 +601,15 @@ Nothing links to it, so there's no live dead link and no SEO harm today. But a p
 >
 > **Fix:** add `'special-offer' => 'memberships'` to snippet 9951 and mirror the edit to [live/wpcode/9951-renamed-page-redirects.php](../live/wpcode/9951-renamed-page-redirects.php) in the same session (backup law). Then move the offer sources under an `Expired/` folder.
 >
+> **✅ APPLIED & VERIFIED LIVE 2026-08-19.** `'special-offer' => 'memberships'` added to snippet 9951, cache flushed, confirmed by `curl` — `301 -> https://southendclub.com/memberships/`, with `/memberships/` itself returning 200 (no redirect chain) and the existing three mappings unchanged. Mirrored to [live/wpcode/9951-renamed-page-redirects.php](../live/wpcode/9951-renamed-page-redirects.php) in the same session. PR #25.
+>
+> **Two things the patch got wrong, both fixed in PR #25 and worth knowing:**
+>
+> 1. **The paste gate would have aborted a correct paste.** It demanded "2,574 characters"; that was a Windows CRLF *byte* count, and bytes are not characters either. The gate is now relative — `+38` — which holds under every counting convention because the added line is pure ASCII.
+> 2. **`live/wpcode/9951-…php` was never a mirror.** It was a rewritten copy that was never pasted back — different header, a leading `<?php` the live snippet lacks, and a `Source of truth:` pointer to a path that does not exist in this repo. 2,459 bytes against the real 1,465. It was caught only because the owner pasted the genuine editor contents. The applied paste was rebuilt from live, not from the repo.
+>
+> **Known limitation, not fixed:** a CDN strips `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`, `gclid` and `fbclid` before PHP receives them (`ref`, `foo` and even `utmx` survive), so a click from the delivered summer email lands correctly but reaches GA4 as **direct** rather than attributed to the campaign. Pre-existing for all four mappings — `/banquets/` behaves identically — and not caused by this change. Recovering it is CDN configuration, an owner decision.
+
 > **Patch prepared 2026-08-18 — ready to paste:** [patches/special-offer-redirect/](../patches/special-offer-redirect/). Full snippet with the line applied, one-line diff against the live mirror, 2,535 → 2,574 bytes, with the `curl` verification and a regression check on the existing three redirects. Needs a human at the WPCode screen.
 
 ---
@@ -771,13 +780,21 @@ That reframes the fix. Surgically deleting the Christmas blocks would yield a *s
 
 ---
 
-### 26. `/get-answers/` is live and indexed with no page source in this repo — **Claude** · small
+### 26. `/get-answers/` has no page source in this repo — **deferred 2026-08-19: the page is being replaced**
 
 Found 2026-08-18. `https://southendclub.com/get-answers/` returns **200**, is listed in `page-sitemap.xml`, and is referenced by both §7 above and [YOAST-SHEET.md](./YOAST-SHEET.md) — but there is **no HTML or CSS for it anywhere under `Website/Pages/`**. It is the only published page in the sitemap with no repo counterpart.
 
 Lower risk than §24 (nothing is going to overwrite it), but it means the page cannot be reviewed, diffed or restored from here.
 
-**Fix:** capture it from the Thrive editor, run `npm run convert:capture`, commit as `Website/Pages/get-answers/`.
+> **⏸️ Deferred 2026-08-19 — owner decision, and the reason matters.** `/get-answers/` is going to be **replaced by an AI bot the owner is building**. Capturing it now would mirror a page that is about to be deleted, so the effort buys a restore point for something nobody intends to restore.
+>
+> **This is a deferral, not a dismissal.** The gap is real and stays open: it is still the only published page in the sitemap with no repo counterpart. **Revisit when the bot ships** — whatever replaces this page will need a source in this repo, and it will need one on the same terms, so the work does not disappear, it changes shape.
+>
+> **Do not re-open this as "capture the FAQ page"** without checking whether the bot has landed. That is the loop this note exists to break.
+
+**Fix, when it is time:** capture from the Thrive editor and commit as `Website/Pages/get-answers/`.
+
+**The destination is already decided**, so nobody needs to re-derive it. Recon on 2026-08-19 measured 17 `thrv-page-section`, 30 `thrv_text_element` and 57 `thrv_wrapper` against only 2 `thrv_custom_html_shortcode` — a **whole page tree**, not a single Custom HTML box. So it is `Website/Pages/` (page frame), where `thrv_wrapper` is real editor structure and **must not be stripped** — the opposite of what the `se-bk-inline` element capture needed. The page also carries one image, so a `curl` capture would arrive CompressX-wrapped in `<picture>`/`<source>`.
 
 ---
 
@@ -812,11 +829,15 @@ Found 2026-08-19 by `curl -s -A "Mozilla/5.0" https://southendclub.com/membershi
 
 ---
 
-### 29. ⚠️ `Special Offer.html` inline builder still carries the values the #7966 fix corrected — **Claude** · launch hazard, unpublished today
+### 29. `Special Offer.html` inline builder carried the pre-fix values ✅ — **done; verified 2026-08-19**
 
 Found 2026-08-19 while reading §28. The special-offer page (unpublished; §16) does not use WPCode for its builder — the #7966-style code is **inlined** in `Website/Pages/Memberships (Category)/special-offer/Special Offer.html`, and that inline copy still reads `youngChildDiscounts = { 1: 25, 2: 15 }` (line 2103) and `offer: "summer-special-2026-jul31"` (line 2264). Those are the two values [patches/fix-7966-young-discounts/](../patches/fix-7966-young-discounts/) fixed in WPCode #7966 on 2026-08-18 — but the page file was not in scope and `guard:stale-offer` scans only `live/wpcode/*.js`, so it cannot see this.
 
-Consequence: re-publishing the special-offer page from this file would quote a family with one young child $5/month more than the join page and file every signup under the July 2026 campaign — the exact hazard the #7966 patch closed, reopened through a different file. Fix: apply the same four substitutions to the inline copy, and either widen `guard:stale-offer` to cover page files that inline an `offer:` tag or note the gap in its header.
+Consequence: re-publishing the special-offer page from this file would quote a family with one young child $5/month more than the join page and file every signup under the July 2026 campaign — the exact hazard the #7966 patch closed, reopened through a different file.
+
+> **✅ Both halves fixed, and verified in the files on 2026-08-19.** Commit `8c96254` parked the expired campaign in the page source — line 2104 now reads `youngChildDiscounts = { 1: 30, 2: 20 }` and line 2265 reads `offer: "UNSET-set-before-launch"`. Commit `8b72083` widened `guard:stale-offer` beyond `live/wpcode/*.js`; it now reports **"3 mirrored snippets + 29 page files"**, so the fourth inlined copy is inside the guard's scope rather than invisible to it.
+>
+> **Four documents went on asserting the opposite after it was fixed** — CLAUDE.md and its two generated mirrors, plus this file. That is the failure worth remembering here: the fix landed, the record did not follow it, and the stale text was specific and confident enough to be believed. Corrected 2026-08-19.
 
 ## Recommended next step
 
