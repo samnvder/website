@@ -1,0 +1,92 @@
+{
+  "_comment": [
+    "Expected anonymous-access surface of the Supabase database, measured against",
+    "production on 2026-08-18 after the RLS remediation. This is the mirror that",
+    "CLAUDE.md's backup law asks for: RLS policy state is configuration living in one",
+    "mutable place, and until now it was recorded nowhere.",
+    "",
+    "It records ACCESS CLASS, not row counts. Counts change as the club adds events and",
+    "classes; access class should never change without someone deciding it should.",
+    "",
+    "  denied  - anon must read ZERO rows. Any row here is a regression.",
+    "  public  - anon may read rows. Deliberate, reviewed, non-sensitive.",
+    "",
+    "Enforced by scripts/audit/rls-guard.js  (npm run guard:rls).",
+    "Refresh procedure and the meaning of each field: security/README.md."
+  ],
+  "project_ref": "zngbawafqjntciafhxgr",
+  "captured": "2026-08-18",
+  "source_of_truth": "live probe with the published anon key; see security/2026-08-18-supabase-rls-exposure.pdf section 5",
+
+  "pii_tables": ["tour_bookings", "tour_referrals"],
+
+  "tables": {
+    "central_activity_log":             "denied",
+    "central_admin_variables":          "denied",
+    "central_circuit_breaker_state":    "denied",
+    "central_class_signups":            "denied",
+    "central_classes":                  "public",
+    "central_clubs":                    "public",
+    "central_department_modules":       "denied",
+    "central_department_skeletons":     "denied",
+    "central_departments":              "public",
+    "central_event_rsvps":              "denied",
+    "central_events":                   "public",
+    "central_failed_crm_syncs":         "denied",
+    "central_feedback_submissions":     "denied",
+    "central_form_definitions":         "public",
+    "central_form_submissions":         "denied",
+    "central_functional_skeletons":     "denied",
+    "central_guest_pass_requests":      "denied",
+    "central_module_columns":           "public",
+    "central_option_list_audit":        "denied",
+    "central_option_lists":             "public",
+    "central_organizations":            "public",
+    "central_other_option_submissions": "denied",
+    "central_poll_responses":           "denied",
+    "central_polls":                    "public",
+    "central_rate_limits":              "denied",
+    "central_recurring_task_templates": "denied",
+    "central_referrals":                "denied",
+    "central_role_permissions":         "denied",
+    "central_roles":                    "denied",
+    "central_schema_version":           "denied",
+    "central_staff_departments":        "denied",
+    "central_survey_responses":         "denied",
+    "central_surveys":                  "public",
+    "central_system_alerts":            "denied",
+    "central_task_assignment_grants":   "denied",
+    "central_task_assignments":         "denied",
+    "central_task_categories":          "denied",
+    "central_task_rules":               "denied",
+    "central_tasks":                    "denied",
+    "central_user_module_overrides":    "denied",
+    "central_user_notifications":       "denied",
+    "central_user_preferences":         "denied",
+    "central_user_roles":               "denied",
+    "tour_bookings":                    "denied",
+    "tour_referrals":                   "denied"
+  },
+
+  "public_rationale": {
+    "central_classes":          "Policy gates on visibility=public AND status in (scheduled,in_progress). Published class listings.",
+    "central_clubs":            "Policy 'Anon can read clubs by slug' but qual=true, so it returns all 3 clubs. Non-sensitive. Name/definition mismatch noted in the audit record section 5.",
+    "central_departments":      "anon_select_departments, qual=true. Operational, non-sensitive.",
+    "central_events":           "Policy gates on status=published AND visibility=public. Public event listings.",
+    "central_form_definitions": "Anon can read form_definitions, qual=true. Form schemas the public forms need to render.",
+    "central_module_columns":   "anon_select_columns, qual=true. Reference/configuration data.",
+    "central_option_lists":     "anon_select_option_lists, qual=true. Dropdown option data for public forms.",
+    "central_organizations":    "Anon can read organizations, qual=true. Non-sensitive.",
+    "central_polls":            "Policy gates on status=published.",
+    "central_surveys":          "Policy gates on status=published."
+  },
+
+  "known_policies_of_note": {
+    "tour_bookings::Anon can insert bookings": {
+      "roles": "{anon}",
+      "cmd": "INSERT",
+      "status": "OPEN - removable",
+      "note": "Grants INSERT with no USING clause, so it cannot read or destroy. Audit record section 8.3 proved the booking flow does not need it: book-tour writes as service_role. Retained during remediation so the fix could not break bookings under any hypothesis. Safe to drop."
+    }
+  }
+}
