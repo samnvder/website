@@ -10,6 +10,7 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 |---|---|---|---|---|
 | ✅ | **[lock-down-supabase-rls](lock-down-supabase-rls.md)** | ✅ **CLOSED 2026-08-18 — remediated and verified in production, read *and* write paths.** Anon `SELECT`/`UPDATE`/`DELETE` on `tour_bookings` and `tour_referrals` is shut. Root cause was a policy granted `TO public` instead of `service_role`, not absent RLS. Write path since confirmed by an authorised probe — which surfaced handoff #6. Audit record: [`security/`](../security/2026-08-18-supabase-rls-exposure.pdf). **The data is still unbacked-up — that is `SEO/TODO.md` §18, a different problem.** | — | done |
 | ✅ | **[publish-tour-tracking-gtm](publish-tour-tracking-gtm.md)** | ✅ **CLOSED 2026-08-18 — GA4 now reports tours.** v7 is live and `tour_booked` is **starred as a key event**; the star was the last checkbox and it took ~22h of propagation to become clickable. One follow-up outlives it: `tour_booking_id` is confirmed `null` (blocks Ads dedup, nothing else). **Engage Pro appointment `831` was cancelled 2026-08-19**, clearing the last stray test artifact. | — | done |
+| **15** | **[fix-double-membership-builder](fix-double-membership-builder.md)** | 🔴 **`/memberships/` embeds TWO builder shortcodes** — `[wpcode id="9926"]` and `[wpcode id="7315"]` — and both would bind the same `#purchaseButton`. It does not double-fire **only because #7315 throws first** on the missing `#originalPrice`; give the join page the discount spans and **every click creates two Dropbox Sign requests**. Patch prepared and proven ([patches/membership-builder-single-bind/](../patches/membership-builder-single-bind/)), **not applied**. Both mirrors re-verified byte-identical to live 2026-08-19, so the patch is built on what is actually running. ⚠️ **The repo copy of the join page is stale and is NOT a rollback.** | ~30 min | no — two 🛑 gates |
 | **13** | **[fix-book-tour-double-booking](fix-book-tour-double-booking.md)** | 🟡 **Mostly done 2026-08-18 — the server now rejects a taken slot (409); it accepted one before.** Numbered 13 to clear a collision with #6 Google Ads, which [read-tour-volume](read-tour-volume.md) references — **its position here is its priority, not its number.** Open: the **partial unique index** (app-level check narrows the race, the database would close it — run the duplicate query first, any rows are an owner call), and a **prepared, undeployed patch** stopping the word `slot_unavailable` reaching customers ([patches/booking-409-message/](../patches/booking-409-message/)). ⚠️ **The old kickoff prompt is retired** — it would send an agent to redo finished work. | ~20 min | index needs a decision; patch needs a deploy gate |
 | 1 | **[tour-conversion-tracking](tour-conversion-tracking.md)** | Makes tour bookings visible to GA4 and Google Ads. Part A ✅ done 2026-08-18; **Part B ✅ published 2026-08-18** (container v7). | ~1h | Part C only — no Google Ads account exists |
 | **14** | **[site-wide-event-tracking](site-wide-event-tracking.md)** | 🟡 **TODO, written 2026-08-19.** Everything still invisible after tours: **`membership_requested`** (the money event — all three WPCode builders end in an `alert()` and push nothing), phone / email / directions clicks (GTM only; only 4 of 23 `tel:` links are the club's number), and the Zapier contact/subscribe iframes GA4 cannot see. Ends in container **v8** + re-export. Scopes but defers Dropbox-Sign-signed, pickleball, Enhanced Conversions and the privacy-policy wording. **Found on the way:** two builders are served on `/memberships/` and #7315 is inert only because it throws on a missing element. Numbered after #13; sits here because it is what Google Ads (#6) will optimise toward. | ~2h | no — three 🛑 gates (WPCode pastes, MP secret, publish) |
@@ -341,6 +342,53 @@ Rules:
   Push after your first commit and after every commit. Verify afterwards which
   branch your commit actually landed on.
 - Finish with npm run guard (expect 5/5) and npm run branches:strict.
+
+Work on a branch. Report what you changed, what you verified with what output,
+and anything you deliberately left undone.
+```
+
+### 15 · Fix the double membership builder on /memberships/
+
+```
+Execute handoffs/fix-double-membership-builder.md in this repo.
+
+Read it in full first, along with CLAUDE.md and live/README.md.
+
+This is SEO/TODO.md §28. /memberships/ embeds TWO membership builders and both
+would bind the same purchase button. It does not double-fire today only because
+#7315 throws first -- give the page #originalPrice and every click creates two
+Dropbox Sign requests. The patch is prepared and NOT applied.
+
+Rules:
+- Re-verify live state FIRST with the curl block in the handoff. Check
+  id="originalPrice" specifically -- a bare grep for originalPrice returns ~6
+  from #7315's own JS and tells you nothing. If id="originalPrice" is >= 1 the
+  hazard is FIRING, not latent: say so immediately.
+- Prove both live/wpcode/ mirrors still match live BEFORE pasting anything.
+  A stale mirror poisons the generated patch -- that exact failure was found in
+  this repo on 2026-08-19 in snippet 9951. The handoff has the one-liner.
+- The repo copy of the join page is NOT a rollback -- it is stale on exactly
+  this point. Confirm Thrive's revision manager is reachable before Gate 1, or
+  capture the page first.
+- Two HUMAN GATES: (1) delete the [wpcode id="7315"] element
+  (data-css tve-u-693b313a87da28) from the /memberships/ Thrive page, post 8812;
+  (2) paste the two files into WPCode #9926 and #7315. Stop and ask at each.
+- Never gate a paste on an absolute character count. Repo files are CRLF in the
+  working tree and LF in the index, so local byte counts are wrong. Gate on the
+  delta: +1,389 for #9926, +1,312 for #7315.
+- Confirm every WP save by its "Snippet updated." notice, never by reading back
+  the field values. The save silently no-ops under automation.
+- After each paste, ask the owner to paste the editor contents back, then
+  re-capture the live/wpcode/ mirrors from that. Backup law, same session.
+- The two repo paste-sources are CRLF. Do not write LF into them.
+- Verify with curl and the stated expected counts, never a browser. Flush
+  GoDaddy cache first. Then coordinate ONE real click and confirm exactly one
+  Dropbox Sign request arrives.
+- More than one agent writes this repo. Run git log --oneline -5, git status
+  and npm run branches before you start. Stage explicit paths, never git add -A.
+  Push after your first commit and after every commit. Verify afterwards which
+  branch your commit actually landed on.
+- Finish with npm run guard (expect exit 0) and npm run branches:strict.
 
 Work on a branch. Report what you changed, what you verified with what output,
 and anything you deliberately left undone.

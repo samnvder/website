@@ -820,12 +820,16 @@ Found 2026-08-19 by `curl -s -A "Mozilla/5.0" https://southendclub.com/membershi
 
 **Why it matters:** the moment the join page is given `#originalPrice` / `#discountedPrice` / `#limitedTimeText` — exactly what swapping in the Discounted Enrollment frontend for a fixed-dollar promo does — both bind and **every click creates two Dropbox Sign requests and two admin notifications.** The proof harness shows the live mirrors also double-bind on a discount-shaped page (#9926 tolerates a missing `#enrollmentFeeDisplay`), so the accident protects one page shape only. #7315 is *meant* for the join page during a fixed-dollar promo; the special-offer page does not use it (its builder is inlined, #7966-style).
 
-**Fix — prepared, NOT applied: [patches/membership-builder-single-bind/](../patches/membership-builder-single-bind/).** Two 🛑 HUMAN GATES:
+**Fix — prepared, NOT applied: [patches/membership-builder-single-bind/](../patches/membership-builder-single-bind/).** Runnable handoff: **[handoffs/fix-double-membership-builder.md](../handoffs/fix-double-membership-builder.md)** (written 2026-08-19 for a cold start on another machine). Two 🛑 HUMAN GATES:
 
 1. **Thrive:** delete the `[wpcode id="7315"]` Custom HTML element (`data-css="tve-u-693b313a87da28"`) from the `/memberships/` page. Root cause. Toggling #7315 off in WPCode instead would leave the shortcode armed for the next promo launch.
 2. **WPCode:** paste the two guarded builders. Each is the live mirror plus one inserted block — #9926 bails if `#discountedPrice` exists, #7315 bails unless it does, and both refuse to bind a `#purchaseButton` another builder has already stamped — so at most one binds on any page. `generate.js` proves each paste is mirror + block and still passes the pricing validator; `prove.js` shows 1 click listener on every page shape (was 2 on two of three).
 
-`curl` verification with expected counts, the post-paste mirror/repo chores, and a kickoff prompt are in the patch README.
+`curl` verification with expected counts, the post-paste mirror/repo chores, and a kickoff prompt are in the patch README and in the handoff.
+
+> **Re-verified 2026-08-19, and one assumption was actually checked rather than inherited.** Live still shows `create-signature-request` = 2 and `id="originalPrice"` = **0**, so the hazard remains **latent, not firing**. More importantly, **both `live/wpcode/` mirrors were proven byte-identical to the code served on `/memberships/`** before anything was prepared for pasting — the patch is generated *from* those mirrors, so a stale one would have poisoned it silently. That is not hypothetical: snippet **9951**'s "mirror" turned out to be a rewrite that was never pasted back (see §16). Re-run the check in the handoff before pasting.
+>
+> ⚠️ **`grep -c originalPrice` returns ~6 and means nothing** — the string is inside #7315's own JS. Only `id="originalPrice"` separates *the element exists* from *code mentions it*, and that is exactly the line between latent and firing.
 
 ---
 
