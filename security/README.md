@@ -9,6 +9,7 @@ self-contained records.
 |---|---|
 | [2026-08-18-supabase-rls-exposure.pdf](./2026-08-18-supabase-rls-exposure.pdf) | Audit record: RLS exposure on `tour_bookings` / `tour_referrals`, root cause, fix, verification |
 | [generate-rls-audit-record.py](./generate-rls-audit-record.py) | Regenerates that PDF. Edit this, not the PDF. |
+| [rls-baseline.json](./rls-baseline.json) | The expected anonymous-access surface of the database. Enforced by `npm run guard:rls`. |
 
 Regenerate with:
 
@@ -57,3 +58,55 @@ written records of what was found, what was changed, and what was verified.
 Live remediation work is tracked in [handoffs/](../handoffs/); a record here
 points back at the handoff that produced it. Code running on the live site is
 mirrored in [live/](../live/) under the backup law.
+
+## The RLS baseline and its guard
+
+`npm run guard:rls` asks **production** what the `anon` role can actually read,
+and fails if it disagrees with [rls-baseline.json](./rls-baseline.json). It is in
+the `npm run guard` chain, so a red chain now includes "someone opened a table to
+the internet".
+
+It records **access class, not row counts** — counts change as the club adds
+events; access class should never change without someone deciding it should.
+
+```bash
+npm run guard:rls                            # probe production
+node scripts/audit/rls-guard.js --offline    # validate baseline shape only
+node scripts/audit/rls-guard.js --json       # machine-readable
+```
+
+**Why behaviour and not policy names.** The 2026-08-18 hole was a policy called
+"Service role full access" granted `TO public`. It read as correct in any listing.
+A guard that parsed policy names would have passed that database every time, so
+this one asks what anon can *see*.
+
+Proven by `scripts/audit/testing/test-rls-guard.js` (12 tests, in `npm test`).
+Two of them are real drift tests: they reclassify a genuinely readable table as
+`denied` and confirm the guard fails against the live database. **A guard that
+exits 0 without those passing is not known to check anything** — see
+[CLAUDE.md](../CLAUDE.md) on the membership-pricing guard.
+
+### Known limit — read before trusting a green run
+
+**The guard cannot discover new tables.** Enumerating the schema needs the
+`service_role` key (`GET /rest/v1/` rejects `anon` with 401), so a newly exposed
+table is invisible until it is added to the baseline. This is exactly how the
+original finding stayed hidden: two of the three known tables were found by
+guessing names, and a 60-name guess later missed 42 tables that existed.
+
+**Refresh the baseline whenever tables are added.** In the Supabase SQL editor:
+
+```sql
+select c.relname                                    as table_name,
+       c.relrowsecurity                             as rls_enabled,
+       has_table_privilege('anon', c.oid, 'select') as anon_select
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public' and c.relkind = 'r'
+order by c.relname;
+```
+
+Any table in that list and not in `tables` needs classifying. Default to
+`denied`; `public` requires an entry in `public_rationale` explaining why, and
+the guard fails without one — undocumented public access is how a deliberate
+exception becomes an unnoticed hole.

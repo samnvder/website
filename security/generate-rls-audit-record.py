@@ -18,6 +18,7 @@ from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, Table,
                                 TableStyle, HRFlowable)
 
 OUT = "security/2026-08-18-supabase-rls-exposure.pdf"
+NL = chr(10)  # newline for mono() blocks, kept out of string escapes
 
 ss = getSampleStyleSheet()
 H1 = ParagraphStyle('H1', parent=ss['Title'], fontSize=17, leading=21,
@@ -143,6 +144,22 @@ p("<b>The failure mode is worth recording separately from the incident.</b> The 
   "was not missing and did not look wrong in a listing: it carried a reassuring name "
   "describing the intent of its author. Any review that read policy names rather than "
   "policy roles would have passed this database. Naming is not access control.")
+p("<b>Origin.</b> Both policies were created by migrations "
+  "<font face='Courier'>001_create_tour_bookings.sql</font> and "
+  "<font face='Courier'>002_create_tour_referrals.sql</font> in the "
+  "<font face='Courier'>engagepro-booking-app</font> repository, which read:")
+mono('-- Allow Edge Functions (service_role) full access' + NL +
+     '     CREATE POLICY "Service role full access"' + NL +
+     '       ON tour_bookings' + NL +
+     '       FOR ALL' + NL +
+     '       USING (true)' + NL +
+     '       WITH CHECK (true);')
+p("The comment states the intent; the SQL omits the <font face='Courier'>TO</font> clause "
+  "that would implement it. The next comment in the same file reads <font face='Courier'>"
+  "-- Block anon from reading/updating/deleting</font>, which was never true from the "
+  "moment the migration first ran. <b>Migration 004 now corrects both policies</b>, so a "
+  "project rebuilt from these migrations lands in the correct state; 001 and 002 carry "
+  "inline warnings and were otherwise left unmodified, migrations being history.")
 
 # ---------------------------------------------------------------- exposure
 p("3. Exposure prior to remediation", H2)
@@ -322,27 +339,108 @@ p("<b>8.2 The booking flow still works, proven positively.</b> The "
   "every slot free -- succeeding while double-booking tours. A date sweep was therefore "
   "run to find a date with an existing booking:")
 mono("2026-08-23    \"booked_slots\":[\"10:30 AM\"]")
-p("<b>This is the decisive result.</b> The edge function returned a booking that the "
-  "<font face='Courier'>anon</font> role provably cannot see, since the same key returns "
-  "an empty array from the table. The function therefore reads with credentials that "
-  "bypass RLS, confirmed in production rather than inferred from the repository. It also "
-  "settles section 7.1 on evidence: the read path requires no anon table access.")
+p("<b>CORRECTION -- this reasoning was unsound and is retracted.</b> The argument made "
+  "at the time was that the edge function had returned a booking the "
+  "<font face='Courier'>anon</font> role provably could not see, and therefore must be "
+  "reading the table with credentials that bypass RLS. <b>The premise was false.</b> "
+  "Retrieval of the function's source on 2026-08-18 showed that "
+  "<font face='Courier'>check-availability</font> never touches Supabase at all: it "
+  "contains no reference to <font face='Courier'>createClient</font>, "
+  "<font face='Courier'>supabase</font> or <font face='Courier'>tour_bookings</font>. Its "
+  "<font face='Courier'>booked_slots</font> come from the Engage Pro CRM calendar. The "
+  "response therefore said nothing about database permissions in either direction.")
+p("The conclusion survived on other evidence -- section 8.3, where "
+  "<font face='Courier'>book-tour</font> demonstrably wrote to the table while "
+  "<font face='Courier'>anon</font> held no access, and the function's source, which "
+  "builds its client with <font face='Courier'>SUPABASE_SERVICE_ROLE_KEY</font>. Only the "
+  "reasoning was wrong. It is retained here rather than deleted because it is the same "
+  "failure this record criticises in section 4: an expectation about behaviour that "
+  "nobody had checked against the implementation. The reviewer who produced section 4 then "
+  "committed the identical error two hours later.")
+p("<b>Operational consequence.</b> <font face='Courier'>check-availability</font> is not a "
+  "health check for database access. It will return "
+  "<font face='Courier'>\"success\":true</font> with correct slot data even if Supabase "
+  "is entirely unreachable. It must not be used to verify an RLS or database change.")
+
+p("<b>8.3 The write path is verified.</b> With owner authorisation, a probe was posted "
+  "to the <font face='Courier'>book-tour</font> edge function. It returned:")
+mono('{"success":true,"booking_id":"4a2f82a7-...","status":"confirmed",\n'
+     ' "crm_synced":true,"appointment_created":true,"supabase_available":true}')
+p("The function wrote to <font face='Courier'>tour_bookings</font>, synchronised the CRM "
+  "and created a calendar appointment <b>while <font face='Courier'>anon</font> held no "
+  "read or write access to the table</b>. This confirms the write path in production and "
+  "settles section 7.1 conclusively: the booking flow requires no anonymous table access "
+  "of any kind. The remaining <font face='Courier'>\"Anon can insert bookings\"</font> "
+  "policy is therefore unnecessary as well as undesirable, and can be removed.")
+p("<b>The probe was intended to be non-destructive and was not.</b> It targeted a slot "
+  "that <font face='Courier'>check-availability</font> reported as already booked, on the "
+  "expectation that the function would reject the conflict and thereby exercise the write "
+  "path without writing. The function accepted it, creating a real record, a real CRM "
+  "prospect and a real staff-calendar appointment. The risk had been identified and "
+  "accepted in advance; undeliverable <font face='Courier'>@example.invalid</font> test "
+  "data was used, so no message reached any person. All artefacts were removed the same "
+  "day: the database row by SQL (anonymous DELETE being correctly blocked by the "
+  "remediation), and CRM prospect 34548 with its appointment.")
+p("<b>The failed expectation is itself a finding.</b> That the function accepted a "
+  "double-booking is an unrelated production defect, recorded in section 9 and handed off "
+  "separately.")
+
+p("8.4 Re-exposure during remediation", H2)
+p("<b>The exposure was reopened on 2026-08-18, after it had been closed.</b> While "
+  "reviewing the origin of the defect, the original <font face='Courier'>CREATE "
+  "POLICY</font> statement was quoted from the migration file as evidence. It was then "
+  "run against production, which recreated the policy -- again without a "
+  "<font face='Courier'>TO</font> clause, and therefore again granted to "
+  "<font face='Courier'>public</font>. All 231 booking records became publicly readable a "
+  "second time.")
+p("<b>It was detected within seconds by the guard built earlier the same day</b> "
+  "(<font face='Courier'>npm run guard:rls</font>, in the repository's "
+  "<font face='Courier'>guard</font> chain), which probes production and fails when a "
+  "table classed as denied returns rows:")
+mono('RLS GUARD FAILED' + NL + NL +
+     '  - PII TABLE "tour_bookings" is EXPOSED -- anon read 231 rows (expected 0). HTTP 206.' + NL +
+     '        Check for a policy granted TO public or TO anon on this table.')
+p("The policy was dropped and closure re-verified. Exposure lasted minutes, on an "
+  "endpoint no third party had reason to be watching, but it is recorded because the "
+  "window is real and because of what it demonstrates.")
+p("<b>Two lessons, both acted upon.</b> First, the guard justified itself within hours of "
+  "being written -- catching a regression that a human review would not have noticed, "
+  "since the reintroduced policy looked exactly as legitimate as the original. Second, "
+  "and more importantly: <b>the dangerous statement was copied out of a migration file "
+  "that presented it as normal, working code.</b> Documenting the hazard in a README "
+  "would not have prevented this, because the file was read directly. The broken "
+  "statements in migrations 001 and 002 now carry inline warnings on the lines themselves "
+  "(<font face='Courier'>DO NOT RUN THE POLICY BLOCK BELOW -- SUPERSEDED BY 004</font>), "
+  "and a corrective migration 004 exists so a fresh project is never built into the "
+  "exposed state.")
 
 # ---------------------------------------------------------------- outstanding
 p("9. Outstanding items", H2)
 table([
     ["Item", "Severity", "Status"],
-    ["End-to-end booking write test (book-tour) not performed",
-     "Medium",
-     "Requires owner authorisation: writes a real record, sends a real "
-     "confirmation email and places an appointment on the staff calendar. The read "
-     "path is proven (8.2); the write path is inferred from the same function "
-     "deployment and remains formally untested."],
+    ["book-tour accepted double-bookings",
+     "RESOLVED",
+     "Unrelated defect, found by the section 8.3 probe: the function accepted a "
+     "booking for a slot check-availability reported as taken, because its pre-check "
+     "asked only whether THIS prospect already had an appointment. A server-side "
+     "conflict check was added, deployed and verified 2026-08-18 -- a booked slot now "
+     "returns HTTP 409 slot_unavailable and creates nothing, while a free slot still "
+     "books. Narrowed, not eliminated: two concurrent requests can still both pass "
+     "the check, which would need a constraint the CRM does not expose."],
+    ["Edge-function source location",
+     "RESOLVED",
+     "Recorded earlier in this document as unversioned. That was wrong. All three "
+     "functions live in the engagepro-booking-app repository with full history and a "
+     "GitHub remote; the website repository simply never referenced it. Deploys now "
+     "run from that repository via the Supabase CLI rather than by pasting into the "
+     "dashboard -- a paste of book-tour truncated at line 150 of 1444 and failed to "
+     "bundle, which is why the practice changed."],
     ["\"Anon can insert bookings\" policy retained",
      "Low",
-     "Grants INSERT only, no read. Permits injection of spurious rows. Deliberately "
-     "left in place during remediation (section 6); should be removed once the write "
-     "path is confirmed to run through the edge function."],
+     "Grants INSERT only, no read, so it cannot disclose or destroy data; it permits "
+     "injection of spurious rows. Deliberately left in place during remediation "
+     "(section 6). Section 8.3 has since shown the booking flow does not need it, so "
+     "it can now be removed."],
     ["No backup or restore path for the Supabase project",
      "High",
      "Free plan provides neither scheduled backups nor point-in-time recovery. "
@@ -380,7 +478,8 @@ table([
     ["Two miswritten policies dropped and replaced", "DONE"],
     ["Post-change verification of anonymous access", "DONE -- closed"],
     ["Post-change verification of the booking read path", "DONE -- working"],
-    ["End-to-end booking write test", "NOT DONE -- not authorised by owner"],
+    ["End-to-end booking write path verified (book-tour)",
+     "DONE -- working; probe artefacts cleaned from both systems"],
     ["Rotation of the anon key", "NONE -- out of scope by design"],
     ["Customer personal data read, exported or copied at any point",
      "NONE -- counts and status codes only"],

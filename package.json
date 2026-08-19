@@ -4,7 +4,7 @@
   "description": "South End Club marketing website (standalone repo; exported from WebsiteV1)",
   "scripts": {
     "pretest": "npm run guard",
-    "test": "node --test Programs/Pickleball/advanced-open-play/testing/unit/test-openplay-rsvp.js Programs/Pickleball/advanced-open-play/testing/unit/test-firebase-rules.js Programs/Pickleball/advanced-open-play/testing/unit/test-rating-eligibility.js Programs/Pickleball/advanced-open-play/testing/unit/test-roll-live.js scripts/audit/testing/test-pricing-apply.js scripts/audit/testing/test-stale-offer-guard.js",
+    "test": "node --test Programs/Pickleball/advanced-open-play/testing/unit/test-openplay-rsvp.js Programs/Pickleball/advanced-open-play/testing/unit/test-firebase-rules.js Programs/Pickleball/advanced-open-play/testing/unit/test-rating-eligibility.js Programs/Pickleball/advanced-open-play/testing/unit/test-roll-live.js scripts/audit/testing/test-pricing-apply.js scripts/audit/testing/test-stale-offer-guard.js scripts/audit/testing/test-rls-guard.js",
     "test:pools-instructors": "node Website/Pages/pools/testing/instructor-pill-layout-test.mjs",
     "firebase:deploy-rules": "npx firebase-tools deploy --only database --non-interactive",
     "deploy:openplay": "node Programs/Pickleball/advanced-open-play/scripts/openplay-deploy.js --only hosting",
@@ -32,7 +32,7 @@
     "scaffold:carousel": "node scripts/scaffold/new-carousel.js",
     "resolve-project-mode": "node scripts/resolve-project-mode.js",
     "summarize": "node Programs/Pickleball/advanced-open-play/scripts/openplay-summarize.js",
-    "guard": "npm run guard:membership-pricing && npm run guard:pickleball-header && npm run guard:racquet-promo && npm run guard:stale-offer",
+    "guard": "npm run guard:membership-pricing && npm run guard:pickleball-header && npm run guard:racquet-promo && npm run guard:stale-offer && npm run guard:rls",
     "guard:membership-pricing": "node scripts/audit/membership-pricing-guard.js",
     "guard:racquet-promo": "node scripts/audit/racquet-promo-guard.js",
     "audit:membership-pricing": "node scripts/audit/membership-pricing-guard.js && node scripts/audit/membership-pricing-audit-pdf.js",
@@ -40,6 +40,7 @@
     "pricing-change": "node scripts/audit/membership-pricing-change.js",
     "guard:pickleball-header": "node scripts/audit/pickleball-header-guard.js",
     "guard:membership-pricing:prove": "node scripts/audit/testing/prove-pricing-drift.js",
+    "guard:rls": "node scripts/audit/rls-guard.js",
     "guard:stale-offer": "node scripts/audit/stale-offer-guard.js"
   },
   "keywords": [

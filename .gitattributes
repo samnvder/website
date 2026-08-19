@@ -17,3 +17,9 @@ analytics/gtm-container-export.json -text
 # file that was verified against live.
 live/wpcode/** -text
 live/thrive/** -text
+
+# Exported diffs are applied with `git apply`, which is strict about line
+# endings: a patch generated with LF and checked out as CRLF fails to apply
+# against the LF source it was made from. core.autocrlf is true here, so
+# without this the patch silently stops working on a fresh clone.
+*.patch -text
