@@ -99,6 +99,7 @@ Verified on `master`: **0** dead page-links, **0** `tve-jump` references, **0** 
 | §21 | `Anon can insert bookings` — anyone can flood the tour calendar | Claude | low · rate limit |
 | §22 | Engage Pro appointment **831** (test booking) still on the staff calendar | Sam | 2 min |
 | §23 | **Google Ads account** — handoff written, 6 prerequisites unmet | Sam | ~30 min · blocked until ~09-18 |
+| §28 | ⚠️ **Two builders bound to one `/memberships/` button** — inert only because #7315 crashes first; #7315 has never served a customer | Claude + Sam | medium · **trap: adding `#originalPrice` doubles every signature request** |
 | §13 | 🔴 **Pre-ticked SMS/calls consent on the tour form** — TCPA exposure | Sam | legal call · ~15 min to fix |
 | §14 | ✅ **Tour bookings now tracked in GA4** — done 2026-08-18; Ads half blocked on having no Ads account | Claude + Sam | done · **read the first month ~2026-09-18** |
 | §15 | Repo has no `se-bk-floating` widget that runs on live | Claude | medium · silent-loss risk |
@@ -751,3 +752,62 @@ Then: **stop optimising, start measuring.** Give Google 2–3 weeks to recrawl a
 > **On metadata specifically — that work is finished and now fully applied.** The 2026-08-13 audit compared all 18 live pages to the sheet character by character and found zero drift; the two under-length descriptions and the organisation-name inconsistency it surfaced have since been fixed live. Titles, descriptions, keyphrases, canonicals, robots, the sitemap and the organisation entity are all correct and all match. Further title/description tuning without query data from Search Console would be guessing.
 >
 > **All three live WPCode snippets are now backed up** in [../live/wpcode/](../live/wpcode/), exported verbatim. That closes the silent-data-loss risk flagged at the top of this file — though the warning still stands, because Yoast's per-page metadata and the WP menus still live only in the database.
+
+
+---
+
+### 28. Two membership builders are injected on `/memberships/`; one is inert and has never worked — **Claude** · latent double-charge
+
+Found 2026-08-19. **Nothing is broken for visitors today. Two things are wrong underneath, and one of them is a trap.**
+
+`curl` on `/memberships/` returns the JS of **both** builders — WPCode **#9926** (normal join) and **#7315**
+(discounted enrollment). Both call `create-signature-request`, and both bind a click handler to the **same**
+`#purchaseButton`, of which the page has exactly one.
+
+| Measured on live `/memberships/` | Count |
+|---|---|
+| `create-signature-request` | **2** |
+| `id="purchaseButton"` (the element) | **1** |
+| `getElementById("purchaseButton")` (scripts grabbing it) | **2** |
+| `id="originalPrice"` (the element) | **0** |
+
+#### Why only one request is sent today
+
+#7315 throws before it can bind. Verified from [`live/wpcode/7315-...js`](../live/wpcode/7315-build-your-membership-discounted-enrollment-with-email-notification.js):
+
+| Line | Code | Effect |
+|---|---|---|
+| 38 | `originalPriceDisplay = document.getElementById("originalPrice")` | `null` |
+| 134 | `originalPriceDisplay.textContent = ...` | **TypeError on null** |
+| 196 | `updateEnrollmentFee();` at top level | throws here |
+| 205 | `getElementById("purchaseButton").addEventListener(...)` | **never reached** |
+
+**So the working behaviour depends on a crash.** That is the trap: add an element with `id="originalPrice"`
+— which is exactly what restoring the discount UI would do — and #7315 stops throwing, binds its listener
+alongside #9926, and **every click creates two Dropbox Sign signature requests**: two envelopes to the
+applicant, two records, for one membership.
+
+#### The second finding: #7315 has never actually run
+
+`id="originalPrice"` appears on **no live page**, and `/memberships/` is the only page carrying a
+`#purchaseButton` at all (`/summer-membership/`, `/corporate-membership/`: none; `/special-offer/`: 404 — §16).
+So #7315 has never bound anywhere, and **no visitor has ever been served its discounted enrollment.**
+
+⚠️ **[CLAUDE.md](../CLAUDE.md) calls #7315 "Active".** That is true in the sense it means — the snippet is
+enabled in WPCode and its code is injected — but it reads as *"this is what customers get"*, and they do not.
+**Enabled is not effective.** Anyone launching the next campaign by toggling #7315 would ship either nothing
+(visitors keep seeing #9926 sticker pricing) or, if they add the missing element, double signature requests.
+
+The pricing guard cross-checking #7315 against `membership-pricing-source.json` is still worth having — the
+numbers matter the moment it does run — but it validates a builder that currently reaches no one.
+
+#### What to do
+
+1. **Decide which builder should own `/memberships/`** and scope the other snippet off that page in WPCode.
+   Two builders on one button is the defect; the crash is only what hides it.
+2. **Do not add `#originalPrice` before doing step 1.** That single element converts a latent bug into a live one.
+3. Add a guard asserting exactly one `create-signature-request` per published page, so this cannot recur silently.
+
+Raised in [handoffs/site-wide-event-tracking.md](../handoffs/site-wide-event-tracking.md) as an A0 pre-check —
+that handoff adds a `dataLayer` push to all three builders, and pushing from a double-bound button would
+double-count the conversion as well as double-charging the applicant.

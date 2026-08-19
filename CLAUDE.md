@@ -169,7 +169,7 @@ A handoff must have:
   | File in [`live/wpcode/`](./live/wpcode/) | WPCode title | Role |
   |---|---|---|
   | `9926-build-your-membership-with-email-notification.js` | JS - Build Your Membership - with email notification | **The original.** No discount, sticker enrollment. The other two derive from it. |
-  | `7315-build-your-membership-discounted-enrollment-with-email-notification.js` | JS - Build Your Membership (Discounted Enrollment) - with email notification | Offer template, fixed-dollar. Currently $100/$100/$150. **Active.** |
+  | `7315-build-your-membership-discounted-enrollment-with-email-notification.js` | JS - Build Your Membership (Discounted Enrollment) - with email notification | Offer template, fixed-dollar. Currently $100/$100/$150. **Enabled in WPCode — but it has never run.** It is injected on `/memberships/` and throws before binding, because `#originalPrice` exists on no live page. No visitor has been served its discounted enrollment. See [SEO/TODO.md](./SEO/TODO.md) §28. |
   | `7966-build-your-membership-discounted-enrollment-percent.js` | JS - Build Your Membership - Discounted Enrollment % | Offer template, "%" per its title though it currently runs a flat `SPECIAL_ENROLLMENT`. Enabled but **inert** — no page published to bind to, and it returns early unless all four builder elements exist. |
 
   **All three mirrors are byte-identical to what is running**, so the guards check reality rather than the repo agreeing with itself. #7966 was the one that had drifted (live on July 31 wording, repo on July 22, `offer:` tag on `…jul21` — matching neither); it was reconciled by pasting the prepared patch on 2026-08-18, and repo, live and mirror are now one thing.

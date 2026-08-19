@@ -39,7 +39,7 @@ If the answer is **under ~15/month** — likely for a single club — the correc
 
 | # | Prerequisite | State |
 |---|---|---|
-| 1 | `tour_booked` marked as a **key event** in GA4 | 🔴 pending propagation — [publish-tour-tracking-gtm.md](publish-tour-tracking-gtm.md) |
+| 1 | `tour_booked` marked as a **key event** in GA4 | ✅ **done 2026-08-18** — starred once it cleared propagation; confirmed on the Key events tab. [publish-tour-tracking-gtm.md](publish-tour-tracking-gtm.md) |
 | 2 | **≥1 month of `tour_booked` data** to size the account | 🔴 collection started 2026-08-18 |
 | 3 | **Conversion Linker** in GTM — [gtm-conversion-linker.md](gtm-conversion-linker.md) | 🔴 parked, **must run BEFORE any conversion tag** |
 | 4 | `tour_booking_id` returns a real id, not `null` | 🔴 `book-tour` edge-function fix |
