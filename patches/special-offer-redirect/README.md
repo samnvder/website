@@ -25,8 +25,9 @@ snippet with the line applied** — paste-ready, select-all, no fragment editing
 
 | | |
 |---|---|
-| Live snippet now | 2,535 bytes |
-| After this patch | 2,574 bytes (+39) |
+| Live snippet now | 2,455 chars / 2,459 bytes LF / 2,535 bytes CRLF |
+| After this patch | 2,493 chars / 2,497 bytes LF / 2,574 bytes CRLF |
+| **Delta — the only stable number** | **+38** (+39 if CRLF counted as two) |
 | Diff vs `live/wpcode/` copy | exactly one added line |
 
 The snippet is guarded by `is_404()`, so it can only act on a request that was
@@ -40,8 +41,14 @@ so `utm_*` campaign attribution survives the redirect.
    snippet **9951** "Renamed-page 301 redirects".
 2. Select all in the editor, paste the contents of
    `9951-renamed-page-redirects.php` from this directory.
-3. Confirm the editor reports **2,574 characters**. If it reports something
+3. **Note the editor's count before selecting all**, and confirm it rises by
+   exactly **38** (or 39 if it counts CRLF as two). If it moves by anything
    else, stop — the paste was partial.
+
+   Do **not** gate on an absolute number. `2,574` was previously written here,
+   and is a Windows CRLF *byte* count rather than an editor character count —
+   it would abort a correct paste. The added line is pure ASCII, so the delta
+   holds under every counting convention while the total does not.
 4. Save. Confirm the *"Snippet updated"* notice; do not trust the field values.
 5. GoDaddy Quick Links → **Flush Cache**. Without this you will verify stale
    HTML.
