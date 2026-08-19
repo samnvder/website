@@ -99,7 +99,7 @@ Verified on `master`: **0** dead page-links, **0** `tve-jump` references, **0** 
 | §21 | `Anon can insert bookings` — anyone can flood the tour calendar | Claude | low · rate limit |
 | §22 | Engage Pro appointment **831** (test booking) still on the staff calendar | Sam | 2 min |
 | §23 | **Google Ads account** — handoff written, 6 prerequisites unmet | Sam | ~30 min · blocked until ~09-18 |
-| §28 | ⚠️ **Two builders bound to one `/memberships/` button** — inert only because #7315 crashes first; #7315 has never served a customer | Claude + Sam | medium · **trap: adding `#originalPrice` doubles every signature request** |
+| §28 | ⚠️ **Two builders bound to one `/memberships/` button**, inert only because #7315 crashes first — plus a **fourth, unguarded builder inlined in `/special-offer/`** carrying stale discounts and an expired offer tag | Claude + Sam | medium · **check WPCode scope BEFORE publishing `/special-offer/`** |
 | §13 | 🔴 **Pre-ticked SMS/calls consent on the tour form** — TCPA exposure | Sam | legal call · ~15 min to fix |
 | §14 | ✅ **Tour bookings now tracked in GA4** — done 2026-08-18; Ads half blocked on having no Ads account | Claude + Sam | done · **read the first month ~2026-09-18** |
 | §15 | Repo has no `se-bk-floating` widget that runs on live | Claude | medium · silent-loss risk |
@@ -789,9 +789,13 @@ applicant, two records, for one membership.
 
 #### The second finding: #7315 has never actually run
 
-`id="originalPrice"` appears on **no live page**, and `/memberships/` is the only page carrying a
-`#purchaseButton` at all (`/summer-membership/`, `/corporate-membership/`: none; `/special-offer/`: 404 — §16).
-So #7315 has never bound anywhere, and **no visitor has ever been served its discounted enrollment.**
+`id="originalPrice"` appears on **no *published* page**, and `/memberships/` is the only published page
+carrying a `#purchaseButton` at all (`/summer-membership/`, `/corporate-membership/`: none). So #7315 has
+never bound anywhere, and **no visitor has ever been served its discounted enrollment.**
+
+⚠️ **Corrected 2026-08-19: "no page" would have been wrong.** `/special-offer/` — currently unpublished,
+404, raised only during promotions (§16) — **does contain `id="originalPrice"`**, and a `#purchaseButton`.
+That page is therefore the specific event that arms this: see below.
 
 ⚠️ **[CLAUDE.md](../CLAUDE.md) calls #7315 "Active".** That is true in the sense it means — the snippet is
 enabled in WPCode and its code is injected — but it reads as *"this is what customers get"*, and they do not.
@@ -801,12 +805,53 @@ enabled in WPCode and its code is injected — but it reads as *"this is what cu
 The pricing guard cross-checking #7315 against `membership-pricing-source.json` is still worth having — the
 numbers matter the moment it does run — but it validates a builder that currently reaches no one.
 
+#### The trigger has a name: publishing `/special-offer/`
+
+Found 2026-08-19 from the page source. `/special-offer/` carries **both** elements this defect needs —
+`id="originalPrice"` and `id="purchaseButton"` — in
+[`Website/Pages/Memberships (Category)/special-offer/Special Offer.html`](../Website/Pages/Memberships%20%28Category%29/special-offer/Special%20Offer.html).
+
+**So the question is not whether the element ever appears. It is what else injects on that page when it
+goes live.** #9926 and #7315 both inject on `/memberships/`; if either also injects on `/special-offer/`,
+#7315 no longer throws — it binds — and the page sends **two or three signature requests per click**.
+The page cannot be measured while it 404s, so **this must be checked in WPCode before publishing, not after.**
+
+#### And it is a fourth builder, which no guard can see
+
+`/special-offer/` does not use a WPCode builder. It **inlines its own copy** of the builder script, and
+says so: *"Special-offer pricing (inlined — do not rely on WPCode 7966 for this page)"*. That copy is a
+fourth divergent builder, and it is invisible to every check in this repo:
+
+| | `guard:stale-offer` | pricing guard |
+|---|---|---|
+| Scans | `live/wpcode/*.js` | the two builder JS files |
+| Sees this page? | **no** | **no** |
+
+What that copy currently holds, verified against the repo file:
+
+| Marker | Value | Should be |
+|---|---|---|
+| young-family discounts | `{1: 25, 2: 15}` | **`{1: 30, 2: 20}`** — [`membership-pricing-source.json`](../scripts/audit/membership-pricing-source.json) |
+| `offer:` tag sent to Heroku / Dropbox Sign | `summer-special-2026-jul31` | **expired** — it is now August |
+| visitor-facing wording | "through July 31 at midnight" ×6 | expired |
+| countdown target | `2026-08-01T06:59:59Z` | already elapsed — renders `00d 00h` |
+
+⚠️ **[CLAUDE.md](../CLAUDE.md) claimed the `{1: 25, 2: 15}` oversight was fixed "everywhere: repo, live
+and mirror" and that "all three builders now agree".** True of the three WPCode builders; **false of the
+site**, because of this fourth copy. Corrected there.
+
+**This is exactly the failure `guard:stale-offer` exists to prevent** — a stale `offer:` tag filing every
+signup of a new campaign under the old campaign's name — reappearing in the one place the guard does not
+look. Publishing this page today would ship an expired offer, a dead countdown, and wrong young-family
+pricing, and none of it would go red.
+
 #### What to do
 
 1. **Decide which builder should own `/memberships/`** and scope the other snippet off that page in WPCode.
    Two builders on one button is the defect; the crash is only what hides it.
-2. **Do not add `#originalPrice` before doing step 1.** That single element converts a latent bug into a live one.
-3. Add a guard asserting exactly one `create-signature-request` per published page, so this cannot recur silently.
+2. **Before publishing `/special-offer/`, check in WPCode which builders inject on it.** That page already has `#originalPrice`, so it is the live trigger — the "do not add the element" advice below is already overtaken there.
+3. Add a guard asserting exactly one `create-signature-request` per page, and **extend the offer and pricing guards to page HTML**, not just `live/wpcode/*.js` — the fourth copy proves the current scope is too narrow.
+4. **Reconcile the inlined copy before any promo**: young discounts to `{1: 30, 2: 20}`, and replace the expired tag/wording/countdown with the campaign actually being run — or with loud placeholders, the way #7966 now rests (`OFFER NOT SET`, `UNSET-set-before-launch`).
 
 Raised in [handoffs/site-wide-event-tracking.md](../handoffs/site-wide-event-tracking.md) as an A0 pre-check —
 that handoff adds a `dataLayer` push to all three builders, and pushing from a double-bound button would

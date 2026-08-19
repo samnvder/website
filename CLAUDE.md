@@ -178,7 +178,7 @@ A handoff must have:
 
   Two things the captures settled, both against what was assumed:
 
-  - **#7966's `{1: 25, 2: 15}` was an oversight — owner-confirmed — and is now `{1: 30, 2: 20}` everywhere: repo, live and mirror.** Pasted into WPCode 2026-08-18 via [`patches/fix-7966-young-discounts/`](./patches/fix-7966-young-discounts/), which also neutralised the expired campaign. **All three builders now agree on young-family discounts.**
+  - **#7966's `{1: 25, 2: 15}` was an oversight — owner-confirmed — and is now `{1: 30, 2: 20}` in all three WPCode builders: repo, live and mirror.** Pasted into WPCode 2026-08-18 via [`patches/fix-7966-young-discounts/`](./patches/fix-7966-young-discounts/), which also neutralised the expired campaign. ⚠️ **"Everywhere" was wrong, and so was "all three builders" — there is a **fourth** copy.** `/special-offer/` does not use a WPCode snippet at all: it **inlines its own builder** in the page HTML (its own comment says *"do not rely on WPCode 7966 for this page"*), and that copy still carries `{1: 25, 2: 15}` plus the expired `summer-special-2026-jul31` tag. **Neither guard can see it** — `guard:stale-offer` scans `live/wpcode/*.js`, and the pricing guard targets the two builder JS files. See [SEO/TODO.md](./SEO/TODO.md) §28.
   - **`npm run pricing:apply -- --dry-run` is now clean** — "No file changes needed". It stopped proposing to rewrite #9926's young-discount ternary into an equivalent map, which was a permanent false positive. **So if it ever reports a change again, that is real.**
 
   See [handoffs/mirror-membership-builders.md](./handoffs/mirror-membership-builders.md).
