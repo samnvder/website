@@ -75,11 +75,11 @@ First numbers, same 28-day window as the baseline below:
 | Event | Status |
 |---|---|
 | `purchase` | "No stream data detected" — GA4's default placeholder, never fires |
-| `tour_booked` | ✅ **collecting since 2026-08-18** (GTM container v7) — ⚠️ **not yet marked as a key event**, see below |
+| `tour_booked` | ✅ **collecting since 2026-08-18** (GTM container v7) and ✅ **marked as a key event 2026-08-18**, see below |
 
-**2026-08-18 update — `tour_booked` now collects, but still counts as zero key events.** The GTM build was published (container **version 7**) and verified end to end: the tag fires, and GA4 DebugView received the event with its parameters attached. **It has not been marked as a key event yet** — the event had not propagated to Admin → Events, and this GA4 build gives no way to name a key event manually. **Until someone stars it, the number below stays 0.** See [handoffs/publish-tour-tracking-gtm.md](../handoffs/publish-tour-tracking-gtm.md) § Still open.
+**2026-08-18 update — `tour_booked` collects AND is now a key event.** The GTM build was published (container **version 7**) and verified end to end: the tag fires, and GA4 DebugView received the event with its parameters attached. The event then took most of the 24-hour propagation window to reach Admin → Events — it was absent on two checks earlier that day — and was **starred as a key event late on 2026-08-18**, confirmed by the toast *"tour_booked has now been enabled as a key event"* and, independently, by the **Key events** tab listing it against stream *South End Club*. See [handoffs/publish-tour-tracking-gtm.md](../handoffs/publish-tour-tracking-gtm.md).
 
-**Key events counted over the last 28 days: `0.00`.** Across every channel, every row. This is §14 in the backlog, seen from the inside: the property is configured for the *Generate leads* objective and measures exactly zero leads.
+**Key events counted over the last 28 days: `0.00`** — **as measured 2026-08-17, before any key event existed.** Across every channel, every row. This was §14 in the backlog seen from the inside: the property was configured for the *Generate leads* objective and measured exactly zero leads. **Read every `0.00` below as the pre-tracking baseline it is, not as current state.** The mechanism that moves it is in place as of 2026-08-18; what it reads from here is a question of booking volume, not configuration. It will still show `0.00` until organic bookings accrue — **GA4 is not retroactive**, so the single 2026-08-18 test booking, which fired before the star, is not counted.
 
 ## Custom definitions — 12, all inherited from MonsterInsights
 
