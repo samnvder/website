@@ -10,9 +10,12 @@ double-booking defect was blocked until the source was retrieved.
 
 | Function | Mirrored | Role |
 |---|---|---|
-| [`book-tour/index.ts`](./book-tour/index.ts) | ✅ 2026-08-18 | Writes the booking, syncs Engage Pro, creates the calendar appointment |
-| `check-availability/` | ❌ **not yet** | Returns `all_slots` / `booked_slots` / `available_slots` for a date |
-| `validate-referral/` | ❌ **not yet** | Verifies a referring member by email or phone |
+| [`book-tour/index.ts`](./book-tour/index.ts) | ⚠️ 2026-08-18 (lossy — see below) | Writes the booking, syncs Engage Pro, creates the calendar appointment |
+| [`check-availability/index.ts`](./check-availability/index.ts) | ✅ 2026-08-18 (clean) | Returns `all_slots` / `booked_slots` / `available_slots` for a date |
+| [`validate-referral/index.ts`](./validate-referral/index.ts) | ✅ 2026-08-18 (clean) | Verifies a referring member by email or phone |
+
+All three are mirrored. Only `book-tour` came through lossy; the other two
+captures retained their non-ASCII characters intact.
 
 ---
 
@@ -65,7 +68,33 @@ else, so two prospects can be booked into one tour.
 Confirmed against production 2026-08-18. Tracked in
 [handoffs/fix-book-tour-double-booking.md](../../../handoffs/fix-book-tour-double-booking.md).
 
-## What this mirror settles
+## What `check-availability` reads — and a correction it forced
+
+**`check-availability` never touches Supabase.** It contains zero references to
+`createClient`, `supabase` or `tour_bookings`. Its `booked_slots` come from the
+**Engage Pro CRM calendar** (`GET /api/calendar`), not from the database.
+
+This corrected a claim made during the RLS remediation on 2026-08-18. That work
+treated a populated `booked_slots` response as proof that the edge functions
+bypass RLS — reasoning that the function *must* be reading `tour_bookings`, and
+that returning a booking `anon` could not see therefore demonstrated service-role
+access. **The premise was false.** The function reads the CRM, so its response
+says nothing about database permissions either way.
+
+The conclusion survived on other evidence: `book-tour` demonstrably wrote a row
+while `anon` held no table access, and its source shows
+`createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)` outright. But the
+reasoning was unsound and is corrected in section 8.2 of the audit record. It is
+recorded here because it is the same failure the remediation itself was
+criticised for: an expectation about behaviour that nobody had checked against
+the implementation.
+
+There is a practical consequence. **`check-availability` is not a health check
+for database access.** It will keep returning `"success":true` with correct slot
+data even if Supabase is entirely unreachable, because it never asks Supabase
+anything. Do not use it to verify an RLS or database change.
+
+## What the `book-tour` mirror settles
 
 `book-tour` constructs its Supabase client with the service-role key:
 
