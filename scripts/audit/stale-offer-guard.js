@@ -58,9 +58,39 @@ const MONTHS = {
  * `today` is injected so the guard is testable and deterministic.
  * Dates are compared at day granularity: an offer ending today has not expired.
  */
+/**
+ * HTML comments are not offers.
+ *
+ * Page source documents its own behaviour in comments -- Summer HTML.html has
+ * "SECTION 5: EARLY BIRD (Date-Gated -- Shows through June 30)" and "Hide after
+ * July 1". Those describe a gating rule; they are never rendered, and no visitor
+ * or payload is affected by them. Flagging them produces a finding nobody can
+ * act on, every run, forever.
+ *
+ * JS block comments are skipped for the same reason. Summer HTML.html documents
+ * a date gate -- "Show through June 30, 2026. Hide after July 1" -- that
+ * handleEarlyBirdVisibility() actually enforces. The comment is accurate, not
+ * stale.
+ *
+ * What is left is what can actually reach someone: the `offer:` tag in the
+ * payload, and wording assigned to a rendered string or attribute. Those are
+ * the two signals this guard was built for, and neither is a comment.
+ *
+ * `//` line comments are deliberately NOT stripped -- every https:// URL in the
+ * file would be mangled, which is worse than the noise it would remove.
+ *
+ * Replaced with equal-length blanks so byte offsets -- and therefore the
+ * year-lookahead window -- are unchanged.
+ */
+function stripComments(source) {
+  return source
+    .replace(/<!--[\s\S]*?-->/g, (m) => ' '.repeat(m.length))
+    .replace(/\/\*[\s\S]*?\*\//g, (m) => ' '.repeat(m.length));
+}
 function findStaleOffers(source, fileLabel, today) {
   const findings = [];
   const currentYear = today.getFullYear();
+  source = stripComments(source);
 
   const expired = (monthIdx, day, year) => {
     const end = new Date(year, monthIdx, day);
@@ -204,4 +234,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { findStaleOffers, collectPageFiles };
+module.exports = { findStaleOffers, collectPageFiles, stripComments };
