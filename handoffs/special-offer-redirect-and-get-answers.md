@@ -46,7 +46,20 @@ today lands on a 404. This is the only open item with a live customer-facing fai
 
 `is_404()` guards the whole snippet, so the redirect can only fire on a request that was already going to
 fail — it cannot shadow a live page, and it goes inert by itself if `/special-offer/` is ever republished.
-Query strings are preserved, so `utm_*` attribution survives.
+Query strings are preserved — **except the tracking parameters, which a CDN
+strips before PHP ever sees them.** Verified on live 2026-08-19: `ref`, `foo` and
+even `utmx` survive the redirect, while `utm_source`, `utm_medium`, `utm_campaign`,
+`utm_term`, `utm_content`, `gclid` and `fbclid` are all removed. `cf-cache-status:
+MISS` on the same request rules out stale cache, and `/banquets/` behaves
+identically, so this is **pre-existing for all four mappings, not caused by this
+change**.
+
+The snippet's own `$query` logic is fine; it simply never receives those keys. The
+practical effect is that a click from the delivered summer email reaches
+`/memberships/` correctly but arrives in GA4 as direct rather than as the campaign
+— the redirect rebuilds the URL server-side, so the browser never carries the
+parameters onward. Landing on a page *without* a redirect is unaffected, because
+there GA4 reads the parameters client-side from the address bar.
 
 ### A1 · 🛑 HUMAN GATE — paste into WPCode
 
