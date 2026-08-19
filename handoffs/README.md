@@ -19,9 +19,9 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 | 5 | **[read-tour-volume](read-tour-volume.md)** | Reads the first real month of `tour_booked`: how many tours, from which pages, what fraction GA4 sees, and whether volume supports smart bidding. Read-only. **Unblocks #6.** | ~20 min | yes — not before ~2026-09-18 |
 | 6 | **[google-ads-account-setup](google-ads-account-setup.md)** | Optimal Ads account from zero. **Not ready** — needs #5 first, and argues GBP §1 should come before any spend. | ~30 min | yes — 6 prerequisites unmet |
 | 7 | **[component-structure-reorg](component-structure-reorg.md)** | Repo-only. Collapses the four competing homes for reusable blocks into one axis: where the block *renders*. Fixes a byte-identical duplicated CTA, 5 homepage blocks scattered across 3 parents, READMEs pointing at a `Dev/` that does not exist, and an unenforceable Commandment 5. Adds the component index whose absence hid the youth camp banner. | ~1.5h | no |
-| **8** | 🔴 **[capture-and-track-se-bk-inline](capture-and-track-se-bk-inline.md)** — the homepage inline booking widget exists in **no file anywhere** (62 ids, one database row) **and reports nothing to GA4**: measured 2026-08-19, the homepage has 3 `book-tour` call sites and 1 `tour_booked` push. So every tour booked there is invisible, and it will read as ad blockers in September’s ratio. The two halves are one job — there is no file to add the push to until someone captures it. Editor paste only; `curl` rots the source. | ~35 min | no |
-| **9** | **Apply the `/special-offer/` redirect** — [patches/special-offer-redirect/](../patches/special-offer-redirect/), [§16](../SEO/TODO.md). Page 404s; the delivered summer email campaign links to it. Patch is paste-ready: full snippet, one-line diff, 2,535 → 2,574 bytes, with `curl` verification and a regression check. | ~5 min | no |
-| **10** | **Capture `/get-answers/`** — [§26](../SEO/TODO.md). Live, indexed, in the sitemap, with no source in this repo. Do it in the same Thrive session as #8. | ~15 min | no |
+| ✅ | **[capture-and-track-se-bk-inline](capture-and-track-se-bk-inline.md)** | ✅ **CLOSED 2026-08-19 — captured, tracked, verified on live.** The homepage inline booking widget existed in no file and reported nothing; it is now mirrored at [`live/thrive/pages/index/se-bk-inline.html`](../live/thrive/pages/index/se-bk-inline.html) and pushes `tour_booked`. Live: homepage `book-tour` = 3, `tour_booked` = 2; other pages unchanged at 2 · 2 · 1. Two findings outlive it: **the Thrive code box reports lines, not characters** (verify element captures by line count), and **`check:capture` exits 1 on this file by design** — its 10 `=""` boolean attributes are genuine editor content, not output-only markup. | — | done |
+| **9** | **[special-offer-redirect-and-get-answers](special-offer-redirect-and-get-answers.md)** · Part A | Apply the `/special-offer/` redirect. Page 404s and the **delivered** summer email campaign links to it — the only open item with a live customer-facing failure. Patch is paste-ready in [patches/special-offer-redirect/](../patches/special-offer-redirect/): full snippet, one-line diff, 2,535 → 2,574 bytes, with `curl` verification and a regression check on the existing three redirects. | ~10 min | no |
+| **10** | **[special-offer-redirect-and-get-answers](special-offer-redirect-and-get-answers.md)** · Part B | Capture `/get-answers/` — live, indexed, in the sitemap, the only published page with no repo counterpart ([§26](../SEO/TODO.md)). Shares Part A's admin session. Carries the two lessons from #8: **Thrive counts lines, WPCode counts characters**, and a non-zero `check:capture` is a question to answer, not a verdict to silence. | ~15 min | no |
 | **11** | **Decide what `Website/Pages/index/Index.html` is** — [§25](../SEO/TODO.md). It is the only page file embedding the Thrive header symbol, and it is a **December 2025 snapshot** (countdown targets Jan 1 2026). Either declare it a whole-page mirror **and re-capture it**, or replace it with a content fragment. ⚠️ Declaring it authoritative *without* re-capturing is worse than leaving it. Needs a Sam decision. | ~30 min | needs decision |
 | **12** | ✅ **`npm run convert:local` fixed 2026-08-19** — it scans `Website/Pages` now, and **refuses to run** instead of silently skipping a path it cannot find. Four further defects came out with it: one mapping pointed at a filename that no longer exists (`Summer Memberships HTML.html`), `require`-ing the module executed `main()` and rewrote every scanned file, and `/` was substituted in an order that only worked by accident of object-literal position. Round-trip proved lossless; 5 tests in `npm test`, both mutations proven to fail. **The retire half is deliberately NOT done** — it would delete `dev-index.html` and three root `index-*.html` variants, which is destructive and needs a Sam decision. | — | done; retire decision still open |
 
@@ -51,10 +51,10 @@ pricing work, and is now merged twice over. It was briefly a trap — reading as
 already-merged while carrying 18 unmerged commits — which is worth knowing if a branch
 ever looks safe to delete again.
 
-**Blocked on a human at a screen** — items 8, 9 and 10 below, all doable in one Thrive
-session. Do **8** first: `se-bk-inline` runs on the live homepage and exists in no file
-anywhere, so it is one database row from being gone, and every other homepage decision
-is downstream of having it.
+**Blocked on a human at a screen** — items 9 and 10 below, both doable in one Thrive
+session. **8 is done** (2026-08-19): `se-bk-inline` was the one-database-row item, and it is
+now mirrored and reporting to GA4, so the homepage decisions downstream of it — item **11**
+in particular — are unblocked.
 
 **Blocked on a decision, not on work** — items 11 and 12 below. Both were put to the
 owner on 2026-08-18 and neither has an answer yet. Either can be executed immediately
@@ -291,6 +291,60 @@ currently lives.
 ### 8 · Mirror the membership builder snippets — ✅ closed, kickoff retired
 
 All three snippets are mirrored; see the [handoff](mirror-membership-builders.md) for the outcome.
+
+### 9 & 10 · Special-offer redirect + capture /get-answers/
+
+```
+Execute handoffs/special-offer-redirect-and-get-answers.md in this repo.
+
+Read it in full first, along with CLAUDE.md and live/README.md.
+
+This is index items #9 and #10. They are unrelated problems that share one WP
+admin session. Do Part A first -- it is the only open item with a live
+customer-facing failure: /special-offer/ 404s and a DELIVERED email campaign
+links to it.
+
+State verified on live 2026-08-19 by the session that wrote this handoff:
+special-offer = 404, get-answers = 200, and junior-programs / food-services /
+banquets all 301 correctly. Re-check if you like, but it is current.
+
+Rules:
+- Part A's patch is already written and byte-checked in
+  patches/special-offer-redirect/. Paste it whole, select-all. Do not
+  re-derive it and do not hand-edit a fragment into the live snippet.
+- The WPCode editor counts CHARACTERS (expect 2,574). The Thrive code box
+  counts LINES. Do not go hunting for a character count in Thrive during
+  Part B -- it does not exist there.
+- Confirm every WP save by its "Snippet updated." notice, never by reading
+  back the field values. The save silently no-ops under automation.
+- Backup law, same session: mirror the applied snippet into
+  live/wpcode/9951-renamed-page-redirects.php and commit. Do not defer it.
+- Part B's capture must come from the THRIVE EDITOR. Ask me for it, and ask
+  for it as a file or in a fenced code block -- raw HTML pasted into chat gets
+  its newlines collapsed and then looks corrupted when it is fine.
+- Decide Part B's destination against the mirror map in live/README.md BEFORE
+  committing. Website/Pages/ = page frame, live/thrive/ = element frame, and
+  the frame changes what the converter treats as junk. If it is ambiguous,
+  ask me rather than picking one.
+- If check:capture exits non-zero, that is a QUESTION not a verdict. Apply
+  CLAUDE.md rule 4: does the difference exist in the Thrive editor, or only in
+  what the server serves? Editor-level differences stay. Report what it flagged
+  and your reasoning. Never strip markup just to make the check green.
+- Commit the unpatched capture first, then any change. Two commits.
+- Moving the expired offer sources does NOT fix §29's fourth inlined builder
+  copy. Do not describe it as fixing that.
+- Verify with curl and stated expected output, never a browser. Flush GoDaddy
+  cache first or you will verify stale HTML.
+- Stop and ask me at every 🛑 HUMAN GATE.
+- More than one agent writes this repo. Run git log --oneline -5, git status
+  and npm run branches before you start. Stage explicit paths, never git add -A.
+  Push after your first commit and after every commit. Verify afterwards which
+  branch your commit actually landed on.
+- Finish with npm run guard (expect 5/5) and npm run branches:strict.
+
+Work on a branch. Report what you changed, what you verified with what output,
+and anything you deliberately left undone.
+```
 
 ### 14 · Site-wide event tracking
 

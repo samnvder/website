@@ -1,0 +1,1467 @@
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- TOUR BOOKING FORM — INLINE VERSION (nvde-v1)                              -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- This version displays the form directly on the page (no button/modal).    -->
+<!-- Use this for dedicated booking pages or sections where the form should    -->
+<!-- always be visible.                                                        -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<style>
+@keyframes seBkSpin{to{transform:rotate(360deg)}}
+
+/* Force no border on card - override theme styles */
+#se-bk-inline-card {
+  border: none !important;
+  outline: none !important;
+}
+#se-bk-inline-card input,
+#se-bk-inline-card select,
+#se-bk-inline-date-display {
+  border: 2px solid #e2e8f0 !important;
+}
+#se-bk-inline-card input:focus,
+#se-bk-inline-card select:focus {
+  border-color: #0b468c !important;
+}
+#se-bk-inline-calendar {
+  border: 1px solid #e2e8f0 !important;
+}
+/* Interest checkbox labels - hover and checked states */
+#se-bk-inline-interests label:hover { border-color: #cbd5e1 !important; }
+#se-bk-inline-interests label:has(input:checked) { border-color: #0b468c !important; background: #f0f4ff !important; color: #0b468c !important; }
+@media (max-width: 600px) {
+  .se-bk-inline-int-goals-grid { grid-template-columns: 1fr !important; }
+}
+#se-bk-inline-chip-btn:hover { background: #e2e8f0 !important; }
+.se-bk-flatpickr-alt {
+  width: 100% !important;
+  padding: 14px 16px !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 14px !important;
+  font-family: system-ui, sans-serif !important;
+  font-size: 16px !important;
+  color: #1a1a2e !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  background: #fafbfc !important;
+  cursor: pointer !important;
+}
+.se-bk-flatpickr-alt:focus {
+  border-color: #0b468c !important;
+  box-shadow: 0 0 0 3px rgba(11,70,140,0.1) !important;
+}
+/* Flatpickr: center, larger, match brand blue */
+.flatpickr-calendar { z-index: 2147483647 !important; }
+.flatpickr-calendar.open {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) scaleX(1.15) scaleY(1.35) !important;
+  transform-origin: center center !important;
+}
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange:hover,
+.flatpickr-day.endRange:hover { background: #0b468c !important; border-color: #0b468c !important; }
+.flatpickr-day:hover { background: rgba(11,70,140,0.15) !important; border-color: rgba(11,70,140,0.3) !important; }
+.flatpickr-months .flatpickr-month { background: #0b468c !important; }
+.flatpickr-current-month .flatpickr-monthDropdown-months { background: #0b468c !important; }
+span.flatpickr-weekday { color: #0b468c !important; }
+.flatpickr-day.flatpickr-disabled { color: #cbd5e1 !important; }
+.flatpickr-day.prevMonthDay.flatpickr-disabled,
+.flatpickr-day.nextMonthDay.flatpickr-disabled { color: #e2e8f0 !important; }
+/* Flatpickr overlay (mobile only) - gradient behind calendar */
+#se-bk-flatpickr-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 2147483646;
+  background: linear-gradient(135deg, rgba(8,20,40,0.75) 0%, rgba(11,70,140,0.5) 50%, rgba(8,20,40,0.75) 100%);
+  pointer-events: none;
+}
+/* Responsive scaling for mobile - date/time scale to viewport width */
+@media (max-width: 768px) {
+  #se-bk-inline-date,
+  #se-bk-inline-time {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 44px !important;
+    font-size: 16px !important;
+    box-sizing: border-box !important;
+  }
+  #se-bk-inline-time {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+  }
+}
+@media (max-width: 480px) {
+  #se-bk-inline-card {
+    font-size: 14px !important;
+    border-radius: 18px !important;
+  }
+  #se-bk-inline-card h2 {
+    font-size: 20px !important;
+  }
+  #se-bk-inline-card h3 {
+    font-size: 18px !important;
+  }
+  #se-bk-inline-card input,
+  #se-bk-inline-card select {
+    font-size: 16px !important;
+    padding: 12px 14px !important;
+    width: 100% !important;
+    min-height: 44px !important;
+    box-sizing: border-box !important;
+  }
+  #se-bk-inline-card label {
+    font-size: 11px !important;
+  }
+}
+
+/* Confirm step: long email / values in grid */
+#se-bk-inline-sum-name, #se-bk-inline-sum-email, #se-bk-inline-sum-phone, #se-bk-inline-sum-ref-v, #se-bk-inline-sum-int-v {
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  min-width: 0 !important;
+}
+
+/* Consent form - fit cleanly in container on mobile */
+@media (max-width: 768px) {
+  .se-bk-consent-wrap {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px 14px !important;
+  }
+  .se-bk-consent-wrap label {
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .se-bk-consent-wrap label input {
+    display: inline-block !important;
+    margin-bottom: 10px !important;
+    vertical-align: top !important;
+  }
+  .se-bk-consent-wrap label span {
+    display: block !important;
+    width: 100% !important;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+    box-sizing: border-box !important;
+  }
+}
+@media (max-width: 380px) {
+  #se-bk-inline-card {
+    font-size: 13px !important;
+    border-radius: 14px !important;
+  }
+  #se-bk-inline-card h2 {
+    font-size: 18px !important;
+  }
+  #se-bk-inline-card h3 {
+    font-size: 16px !important;
+  }
+  #se-bk-inline-card input,
+  #se-bk-inline-card select {
+    font-size: 15px !important;
+    padding: 10px 12px !important;
+    min-height: 44px !important;
+  }
+}
+
+/* Reduce body padding on mobile */
+@media (max-width: 480px) {
+  #se-bk-inline-body {
+    padding: 18px 20px 40px 20px !important;
+  }
+}
+@media (max-width: 380px) {
+  #se-bk-inline-body {
+    padding: 14px 16px 30px 16px !important;
+  }
+}
+
+/* Mobile button sizing + stacking fixes */
+#se-bk-inline-card [role="button"],
+#se-bk-inline-success a {
+  box-sizing: border-box !important;
+}
+@media (max-width: 480px) {
+  #se-bk-inline-pick-next,
+  #se-bk-inline-talk-next,
+  #se-bk-inline-s2-back,
+  #se-bk-inline-s2-next,
+  #se-bk-inline-s2b-back,
+  #se-bk-inline-s2b-next,
+  #se-bk-inline-s3-back,
+  #se-bk-inline-s3-next,
+  #se-bk-inline-s4-back,
+  #se-bk-inline-submit {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 48px !important;
+    padding: 14px 16px !important;
+    font-size: 14px !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    white-space: normal !important;
+  }
+  #se-bk-inline-ref-btn {
+    padding: 8px 10px !important;
+    font-size: 11px !important;
+  }
+  #se-bk-inline-referral {
+    padding-right: 72px !important;
+  }
+  #se-bk-inline-chip-btn {
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+    flex-wrap: wrap !important;
+  }
+  #se-bk-inline-success a {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 14px 20px !important;
+    text-align: center !important;
+  }
+  #se-bk-inline-s2 > div:last-child,
+  #se-bk-inline-s2b > div:last-child,
+  #se-bk-inline-s3 > div:last-child,
+  #se-bk-inline-s4 > div:last-child {
+    flex-direction: column !important;
+  }
+}
+@media (max-width: 380px) {
+  #se-bk-inline-pick-next,
+  #se-bk-inline-talk-next,
+  #se-bk-inline-s2-back,
+  #se-bk-inline-s2-next,
+  #se-bk-inline-s2b-back,
+  #se-bk-inline-s2b-next,
+  #se-bk-inline-s3-back,
+  #se-bk-inline-s3-next,
+  #se-bk-inline-s4-back,
+  #se-bk-inline-submit {
+    padding: 13px 14px !important;
+    font-size: 13px !important;
+  }
+  #se-bk-inline-ref-btn {
+    padding: 7px 9px !important;
+    font-size: 10px !important;
+  }
+  #se-bk-inline-referral {
+    padding-right: 68px !important;
+  }
+}
+/* ── Inline field-level validation ──────────────────────────────────── */
+.se-invalid{
+  border-color:#dc2626 !important;
+  box-shadow:0 0 0 3px rgba(220,38,38,0.12) !important;
+  background:#fff5f5 !important;
+}
+.se-field-error{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-top:6px;
+  font-family:system-ui,sans-serif;
+  font-size:12.5px;
+  line-height:1.3;
+  color:#dc2626;
+}
+.se-field-error svg{
+  flex:0 0 auto;
+  width:14px;
+  height:14px;
+}
+</style>
+
+<!-- ── Inline Form Card ─────────────────────────────────────────────────────── -->
+<div id="se-bk-inline-card" style="background:#ffffff;border-radius:24px;width:100%;max-width:520px;margin:0 auto;box-shadow:0 20px 60px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.05);display:flex;flex-direction:column;overflow:hidden;">
+
+  <!-- HEADER + TABS -->
+  <div style="padding:20px 28px 0;background:linear-gradient(135deg,#0b468c 0%,#163d6b 100%);position:relative;">
+    <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at 80% 20%,rgba(26,109,212,0.3),transparent 60%);pointer-events:none;"></div>
+    <div style="position:relative;">
+      <!-- LOGO -->
+      <div style="display:flex;justify-content:center;margin-bottom:12px;">
+        <img src="https://southendclub.com/wp-content/uploads/2025/11/Original-Logo.svg" alt="South End Club" style="height:50px;width:auto;filter:brightness(0) invert(1);" draggable="false">
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+        <h3 style="margin:0;font-family:Montserrat,system-ui,sans-serif;font-weight:800;font-size:20px;color:#fff;letter-spacing:-0.3px;">Book Your Tour</h3>
+      </div>
+      <!-- TAB BAR -->
+      <div id="se-bk-inline-tabs" style="display:flex;gap:0;margin:0 -28px;padding:0;">
+        <div id="se-bk-inline-tab-pick" style="flex:1;padding:14px 0;text-align:center;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:13px;letter-spacing:0.3px;cursor:pointer;transition:all 0.25s ease;color:#fff;background:rgba(255,255,255,0.12);border-bottom:3px solid #fff;display:flex;align-items:center;justify-content:center;gap:7px;" role="tab" tabindex="0" aria-selected="true">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px;opacity:0.9;"><path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1zm-2 6v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8H5z"></path></svg>
+          Pick a Time
+        </div>
+        <div id="se-bk-inline-tab-talk" style="flex:1;padding:14px 0;text-align:center;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:13px;letter-spacing:0.3px;cursor:pointer;transition:all 0.25s ease;color:rgba(255,255,255,0.55);background:transparent;border-bottom:3px solid transparent;display:flex;align-items:center;justify-content:center;gap:7px;" role="tab" tabindex="0" aria-selected="false">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px;opacity:0.7;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          Just Tell Us
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCROLLABLE BODY -->
+  <div id="se-bk-inline-body" style="padding:24px 28px 40px 28px;">
+
+    <!-- Progress Dots (1=Time, 2=Info, 3=Interests, 4=Confirm) -->
+    <div id="se-bk-inline-dots" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:20px;">
+      <div id="se-bk-inline-d1" style="width:10px;height:10px;border-radius:50%;background:#0b468c;transition:all 0.3s ease;"></div>
+      <div style="width:12px;height:2px;background:#e2e8f0;border-radius:1px;"></div>
+      <div id="se-bk-inline-d2" style="width:10px;height:10px;border-radius:50%;background:#e2e8f0;transition:all 0.3s ease;"></div>
+      <div style="width:12px;height:2px;background:#e2e8f0;border-radius:1px;"></div>
+      <div id="se-bk-inline-d3" style="width:10px;height:10px;border-radius:50%;background:#e2e8f0;transition:all 0.3s ease;"></div>
+      <div style="width:12px;height:2px;background:#e2e8f0;border-radius:1px;"></div>
+      <div id="se-bk-inline-d4" style="width:10px;height:10px;border-radius:50%;background:#e2e8f0;transition:all 0.3s ease;"></div>
+    </div>
+
+    <!-- STEP 1A: Pick a Time -->
+    <div id="se-bk-inline-s1pick">
+      <p style="margin:0 0 18px;font-family:system-ui,sans-serif;font-size:14px;color:#64748b;line-height:1.4;text-align:center;">Choose a day and time that works for you.</p>
+      <div id="se-bk-inline-date-wrap" style="margin-bottom:14px;cursor:pointer;" onclick="(function(e){var d=document.getElementById('se-bk-inline-date');if(d&amp;&amp;e.target!==d){if(d._flatpickr)d._flatpickr.open();else if(d.showPicker)d.showPicker();else d.focus();}})(event)">
+        <label style="display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;">Date</label>
+        <input type="date" id="se-bk-inline-date" required="" style="width:100%;padding:14px 16px;border:2px solid #e2e8f0;border-radius:14px;font-family:system-ui,sans-serif;font-size:16px;color:#1a1a2e;outline:none;box-sizing:border-box;transition:border-color 0.2s ease,box-shadow 0.2s ease;background:#fafbfc;cursor:pointer;" onfocus="this.style.borderColor='#0b468c';this.style.boxShadow='0 0 0 3px rgba(11,70,140,0.1)';" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none';" onclick="if(this.showPicker) this.showPicker();">
+        <script>(function(){var d=new Date();d.setDate(d.getDate()+1);var m=d.getMonth()+1,s=d.getDate();document.getElementById('se-bk-inline-date')&&document.getElementById('se-bk-inline-date').setAttribute('min',d.getFullYear()+'-'+(m<10?'0':'')+m+'-'+(s<10?'0':'')+s);})();</script>
+      </div>
+      <div style="margin-bottom:20px;">
+        <label style="display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;">Time</label>
+        <select id="se-bk-inline-time" required="" style="width:100%;padding:14px 16px;border:2px solid #e2e8f0;border-radius:14px;font-family:system-ui,sans-serif;font-size:16px;color:#1a1a2e;outline:none;box-sizing:border-box;background:#fafbfc;cursor:pointer;transition:border-color 0.2s ease,box-shadow 0.2s ease;-webkit-appearance:none;appearance:none;background-image:url('data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2364748b%22 stroke-width=%222%22&gt;&lt;polyline points=%226 9 12 15 18 9%22/&gt;&lt;/svg&gt;');background-repeat:no-repeat;background-position:right 16px center;" onfocus="this.style.borderColor='#0b468c';this.style.boxShadow='0 0 0 3px rgba(11,70,140,0.1)';" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none';">
+          <option value="">Choose a time</option>
+        </select>
+      </div>
+      <div id="se-bk-inline-pick-next" style="width: 100%; padding: 16px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; border-radius: 100px; background: linear-gradient(135deg, rgb(11, 70, 140), rgb(26, 109, 212)); color: rgb(255, 255, 255); font-family: Montserrat, system-ui, sans-serif; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.15s, box-shadow 0.15s; box-shadow: rgba(11, 70, 140, 0.25) 0px 4px 16px; box-sizing: border-box; text-align: center;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(11,70,140,0.35)';" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(11,70,140,0.25)';" role="button" tabindex="0">
+        Continue
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </div>
+    </div>
+
+    <!-- STEP 1B: Just Tell Us -->
+    <div id="se-bk-inline-s1talk" style="display:none;">
+      <p style="margin:0 0 6px;font-family:system-ui,sans-serif;font-size:14px;color:#64748b;line-height:1.4;text-align:center;">Type when you'd like to come in.</p>
+      <p style="margin:0 0 18px;font-family:system-ui,sans-serif;font-size:12px;color:#94a3b8;line-height:1.3;text-align:center;">e.g. "next Tuesday 2pm" · "Thursday at 10:30" · "tomorrow morning"</p>
+      <div style="position:relative;margin-bottom:12px;">
+        <input type="text" id="se-bk-inline-nlp" autocomplete="off" spellcheck="false" style="width: 100%; padding: 18px 52px 18px 20px; border: 2px solid rgb(226, 232, 240); border-radius: 16px; font-family: system-ui, sans-serif; font-size: 18px; color: rgb(26, 26, 46); outline: none; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s; background-origin: initial; background-clip: initial; background-color: rgb(250, 251, 252);" onfocus="this.style.borderColor='#0b468c';this.style.boxShadow='0 0 0 3px rgba(11,70,140,0.1)';" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none';" placeholder="next Tuesday at 2pm">
+        <div style="position:absolute;right:16px;top:50%;transform:translateY(-50%);pointer-events:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" style="width:20px;height:20px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </div>
+      </div>
+      <div id="se-bk-inline-nlp-feedback" style="display:none;padding:16px 18px;border-radius:14px;margin-bottom:16px;transition:all 0.25s ease;"></div>
+      <div id="se-bk-inline-talk-next" style="display:none;width:100%;padding:16px;border:none;border-radius:100px;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:15px;cursor:pointer;align-items:center;justify-content:center;gap:8px;transition:transform 0.15s ease,box-shadow 0.15s ease;box-shadow:0 4px 16px rgba(22,163,74,0.25);box-sizing:border-box;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(22,163,74,0.35)';" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(22,163,74,0.25)';" role="button" tabindex="0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Looks Good — Continue
+      </div>
+    </div>
+
+    <!-- STEP 2: Your Info -->
+    <div id="se-bk-inline-s2" style="display:none;">
+      <h4 style="margin:0 0 16px;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:16px;color:#1a1a2e;text-align:center;">Tell us about yourself</h4>
+      <div id="se-bk-inline-time-chip" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:18px;">
+        <div id="se-bk-inline-chip-btn" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#f0f4ff;border-radius:100px;font-family:system-ui,sans-serif;font-size:13px;color:#0b468c;font-weight:500;cursor:pointer;transition:background 0.15s ease;" role="button" tabindex="0">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;opacity:0.7;"><path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1zm-2 6v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8H5z"></path></svg>
+          <span id="se-bk-inline-chip-text"></span>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:14px;">
+        <div style="flex:1;">
+          <label style="display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;">First Name</label>
+          <input type="text" id="se-bk-inline-fname" required="" autocomplete="given-name" maxlength="25" placeholder="John" style="width: 100%; padding: 14px 16px; border: 2px solid rgb(226, 232, 240); border-radius: 14px; font-family: system-ui, sans-serif; font-size: 16px; color: rgb(26, 26, 46); outline: none; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s; background-origin: initial; background-clip: initial; background-color: rgb(250, 251, 252);" onfocus="this.style.borderColor='#0b468c';this.style.boxShadow='0 0 0 3px rgba(11,70,140,0.1)';" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none';">
+        </div>
+        <div style="flex:1;">
+          <label style="display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;">Last Name</label>
+          <input type="text" id="se-bk-inline-lname" required="" autocomplete="family-name" maxlength="25" placeholder="Smith" style="width: 100%; padding: 14px 16px; border: 2px solid rgb(226, 232, 240); border-radius: 14px; font-family: system-ui, sans-serif; font-size: 16px; color: rgb(26, 26, 46); outline: none; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s; background-origin: initial; background-clip: initial; background-color: rgb(250, 251, 252);" onfocus="this.style.borderColor='#0b468c';this.style.boxShadow='0 0 0 3px rgba(11,70,140,0.1)';" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none';">
+        </div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;">Email</label>
+        <input type="email" id="se-bk-inline-email" required="" autocomplete="email" maxlength="60" placeholder="john@example.com" style="width: 100%; padding: 14px 16px; border: 2px solid rgb(226, 232, 240); border-radius: 14px; font-family: system-ui, sans-serif; font-size: 16px; color: rgb(26, 26, 46); outline: none; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s; background-origin: initial; background-clip: initial; background-color: rgb(250, 251, 252);" onfocus="this.style.borderColor='#0b468c';this.style.boxShadow='0 0 0 3px rgba(11,70,140,0.1)';" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none';">
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;">Phone</label>
+        <input type="tel" id="se-bk-inline-phone" required="" autocomplete="tel" maxlength="14" placeholder="(310) 555-1234" style="width:100%;padding:14px 16px;border:2px solid #e2e8f0;border-radius:14px;font-family:system-ui,sans-serif;font-size:16px;color:#1a1a2e;outline:none;box-sizing:border-box;transition:border-color 0.2s ease,box-shadow 0.2s ease;background:#fafbfc;" onfocus="this.style.borderColor='#0b468c';this.style.boxShadow='0 0 0 3px rgba(11,70,140,0.1)';" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none';">
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;">How did you hear about us?</label>
+        <select id="se-bk-inline-heard" style="width:100%;padding:14px 16px;border:2px solid #e2e8f0;border-radius:14px;font-family:system-ui,sans-serif;font-size:16px;color:#94a3b8;outline:none;box-sizing:border-box;background:#fafbfc;cursor:pointer;transition:border-color 0.2s ease,box-shadow 0.2s ease,color 0.2s ease;-webkit-appearance:none;appearance:none;background-image:url('data:image/svg+xml;utf8,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%2364748b%22 stroke-width=%222%22&gt;&lt;polyline points=%226 9 12 15 18 9%22/&gt;&lt;/svg&gt;');background-repeat:no-repeat;background-position:right 16px center;" onfocus="this.style.borderColor='#0b468c';this.style.boxShadow='0 0 0 3px rgba(11,70,140,0.1)';" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none';" onchange="this.style.color=this.value?'#1a1a2e':'#94a3b8';">
+          <option value="" disabled="" selected="" hidden="">— Select —</option>
+          <option value="Friends/Family">Member Referral</option>
+          <option value="Web Search/Website">Web Search / Website</option>
+          <option value="Instagram">Instagram</option>
+          <option value="Facebook">Facebook</option>
+          <option value="Drove By">Drove By</option>
+          <option value="Email">Email</option>
+          <option value="Word of Mouth">Word of Mouth</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <!-- Other (custom) -->
+      <div id="se-bk-inline-other-wrap" style="display:none;margin-bottom:14px;">
+        <label style="display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;">Please specify</label>
+        <input type="text" id="se-bk-inline-heard-other" placeholder="How did you hear about us?" style="width: 100%; padding: 14px 16px; border: 2px solid rgb(226, 232, 240); border-radius: 14px; font-family: system-ui, sans-serif; font-size: 16px; color: rgb(26, 26, 46); outline: none; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s; background-origin: initial; background-clip: initial; background-color: rgb(250, 251, 252);" onfocus="this.style.borderColor='#0b468c';this.style.boxShadow='0 0 0 3px rgba(11,70,140,0.1)';" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none';">
+      </div>
+      <!-- Referral Lookup -->
+      <div id="se-bk-inline-ref-wrap" style="display:none;margin-bottom:14px;">
+        <label style="display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;">Who referred you?</label>
+        <p style="margin:0 0 8px;font-family:system-ui,sans-serif;font-size:12px;color:#94a3b8;line-height:1.3;">Enter the member's email or phone number to verify.</p>
+        <div style="position:relative;">
+          <input type="text" id="se-bk-inline-referral" autocomplete="off" placeholder="Email or phone number" style="width: 100%; padding: 14px 80px 14px 16px; border: 2px solid rgb(226, 232, 240); border-radius: 14px; font-family: system-ui, sans-serif; font-size: 16px; color: rgb(26, 26, 46); outline: none; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s; background-origin: initial; background-clip: initial; background-color: rgb(250, 251, 252);" onfocus="this.style.borderColor='#0b468c';this.style.boxShadow='0 0 0 3px rgba(11,70,140,0.1)';" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none';">
+          <div id="se-bk-inline-ref-btn" style="position:absolute;right:6px;top:50%;transform:translateY(-50%);padding:8px 14px;border-radius:10px;background:#0b468c;color:#fff;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:background 0.15s ease;" onmouseover="this.style.background='#0d3d7a';" onmouseout="this.style.background='#0b468c';" role="button" tabindex="0">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:12px;height:12px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            Match
+          </div>
+        </div>
+        <div id="se-bk-inline-ref-status" style="display:none;margin-top:8px;padding:10px 14px;border-radius:10px;font-family:system-ui,sans-serif;font-size:13px;line-height:1.4;"></div>
+      </div>
+      <!-- Nav -->
+      <div style="display:flex;gap:10px;margin-top:6px;">
+        <div id="se-bk-inline-s2-back" style="flex:0 0 auto;padding:16px 20px;border:2px solid #e2e8f0;border-radius:100px;color:#64748b;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:border-color 0.15s ease,color 0.15s ease;box-sizing:border-box;" onmouseover="this.style.borderColor='#0b468c';this.style.color='#0b468c';" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#64748b';" role="button" tabindex="0">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Back
+        </div>
+        <div id="se-bk-inline-s2-next" style="flex:1;padding:16px;border:none;border-radius:100px;background:linear-gradient(135deg,#0b468c,#1a6dd4);color:#fff;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform 0.15s ease,box-shadow 0.15s ease;box-shadow:0 4px 16px rgba(11,70,140,0.25);box-sizing:border-box;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(11,70,140,0.35)';" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(11,70,140,0.25)';" role="button" tabindex="0">
+          Continue
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2b: Referrer Name (only when Member Referral + no match) -->
+    <div id="se-bk-inline-s2b" style="display:none;">
+      <h4 style="margin:0 0 16px;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:16px;color:#1a1a2e;text-align:center;">Who referred you?</h4>
+      <p style="margin:0 0 18px;font-family:system-ui,sans-serif;font-size:14px;color:#64748b;line-height:1.4;text-align:center;">We couldn't find them in our system. What's their full name?</p>
+      <div style="margin-bottom:20px;">
+        <label style="display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;">Referrer's Full Name</label>
+        <input type="text" id="se-bk-inline-referrer-name" placeholder="e.g. John Smith" style="width: 100%; padding: 14px 16px; border: 2px solid rgb(226, 232, 240); border-radius: 14px; font-family: system-ui, sans-serif; font-size: 16px; color: rgb(26, 26, 46); outline: none; box-sizing: border-box; transition: border-color 0.2s, box-shadow 0.2s; background-origin: initial; background-clip: initial; background-color: rgb(250, 251, 252);" onfocus="this.style.borderColor='#0b468c';this.style.boxShadow='0 0 0 3px rgba(11,70,140,0.1)';" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none';">
+      </div>
+      <div style="display:flex;gap:10px;">
+        <div id="se-bk-inline-s2b-back" style="flex:0 0 auto;padding:16px 20px;border:2px solid #e2e8f0;border-radius:100px;color:#64748b;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:border-color 0.15s ease,color 0.15s ease;box-sizing:border-box;" onmouseover="this.style.borderColor='#0b468c';this.style.color='#0b468c';" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#64748b';" role="button" tabindex="0">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Back
+        </div>
+        <div id="se-bk-inline-s2b-next" style="flex:1;padding:16px;border:none;border-radius:100px;background:linear-gradient(135deg,#0b468c,#1a6dd4);color:#fff;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform 0.15s ease,box-shadow 0.15s ease;box-shadow:0 4px 16px rgba(11,70,140,0.25);box-sizing:border-box;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(11,70,140,0.35)';" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(11,70,140,0.25)';" role="button" tabindex="0">
+          Continue
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: Interests / Goals (CRM-friendly values for profile sync) -->
+    <div id="se-bk-inline-s3" style="display:none;">
+      <h4 style="margin:0 0 16px;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:16px;color:#1a1a2e;text-align:center;">What are you interested in?</h4>
+      <p style="margin:0 0 20px;font-family:system-ui,sans-serif;font-size:14px;color:#64748b;line-height:1.4;text-align:center;">Select all that apply — helps us personalize your tour.</p>
+      <div class="se-bk-inline-int-goals-grid" style="display:grid;grid-template-columns:1fr;gap:24px;margin-bottom:20px;">
+        <!-- Interests -->
+        <div>
+          <h5 style="margin:0 0 12px;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:13px;color:#1a1a2e;">Interests</h5>
+          <div id="se-bk-inline-interests" style="display:flex;flex-direction:column;gap:8px;">
+            <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-inline-interest" value="Weight/Resistance Training" style="accent-color:#0b468c;width:18px;height:18px;"> Weight/Resistance Training</label>
+            <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-inline-interest" value="Swimming" style="accent-color:#0b468c;width:18px;height:18px;"> Swimming</label>
+            <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-inline-interest" value="Pickleball" style="accent-color:#0b468c;width:18px;height:18px;"> Pickleball</label>
+            <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-inline-interest" value="Squash" style="accent-color:#0b468c;width:18px;height:18px;"> Squash</label>
+            <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-inline-interest" value="Padel" style="accent-color:#0b468c;width:18px;height:18px;"> Padel</label>
+            <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-inline-interest" value="Family Oriented Atmosphere" style="accent-color:#0b468c;width:18px;height:18px;"> Family Oriented Atmosphere</label>
+            <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-inline-interest" value="Cardio" style="accent-color:#0b468c;width:18px;height:18px;"> Cardio</label>
+            <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-inline-interest" value="Group Exercise Classes" style="accent-color:#0b468c;width:18px;height:18px;"> Group Exercise Classes</label>
+            <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-inline-interest" value="Tennis" style="accent-color:#0b468c;width:18px;height:18px;"> Tennis</label>
+            <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-inline-interest" value="Racquetball" style="accent-color:#0b468c;width:18px;height:18px;"> Racquetball</label>
+            <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-inline-interest" value="Social Community" style="accent-color:#0b468c;width:18px;height:18px;"> Social Community</label>
+            <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-inline-interest" value="Childcare" data-crm="Kid's Club" style="accent-color:#0b468c;width:18px;height:18px;"> Childcare</label>
+          </div>
+          <div style="margin-top:12px;">
+            <label style="display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:11px;color:#64748b;margin-bottom:6px;">Other (comma-separated for multiple)</label>
+            <input type="text" id="se-bk-inline-interest-other" placeholder="e.g. Yoga, Pilates" style="width: 100%; padding: 12px 14px; border: 2px solid rgb(226, 232, 240); border-radius: 10px; font-family: system-ui, sans-serif; font-size: 14px; color: rgb(26, 26, 46); outline: none; box-sizing: border-box; background-origin: initial; background-clip: initial; background-color: rgb(250, 251, 252);" onfocus="this.style.borderColor='#0b468c';this.style.boxShadow='0 0 0 3px rgba(11,70,140,0.1)';" onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none';">
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <div id="se-bk-inline-s3-back" style="flex:0 0 auto;padding:16px 20px;border:2px solid #e2e8f0;border-radius:100px;color:#64748b;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:border-color 0.15s ease,color 0.15s ease;box-sizing:border-box;" onmouseover="this.style.borderColor='#0b468c';this.style.color='#0b468c';" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#64748b';" role="button" tabindex="0">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Back
+        </div>
+        <div id="se-bk-inline-s3-next" style="flex:1;padding:16px;border:none;border-radius:100px;background:linear-gradient(135deg,#0b468c,#1a6dd4);color:#fff;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform 0.15s ease,box-shadow 0.15s ease;box-shadow:0 4px 16px rgba(11,70,140,0.25);box-sizing:border-box;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(11,70,140,0.35)';" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(11,70,140,0.25)';" role="button" tabindex="0">
+          Review &amp; Book
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: Confirm -->
+    <div id="se-bk-inline-s4" style="display:none;">
+      <h4 style="margin:0 0 16px;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:16px;color:#1a1a2e;text-align:center;">Confirm Your Tour</h4>
+      <div style="background:#f8fafc;border-radius:16px;padding:20px;margin-bottom:16px;border:1px solid #e2e8f0;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #e2e8f0;">
+          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#0b468c,#1a6dd4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;height:22px;color:#fff;"><path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1zm-2 6v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8H5z"></path></svg>
+          </div>
+          <div>
+            <div id="se-bk-inline-sum-date" style="font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:15px;color:#1a1a2e;"></div>
+            <div id="se-bk-inline-sum-time" style="font-family:system-ui,sans-serif;font-size:13px;color:#64748b;margin-top:2px;"></div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-family:system-ui,sans-serif;font-size:14px;">
+          <span style="color:#64748b;">Name</span><span id="se-bk-inline-sum-name" style="color:#1a1a2e;font-weight:500;"></span>
+          <span style="color:#64748b;">Email</span><span id="se-bk-inline-sum-email" style="color:#1a1a2e;font-weight:500;"></span>
+          <span style="color:#64748b;">Phone</span><span id="se-bk-inline-sum-phone" style="color:#1a1a2e;font-weight:500;"></span>
+          <span id="se-bk-inline-sum-ref-l" style="color:#64748b;display:none;">Referral</span>
+          <span id="se-bk-inline-sum-ref-v" style="color:#1a1a2e;font-weight:500;display:none;"></span>
+          <span id="se-bk-inline-sum-int-l" style="color:#64748b;display:none;">Interests</span>
+          <span id="se-bk-inline-sum-int-v" style="color:#1a1a2e;font-weight:500;display:none;"></span>
+        </div>
+      </div>
+      <div class="se-bk-consent-wrap" style="padding:14px 16px;background:#f0f4ff;border-radius:12px;margin-bottom:16px;border:1px solid #dbe4f0;">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;">
+          <input type="checkbox" id="se-bk-inline-consent" checked="" style="margin-top:3px;accent-color:#0b468c;width:16px;height:16px;flex-shrink:0;">
+          <span style="font-family:system-ui,sans-serif;font-size:12px;color:#475569;line-height:1.5;">
+            By providing your phone number and email address, you consent to the
+            <a href="https://southendclub.com/privacy-policy/" target="_blank" rel="noopener" style="color:#0b468c;text-decoration:underline;" draggable="false">Privacy Policy</a> and
+            <a href="https://southendclub.com/terms-conditions/" target="_blank" rel="noopener" style="color:#0b468c;text-decoration:underline;" draggable="false">Terms and Conditions</a>
+            and agree to receive SMS text messages from South End Club. Message and data rates may apply. Message frequency varies. Reply STOP to opt out or HELP for assistance at any time.
+          </span>
+        </label>
+      </div>
+      <div id="se-bk-inline-error" style="display:none;padding:12px 16px;background:#fef2f2;border:1px solid #fecaca;border-radius:12px;font-family:system-ui,sans-serif;font-size:14px;color:#dc2626;margin-bottom:12px;text-align:center;"></div>
+      <div style="display:flex;gap:10px;">
+        <div id="se-bk-inline-s4-back" style="flex:0 0 auto;padding:16px 20px;border:2px solid #e2e8f0;border-radius:100px;color:#64748b;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:border-color 0.15s ease,color 0.15s ease;box-sizing:border-box;" onmouseover="this.style.borderColor='#0b468c';this.style.color='#0b468c';" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#64748b';" role="button" tabindex="0">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Back
+        </div>
+        <div id="se-bk-inline-submit" style="flex:1;padding:16px;border:none;border-radius:100px;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform 0.15s ease,box-shadow 0.15s ease;box-shadow:0 4px 16px rgba(22,163,74,0.3);box-sizing:border-box;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(22,163,74,0.4)';" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(22,163,74,0.3)';" role="button" tabindex="0">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Confirm Tour
+        </div>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div id="se-bk-inline-success" style="display:none;text-align:center;padding:20px 10px;">
+      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#16a34a);display:inline-flex;align-items:center;justify-content:center;margin-bottom:20px;box-shadow:0 8px 32px rgba(22,163,74,0.3);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:36px;height:36px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <h3 style="margin:0 0 8px;font-family:Montserrat,system-ui,sans-serif;font-weight:800;font-size:22px;color:#1a1a2e;">Accepted! See you then.</h3>
+      <p id="se-bk-inline-success-detail" style="margin:0 0 6px;font-family:system-ui,sans-serif;font-size:15px;color:#0b468c;font-weight:600;line-height:1.4;"></p>
+      <p style="margin:0 0 8px;font-family:system-ui,sans-serif;font-size:14px;color:#64748b;line-height:1.5;">A confirmation email will be sent shortly.</p>
+      <p style="margin:0 0 24px;font-family:system-ui,sans-serif;font-size:15px;color:#22c55e;font-weight:600;line-height:1.5;">Have a great day! <img role="img" class="emoji" alt="🎉" src="https://s.w.org/images/core/emoji/17.0.2/svg/1f389.svg" draggable="false"></p>
+      <a href="https://southendclub.com/memberships/#FAQs" style="display:inline-block;padding:14px 32px;border-radius:100px;background:linear-gradient(135deg,#0b468c,#1a6dd4);color:#fff;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 4px 16px rgba(11,70,140,0.25);transition:transform 0.15s ease;text-decoration:none;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='';" draggable="false">View Membership FAQs</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- JAVASCRIPT (same logic as modal version, minus modal open/close)          -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+  /* ══════════════════════════════════════════════════════════════════ */
+  /* INLINE FIELD-LEVEL VALIDATION HELPERS                            */
+  /* ══════════════════════════════════════════════════════════════════ */
+  function seFieldEl(ref){
+    if(!ref) return null;
+    if(typeof ref === 'string'){ return document.getElementById(ref); }
+    return ref;
+  }
+  function seClearError(ref){
+    var el = seFieldEl(ref);
+    if(!el) return;
+    el.classList.remove('se-invalid');
+    el.removeAttribute('aria-invalid');
+    if(el._seErrMsg && el._seErrMsg.parentNode){
+      el._seErrMsg.parentNode.removeChild(el._seErrMsg);
+    }
+    el._seErrMsg = null;
+  }
+  function seShowError(ref, message, anchorRef){
+    var el = seFieldEl(ref);
+    if(!el) return;
+    seClearError(el);
+    el.classList.add('se-invalid');
+    el.setAttribute('aria-invalid', 'true');
+    var anchor = anchorRef ? seFieldEl(anchorRef) : el;
+    if(!anchor) anchor = el;
+    var msg = document.createElement('div');
+    msg.className = 'se-field-error';
+    msg.setAttribute('role', 'alert');
+    msg.innerHTML = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span></span>';
+    msg.querySelector('span').textContent = message;
+    if(anchor.parentNode){
+      anchor.parentNode.insertBefore(msg, anchor.nextSibling);
+    }
+    el._seErrMsg = msg;
+    var clear = function(){
+      seClearError(el);
+      el.removeEventListener('input', clear);
+      el.removeEventListener('change', clear);
+    };
+    el.addEventListener('input', clear);
+    el.addEventListener('change', clear);
+  }
+  function seFocusFirst(ref){
+    var el = seFieldEl(ref);
+    if(!el) return;
+    try { el.focus({ preventScroll: true }); } catch(e){ el.focus(); }
+    if(el.scrollIntoView){ el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  }
+  function seFail(ref, message, anchorRef){
+    seShowError(ref, message, anchorRef);
+    seFocusFirst(ref);
+    return undefined;
+  }
+
+  function ensureFlatpickrAssets(done){
+    function ensureStyles(){
+      var css = [
+        ['se-bk-flatpickr-core-css', 'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css'],
+        ['se-bk-flatpickr-theme-css', 'https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css']
+      ];
+      for(var i = 0; i < css.length; i++){
+        if(!document.getElementById(css[i][0])){
+          var link = document.createElement('link');
+          link.id = css[i][0];
+          link.rel = 'stylesheet';
+          link.href = css[i][1];
+          document.head.appendChild(link);
+        }
+      }
+    }
+    ensureStyles();
+    if(typeof window.flatpickr !== 'undefined'){ done(); return; }
+    if(window.__seBkFlatpickrLoading){
+      document.addEventListener('seBkFlatpickrReady', done, { once: true });
+      return;
+    }
+    window.__seBkFlatpickrLoading = true;
+    var script = document.createElement('script');
+    script.id = 'se-bk-flatpickr-script';
+    script.src = 'https://cdn.jsdelivr.net/npm/flatpickr';
+    script.onload = function(){
+      window.__seBkFlatpickrLoading = false;
+      document.dispatchEvent(new Event('seBkFlatpickrReady'));
+      done();
+    };
+    script.onerror = function(){
+      window.__seBkFlatpickrLoading = false;
+      done();
+    };
+    document.head.appendChild(script);
+  }
+
+  function init(){
+    if(!document.getElementById('se-bk-inline-card')) return;
+  /* ── Config ─────────────────────────────────────────────────────── */
+  var SE_URL = 'https://zngbawafqjntciafhxgr.supabase.co';
+  var SE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpuZ2Jhd2FmcWpudGNpYWZoeGdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2ODE3NTgsImV4cCI6MjA4NjI1Nzc1OH0.NtH0Cm6gENkkYki2LUMMYlPsFvrdg8CDt63iNP7Xi4o';
+  var SE_REF_ID = null, SE_REF_REFID = null, SE_REF_NAME = '', SE_REF_EMAIL = null, SE_REF_PHONE = null;
+  var SE_MODE = 'pick';
+  var SE_PARSED_DATE = '', SE_PARSED_TIME = '', SE_PARSED_LABEL = '';
+
+  /* Tour hours: Mon-Fri 11am-7pm, Sat-Sun 8am-4pm */
+  var HOURS = {0:[8,16],1:[11,19],2:[11,19],3:[11,19],4:[11,19],5:[11,19],6:[8,16]};
+  var DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  function pad2(n){ return n < 10 ? '0' + n : '' + n; }
+  function fmtDate(d){ return DAYS[d.getDay()] + ', ' + MONTHS[d.getMonth()] + ' ' + d.getDate(); }
+  function toLocalYMD(d){
+    return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+  }
+
+  /* ── Date input: polished Flatpickr UI with same YYYY-MM-DD value ─ */
+  var di = document.getElementById('se-bk-inline-date');
+  if(di){
+    var t = new Date(); /* same-day booking allowed (time picker enforces 2h buffer) */
+    var minDate = t.getFullYear() + '-' + pad2(t.getMonth() + 1) + '-' + pad2(t.getDate());
+    di.setAttribute('min', minDate);
+    if(typeof flatpickr !== 'undefined'){
+      di.type = 'text';
+      di.readOnly = true;
+      di.removeAttribute('onclick');
+      di.setAttribute('placeholder', 'Select date');
+      flatpickr(di, {
+        minDate: t,
+        dateFormat: 'Y-m-d',
+        altInput: true,
+        altInputClass: 'se-bk-flatpickr-alt',
+        altFormat: 'F j, Y',
+        disableMobile: true,
+        monthSelectorType: 'static',
+        onChange: function(selectedDates, dateStr){
+          var normalized = selectedDates && selectedDates[0] ? toLocalYMD(selectedDates[0]) : (dateStr || '');
+          di.value = normalized;
+          var dateField = (di && di._flatpickr && di._flatpickr.altInput) ? di._flatpickr.altInput : di;
+          seClearError(dateField);
+          populateTimeOptions(normalized);
+        },
+        onOpen: function(){
+          var o = document.getElementById('se-bk-flatpickr-overlay');
+          if(!o){ o = document.createElement('div'); o.id = 'se-bk-flatpickr-overlay'; document.body.appendChild(o); }
+        },
+        onClose: function(){
+          var o = document.getElementById('se-bk-flatpickr-overlay');
+          if(o) o.remove();
+        }
+      });
+    }
+  }
+
+  /* ── Populate time options based on selected date ─────────────── */
+  function populateTimeOptions(dateStr){
+    var sel = document.getElementById('se-bk-inline-time');
+    if(!sel) return;
+    sel.innerHTML = '<option value="" disabled selected style="color:#94a3b8;">\u2014 Select a time \u2014</option>';
+    if(!dateStr) return;
+    var parts = dateStr.split('-');
+    var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    var day = d.getDay();
+    var h = HOURS[day];
+    if(!h) {
+      sel.innerHTML = '<option value="" disabled selected>No tours available this day</option>';
+      return;
+    }
+
+    sel.innerHTML = '<option value="" disabled selected style="color:#94a3b8;">Loading times...</option>';
+    sel.disabled = true;
+
+    fetch(SE_URL + '/functions/v1/check-availability', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SE_KEY, 'Authorization': 'Bearer ' + SE_KEY },
+      body: JSON.stringify({ date: dateStr })
+    })
+    .then(function(r){
+      return r.json()
+        .then(function(data){ return { ok: r.ok, data: data }; })
+        .catch(function(){ return { ok: r.ok, data: null }; });
+    })
+    .then(function(res){
+      var data = res.data || {};
+      sel.innerHTML = '<option value="" disabled selected style="color:#94a3b8;">\u2014 Select a time \u2014</option>';
+      sel.disabled = false;
+
+      if(!res.ok || data.success !== true){
+        sel.innerHTML = '<option value="" disabled selected>Unable to load live availability — try again</option>';
+        return;
+      }
+
+      var bookedSet = {};
+      if(data.booked_slots){
+        for(var i = 0; i < data.booked_slots.length; i++){
+          bookedSet[data.booked_slots[i]] = true;
+        }
+      }
+
+      var hasAvailable = false;
+      /* For same-day bookings, require a 2-hour lead time before each slot */
+      var cutoff = null;
+      var nowD = new Date();
+      if(d.getFullYear() === nowD.getFullYear() && d.getMonth() === nowD.getMonth() && d.getDate() === nowD.getDate()){
+        cutoff = new Date(nowD.getTime() + 2 * 60 * 60 * 1000);
+      }
+      for(var hr = h[0]; hr < h[1]; hr++){
+        for(var min = 0; min < 60; min += 30){
+          var ampm = hr >= 12 ? 'PM' : 'AM';
+          var h12 = hr > 12 ? hr - 12 : (hr === 0 ? 12 : hr);
+          var mStr = min === 0 ? '00' : '30';
+          var label = h12 + ':' + mStr + ' ' + ampm;
+          if(cutoff){
+            var slotTime = new Date(d.getFullYear(), d.getMonth(), d.getDate(), hr, min);
+            if(slotTime < cutoff) continue; /* too soon — within 2h buffer */
+          }
+          if(bookedSet[label]){
+            sel.innerHTML += '<option value="' + label + '" disabled style="color:#ccc;">' + label + ' (Booked)</option>';
+          } else {
+            hasAvailable = true;
+            sel.innerHTML += '<option value="' + label + '">' + label + '</option>';
+          }
+        }
+      }
+
+      if(!hasAvailable){
+        sel.innerHTML = '<option value="" disabled selected>Fully booked — try another day</option>';
+      }
+    })
+    .catch(function(){
+      sel.disabled = false;
+      sel.innerHTML = '<option value="" disabled selected>Unable to load live availability — try again</option>';
+    });
+  }
+  if(di){
+    di.addEventListener('change', function(){ populateTimeOptions(this.value); });
+    populateTimeOptions('');
+  }
+
+  /* ── Phone auto-format ──────────────────────────────────────────── */
+  var phoneInput = document.getElementById('se-bk-inline-phone');
+  if(phoneInput){
+    phoneInput.addEventListener('input', function(){
+      var v = this.value.replace(/\D/g, '');
+      if(v.length >= 6) this.value = '(' + v.slice(0,3) + ') ' + v.slice(3,6) + '-' + v.slice(6,10);
+      else if(v.length >= 3) this.value = '(' + v.slice(0,3) + ') ' + v.slice(3);
+      else this.value = v;
+    });
+  }
+
+  /* ── Show Step ──────────────────────────────────────────────────── */
+  /* n: 1=Time, 2=Info, '2b'=Referrer, 3=Interests, 4=Confirm */
+  function showStep(n){
+    document.getElementById('se-bk-inline-s1pick').style.display = (n===1 && SE_MODE==='pick') ? 'block' : 'none';
+    document.getElementById('se-bk-inline-s1talk').style.display = (n===1 && SE_MODE==='talk') ? 'block' : 'none';
+    document.getElementById('se-bk-inline-s2').style.display = n===2 ? 'block' : 'none';
+    document.getElementById('se-bk-inline-s2b').style.display = n==='2b' ? 'block' : 'none';
+    document.getElementById('se-bk-inline-s3').style.display = n===3 ? 'block' : 'none';
+    document.getElementById('se-bk-inline-s4').style.display = n===4 ? 'block' : 'none';
+    document.getElementById('se-bk-inline-success').style.display = 'none';
+    document.getElementById('se-bk-inline-tabs').style.display = n===1 ? 'flex' : 'none';
+    document.getElementById('se-bk-inline-dots').style.display = (n >= 1 && n <= 4) ? 'flex' : 'none';
+    document.getElementById('se-bk-inline-d1').style.background = n>=1 ? '#0b468c' : '#e2e8f0';
+    document.getElementById('se-bk-inline-d2').style.background = (n===2 || n==='2b') ? '#0b468c' : '#e2e8f0';
+    document.getElementById('se-bk-inline-d3').style.background = n>=3 ? '#0b468c' : '#e2e8f0';
+    document.getElementById('se-bk-inline-d4').style.background = n>=4 ? '#0b468c' : '#e2e8f0';
+  }
+
+  /* ── Tab Switching ──────────────────────────────────────────────── */
+  function switchTab(mode){
+    SE_MODE = mode;
+    var tPick = document.getElementById('se-bk-inline-tab-pick');
+    var tTalk = document.getElementById('se-bk-inline-tab-talk');
+    if(mode === 'pick'){
+      tPick.style.color = '#fff'; tPick.style.background = 'rgba(255,255,255,0.12)'; tPick.style.borderBottom = '3px solid #fff';
+      tTalk.style.color = 'rgba(255,255,255,0.55)'; tTalk.style.background = 'transparent'; tTalk.style.borderBottom = '3px solid transparent';
+    } else {
+      tTalk.style.color = '#fff'; tTalk.style.background = 'rgba(255,255,255,0.12)'; tTalk.style.borderBottom = '3px solid #fff';
+      tPick.style.color = 'rgba(255,255,255,0.55)'; tPick.style.background = 'transparent'; tPick.style.borderBottom = '3px solid transparent';
+      setTimeout(function(){ document.getElementById('se-bk-inline-nlp').focus(); }, 100);
+    }
+    showStep(1);
+  }
+  document.getElementById('se-bk-inline-tab-pick').addEventListener('click', function(){ switchTab('pick'); });
+  document.getElementById('se-bk-inline-tab-talk').addEventListener('click', function(){ switchTab('talk'); });
+
+  /* ── Pick Mode: Next ────────────────────────────────────────────── */
+  document.getElementById('se-bk-inline-pick-next').addEventListener('click', function(){
+    var d = document.getElementById('se-bk-inline-date').value;
+    var t = document.getElementById('se-bk-inline-time').value;
+    var di = document.getElementById('se-bk-inline-date');
+    var dateField = (di && di._flatpickr && di._flatpickr.altInput) ? di._flatpickr.altInput : di;
+    if(!d){ return seFail(dateField, 'Please select a date'); }
+    if(!t){ return seFail('se-bk-inline-time', 'Please select a time'); }
+    SE_PARSED_DATE = d; SE_PARSED_TIME = t;
+    var parts = d.split('-');
+    var dateObj = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    SE_PARSED_LABEL = fmtDate(dateObj) + ' at ' + t;
+    document.getElementById('se-bk-inline-chip-text').textContent = SE_PARSED_LABEL;
+    showStep(2);
+  });
+
+  /* ══════════════════════════════════════════════════════════════════ */
+  /* NATURAL LANGUAGE PARSER (same as modal version)                   */
+  /* ══════════════════════════════════════════════════════════════════ */
+  function parseNatural(input){
+    var s = input.toLowerCase().trim();
+    if(!s) return null;
+    var now = new Date();
+    var date = null, hour = null, minute = 0;
+
+    var tm = s.match(/(\d{1,2})[\s:.]?(\d{2})?\s*(am|pm)/i);
+    if(tm){
+      hour = parseInt(tm[1]); minute = tm[2] ? parseInt(tm[2]) : 0;
+      var ampm = tm[3].toLowerCase();
+      if(ampm === 'pm' && hour !== 12) hour += 12;
+      if(ampm === 'am' && hour === 12) hour = 0;
+    }
+    if(hour === null){
+      var tm3 = s.match(/\b(\d{3,4})\b/);
+      if(tm3){
+        var num = tm3[1];
+        if(num.length === 3){ hour = parseInt(num[0]); minute = parseInt(num.slice(1)); }
+        else if(num.length === 4){ hour = parseInt(num.slice(0,2)); minute = parseInt(num.slice(2)); }
+        if(hour >= 1 && hour <= 6) hour += 12;
+      }
+    }
+    if(hour === null){
+      var tm4 = s.match(/\b(\d{1,2})\s+(\d{2})\b/);
+      if(tm4){
+        hour = parseInt(tm4[1]); minute = parseInt(tm4[2]);
+        if(hour >= 1 && hour <= 6) hour += 12;
+      }
+    }
+    if(hour === null){
+      var tm2 = s.match(/(?:at\s+)?(\d{1,2})(?::(\d{2}))?(?:\s*o.?clock)?/);
+      if(tm2 && parseInt(tm2[1]) >= 1 && parseInt(tm2[1]) <= 12){
+        hour = parseInt(tm2[1]); minute = tm2[2] ? parseInt(tm2[2]) : 0;
+        if(hour >= 1 && hour <= 6) hour += 12;
+      }
+    }
+    if(hour === null){
+      if(/morning/.test(s)){ hour = 10; minute = 0; }
+      else if(/afternoon/.test(s)){ hour = 14; minute = 0; }
+      else if(/evening/.test(s)){ hour = 17; minute = 0; }
+      else if(/noon|lunch/.test(s)){ hour = 12; minute = 0; }
+    }
+
+    if(/tomorrow/.test(s)){ date = new Date(now); date.setDate(date.getDate() + 1); }
+    else if(/today/.test(s)){ date = new Date(now); }
+
+    var dayNames = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+    var dayMatch = null;
+    for(var i = 0; i < dayNames.length; i++){
+      var full = dayNames[i], short3 = full.slice(0,3);
+      var re = new RegExp('\\b' + full + '\\b|\\b' + short3 + '\\b');
+      if(re.test(s)){ dayMatch = i; break; }
+    }
+    if(dayMatch !== null && !date){
+      date = new Date(now);
+      var diff = dayMatch - date.getDay();
+      if(diff <= 0) diff += 7;
+      date.setDate(date.getDate() + diff);
+    }
+
+    var monthNames = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+    var mMatch = s.match(/(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+(\d{1,2})/i);
+    if(mMatch){
+      var mi = -1;
+      for(var j = 0; j < monthNames.length; j++){
+        if(mMatch[1].toLowerCase().indexOf(monthNames[j]) === 0){ mi = j; break; }
+      }
+      if(mi >= 0){
+        var yr = now.getFullYear();
+        date = new Date(yr, mi, parseInt(mMatch[2]));
+        if(date < now) date.setFullYear(yr + 1);
+      }
+    }
+
+    var inDays = s.match(/in\s+(\d+)\s+day/);
+    if(inDays){ date = new Date(now); date.setDate(date.getDate() + parseInt(inDays[1])); }
+
+    if(/next\s+week/.test(s) && !date){
+      date = new Date(now);
+      var toMon = 1 - date.getDay(); if(toMon <= 0) toMon += 7;
+      date.setDate(date.getDate() + toMon + 7);
+    }
+
+    if(!date && hour === null) return null;
+    if(!date){ date = new Date(now); date.setDate(date.getDate() + 1); }
+    if(hour === null){ hour = 10; }
+
+    if(minute > 0 && minute < 15) minute = 0;
+    else if(minute >= 15 && minute < 45) minute = 30;
+    else if(minute >= 45){ minute = 0; hour++; }
+
+    return { date: date, hour: hour, minute: minute };
+  }
+
+  function formatHour12(h){
+    if(h === 0 || h === 24) return '12:00 AM';
+    if(h === 12) return '12:00 PM';
+    if(h < 12) return h + ':00 AM';
+    return (h - 12) + ':00 PM';
+  }
+
+  function findNextAvailable(fromDate, fromHour){
+    var d = new Date(fromDate);
+    var startHour = fromHour;
+    for(var i = 0; i < 14; i++){
+      if(i > 0){ d.setDate(d.getDate() + 1); startHour = 0; }
+      var today = new Date(); today.setHours(0,0,0,0);
+      var check = new Date(d); check.setHours(0,0,0,0);
+      if(check <= today) continue;
+      var day = d.getDay();
+      var h = HOURS[day];
+      if(!h) continue;
+      var tryHour = Math.max(startHour, h[0]);
+      if(tryHour < h[1]){
+        return {
+          date: new Date(d),
+          hour: tryHour,
+          label: DAYS[day] + ', ' + MONTHS[d.getMonth()] + ' ' + d.getDate() + ' at ' + formatHour12(tryHour)
+        };
+      }
+    }
+    return null;
+  }
+
+  function checkHours(date, hour){
+    var today = new Date(); today.setHours(0,0,0,0);
+    var check = new Date(date); check.setHours(0,0,0,0);
+    if(check <= today){
+      var next = findNextAvailable(new Date(), 0);
+      return { ok: false, reason: 'Please choose a future date.', suggestion: next };
+    }
+    var day = date.getDay();
+    var h = HOURS[day];
+    if(!h){
+      var next = findNextAvailable(date, 0);
+      return { ok: false, reason: "We're closed that day.", suggestion: next };
+    }
+    if(hour < h[0]){
+      var next = findNextAvailable(date, h[0]);
+      return { ok: false, reason: 'Tours start at ' + formatHour12(h[0]) + ' on ' + DAYS[day] + 's.', suggestion: next };
+    }
+    if(hour >= h[1]){
+      var nextDay = new Date(date);
+      nextDay.setDate(nextDay.getDate() + 1);
+      var next = findNextAvailable(nextDay, 0);
+      var lastSlotHour = h[1] - 1;
+      var lastSlotLabel = (lastSlotHour > 12 ? lastSlotHour - 12 : lastSlotHour) + ':30 ' + (lastSlotHour >= 12 ? 'PM' : 'AM');
+      if(hour - lastSlotHour <= 2){
+        next = { date: new Date(date), hour: lastSlotHour, minute: 30, label: DAYS[day] + ', ' + MONTHS[date.getMonth()] + ' ' + date.getDate() + ' at ' + lastSlotLabel };
+      }
+      return { ok: false, reason: 'Last tour is at ' + lastSlotLabel + ' on ' + DAYS[day] + 's.', suggestion: next };
+    }
+    return { ok: true };
+  }
+
+  function formatTime12(hour, minute){
+    var ampm = hour >= 12 ? 'PM' : 'AM';
+    var h12 = hour % 12; if(h12 === 0) h12 = 12;
+    return h12 + ':' + pad2(minute) + ' ' + ampm;
+  }
+
+  /* ── Live NLP Feedback ──────────────────────────────────────────── */
+  var nlpInput = document.getElementById('se-bk-inline-nlp');
+  nlpInput.addEventListener('input', function(){
+    var fb = document.getElementById('se-bk-inline-nlp-feedback');
+    var btn = document.getElementById('se-bk-inline-talk-next');
+    var parsed = parseNatural(this.value);
+
+    if(!parsed || !this.value.trim()){
+      fb.style.display = 'none'; btn.style.display = 'none';
+      SE_PARSED_DATE = ''; SE_PARSED_TIME = ''; SE_PARSED_LABEL = '';
+      return;
+    }
+
+    var valid = checkHours(parsed.date, parsed.hour);
+    var timeStr = formatTime12(parsed.hour, parsed.minute);
+    var dateStr = fmtDate(parsed.date);
+    fb.style.display = 'block';
+
+    if(valid.ok){
+      var y = parsed.date.getFullYear();
+      var m = pad2(parsed.date.getMonth() + 1);
+      var d = pad2(parsed.date.getDate());
+      var dateStrApi = y + '-' + m + '-' + d;
+      fb.style.background = '#f8fafc'; fb.style.border = '1px solid #e2e8f0'; fb.style.color = '#64748b';
+      fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" style="width:18px;height:18px;animation:seBkSpin 0.8s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="31" stroke-dashoffset="10"/></svg> Checking availability...</div>';
+      btn.style.display = 'none';
+      SE_PARSED_DATE = ''; SE_PARSED_TIME = ''; SE_PARSED_LABEL = '';
+      fetch(SE_URL + '/functions/v1/check-availability', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SE_KEY, 'Authorization': 'Bearer ' + SE_KEY },
+        body: JSON.stringify({ date: dateStrApi, time: timeStr })
+      })
+      .then(function(r){
+        return r.json()
+          .then(function(data){ return { ok: r.ok, data: data }; })
+          .catch(function(){ return { ok: r.ok, data: null }; });
+      })
+      .then(function(res){
+        var data = res.data || {};
+        if(!res.ok || data.success !== true){
+          fb.style.background = '#fffbeb'; fb.style.border = '1px solid #fcd34d'; fb.style.color = '#92400e';
+          fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5" style="width:20px;height:20px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>Unable to verify live availability right now. Please use Pick a Time.</div></div>';
+          btn.style.display = 'none';
+          return;
+        }
+        var booked = data.booked_slots || [];
+        var available = data.available_slots || [];
+        var suggestions = data.suggestions || [];
+        var isBooked = booked.indexOf(timeStr) >= 0;
+        if(isBooked){
+          fb.style.background = '#f0fdf4'; fb.style.border = '1px solid #bbf7d0'; fb.style.color = '#166534';
+          var suggHtml = '';
+          if(suggestions.length > 0){
+            suggHtml = '<div style="margin-top:12px;"><div style="font-size:13px;font-weight:600;color:#166534;margin-bottom:8px;">Times that might work for you:</div>';
+            for(var i = 0; i < suggestions.length; i++){
+              var s = suggestions[i];
+              suggHtml += '<div class="se-bk-inline-suggest-row" style="margin-bottom:6px;padding:10px 14px;background:#ffffff;border:2px solid #22c55e;border-radius:8px;color:#166534;font-size:14px;cursor:pointer;" data-date="' + s.date + '" data-time="' + s.time + '" data-label="' + s.label.replace(/"/g, '&quot;') + '">' + s.label + ' <span style="color:#0b468c;text-decoration:underline;">Book this instead?</span></div>';
+            }
+            suggHtml += '</div>';
+          } else if(available.length > 0){
+            var first = available[0];
+            suggHtml = '<div style="margin-top:10px;padding:10px 14px;background:#ffffff;border:2px solid #22c55e;border-radius:8px;color:#166534;font-size:14px;cursor:pointer;" id="se-bk-inline-suggest" data-date="' + dateStrApi + '" data-time="' + first + '" data-label="' + (fmtDate(parsed.date) + ' at ' + first).replace(/"/g, '&quot;') + '">' +
+              '<strong>That time is booked.</strong> Next available: ' + first + ' <span style="color:#0b468c;text-decoration:underline;margin-left:4px;">Book this instead?</span></div>';
+          } else {
+            suggHtml = '<div style="margin-top:8px;font-size:13px;">Fully booked that day — try another date.</div>';
+          }
+          fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" style="width:20px;height:20px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' +
+            '<div><span style="font-size:13px;color:#64748b;">That time is already booked.</span></div></div>' + suggHtml;
+          var rows = fb.querySelectorAll('.se-bk-inline-suggest-row, #se-bk-inline-suggest');
+          for(var r = 0; r < rows.length; r++){
+            rows[r].addEventListener('click', function(){
+              var sd = this.getAttribute('data-date');
+              var st = this.getAttribute('data-time');
+              var lbl = this.getAttribute('data-label');
+              SE_PARSED_DATE = sd; SE_PARSED_TIME = st; SE_PARSED_LABEL = lbl || (fmtDate(new Date(parseInt(sd.split('-')[0]), parseInt(sd.split('-')[1])-1, parseInt(sd.split('-')[2]))) + ' at ' + st);
+              fb.style.background = '#f0fdf4'; fb.style.border = '1px solid #bbf7d0'; fb.style.color = '#166534';
+              fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" style="width:20px;height:20px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><div><strong>Accepted!</strong> ' + SE_PARSED_LABEL + '</div></div>';
+              btn.style.display = 'flex';
+            });
+          }
+        } else {
+          fb.style.background = '#f0fdf4'; fb.style.border = '1px solid #bbf7d0'; fb.style.color = '#166534';
+          fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex-shrink:0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' +
+            '<div><strong style="font-size:15px;">' + dateStr + '</strong><br><span style="font-size:13px;opacity:0.8;">at ' + timeStr + '</span></div></div>';
+          btn.style.display = 'flex';
+          SE_PARSED_DATE = dateStrApi; SE_PARSED_TIME = timeStr; SE_PARSED_LABEL = dateStr + ' at ' + timeStr;
+        }
+      })
+      .catch(function(){
+        fb.style.background = '#fffbeb'; fb.style.border = '1px solid #fcd34d'; fb.style.color = '#92400e';
+        fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5" style="width:20px;height:20px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>Unable to verify live availability right now. Please use Pick a Time.</div></div>';
+        btn.style.display = 'none';
+        SE_PARSED_DATE = ''; SE_PARSED_TIME = ''; SE_PARSED_LABEL = '';
+      });
+    } else {
+      var suggHtml = '';
+      if(valid.suggestion){
+        var s = valid.suggestion;
+        fb.style.background = '#f0fdf4'; fb.style.border = '1px solid #bbf7d0'; fb.style.color = '#166534';
+        suggHtml = '<div style="margin-top:10px;padding:10px 14px;background:#ffffff;border:2px solid #22c55e;border-radius:8px;color:#166534;font-size:14px;cursor:pointer;" ' +
+          'id="se-bk-inline-suggest" data-date="' + s.date.getFullYear() + '-' + String(s.date.getMonth()+1).padStart(2,'0') + '-' + String(s.date.getDate()).padStart(2,'0') + '" ' +
+          'data-hour="' + s.hour + '">' +
+          '<strong>Next available:</strong> ' + s.label +
+          ' <span style="color:#0b468c;text-decoration:underline;margin-left:4px;">Book this instead?</span></div>';
+        fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" style="width:20px;height:20px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' +
+          '<div><span style="font-size:13px;color:#64748b;">' + valid.reason + '</span></div></div>' + suggHtml;
+      } else {
+        fb.style.background = '#fef2f2'; fb.style.border = '1px solid #fecaca'; fb.style.color = '#991b1b';
+        fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" style="width:20px;height:20px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>' +
+          '<div><strong>Time Not Available</strong><br><span style="font-size:13px;opacity:0.8;">' + valid.reason + '</span></div></div>';
+      }
+      var suggEl = document.getElementById('se-bk-inline-suggest');
+      if(suggEl){
+        suggEl.addEventListener('click', function(){
+          var sd = this.getAttribute('data-date');
+          var sh = parseInt(this.getAttribute('data-hour'));
+          var sMin = '00';
+          var sAmPm = sh >= 12 ? 'PM' : 'AM';
+          var sH12 = sh > 12 ? sh - 12 : (sh === 0 ? 12 : sh);
+          SE_PARSED_DATE = sd;
+          SE_PARSED_TIME = sH12 + ':' + sMin + ' ' + sAmPm;
+          SE_PARSED_LABEL = this.textContent.replace('Book this instead?','').replace('Next available:','').trim();
+          fb.style.background = '#f0fdf4'; fb.style.border = '1px solid #bbf7d0'; fb.style.color = '#166534';
+          fb.innerHTML = '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" style="width:20px;height:20px;flex-shrink:0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' +
+            '<div><strong>Accepted!</strong> ' + SE_PARSED_LABEL + '</div></div>';
+          btn.style.display = 'flex';
+        });
+      }
+      btn.style.display = 'none';
+      SE_PARSED_DATE = ''; SE_PARSED_TIME = ''; SE_PARSED_LABEL = '';
+    }
+  });
+
+  nlpInput.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); talkNext(); }
+  });
+
+  function talkNext(){
+    if(!SE_PARSED_DATE || !SE_PARSED_TIME) return;
+    document.getElementById('se-bk-inline-chip-text').textContent = SE_PARSED_LABEL;
+    showStep(2);
+  }
+  document.getElementById('se-bk-inline-talk-next').addEventListener('click', talkNext);
+
+  /* ── Step 2 Back ────────────────────────────────────────────────── */
+  document.getElementById('se-bk-inline-s2-back').addEventListener('click', function(){ showStep(1); });
+
+  /* ── Time chip: click to go back to step 1 ───────────────────────── */
+  var chipBtn = document.getElementById('se-bk-inline-chip-btn');
+  if(chipBtn){ chipBtn.addEventListener('click', function(){ showStep(1); }); }
+
+  /* ── How Heard → show/hide referral, show/hide Other input ───────── */
+  document.getElementById('se-bk-inline-heard').addEventListener('change', function(){
+    var v = this.value;
+    document.getElementById('se-bk-inline-ref-wrap').style.display = v === 'Friends/Family' ? 'block' : 'none';
+    document.getElementById('se-bk-inline-other-wrap').style.display = v === 'Other' ? 'block' : 'none';
+    if(v !== 'Other') document.getElementById('se-bk-inline-heard-other').value = '';
+  });
+
+  document.getElementById('se-bk-inline-referral').addEventListener('input', function(){
+    document.getElementById('se-bk-inline-ref-status').style.display = 'none';
+  });
+
+  /* ── Go from Step 2 to next (2b or 3) ────────────────────────────── */
+  document.getElementById('se-bk-inline-s2-next').addEventListener('click', function(){
+    var fn = document.getElementById('se-bk-inline-fname').value.trim();
+    var ln = document.getElementById('se-bk-inline-lname').value.trim();
+    var em = document.getElementById('se-bk-inline-email').value.trim();
+    var ph = document.getElementById('se-bk-inline-phone').value.trim();
+    if(!fn){ return seFail('se-bk-inline-fname', 'Please enter your first name'); }
+    if(!ln){ return seFail('se-bk-inline-lname', 'Please enter your last name'); }
+    if(!em || em.indexOf('@') < 0){ return seFail('se-bk-inline-email', 'Please enter a valid email'); }
+    if(ph.replace(/\D/g,'').length !== 10){ return seFail('se-bk-inline-phone', 'Please enter a valid 10-digit phone number'); }
+    var heard = document.getElementById('se-bk-inline-heard').value;
+    if(!heard){ return seFail('se-bk-inline-heard', 'Please let us know how you heard about us'); }
+    if(heard === 'Other'){
+      var otherVal = document.getElementById('se-bk-inline-heard-other').value.trim();
+      if(!otherVal){ return seFail('se-bk-inline-heard-other', 'Please specify how you heard about us'); }
+    }
+    var refInput = document.getElementById('se-bk-inline-referral');
+    var refVal = refInput ? refInput.value.trim() : '';
+    var needsReferrerName = (heard === 'Friends/Family' && !SE_REF_NAME && !refVal);
+    if(needsReferrerName){
+      showStep('2b');
+    } else {
+      if(heard === 'Friends/Family' && refVal && !SE_REF_NAME){ SE_REF_NAME = refVal; }
+      showStep(3);
+    }
+  });
+
+  /* ── Step 2b: Referrer name ──────────────────────────────────────── */
+  document.getElementById('se-bk-inline-s2b-back').addEventListener('click', function(){ showStep(2); });
+  document.getElementById('se-bk-inline-s2b-next').addEventListener('click', function(){
+    var refName = document.getElementById('se-bk-inline-referrer-name').value.trim();
+    if(!refName){ return seFail('se-bk-inline-referrer-name', 'Please enter the referrer\'s full name'); }
+    SE_REF_NAME = refName + ' (Unverified)';
+    showStep(3);
+  });
+
+  /* ── Step 3 (Interests) → Step 4 (Confirm) ───────────────────────── */
+  document.getElementById('se-bk-inline-s3-back').addEventListener('click', function(){
+    var heard = document.getElementById('se-bk-inline-heard').value;
+    var refInput = document.getElementById('se-bk-inline-referral');
+    var refVal = refInput ? refInput.value.trim() : '';
+    var needsReferrerName = (heard === 'Friends/Family' && !SE_REF_NAME && !refVal);
+    showStep(needsReferrerName ? '2b' : 2);
+  });
+  document.getElementById('se-bk-inline-s3-next').addEventListener('click', function(){
+    var fn = document.getElementById('se-bk-inline-fname').value.trim();
+    var ln = document.getElementById('se-bk-inline-lname').value.trim();
+    var em = document.getElementById('se-bk-inline-email').value.trim();
+    var ph = document.getElementById('se-bk-inline-phone').value.trim();
+    var parts = SE_PARSED_DATE.split('-');
+    var dateObj = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    document.getElementById('se-bk-inline-sum-date').textContent = fmtDate(dateObj);
+    document.getElementById('se-bk-inline-sum-time').textContent = SE_PARSED_TIME;
+    document.getElementById('se-bk-inline-sum-name').textContent = fn + ' ' + ln;
+    document.getElementById('se-bk-inline-sum-email').textContent = em;
+    document.getElementById('se-bk-inline-sum-phone').textContent = ph;
+    var rl = document.getElementById('se-bk-inline-sum-ref-l');
+    var rv = document.getElementById('se-bk-inline-sum-ref-v');
+    if(SE_REF_NAME){ rl.style.display = 'block'; rv.style.display = 'block'; rv.textContent = SE_REF_NAME; }
+    else { rl.style.display = 'none'; rv.style.display = 'none'; }
+    var intL = document.getElementById('se-bk-inline-sum-int-l');
+    var intV = document.getElementById('se-bk-inline-sum-int-v');
+    var intEls = document.querySelectorAll('input[name="se-bk-inline-interest"]:checked');
+    var intArr = []; for(var i = 0; i < intEls.length; i++){ intArr.push(intEls[i].value); }
+    var intOther = document.getElementById('se-bk-inline-interest-other');
+    if(intOther && intOther.value.trim()){ var o = intOther.value.trim().split(',').map(function(s){ return s.trim(); }).filter(Boolean); for(var ii = 0; ii < o.length; ii++) intArr.push(o[ii]); }
+    if(intArr.length > 0){ intL.style.display = 'block'; intV.style.display = 'block'; intV.textContent = intArr.join(', '); }
+    else { intL.style.display = 'none'; intV.style.display = 'none'; }
+    showStep(4);
+  });
+
+  document.getElementById('se-bk-inline-s4-back').addEventListener('click', function(){ showStep(3); });
+
+  /* ── Referral Verification ──────────────────────────────────────── */
+  function detectSearchType(val){
+    if(val.indexOf('@') >= 0) return 'email';
+    if(val.replace(/\D/g,'').length >= 7) return 'phone';
+    return 'name';
+  }
+
+  function normalizeReferralValue(searchType, raw){
+    if(searchType === 'email') return raw.trim().toLowerCase();
+    if(searchType === 'phone') return raw.replace(/\D/g,'');
+    return raw.trim();
+  }
+
+  document.getElementById('se-bk-inline-ref-btn').addEventListener('click', function(){
+    var input = document.getElementById('se-bk-inline-referral');
+    var status = document.getElementById('se-bk-inline-ref-status');
+    var btn = document.getElementById('se-bk-inline-ref-btn');
+    var val = input.value.trim();
+    if(!val){
+      status.style.display = 'block'; status.style.background = '#fef2f2'; status.style.color = '#dc2626';
+      status.textContent = 'Please enter the member\'s email or phone number.'; return;
+    }
+
+    var matchBtnIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:12px;height:12px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Match';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px;animation:seBkSpin 0.8s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="31" stroke-dashoffset="10"/></svg>';
+    status.style.display = 'block'; status.style.background = '#f8fafc'; status.style.color = '#64748b';
+    status.textContent = 'Searching...';
+
+    var searchType = detectSearchType(val);
+    var normalizedVal = normalizeReferralValue(searchType, val);
+    fetch(SE_URL + '/functions/v1/validate-referral', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SE_KEY, 'Authorization': 'Bearer ' + SE_KEY },
+      body: JSON.stringify({ search_type: searchType, search_value: normalizedVal })
+    })
+    .then(function(r){
+      return r.json()
+        .then(function(data){ return { ok: r.ok, data: data }; })
+        .catch(function(){ return { ok: r.ok, data: null }; });
+    })
+    .then(function(res){
+      var d = res.data || {};
+      btn.innerHTML = matchBtnIcon;
+      if(!res.ok){
+        SE_REF_ID = null; SE_REF_REFID = null; SE_REF_NAME = ''; SE_REF_EMAIL = null; SE_REF_PHONE = null;
+        status.style.background = '#fffbeb'; status.style.color = '#b45309';
+        status.textContent = d.message || 'Referral lookup unavailable right now.';
+        input.style.borderColor = '#f59e0b';
+        return;
+      }
+      if(d.found){
+        SE_REF_ID = d.member.id;
+        SE_REF_REFID = d.member.ref_id || null;
+        SE_REF_NAME = (d.member.first_name || '') + ' ' + (d.member.last_name || '');
+        SE_REF_EMAIL = d.member.email || null;
+        SE_REF_PHONE = d.member.cell_phone || null;
+        status.style.background = '#f0fdf4'; status.style.color = '#16a34a';
+        status.innerHTML = '<span style="display:flex;align-items:center;gap:6px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Member matched: <strong>' + SE_REF_NAME.trim() + '</strong></span>';
+        input.style.borderColor = '#22c55e';
+      } else if(d.noted){
+        SE_REF_ID = null; SE_REF_REFID = null; SE_REF_NAME = ''; SE_REF_EMAIL = null; SE_REF_PHONE = null;
+        status.style.background = '#fef2f2'; status.style.color = '#dc2626';
+        status.textContent = 'Please enter the member\'s email or phone number to verify.';
+        input.style.borderColor = '#e2e8f0';
+      } else {
+        SE_REF_ID = null; SE_REF_REFID = null; SE_REF_NAME = ''; SE_REF_EMAIL = null; SE_REF_PHONE = null;
+        status.style.background = '#fffbeb'; status.style.color = '#b45309';
+        status.textContent = "No member found with that email or phone.";
+        input.style.borderColor = '#f59e0b';
+      }
+    })
+    .catch(function(){
+      btn.innerHTML = matchBtnIcon;
+      status.style.background = '#fffbeb'; status.style.color = '#b45309';
+      status.textContent = "Could not verify right now — we'll follow up.";
+    });
+  });
+
+  /* ── Submit ─────────────────────────────────────────────────────── */
+  document.getElementById('se-bk-inline-submit').addEventListener('click', function(){
+    var consent = document.getElementById('se-bk-inline-consent');
+    var errEl = document.getElementById('se-bk-inline-error');
+    var submitBtn = document.getElementById('se-bk-inline-submit');
+
+    if(!consent.checked){
+      errEl.textContent = 'Please accept the terms to continue.';
+      errEl.style.display = 'block'; return;
+    }
+    errEl.style.display = 'none';
+
+    submitBtn.style.pointerEvents = 'none'; submitBtn.style.opacity = '0.7';
+    submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;animation:seBkSpin 0.8s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="31" stroke-dashoffset="10"/></svg> Booking...';
+
+    var refInput = document.getElementById('se-bk-inline-referral');
+    var heardSelect = document.getElementById('se-bk-inline-heard');
+    var heardVal = heardSelect ? heardSelect.value : '';
+    if(heardVal === 'Other'){
+      var otherInput = document.getElementById('se-bk-inline-heard-other');
+      heardVal = otherInput && otherInput.value.trim() ? ('Other: ' + otherInput.value.trim()) : 'Other';
+    }
+    var interests = [];
+    var interestEls = document.querySelectorAll('input[name="se-bk-inline-interest"]:checked');
+    for(var i = 0; i < interestEls.length; i++){
+      var el = interestEls[i];
+      interests.push(el.getAttribute('data-crm') || el.value);
+    }
+    var interestOther = document.getElementById('se-bk-inline-interest-other');
+    if(interestOther && interestOther.value.trim()){
+      var otherVals = interestOther.value.trim().split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+      for(var j = 0; j < otherVals.length; j++){ interests.push(otherVals[j]); }
+    }
+
+    var payload = {
+      first_name: document.getElementById('se-bk-inline-fname').value.trim(),
+      last_name: document.getElementById('se-bk-inline-lname').value.trim(),
+      email: document.getElementById('se-bk-inline-email').value.trim(),
+      cell_phone: document.getElementById('se-bk-inline-phone').value,
+      preferred_date: SE_PARSED_DATE,
+      preferred_time: SE_PARSED_TIME,
+      how_heard: heardVal || null,
+      interests: interests.length > 0 ? interests.join(', ') : null,
+      referral_member: (refInput && refInput.value.trim()) ? (SE_REF_NAME || refInput.value.trim()) : null,
+      referral_member_id: SE_REF_ID || null,
+      referral_member_ref_id: SE_REF_REFID || null,
+      referral_member_email: SE_REF_EMAIL || null,
+      referral_member_phone: SE_REF_PHONE || null,
+      send_texts: '1',
+      send_calls: '1',
+      send_emails: 'now',
+      source_page: window.location.href,
+      device_type: window.innerWidth < 768 ? 'mobile' : 'desktop',
+      utm_source: (new URLSearchParams(window.location.search)).get('utm_source'),
+      utm_medium: (new URLSearchParams(window.location.search)).get('utm_medium'),
+      utm_campaign: (new URLSearchParams(window.location.search)).get('utm_campaign')
+    };
+
+    fetch(SE_URL + '/functions/v1/book-tour', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SE_KEY, 'Authorization': 'Bearer ' + SE_KEY },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
+    .then(function(res){
+      if(res.ok && res.data.success){
+        /* --- GA4 / Google Ads conversion — added 2026-08-19, see handoffs/capture-and-track-se-bk-inline.md --- */
+        try {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: 'tour_booked',
+            tour_booking_id: res.data.appointment_id || res.data.id || null,
+            tour_is_reschedule: !!res.data.appointment_rescheduled,
+            tour_date: payload.preferred_date || null,
+            tour_time: payload.preferred_time || null,
+            tour_heard_about: payload.how_heard || null,
+            tour_source_page: payload.source_page || null,
+            tour_device: payload.device_type || null,
+            tour_utm_source: payload.utm_source || null,
+            tour_utm_medium: payload.utm_medium || null,
+            tour_utm_campaign: payload.utm_campaign || null
+          });
+        } catch(e) { /* never let tracking break the booking confirmation */ }
+        /* --- end conversion tracking --- */
+        document.getElementById('se-bk-inline-s4').style.display = 'none';
+        document.getElementById('se-bk-inline-dots').style.display = 'none';
+        document.getElementById('se-bk-inline-tabs').style.display = 'none';
+        document.getElementById('se-bk-inline-success-detail').textContent = SE_PARSED_LABEL;
+        var headingEl = document.querySelector('#se-bk-inline-success h3');
+        if(headingEl && res.data.appointment_rescheduled){
+          headingEl.textContent = 'Rescheduled! See you then.';
+        }
+        document.getElementById('se-bk-inline-success').style.display = 'block';
+      } else {
+        errEl.textContent = res.data.error || 'Something went wrong. Please try again.';
+        errEl.style.display = 'block';
+        resetBtn();
+      }
+    })
+    .catch(function(){
+      errEl.textContent = 'Network error — please check your connection and try again.';
+      errEl.style.display = 'block';
+      resetBtn();
+    });
+
+    function resetBtn(){
+      submitBtn.style.pointerEvents = ''; submitBtn.style.opacity = '1';
+      submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><polyline points="20 6 9 17 4 12"/></svg> Confirm Tour';
+    }
+  });
+
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ ensureFlatpickrAssets(init); });
+  } else {
+    ensureFlatpickrAssets(init);
+  }
+})();
+</script>
