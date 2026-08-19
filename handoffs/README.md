@@ -23,6 +23,41 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 | **11** | **Decide what `Website/Pages/index/Index.html` is** — [§25](../SEO/TODO.md). It is the only page file embedding the Thrive header symbol, and it is a **December 2025 snapshot** (countdown targets Jan 1 2026). Either declare it a whole-page mirror **and re-capture it**, or replace it with a content fragment. ⚠️ Declaring it authoritative *without* re-capturing is worse than leaving it. Needs a Sam decision. | ~30 min | needs decision |
 | **12** | **Fix or retire `npm run convert:local`** — `DIRECTORIES_TO_SCAN` is `['Pages','Components']`, but pages live at `Website/Pages`. From the repo root it silently skips every page and rewrites `Components/` only, leaving the tree half-converted with no warning. Demonstrated accidentally 2026-08-18. Retiring it likely takes the three root `index-*.html` variants and `dev-index.html` with it. | ~20 min | needs decision — is local preview still used? |
 
+### Where this stood at the end of 2026-08-18
+
+Written for whoever picks this up next, so none of it has to be re-derived.
+
+**`npm run guard` passes on `master` — 5/5.** It had been crashing on
+`Could not find "const discountRates" in source file.`, which meant a red check
+said nothing and a real breakage was indistinguishable from the normal state. That
+is fixed and merged, so **a red check now means something again.** Before changing
+any guard, run `npm run guard:membership-pricing:prove` — it mutates real pricing
+files, asserts each mutation landed, and restores from git. A guard that exits 0
+without that passing is not known to check anything.
+
+**Merged to `master` on 2026-08-18:** the Message Us mirror (PR #8); the
+capture-converter thread — attribute expansions stripped from nine page files (#9),
+the capture frame derived from the path rather than guessed (#10), and the mirror map
+given a row for page trees (#11); and the pricing work (#12) — guard fix, all three
+live builders mirrored, the stale-offer guard, and `pricing:apply` repaired.
+`Website/Pages/CAPTURE-AUDIT.md` is down to one warning, and that warning is item
+**11** below, not a defect.
+
+**One piece of cleanup, then delete this paragraph:** the branch
+`claude/converter-frame-awareness` can go. It was PR #10's branch, got reused for the
+pricing work, and is now merged twice over. It was briefly a trap — reading as
+already-merged while carrying 18 unmerged commits — which is worth knowing if a branch
+ever looks safe to delete again.
+
+**Blocked on a human at a screen** — items 8, 9 and 10 below, all doable in one Thrive
+session. Do **8** first: `se-bk-inline` runs on the live homepage and exists in no file
+anywhere, so it is one database row from being gone, and every other homepage decision
+is downstream of having it.
+
+**Blocked on a decision, not on work** — items 11 and 12 below. Both were put to the
+owner on 2026-08-18 and neither has an answer yet. Either can be executed immediately
+once answered; neither should be guessed at.
+
 > ### ⚠️ Read this before picking anything up
 >
 > **This file is the priority index. If an item is not here, it is not scheduled** — check [SEO/TODO.md](../SEO/TODO.md) for the full backlog.
