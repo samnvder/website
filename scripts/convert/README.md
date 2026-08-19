@@ -18,7 +18,9 @@ Convert scripts transform file contents for environment or format. Example: `con
 
 In-place or batch transformation of existing files. No source-of-truth propagation—these modify files for context (local vs live, minified vs dev, etc.). Typically idempotent with a `--revert` or mode flag. Run: `node scripts/convert/<script>.js` or via `npm run convert:local` / `convert:live`.
 
-**Scope:** `convert-to-local.js` scans only `Pages` and `Components`. Applications, Templates, and Dev are not included. Add to `DIRECTORIES_TO_SCAN` if those need URL conversion.
+**Scope:** `convert-to-local.js` scans `Website/Pages` and `Components`. Applications, Templates, and Dev are not included. Add to `DIRECTORIES_TO_SCAN` if those need URL conversion.
+
+**Run it from the repo root** — every path in it is root-relative. It used to say `Pages`, which does not exist, so from the root it silently skipped every page and rewrote `Components/` alone, reporting "0 of 0 files modified" and exiting 0. It now validates every scan directory and every mapping target up front and **refuses to run** if any does not resolve, naming each one. Covered by `scripts/convert/testing/test-convert-to-local.js` in `npm test`.
 
 ### live-capture-to-source.js
 
