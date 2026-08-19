@@ -1,0 +1,23 @@
+diff --git a/supabase/functions/book-tour/index.ts b/supabase/functions/book-tour/index.ts
+index ffd9640..3361ee8 100644
+--- a/supabase/functions/book-tour/index.ts
++++ b/supabase/functions/book-tour/index.ts
+@@ -642,10 +642,16 @@ serve(async (req: Request) => {
+     if (slotConflict) {
+       console.log("Rejecting booking -", slotConflict, "-",
+         body.preferred_date, body.preferred_time);
++      // `error` carries the HUMAN sentence, because every booking widget renders
++      // `res.data.error` verbatim to the visitor. Sending a machine token here put
++      // the literal text "slot_unavailable" in front of customers. The token now
++      // lives in `code`, and `message` is kept for any future consumer.
++      const conflictMessage = `${slotConflict}. Please choose another time.`;
+       return jsonResponse({
+         success: false,
+-        error: "slot_unavailable",
+-        message: `${slotConflict}. Please choose another time.`,
++        code: "slot_unavailable",
++        error: conflictMessage,
++        message: conflictMessage,
+       }, 409);
+     }
+ 

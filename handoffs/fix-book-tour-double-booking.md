@@ -1,8 +1,38 @@
 # Handoff — `book-tour` accepts double-bookings
 
-**Created:** 2026-08-18 · **Status:** 🔴 **OPEN** · **Est.:** ~45 min, most of it getting at the edge-function source
+**Created:** 2026-08-18 · **Status:** 🟡 **MOSTLY DONE 2026-08-18 — do not re-run steps 1 and 2.** The server-side conflict check is **written, deployed and verified in production**; the source blocker is gone. **What is genuinely left is step 3 only** — the database-level unique index, never attempted. · **Est.:** ~20 min for step 3, most of it deciding whether one tour per slot is the correct rule.
 
 > **Execution convention:** written to be run by a Claude Code agent in Cowork. See [CLAUDE.md § Handoffs](../CLAUDE.md).
+
+---
+
+## ⚠️ Read this first — most of this handoff is already done
+
+Executed 2026-08-18. **Steps 1 and 2 are finished. Do not redo them.** A cold reader following this
+document top to bottom would re-retrieve source that is already in git and re-write a check that is
+already running in production.
+
+| Step | State |
+|---|---|
+| 1 · Retrieve and mirror the source | ✅ **Done, but not where this handoff said.** See below. |
+| 2 · Server-side conflict check | ✅ **Written, deployed and verified in production.** A second booking of the same slot now returns **409**; it returned `success:true` before. |
+| 3 · Unique index at the database | ❌ **Not attempted. This is the open work.** |
+| 4 · Verify | ✅ Done for steps 1–2, by `curl` against production — output below. |
+
+**The blocker this handoff was built around is gone.** The source was never missing, only missing *here*:
+all three edge functions live in a **separate repo**, `Documents/Local Projects/engagepro-booking-app`,
+with git history and a GitHub remote. **That repo is the source of truth for the booking system.**
+The fix is commit `b9d5e3c` there.
+
+**Mirroring into `live/supabase/functions/` was tried and then deliberately reversed** (commits `2274c87`
+and `1ceddf3`, undone by `18137c7`). Two copies of the same code in two repos is a drift hazard — exactly
+the failure the backup law exists to prevent, arriving by a different route. This repo now holds a pointer
+and the flow documentation instead. **Reverse that only with a reason**; the backup law is satisfied
+because the code is in version control with a remote, which is what the law actually asks for.
+
+**A follow-on defect came out of this work and is not fixed:** the 409 renders the raw token
+`slot_unavailable` to visitors. Patch prepared, not deployed —
+[patches/booking-409-message/](../patches/booking-409-message/). See [§ The 409 message](#the-409-message-defect).
 
 ---
 
@@ -68,11 +98,34 @@ Severity is bounded by tour volume — this is not a high-frequency booking syst
 
 ## Steps
 
-### 1 · Retrieve and mirror the current source
+### 1 · ~~Retrieve and mirror the current source~~ — ✅ DONE, differently
+
+> **Done 2026-08-18, and the instruction below is superseded.** The source was not missing — it is in
+> `engagepro-booking-app`, in git, with a remote. It was briefly mirrored here and then removed again
+> (`18137c7`) to avoid keeping two copies of the same code. **Do not re-mirror without a reason.**
 
 Get `book-tour`'s source by paste or download. Commit it **unmodified** to `live/supabase/functions/book-tour/` first, so the pre-change state is a `git show HEAD~1:` away. Do the same for `check-availability` and `validate-referral` while you have access.
 
-### 2 · Add a server-side conflict check
+### 2 · ~~Add a server-side conflict check~~ — ✅ DONE and DEPLOYED
+
+> **Done 2026-08-18** — `engagepro-booking-app@b9d5e3c`, deployed to production. `findSlotConflict` runs
+> **before** the Supabase insert and before any CRM call, so a rejected booking leaves nothing behind:
+> no row, no lead, no calendar event, no email. It **fails open** on an Engage Pro outage, matching
+> `check-availability` — deliberate, and the alternative (rejecting bookings during an outage) is the
+> stricter trade nobody chose.
+>
+> Verified in production, both directions:
+>
+> ```
+> 1. 2026-09-15 booked_slots: []
+> 2. book 3:00 PM             -> 200  booking_id 213e4bf7-...  crm_synced:true
+> 3. booked_slots: ["3:00 PM"]
+> 4. re-book 3:00 PM (other person) -> 409 {"error":"slot_unavailable"}
+> ```
+>
+> Step 4 returned `success:true` before the fix. **The response shape shown below was not what shipped**
+> — no `available_slots` field is returned, so the widget's suggester is not fed. That is a real gap, and
+> it is why the visitor gets a bare rejection rather than an alternative time.
 
 Reject a booking whose `preferred_date` + `preferred_time` already has a confirmed row, **before** inserting, syncing the CRM, or sending mail. Return a shape the widget can already act on — it has a suggester built for exactly this case.
 
@@ -86,7 +139,12 @@ Suggested response for a conflict:
 
 Ordering matters: the check, the insert and the CRM sync must not be able to interleave with another request. A check-then-insert with a gap between them reopens the same race at a narrower window.
 
-### 3 · Close the race at the database, not just in code
+### 3 · Close the race at the database, not just in code — 🔴 **THE OPEN WORK**
+
+> **Not attempted.** The application-level check from step 2 narrows the race; it does not close it. Two
+> requests can still pass the check before either inserts. **Run the duplicate query below first** — if it
+> returns rows, those are pre-existing double-bookings and resolving them is an owner call, not cleanup
+> to do unilaterally.
 
 🛑 **HUMAN GATE — schema change on production.** Application-level checks lose races; the database does not. A partial unique index makes a double-booking impossible regardless of what any caller does:
 
@@ -144,16 +202,48 @@ delete from public.tour_bookings where id = '<booking_id>';
 
 ---
 
+## The 409 message defect
+
+**Found 2026-08-19, while confirming the RLS change had not broken booking. Not deployed.**
+
+The conflict response carries a machine token in the field the widgets actually display:
+
+```json
+{ "success": false, "error": "slot_unavailable", "message": "That time was just booked. Please choose another time." }
+```
+
+Every widget renders `res.data.error` **verbatim** — it never reads `message`:
+
+```js
+errEl.textContent = res.data.error || 'Something went wrong. Please try again.';
+```
+
+**So the human sentence is sent and thrown away, and the visitor sees the word `slot_unavailable`.**
+It is also the only place in `book-tour` that breaks the file's own convention — every other error
+returns a sentence through that field (`"First name is required"`, `"Unable to complete booking. Please
+try again or call us directly."`).
+
+**Fixed server-side rather than in the widgets, on purpose.** Three live widgets book tours — `se-cal`
+(2 pages), `se-bk-floating` (site-wide via WPCode 8309), and **`se-bk-inline` on the homepage, whose
+source exists in no repo at all** ([SEO/TODO.md §24](../SEO/TODO.md)). A widget-side fix needs three
+Thrive pastes and is **blocked on capturing `se-bk-inline` first**; one field rename fixes all three.
+
+Prepared on `engagepro-booking-app@claude/409-human-message`, pushed, **not deployed**. Diff, rationale,
+deploy command and `curl` verification: [patches/booking-409-message/](../patches/booking-409-message/).
+
+**Note for any future error response:** these widgets read `error` and ignore `message`, so the field
+they read has to hold the human text. The server cannot send them a code and a sentence separately.
+
 ## When it is done
 
-- [ ] `book-tour` source retrieved and mirrored unpatched to `live/supabase/functions/book-tour/`
-- [ ] `check-availability` and `validate-referral` mirrored too
-- [ ] Server-side conflict check added and deployed
-- [ ] Existing duplicates checked for, and resolved with the owner if any exist
-- [ ] Unique index created (or a deliberate decision recorded not to)
-- [ ] Conflict probe returns `"success":false`
-- [ ] A free slot still books successfully
-- [ ] Every test booking cleaned up from **both** Supabase and Engage Pro
+- [x] `book-tour` source retrieved — **in `engagepro-booking-app`, not mirrored here** (deliberate, `18137c7`)
+- [x] `check-availability` and `validate-referral` accounted for — same repo
+- [x] Server-side conflict check added and deployed — `b9d5e3c`
+- [x] Conflict probe returns `409` · [x] a free slot still books · [x] test bookings cleaned from both systems
+- [ ] **Existing duplicates checked for** — query written, never run
+- [ ] **Unique index created** (or a deliberate decision recorded not to) — the open work
+- [ ] **409 message patch deployed** — prepared, gated: [patches/booking-409-message/](../patches/booking-409-message/)
+- [ ] `available_slots` returned on conflict, so the widget can suggest a time — never shipped
 - [ ] Row in [handoffs/README.md](README.md) moved to Closed
 
 ## Out of scope
@@ -171,47 +261,51 @@ delete from public.tour_bookings where id = '<booking_id>';
 
 ## Kickoff prompt
 
-Paste into a fresh Claude Code (Cowork) session in this repo:
+⚠️ **The original kickoff is retired — it would send an agent to redo finished work.** It told the reader
+the source was missing and asked for the conflict check to be written; both are done. Kept out of the way
+rather than left where it could be pasted by mistake.
+
+Use this instead. It covers only what is actually left:
 
 ```
-Execute handoffs/fix-book-tour-double-booking.md in this repo.
+Continue handoffs/fix-book-tour-double-booking.md in this repo. Read it in
+full first, along with CLAUDE.md.
 
-Read it in full first, along with CLAUDE.md.
+MOST OF IT IS DONE. Do NOT retrieve the edge-function source and do NOT write
+a conflict check -- both landed 2026-08-18 and the check is deployed and
+verified in production. The source is NOT in this repo by design: it lives in
+Documents/Local Projects/engagepro-booking-app, in git, with a remote. Do not
+re-mirror it here; that was tried and deliberately reversed (18137c7).
 
-Context: the book-tour Supabase edge function accepts a booking for a slot
-that check-availability reports as already booked. Confirmed against
-production on 2026-08-18 — the request returned "success":true, wrote a row,
-synced the CRM and created a second staff-calendar appointment for a slot that
-already had one. Slot conflict is enforced only in browser JavaScript; the
-server enforces nothing. Two prospects can be booked into one tour, either by
-two people submitting at once or by any request that does not come from the
-widget.
+Three things are open, in this order:
 
-The blocker is that the edge-function source is NOT in this repo —
-Components/Backend/supabase/functions/book-tour/ exists but is empty, and the
-supabase CLI is not installed. Retrieve it from the Supabase dashboard first,
-and mirror it (plus check-availability and validate-referral) into
-live/supabase/functions/ per the backup law in CLAUDE.md — unpatched capture
-committed first, then the patched version.
+1. Run the duplicate-check query in step 3 BEFORE anything else. If it
+   returns rows, STOP and report -- those are pre-existing double-bookings
+   and resolving them is the owner's call, not cleanup for you to do.
 
-Fix server-side, at write time, in the same transaction as the insert. Then
-close the race at the database with a partial unique index — but check for
-existing duplicates first, and treat any you find as an owner decision, not
-something to clean up yourself. The index is a HUMAN GATE.
+2. The partial unique index in step 3. This is a schema change on production
+   and a HUMAN GATE. Confirm the semantics first: is exactly one tour per
+   slot correct, or can staff run concurrent tours? The index enforces one.
+   Ask -- do not assume.
 
-Verify with curl and expected output, never a browser (the browser lies about
-cache — see CLAUDE.md). Posting a booked slot must return "success":false with
-"error":"slot_unavailable"; a free slot must still return "success":true.
+3. Deploy the prepared 409 message patch, or say why not:
+   patches/booking-409-message/. It is a one-field rename that stops the
+   word "slot_unavailable" being shown to customers. Branch
+   claude/409-human-message in the other repo, pushed, NOT deployed.
+   Deploying is a HUMAN GATE.
 
-Use undeliverable @example.invalid test data. If a probe returns
-"success":true unexpectedly, it has created a REAL row, a REAL CRM prospect
-and a REAL staff-calendar appointment — capture booking_id and
-engage_pro_prospect_id from the response and clean up BOTH systems at once.
-Anon cannot delete rows any more (RLS was locked down 2026-08-18), so removal
-needs the SQL editor. Engage Pro appointment 831 is also still outstanding
-from an earlier test.
+Rules:
+- Verify with curl and stated expected output, never a browser.
+- Use undeliverable @example.invalid test data.
+- A booking probe that unexpectedly returns success:true has created a REAL
+  row, a REAL CRM prospect and a REAL staff-calendar appointment. Capture
+  booking_id and engage_pro_prospect_id and clean up BOTH systems. anon
+  cannot delete rows since the 2026-08-18 RLS lockdown, so removal needs the
+  SQL editor. Engage Pro appointment 831 is still outstanding from an earlier
+  test -- that is a standing example of exactly this cleanup being missed.
+- More than one agent writes this repo. git log --oneline -5 and git status
+  before you start, and stage explicit paths -- never git add -A.
 
-Report: what the function did before, what you changed, whether any existing
-duplicate bookings were found, and the verification output for both the
-conflict case and the free-slot case.
+Report: whether duplicates exist, what you decided about the index and why,
+and whether the 409 patch was deployed with the curl output proving it.
 ```
