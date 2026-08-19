@@ -10,7 +10,7 @@ When the site is live, links point to the real website. When you work on your co
 
 ## Medium understanding
 
-Scans `Pages/` and `Components/` for HTML and CSS. Replaces `https://southendclub.com/...` with relative paths (e.g. `../Pages/...`) for local dev. `--revert` converts relative paths back to absolute URLs for deploy. URL mappings are defined in the script (live path → local file path).
+Scans `Website/Pages/` and `Components/` for HTML and CSS. **Run from the repo root** — paths are root-relative, and the script now refuses to run rather than silently skipping a directory it cannot find. Replaces `https://southendclub.com/...` with relative paths (e.g. `../Pages/...`) for local dev. `--revert` converts relative paths back to absolute URLs for deploy. URL mappings are defined in the script (live path → local file path).
 
 ## Advanced
 

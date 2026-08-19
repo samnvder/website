@@ -18,30 +18,34 @@ const ALT_DOMAIN = 'http://southendclub.com';
 
 // URL mappings from live site to local file paths
 const URL_MAPPINGS = {
-    '/memberships/': '/Pages/Memberships (Category)/memberships/Memberships Page HTML.html',
-    '/corporate-membership/': '/Pages/Memberships (Category)/corporate-membership/Corporate HTML.html',
-    '/special-offer/': '/Pages/Memberships (Category)/special-offer/Special Offer.html',
-    '/summer-membership/': '/Pages/Memberships (Category)/summer-membership/Summer Memberships HTML.html',
-    '/fitness/': '/Pages/fitness/fitness HTML.html',
-    '/racquet-sports/': '/Pages/racquet-sports/Racquet Sports HTML.html',
-    '/pools/': '/Pages/pools/Pools HTML.html',
-    '/wellness/': '/Pages/wellness/Wellness HTML.html',
-    '/food-beverage/': '/Pages/food-beverage/Food & Beverage HTML.html',
-    '/youth-programs/': '/Pages/youth-programs/youth-programs.html',
-    '/services/': '/Pages/services/services HTML.html',
-    '/events/': '/Pages/Events (Category)/events/Events HTML.html',
-    '/lounge-rentals/': '/Pages/Events (Category)/lounge-rentals/Lounge Rental HTML.html',
-    '/schedule-a-tour/': '/Pages/Tours (Category)/schedule-a-tour/Membership Tour Booking Page.html',
-    '/schedule-an-event-viewing/': '/Pages/Tours (Category)/schedule-an-event-viewing/Event Tour Booking Page.html',
-    '/contact-us/': '/Pages/contact-us/Contact Us Page HTML.html',
-    '/privacy-policy/': '/Pages/privacy-policy/Privacy Policy HTML.html',
-    '/terms-conditions/': '/Pages/terms-conditions/Terms & Conditions.html',
+    '/memberships/': '/Website/Pages/Memberships (Category)/memberships/Memberships Page HTML.html',
+    '/corporate-membership/': '/Website/Pages/Memberships (Category)/corporate-membership/Corporate HTML.html',
+    '/special-offer/': '/Website/Pages/Memberships (Category)/special-offer/Special Offer.html',
+    '/summer-membership/': '/Website/Pages/Memberships (Category)/summer-membership/Summer HTML.html',
+    '/fitness/': '/Website/Pages/fitness/fitness HTML.html',
+    '/racquet-sports/': '/Website/Pages/racquet-sports/Racquet Sports HTML.html',
+    '/pools/': '/Website/Pages/pools/Pools HTML.html',
+    '/wellness/': '/Website/Pages/wellness/Wellness HTML.html',
+    '/food-beverage/': '/Website/Pages/food-beverage/Food & Beverage HTML.html',
+    '/youth-programs/': '/Website/Pages/youth-programs/youth-programs.html',
+    '/services/': '/Website/Pages/services/services HTML.html',
+    '/events/': '/Website/Pages/Events (Category)/events/Events HTML.html',
+    '/lounge-rentals/': '/Website/Pages/Events (Category)/lounge-rentals/Lounge Rental HTML.html',
+    '/schedule-a-tour/': '/Website/Pages/Tours (Category)/schedule-a-tour/Membership Tour Booking Page.html',
+    '/schedule-an-event-viewing/': '/Website/Pages/Tours (Category)/schedule-an-event-viewing/Event Tour Booking Page.html',
+    '/contact-us/': '/Website/Pages/contact-us/Contact Us Page HTML.html',
+    '/privacy-policy/': '/Website/Pages/privacy-policy/Privacy Policy HTML.html',
+    '/terms-conditions/': '/Website/Pages/terms-conditions/Terms & Conditions.html',
     '/': '/index.html',
 };
 
 // Files/directories to process
+// Paths are relative to the REPO ROOT, which is where npm run executes.
+// 'Pages' was wrong -- pages live at Website/Pages -- so every page was
+// silently skipped while Components/ was rewritten, leaving a half-converted
+// tree with no warning. assertPathsExist() now makes that failure loud.
 const DIRECTORIES_TO_SCAN = [
-    'Pages',
+    'Website/Pages',
     'Components',
 ];
 
@@ -91,7 +95,7 @@ function convertToLocal(filePath) {
     let modified = false;
 
     // Replace each URL mapping
-    for (const [liveUrl, localPath] of Object.entries(URL_MAPPINGS)) {
+    for (const [liveUrl, localPath] of mappingsLongestFirst()) {
         const fullLiveUrl = LIVE_DOMAIN + liveUrl;
         const altFullUrl = ALT_DOMAIN + liveUrl;
 
@@ -108,7 +112,7 @@ function convertToLocal(filePath) {
     }
 
     // Also handle anchor links (keep the hash, update the base URL)
-    for (const [liveUrl, localPath] of Object.entries(URL_MAPPINGS)) {
+    for (const [liveUrl, localPath] of mappingsLongestFirst()) {
         const fullLiveUrl = LIVE_DOMAIN + liveUrl;
         const pattern = new RegExp(escapeRegex(fullLiveUrl) + '#([\\w-]+)', 'g');
 
@@ -134,7 +138,7 @@ function convertToLive(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');
     let modified = false;
 
-    for (const [liveUrl, localPath] of Object.entries(URL_MAPPINGS)) {
+    for (const [liveUrl, localPath] of mappingsLongestFirst()) {
         const relativePath = getRelativePath(filePath, localPath);
         const fullLiveUrl = LIVE_DOMAIN + liveUrl;
 
@@ -160,6 +164,56 @@ function escapeRegex(string) {
 }
 
 /**
+ * Fail loudly on a misconfiguration instead of quietly doing nothing.
+ *
+ * The original defect: getAllFiles() returns [] for a directory that does
+ * not exist, so a wrong path produced "0 of 0 files modified" and exit 0 --
+ * which reads exactly like "nothing needed changing". A mapping pointing at
+ * a moved or renamed file failed the same silent way, rewriting a live URL
+ * into a link that 404s locally.
+ */
+function assertPathsExist() {
+    const problems = [];
+
+    for (const dir of DIRECTORIES_TO_SCAN) {
+        if (!fs.existsSync(dir)) {
+            problems.push(`scan directory not found: ${dir}`);
+        }
+    }
+
+    for (const [liveUrl, localPath] of Object.entries(URL_MAPPINGS)) {
+        if (!fs.existsSync(localPath.replace(/^[/]/, ''))) {
+            problems.push(`${liveUrl} maps to a file that does not exist: ${localPath}`);
+        }
+    }
+
+    if (problems.length) {
+        console.error('');
+        console.error(`Refusing to run -- ${problems.length} path(s) do not resolve:`);
+        console.error('');
+        problems.forEach(problem => console.error(`   - ${problem}`));
+        console.error('');
+        console.error('Paths are relative to the repo root. Run from the repo root,');
+        console.error('or fix DIRECTORIES_TO_SCAN / URL_MAPPINGS in this file.');
+        console.error('');
+        process.exit(1);
+    }
+}
+
+/**
+ * Longest live URL first.
+ *
+ * "https://southendclub.com/" is a prefix of every other mapped URL, so if
+ * it is substituted first it corrupts all of them. That it works today is an
+ * accident of '/' sitting last in the object literal -- add a mapping below
+ * it and the tool quietly starts producing wrong links. Sorting makes that
+ * impossible rather than merely unlikely.
+ */
+function mappingsLongestFirst() {
+    return Object.entries(URL_MAPPINGS).sort((a, b) => b[0].length - a[0].length);
+}
+
+/**
  * Main execution
  */
 function main() {
@@ -168,6 +222,8 @@ function main() {
 
     console.log('\n🔄 South End Club URL Converter\n');
     console.log(revert ? 'Mode: Converting to LIVE URLs' : 'Mode: Converting to LOCAL paths');
+
+    assertPathsExist();
     console.log('─'.repeat(50) + '\n');
 
     let totalFiles = 0;
@@ -197,4 +253,12 @@ function main() {
     }
 }
 
-main();
+
+// Only run when invoked directly. Requiring this module used to execute
+// main() as a side effect, so a bare import rewrote every scanned file --
+// the same defect CLAUDE.md records for pricing:apply.
+if (require.main === module) {
+    main();
+}
+
+module.exports = { URL_MAPPINGS, DIRECTORIES_TO_SCAN, mappingsLongestFirst, getRelativePath };
