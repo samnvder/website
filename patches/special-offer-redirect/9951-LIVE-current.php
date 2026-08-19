@@ -25,7 +25,6 @@ add_action( 'template_redirect', function () {
 		'junior-programs' => 'youth-programs',
 		'food-services'   => 'food-beverage',
 		'banquets'        => 'events',
-		'special-offer'   => 'memberships',
 	);
 
 	$path = wp_parse_url( $_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH );

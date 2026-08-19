@@ -46,7 +46,20 @@ today lands on a 404. This is the only open item with a live customer-facing fai
 
 `is_404()` guards the whole snippet, so the redirect can only fire on a request that was already going to
 fail — it cannot shadow a live page, and it goes inert by itself if `/special-offer/` is ever republished.
-Query strings are preserved, so `utm_*` attribution survives.
+Query strings are preserved — **except the tracking parameters, which a CDN
+strips before PHP ever sees them.** Verified on live 2026-08-19: `ref`, `foo` and
+even `utmx` survive the redirect, while `utm_source`, `utm_medium`, `utm_campaign`,
+`utm_term`, `utm_content`, `gclid` and `fbclid` are all removed. `cf-cache-status:
+MISS` on the same request rules out stale cache, and `/banquets/` behaves
+identically, so this is **pre-existing for all four mappings, not caused by this
+change**.
+
+The snippet's own `$query` logic is fine; it simply never receives those keys. The
+practical effect is that a click from the delivered summer email reaches
+`/memberships/` correctly but arrives in GA4 as direct rather than as the campaign
+— the redirect rebuilds the URL server-side, so the browser never carries the
+parameters onward. Landing on a page *without* a redirect is unaffected, because
+there GA4 reads the parameters client-side from the address bar.
 
 ### A1 · 🛑 HUMAN GATE — paste into WPCode
 
@@ -54,8 +67,28 @@ WordPress admin → **WPCode** → snippet **9951** "Renamed-page 301 redirects"
 paste the full contents of
 [`patches/special-offer-redirect/9951-renamed-page-redirects.php`](../patches/special-offer-redirect/9951-renamed-page-redirects.php).
 
-**Confirm the editor reports 2,574 characters** (up from 2,535). If it reports anything else, stop — the
-paste was partial.
+**Read the count off the WPCode editor _before_ you select-all, then require that number `+38`.**
+(If the editor counts CRLF as two, it will be `+39` — accept either; nothing else.)
+
+The gate is deliberately **relative**, because every absolute number previously written here was wrong.
+The added line is pure ASCII, so the delta is stable under all four counting conventions while the
+absolute total is not:
+
+| Convention | live 9951 now | after patch |
+|---|---|---|
+| characters, LF — **most likely what WPCode shows** | **2,455** | **2,493** |
+| bytes, LF (git blob) | 2,459 | 2,497 |
+| bytes, CRLF (Windows working tree) | 2,535 | 2,574 |
+
+> ⚠️ **`2,574` was a Windows working-copy byte count, and it would have aborted a correct paste.**
+> It is wrong twice over: CRLF inflates it by one byte per line (77 lines), and *bytes are not characters*
+> — the file carries a `✅` and an em dash, 3 bytes each, so the character count is 4 lower again.
+> Verified 2026-08-19 with `git ls-files --eol` (`i/lf w/crlf`) and a UTF-8 decode.
+>
+> **A related guarantee is not in force.** `.gitattributes` marks `live/wpcode/** -text` precisely so these
+> counts stay stable across checkout — but this tree reports `attr/-text` *with* `w/crlf`, meaning the
+> attribute landed after the files were checked out. `patches/**` carries no such attribute at all. Until
+> someone re-normalises, never quote a byte count taken from a Windows working tree as an editor count.
 
 > ⚠️ **Editors disagree about what they count, and it cost time on 2026-08-19.** The **WPCode** editor
 > reports **characters**. The **Thrive** code box reports **lines**. Do not go looking for a character
@@ -179,7 +212,7 @@ needs its count updating — it is the record that says which published pages ha
 
 ## When it is done
 
-- [ ] Snippet 9951 pasted, editor reported **2,574 characters**, *"Snippet updated."* seen
+- [ ] Snippet 9951 pasted, editor count rose by **38** (or 39), *"Snippet updated."* seen
 - [ ] Cache flushed
 - [ ] `/special-offer/` → `301 -> https://southendclub.com/memberships/`
 - [ ] `junior-programs` · `food-services` · `banquets` still 301 to their targets

@@ -25,14 +25,27 @@ snippet with the line applied** — paste-ready, select-all, no fragment editing
 
 | | |
 |---|---|
-| Live snippet now | 2,535 bytes |
-| After this patch | 2,574 bytes (+39) |
+| Live snippet now | 2,455 chars / 2,459 bytes LF / 2,535 bytes CRLF |
+| After this patch | 2,493 chars / 2,497 bytes LF / 2,574 bytes CRLF |
+| **Delta — the only stable number** | **+38** (+39 if CRLF counted as two) |
 | Diff vs `live/wpcode/` copy | exactly one added line |
 
 The snippet is guarded by `is_404()`, so it can only act on a request that was
 already going to fail. It cannot shadow a live page, and if `/special-offer/` is
-ever republished the entry goes inert on its own. Query strings are preserved,
-so `utm_*` campaign attribution survives the redirect.
+ever republished the entry goes inert on its own. Query strings are preserved — **except the tracking parameters, which a CDN
+strips before PHP ever sees them.** Verified on live 2026-08-19: `ref`, `foo` and
+even `utmx` survive the redirect, while `utm_source`, `utm_medium`, `utm_campaign`,
+`utm_term`, `utm_content`, `gclid` and `fbclid` are all removed. `cf-cache-status:
+MISS` on the same request rules out stale cache, and `/banquets/` behaves
+identically, so this is **pre-existing for all four mappings, not caused by this
+change**.
+
+The snippet's own `$query` logic is fine; it simply never receives those keys. The
+practical effect is that a click from the delivered summer email reaches
+`/memberships/` correctly but arrives in GA4 as direct rather than as the campaign
+— the redirect rebuilds the URL server-side, so the browser never carries the
+parameters onward. Landing on a page *without* a redirect is unaffected, because
+there GA4 reads the parameters client-side from the address bar.
 
 ## Steps
 
@@ -40,8 +53,14 @@ so `utm_*` campaign attribution survives the redirect.
    snippet **9951** "Renamed-page 301 redirects".
 2. Select all in the editor, paste the contents of
    `9951-renamed-page-redirects.php` from this directory.
-3. Confirm the editor reports **2,574 characters**. If it reports something
+3. **Note the editor's count before selecting all**, and confirm it rises by
+   exactly **38** (or 39 if it counts CRLF as two). If it moves by anything
    else, stop — the paste was partial.
+
+   Do **not** gate on an absolute number. `2,574` was previously written here,
+   and is a Windows CRLF *byte* count rather than an editor character count —
+   it would abort a correct paste. The added line is pure ASCII, so the delta
+   holds under every counting convention while the total does not.
 4. Save. Confirm the *"Snippet updated"* notice; do not trust the field values.
 5. GoDaddy Quick Links → **Flush Cache**. Without this you will verify stale
    HTML.
