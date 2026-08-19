@@ -479,6 +479,64 @@ function buildYoungDiscountMapLiteral(youngDiscounts) {
   return `{ ${parts.join(', ')} }`;
 }
 
+/**
+ * Read the young-family discount rule already present in a builder, in either
+ * form it is written in the wild:
+ *
+ *   ternary:  additionalCharge -= numChildren === 1 ? 30 : 20;
+ *   map:      const youngChildDiscounts = { 1: 30, 2: 20 };
+ *
+ * Returns { gate: {maxAverageAge, maxChildren}, discounts } or null.
+ */
+function readExistingYoungRule(source) {
+  const gateMatch = source.match(
+    /if \(averageAge <= (\d+) && numChildren <= (\d+)\) \{([\s\S]*?)\n\s*\}/
+  );
+  if (!gateMatch) return null;
+  const gate = {
+    maxAverageAge: Number(gateMatch[1]),
+    maxChildren: Number(gateMatch[2]),
+  };
+  const body = gateMatch[3];
+
+  const mapForm = body.match(/const youngChildDiscounts = \{([^}]*)\}/);
+  if (mapForm) {
+    const discounts = {};
+    mapForm[1].split(',').forEach((pair) => {
+      const kv = pair.split(':');
+      if (kv.length === 2) discounts[kv[0].trim()] = Number(kv[1].trim());
+    });
+    return { gate, discounts };
+  }
+
+  const ternary = body.match(
+    /additionalCharge -= numChildren === 1 \? (\d+) : (\d+);/
+  );
+  if (ternary) {
+    return { gate, discounts: { 1: Number(ternary[1]), 2: Number(ternary[2]) } };
+  }
+
+  return null;
+}
+
+/** Same rule, expressed either way? */
+function youngRuleMatchesModel(existing, model) {
+  if (!existing) return false;
+  const young = model.familyAdjustments.youngAverage;
+  if (
+    existing.gate.maxAverageAge !== young.maxAverageAge ||
+    existing.gate.maxChildren !== young.maxChildren
+  ) {
+    return false;
+  }
+  const want = young.discounts;
+  const wantKeys = Object.keys(want).sort();
+  const gotKeys = Object.keys(existing.discounts).sort();
+  if (wantKeys.join() !== gotKeys.join()) return false;
+  return wantKeys.every((k) => Number(want[k]) === Number(existing.discounts[k]));
+}
+
+
 function updateMembershipBuilderJs(raw, model) {
   let next = raw;
   next = replaceConstObject(next, 'pricing', buildPricingObject(model));
@@ -536,12 +594,19 @@ function updateMembershipBuilderJs(raw, model) {
     }
 }`;
 
-  next = replaceBlockAtIndent(
-    next,
-    /if \(averageAge <=[\s\S]*?(for \(let i = 3;)/,
-    (m) => `${youngBlock}\n\n${m[1]}`,
-    'young family discount block'
-  );
+  // Only rewrite this rule if it actually says something different. #9926
+  // writes the same 30/20 as a ternary rather than a map -- semantically
+  // identical, so rewriting it would churn a live paste-in file and put the
+  // repo out of step with what is running, for no behavioural change. A tool
+  // that always reports work to do trains people to skim past it.
+  if (!youngRuleMatchesModel(readExistingYoungRule(next), model)) {
+    next = replaceBlockAtIndent(
+      next,
+      /if \(averageAge <=[\s\S]*?(for \(let i = 3;)/,
+      (m) => `${youngBlock}\n\n${m[1]}`,
+      'young family discount block'
+    );
+  }
 
   next = replaceBlockAtIndent(
     next,

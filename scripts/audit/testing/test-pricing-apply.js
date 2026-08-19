@@ -141,3 +141,61 @@ test('rewrites discounts in a builder that already has them', () => {
   assert.match(out, /family: 150/);
   assert.match(out, /const discountedPrice = originalPrice - discount;/);
 });
+
+// ---------------------------------------------------------------------------
+// Young-family rule: rewrite only when it says something different.
+// #9926 writes the canonical 30/20 as a ternary rather than a map. Rewriting
+// that is churn on a live paste-in file for zero behavioural change, and it
+// left `pricing:apply --dry-run` permanently reporting work to do -- which
+// trains people to skim past it.
+// ---------------------------------------------------------------------------
+
+/** Fixture whose young rule is the canonical 30/20, written as a ternary. */
+function ternaryYoungFixture() {
+  return deepBuilderFixture().replace(
+    '            if (averageAge <= 1 && numChildren <= 1) {\r\n                additionalCharge -= 1;\r\n            }',
+    '            if (averageAge <= 6 && numChildren <= 2) {\r\n                additionalCharge -= numChildren === 1 ? 30 : 20;\r\n            }'
+  );
+}
+
+test('leaves an equivalent ternary young-discount rule untouched', () => {
+  const src = ternaryYoungFixture();
+  assert.match(src, /numChildren === 1 \? 30 : 20/, 'fixture built correctly');
+  const out = updateMembershipBuilderJs(src, model);
+  assert.match(out, /additionalCharge -= numChildren === 1 \? 30 : 20;/,
+    'ternary form preserved -- same numbers, no rewrite');
+  assert.ok(!/youngChildDiscounts/.test(out), 'not converted to map form');
+});
+
+test('DOES rewrite the young rule when the numbers differ', () => {
+  const src = ternaryYoungFixture().replace(
+    'numChildren === 1 ? 30 : 20',
+    'numChildren === 1 ? 25 : 15'
+  );
+  const out = updateMembershipBuilderJs(src, model);
+  assert.match(out, /const youngChildDiscounts = \{ 1: 30, 2: 20 \};/,
+    'stale 25/15 replaced with canonical 30/20');
+});
+
+test('DOES rewrite when the gate differs even if the discounts match', () => {
+  const src = ternaryYoungFixture().replace(
+    'averageAge <= 6 && numChildren <= 2',
+    'averageAge <= 4 && numChildren <= 2'
+  );
+  const out = updateMembershipBuilderJs(src, model);
+  assert.match(out, /averageAge <= 6 && numChildren <= 2/, 'gate corrected to canonical');
+});
+
+test('leaves an equivalent map young-discount rule untouched', () => {
+  const src = ternaryYoungFixture().replace(
+    'additionalCharge -= numChildren === 1 ? 30 : 20;',
+    'const youngChildDiscounts = { 1: 30, 2: 20 };\r\n                if (youngChildDiscounts[numChildren]) {\r\n                    additionalCharge -= youngChildDiscounts[numChildren];\r\n                }'
+  );
+  const before = src;
+  const out = updateMembershipBuilderJs(src, model);
+  assert.strictEqual(
+    out.match(/youngChildDiscounts = \{ 1: 30, 2: 20 \}/g).length,
+    before.match(/youngChildDiscounts = \{ 1: 30, 2: 20 \}/g).length,
+    'map form with matching values is not duplicated or rewritten'
+  );
+});

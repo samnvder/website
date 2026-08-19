@@ -178,13 +178,13 @@ A handoff must have:
 
   Two things the captures settled, both against what was assumed:
 
-  - **Do not apply the `{1: 25, 2: 15}` → `{1: 30, 2: 20}` change to #7966.** Live really does use 25/15, so it is a genuine behavioural difference, not repo staleness — a family with one young child pays **$5/month more** through it than through the join page. Likely a leftover from an earlier pricing era. Decide before the next offer; the guard does **not** cover #7966.
-  - **`npm run pricing:apply` would now rewrite live behaviour, not correct drift.** Both remaining pending edits are settled as *do not apply*.
+  - **#7966's `{1: 25, 2: 15}` was an oversight — owner-confirmed 2026-08-18 — and the repo copy is now `{1: 30, 2: 20}`, matching the other two builders.** ⏳ **Live still runs 25/15 until [`patches/fix-7966-young-discounts/`](./patches/fix-7966-young-discounts/) is pasted into WPCode.** The same patch neutralises the expired campaign. Safe to paste any time: #7966 is inert.
+  - **`npm run pricing:apply -- --dry-run` is now clean** — "No file changes needed". It stopped proposing to rewrite #9926's young-discount ternary into an equivalent map, which was a permanent false positive. **So if it ever reports a change again, that is real.**
 
   See [handoffs/mirror-membership-builders.md](./handoffs/mirror-membership-builders.md).
 - **`npm run guard:stale-offer` exists and currently FAILS — deliberately not in the `guard` chain yet.** It scans `live/wpcode/*.js` for offer campaigns whose date has passed: the visitor-facing "through July 31" wording, and more importantly the `offer:` tag in the fetch payload, which reaches Heroku and Dropbox Sign. A stale tag files every signup of a *new* campaign under the *old* campaign's name — the page looks right and only the paperwork is wrong.
 
-  It reports one real finding: **#7966 still carries `summer-special-2026-jul31`.** Since #7315 and #7966 are reusable templates, that is a launch hazard sitting in wait, not dead text.
+  It reports one real finding: **#7966 still carries `summer-special-2026-jul31`.** The fix is prepared in [`patches/fix-7966-young-discounts/`](./patches/fix-7966-young-discounts/) and **waiting on a paste into WPCode** — the mirror is a record of live, so it stays stale, and this guard stays red, until live actually changes. That is the guard working, not a bug.
 
   **Why it is not in `npm run guard`:** it would go red the moment it landed, and a permanently-red check is the exact disease that made the membership-pricing crash invisible for weeks. Wire it into the chain (`"guard": "... && npm run guard:stale-offer"`) **once #7966's date and tag are neutralised** — at which point green means something and a future stale campaign fails loudly. Covered by `scripts/audit/testing/test-stale-offer-guard.js` (9 tests, in `npm test`), with `today` injected so the tests do not themselves expire.
 - **All-in-One WP Migration Unlimited Extension is flagged by WordPress as likely pirated** and throws a fatal error against the current core version. Currently deactivated. Should be deleted — nulled plugins are a malware vector.

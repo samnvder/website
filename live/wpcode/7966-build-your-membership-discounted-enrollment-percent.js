@@ -31,6 +31,12 @@
 /*                                                                          */
 /* Then re-capture into this file. It is the only diffable record.           */
 /*                                                                          */
+/* ⏳ A FIX IS PREPARED AND NOT YET PASTED. This mirror still shows what is    */
+/* in the WPCode editor today. patches/fix-7966-young-discounts/ holds the    */
+/* paste-ready replacement: 30/20 discounts, and the expired campaign        */
+/* neutralised. Re-capture this file after pasting, then wire                */
+/* npm run guard:stale-offer into the guard chain.                          */
+/*                                                                          */
 /* NOTE -- young-family discounts here are { 1: 25, 2: 15 }, where #9926 and */
 /* #7315 both use 30/20. Confirmed live, not a capture error. A family with  */
 /* one young child pays $5/month MORE through this builder than through the  */
