@@ -85,8 +85,9 @@
     "tour_bookings::Anon can insert bookings": {
       "roles": "{anon}",
       "cmd": "INSERT",
-      "status": "OPEN - removable",
-      "note": "Grants INSERT with no USING clause, so it cannot read or destroy. Audit record section 8.3 proved the booking flow does not need it: book-tour writes as service_role. Retained during remediation so the fix could not break bookings under any hypothesis. Safe to drop."
+      "status": "DROPPED 2026-08-18",
+      "note": "Dropped after audit record section 8.3 proved the booking flow does not need it: book-tour writes as service_role and bypasses RLS. Verified after the drop -- a direct anon POST to /rest/v1/tour_bookings now returns HTTP 401, code 42501, 'new row violates row-level security policy'. The anon role now holds NO policy of any kind on this table.",
+      "rollback": "create policy \"Anon can insert bookings\" on public.tour_bookings for insert to anon with check (true);"
     }
   }
 }
