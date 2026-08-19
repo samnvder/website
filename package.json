@@ -21,6 +21,8 @@
     "start": "npx live-server --port=3000 --open=/",
     "serve": "npx serve -l 3000",
     "dev": "npx live-server --port=3000 --open=/ --watch=.",
+    "branches": "node scripts/audit/branch-safety.js",
+    "branches:strict": "node scripts/audit/branch-safety.js --strict",
     "convert:local": "node scripts/convert/convert-to-local.js",
     "convert:live": "node scripts/convert/convert-to-local.js --revert",
     "convert:capture": "node scripts/convert/live-capture-to-source.js",

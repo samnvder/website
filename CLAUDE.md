@@ -2,15 +2,96 @@
 
 Entry point for a fresh session. Read this, then [README.md](./README.md) and [AI-RULES.md](./AI-RULES.md). For **what to work on**, go to [handoffs/README.md](./handoffs/README.md) — it is the priority index, and it outranks the ordering claims in any other file.
 
-## ⚠️ You are probably not the only agent in this repo
+## ⚠️ The concurrency law — you are not the only agent in this repo
 
-Sessions run concurrently here. On 2026-08-18 two agents committed within a minute of each other, and one of them swept another's uncommitted working-tree changes into an unrelated commit — so the change landed correctly but the history now attributes it to the wrong work.
+**Every agent shares one working tree and one HEAD.** There is no isolation by default: when another
+session runs `git checkout`, *your* working directory changes under you, mid-task. Everything below is
+a consequence of that one fact, and every rule earned its place by going wrong here.
 
-Three habits that avoid it:
+### The five rules
 
-- **`git log --oneline -5` and `git status` before you start.** The tree may have moved since your context was built.
-- **Stage and commit in one step, straight after the edit.** Every second a change sits unstaged is a window for someone else's `git add`.
-- **An untracked file may be someone's work in progress.** `git status` showing `??` is not permission to overwrite it — read it first. This has already cost one file that had no git copy to restore from.
+**1. Push immediately after your first commit, then after every commit.**
+
+```bash
+git push -u origin HEAD
+```
+
+`git commit` is **not** a backup — it writes to `.git/` on this machine. Ten commits without a push are
+ten commits in exactly one place. On 2026-08-19 two branches were found holding **1,399 lines** that had
+never left the disk: a handoff and a prepared patch, both properly committed, both invisible to everyone.
+Push *before* the work is finished — a half-written branch is when it is least reproducible from memory.
+
+**2. Stage explicit paths. Never `git add -A`, never `git add .`**
+
+Another agent's uncommitted edits are sitting in the same tree. On 2026-08-18 one session swept
+another's changes into an unrelated commit: the change landed, but the history now attributes it to the
+wrong work. Always `git add path/one path/two`, and read `git status` before you do.
+
+**3. Verify which branch your commit actually landed on — afterwards, not before.**
+
+```bash
+git log --oneline -1 <your-branch>
+```
+
+Checking before you commit proves nothing, because HEAD can move between the check and the commit. That
+is not hypothetical: it happened twice on 2026-08-19. Once a commit landed on `master` instead of its
+branch, and once it landed on *another session's* branch, because that session had created its branch
+from the tip of the one already checked out. Both were recoverable only because the commits were found.
+
+**4. An untracked file is someone's work in progress.**
+
+`??` in `git status` is not permission to overwrite. Read it first. This has already cost one file that
+had no git copy to restore from.
+
+**5. Prove a branch is merged by CONTENT before deleting it.**
+
+```bash
+npm run branches
+```
+
+`git branch --merged` compares by **commit**, so a branch whose work was cherry-picked into `master`
+still reads as unmerged — and a branch that was rebased can read as merged when it is not. Both errors
+nearly happened on 2026-08-19. `npm run branches` uses `git cherry`, which compares by **patch-id** and
+gets it right.
+
+⚠️ **Do not judge this from a GUI branch list.** GitHub Desktop draws a local-only branch identically
+to a pushed one, so the branches most at risk look exactly like the safe ones. That makes "tidy up merged
+branches" one of the more dangerous operations available from that view.
+
+### The mechanical check
+
+| Command | What it does |
+|---|---|
+| `npm run branches` | Reports every branch: pushed, unpushed, or already in `master` by patch-id. Always exits 0. |
+| `npm run branches:strict` | **Exits 1 if any branch exists only on this machine.** Run it before you finish. |
+
+**Run `npm run branches:strict` at the end of every session.** A checklist is what failed the first time;
+this makes it mechanical. It is deliberately *not* in the `guard` chain — a branch being briefly unpushed
+mid-session is normal, and a check that is red during ordinary work is a check people learn to ignore.
+That is the exact disease recorded below for the membership-pricing guard, which crashed for weeks while
+a red check meant nothing.
+
+### If you need real isolation
+
+Rules 1–4 manage a shared tree. They do not *fix* it. When work will span many edits, or when another
+session is clearly active, take your own tree instead:
+
+```bash
+git worktree add ../se-<task> -b claude/<task>
+```
+
+That gives you a separate directory and your own HEAD, so no other session can move your branch and you
+cannot move theirs. Push from it as normal, and `git worktree remove ../se-<task>` when done. Rules 1, 2
+and 5 still apply — only rule 3 stops being a hazard.
+
+### Before you start, always
+
+```bash
+git log --oneline -5 && git status && npm run branches
+```
+
+The tree may have moved since your context was built, and a branch you assume is yours may now hold
+someone else's commits.
 
 ## What this repo is
 
