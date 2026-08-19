@@ -5,9 +5,10 @@
 **Type-checked** with `deno check` — clean. Use `npm run deploy`, not the raw `supabase` CLI: its `predeploy` hook runs the type-check first, so a function that does not compile cannot reach production. That matters here because a deploy is the one action in this system that cannot be rolled back automatically. Requires `claude/deno-typecheck` to be merged in that repo (or `npm install --save-dev deno` locally).
 
 **The code lives in a different repo.** `book-tour` is not in this repo — its source is
-`Documents/Local Projects/engagepro-booking-app`, on branch **`claude/409-human-message`**
-(pushed, not merged, not deployed). [`book-tour-409-message.patch`](book-tour-409-message.patch)
-is the exact diff, exported so this repo records what was changed even though it cannot hold the source.
+`Documents/Local Projects/engagepro-booking-app`. The fix is **merged to `main` there** as of
+2026-08-19 (PR #2), and **still not deployed** — merging and deploying are separate, and only the deploy
+reaches customers. [`book-tour-409-message.patch`](book-tour-409-message.patch) is the exact diff, exported
+so this repo records what changed even though it cannot hold the source.
 
 ---
 
@@ -56,7 +57,7 @@ at once with no Thrive edit.
 *"cannot be rolled back automatically"*; the previous source is in git, so rollback means redeploying it.
 
 ```bash
-cd "Documents/Local Projects/engagepro-booking-app" && git checkout claude/409-human-message && npm install && npm run deploy -- book-tour
+cd "Documents/Local Projects/engagepro-booking-app" && git checkout main && git pull && npm install && npm run deploy -- book-tour
 ```
 
 ## Verifying it

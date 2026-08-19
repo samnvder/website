@@ -228,7 +228,7 @@ try again or call us directly."`).
 source exists in no repo at all** ([SEO/TODO.md §24](../SEO/TODO.md)). A widget-side fix needs three
 Thrive pastes and is **blocked on capturing `se-bk-inline` first**; one field rename fixes all three.
 
-Prepared on `engagepro-booking-app@claude/409-human-message`, pushed, **not deployed**. Diff, rationale,
+Merged to `engagepro-booking-app@main` 2026-08-19 (PR #2), **not deployed** — only the deploy reaches customers.
 deploy command and `curl` verification: [patches/booking-409-message/](../patches/booking-409-message/).
 
 **Note for any future error response:** these widgets read `error` and ignore `message`, so the field
@@ -291,7 +291,7 @@ Three things are open, in this order:
 3. Deploy the prepared 409 message patch, or say why not:
    patches/booking-409-message/. It is a one-field rename that stops the
    word "slot_unavailable" being shown to customers. Branch
-   claude/409-human-message in the other repo, pushed, NOT deployed.
+   merged to main in the other repo 2026-08-19, but NOT deployed.
    Deploying is a HUMAN GATE.
 
 Rules:
