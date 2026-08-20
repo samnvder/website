@@ -799,7 +799,7 @@ Found 2026-08-18. `https://southendclub.com/get-answers/` returns **200**, is li
 
 Lower risk than §24 (nothing is going to overwrite it), but it means the page cannot be reviewed, diffed or restored from here.
 
-> **⏸️ Deferred 2026-08-19 — owner decision, and the reason matters.** `/get-answers/` is going to be **replaced by an AI bot the owner is building**. Capturing it now would mirror a page that is about to be deleted, so the effort buys a restore point for something nobody intends to restore.
+> **⏸️ Deferred 2026-08-19 — owner decision, and the reason matters.** `/get-answers/` is going to be **replaced by an AI agent built specifically for South End** (owner, sharpened 2026-08-20). The planned tour-confirmation page ([handoffs/build-tour-confirmation-page.md](../handoffs/build-tour-confirmation-page.md)) reserves its "questions before your visit?" slot as the agent's future home. Capturing it now would mirror a page that is about to be deleted, so the effort buys a restore point for something nobody intends to restore.
 >
 > **This is a deferral, not a dismissal.** The gap is real and stays open: it is still the only published page in the sitemap with no repo counterpart. **Revisit when the bot ships** — whatever replaces this page will need a source in this repo, and it will need one on the same terms, so the work does not disappear, it changes shape.
 >
