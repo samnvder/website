@@ -56,19 +56,21 @@ the §28 single-bind guards police exactly that page shape. The tier cards are s
 link to `/memberships/`. If interactivity is ever wanted here, it goes through the §28
 reasoning deliberately.
 
-## 🛑 Quotes — NOT SET, and why
+## Quotes — real, in a rotator (updated 2026-08-20)
 
-The handoff pointed at `Website/Pages/testimonials (draft)/` as the quote mine. That
-draft turned out to hold **no quote text**: it fetches reviews at runtime from
-`https://google-reviews-ccc006f827e9.herokuapp.com`, and that Heroku app is **dead**
-("no such app", verified 2026-08-20). Google's anonymous Maps view exposes no review
-text either. Rather than fabricate quotes, section 4 carries loud
-`[MEMBER QUOTE NOT SET]` placeholders — same convention as #7966's `OFFER NOT SET` —
-so an accidental publish fails obviously. Each placeholder is tagged `data-interests`
-for future interest-matched selection.
+Section 4 is now an **SE quote rotator** — a copy of the reusable component at
+[`Website/Components/quote-rotator/`](../../../Components/quote-rotator/) (improve it
+there first, then re-copy here) — carrying **8 real, verbatim Google reviews** of the
+club, mined 2026-08-20 from the Google Business Profile reviews manager (the paths that
+failed first: the testimonials draft fetches from a dead Heroku app — "no such app" —
+and Google's anonymous Maps view exposes no review text). Excerpts are contiguous with
+`…` where trimmed; attribution is the reviewer's public display name + "Google review".
+Each slide is tagged `data-interests`; the personalization script floats matched quotes
+to the front of the rotation before the rotator starts. Do not use Yelp review text —
+Yelp's terms prohibit republishing outside their widgets.
 
-**Before phase 2:** the owner supplies 3 real, verbatim member reviews (Google/Yelp),
-with first-name attribution.
+**Before phase 2:** the owner approves (or swaps) the 8 selected quotes — the full
+top-20 shortlist is in the phase-1→2 report.
 
 ## No JSON-LD, no head meta — on purpose
 
@@ -80,7 +82,8 @@ viewport, theme-color, stylesheet link, fonts).
 
 ## Phase 2 — the gates
 
-1. 🛑 **Owner supplies 3 real member quotes** → replace the placeholders here first.
+1. 🛑 **Owner approves the 8 selected quotes** (or swaps from the top-20 shortlist) —
+   they are already real and verbatim, so this is sign-off, not sourcing.
 2. 🛑 **Create the WordPress page** (suggested slug `/tour-confirmation/`) and paste this
    fragment into Thrive. Never paste over an existing live page.
 3. 🛑 **Noindex + sitemap-exclude** the new URL via WPCode snippet 9934.

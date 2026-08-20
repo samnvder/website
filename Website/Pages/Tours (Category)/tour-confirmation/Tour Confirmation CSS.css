@@ -386,37 +386,143 @@
   margin: 0 auto;
 }
 
-/* ── 4 · Member quotes ─────────────────────────────────────────────── */
+/* ── 4 · Member quotes — SE quote rotator ──────────────────────────────
+   Copy of Website/Components/quote-rotator/quote-rotator.html styles.
+   Improve the component there first, then re-copy here. */
 
-.se-tc-quotes {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
+.se-qr {
+  --se-qr-accent: #0b468c;
+  --se-qr-text: #3d5a5e;
+  --se-qr-name: #0b468c;
+  --se-qr-star: #f6b01e;
+  --se-qr-bg: #fafbfc;
+  --se-qr-border: rgba(11, 70, 140, 0.12);
+  position: relative;
+  max-width: 760px;
+  margin: 0 auto;
 }
 
-.se-tc-quote {
-  background: #fafbfc;
-  border: 2px solid rgba(11, 70, 140, 0.12);
-  border-radius: var(--se-tc-radius-sm);
-  padding: 24px;
+.se-qr-track { position: relative; }
+
+/* Once the script runs, slides stack in one grid cell (the track sizes
+   itself to the tallest slide — no JS measuring) and crossfade; before
+   it runs (or with scripting off) they simply flow in a column —
+   nothing is hidden. */
+.se-qr.se-qr-ready .se-qr-track { display: grid; }
+
+.se-qr-slide {
   margin: 0;
+  padding: 28px 30px 22px;
+  background: var(--se-qr-bg);
+  border: 2px solid var(--se-qr-border);
+  border-radius: 12px;
+  text-align: center;
 }
 
-.se-tc-quote p {
-  font-size: 14.5px;
-  line-height: 1.7;
-  color: var(--se-tc-text-soft);
+.se-qr.se-qr-ready .se-qr-slide {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s ease, transform 0.6s ease, visibility 0.6s;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.se-qr.se-qr-ready .se-qr-slide.se-qr-active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .se-qr.se-qr-ready .se-qr-slide { transition: none; transform: none; }
+}
+
+.se-qr-stars {
+  color: var(--se-qr-star);
+  letter-spacing: 3px;
+  font-size: 15px;
+  margin: 0 0 12px;
+}
+
+.se-qr-slide p {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--se-qr-text);
   font-style: italic;
-  margin: 0 0 14px;
+  margin: 0 0 16px;
 }
 
-.se-tc-quote footer {
+.se-qr-slide footer {
   font-size: 13px;
   font-weight: 700;
-  color: var(--se-tc-blue);
+  font-style: normal;
+  color: var(--se-qr-name);
 }
 
-.se-tc-stars { color: #f6b01e; letter-spacing: 2px; font-style: normal; }
+.se-qr-slide footer span {
+  display: block;
+  margin-top: 3px;
+  font-weight: 500;
+  font-size: 11.5px;
+  color: var(--se-qr-text);
+  opacity: 0.75;
+}
+
+.se-qr-dots {
+  display: none;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.se-qr.se-qr-ready .se-qr-dots { display: flex; }
+
+.se-qr-dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--se-qr-border);
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.se-qr-dot.se-qr-dot-active {
+  background: var(--se-qr-accent);
+  transform: scale(1.25);
+}
+
+.se-qr-arrow {
+  display: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--se-qr-border);
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--se-qr-accent);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  z-index: 2;
+}
+
+.se-qr.se-qr-ready .se-qr-arrow { display: inline-flex; }
+.se-qr-arrow:hover { border-color: var(--se-qr-accent); box-shadow: 0 4px 14px rgba(11, 70, 140, 0.18); }
+.se-qr-arrow.se-qr-prev { left: -52px; }
+.se-qr-arrow.se-qr-next { right: -52px; }
+
+@media (max-width: 900px) {
+  .se-qr-arrow { display: none !important; }
+}
 
 /* ── 5 · Soft close / future AI-agent slot ─────────────────────────── */
 

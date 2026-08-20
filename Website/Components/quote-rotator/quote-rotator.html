@@ -1,0 +1,271 @@
+<!-- ═══════════════════════════════════════════════════════════════════
+     SE QUOTE ROTATOR — reusable component (canonical source)
+     See README.md in this directory for the copy-in model and options.
+
+     A dependency-free rotating quote/testimonial carousel:
+       · auto-advance with crossfade + gentle rise (CSS transitions only)
+       · pause on hover and keyboard focus; honors prefers-reduced-motion
+       · swipe on touch, arrow keys when focused, clickable dots
+       · classes only, no ids — any number of instances per page
+       · initializes every .se-qr on the page; slides are plain
+         <blockquote class="se-qr-slide"> markup, so content stays
+         visible to guards, grep, and (if ever wanted) crawlers
+
+     This block is the whole component: styles + example markup + script.
+     Pages embed a COPY (Thrive paste model — there is no runtime
+     include); this file is the source you copy from and diff against.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style>
+.se-qr {
+  --se-qr-accent: #0b468c;
+  --se-qr-text: #3d5a5e;
+  --se-qr-name: #0b468c;
+  --se-qr-star: #f6b01e;
+  --se-qr-bg: #fafbfc;
+  --se-qr-border: rgba(11, 70, 140, 0.12);
+  --se-qr-interval: 6.5s;
+  position: relative;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.se-qr-track { position: relative; }
+
+/* Once the script runs, slides stack in one grid cell (the track sizes
+   itself to the tallest slide — no JS measuring) and crossfade; before
+   it runs (or with scripting off) they simply flow in a column —
+   nothing is hidden. */
+.se-qr.se-qr-ready .se-qr-track { display: grid; }
+
+.se-qr-slide {
+  margin: 0;
+  padding: 28px 30px 22px;
+  background: var(--se-qr-bg);
+  border: 2px solid var(--se-qr-border);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.se-qr.se-qr-ready .se-qr-slide {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s ease, transform 0.6s ease, visibility 0.6s;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.se-qr.se-qr-ready .se-qr-slide.se-qr-active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .se-qr.se-qr-ready .se-qr-slide { transition: none; transform: none; }
+}
+
+.se-qr-stars {
+  color: var(--se-qr-star);
+  letter-spacing: 3px;
+  font-size: 15px;
+  margin: 0 0 12px;
+}
+
+.se-qr-slide p {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--se-qr-text);
+  font-style: italic;
+  margin: 0 0 16px;
+}
+
+.se-qr-slide footer {
+  font-size: 13px;
+  font-weight: 700;
+  font-style: normal;
+  color: var(--se-qr-name);
+}
+
+.se-qr-slide footer span {
+  display: block;
+  margin-top: 3px;
+  font-weight: 500;
+  font-size: 11.5px;
+  color: var(--se-qr-text);
+  opacity: 0.75;
+}
+
+/* Dots */
+.se-qr-dots {
+  display: none;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.se-qr.se-qr-ready .se-qr-dots { display: flex; }
+
+.se-qr-dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--se-qr-border);
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.se-qr-dot.se-qr-dot-active {
+  background: var(--se-qr-accent);
+  transform: scale(1.25);
+}
+
+/* Arrows */
+.se-qr-arrow {
+  display: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--se-qr-border);
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--se-qr-accent);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  z-index: 2;
+}
+
+.se-qr.se-qr-ready .se-qr-arrow { display: inline-flex; }
+.se-qr-arrow:hover { border-color: var(--se-qr-accent); box-shadow: 0 4px 14px rgba(11, 70, 140, 0.18); }
+.se-qr-arrow.se-qr-prev { left: -52px; }
+.se-qr-arrow.se-qr-next { right: -52px; }
+
+@media (max-width: 900px) {
+  .se-qr-arrow { display: none !important; }
+}
+</style>
+
+<!-- ── Example instance (replace the slides with your content) ──────── -->
+<div class="se-qr" data-interval="6500" role="region" aria-label="Member reviews">
+  <button type="button" class="se-qr-arrow se-qr-prev" aria-label="Previous quote">&#8249;</button>
+  <button type="button" class="se-qr-arrow se-qr-next" aria-label="Next quote">&#8250;</button>
+  <div class="se-qr-track">
+    <blockquote class="se-qr-slide" data-interests="">
+      <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+      <p>[EXAMPLE QUOTE — replace with a real, verbatim review.]</p>
+      <footer>First Last<span>Google review</span></footer>
+    </blockquote>
+    <blockquote class="se-qr-slide" data-interests="">
+      <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+      <p>[EXAMPLE QUOTE — replace with a real, verbatim review.]</p>
+      <footer>First Last<span>Google review</span></footer>
+    </blockquote>
+  </div>
+  <div class="se-qr-dots" role="tablist" aria-label="Choose quote"></div>
+</div>
+
+<script>
+/* SE quote rotator. Initializes every .se-qr on the page. Options via
+   data attributes on the .se-qr element:
+     data-interval  ms between advances (default 6500; 0 = no autoplay)
+   Public hook: before this script runs, any code may reorder the
+   .se-qr-slide elements (e.g. interest matching); the rotator simply
+   starts from the first slide in DOM order. */
+(function(){
+  'use strict';
+
+  function initRotator(root){
+    var track = root.querySelector('.se-qr-track');
+    if (!track) return;
+    var slides = track.querySelectorAll('.se-qr-slide');
+    if (slides.length < 2) return;
+
+    var dotsWrap = root.querySelector('.se-qr-dots');
+    var interval = parseInt(root.getAttribute('data-interval') || '6500', 10);
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var current = 0;
+    var timer = null;
+    var dots = [];
+
+    function show(idx){
+      current = (idx + slides.length) % slides.length;
+      for (var i = 0; i < slides.length; i++) {
+        slides[i].classList.toggle('se-qr-active', i === current);
+      }
+      for (var j = 0; j < dots.length; j++) {
+        dots[j].classList.toggle('se-qr-dot-active', j === current);
+        dots[j].setAttribute('aria-selected', j === current ? 'true' : 'false');
+      }
+    }
+
+    function stop(){ if (timer) { clearInterval(timer); timer = null; } }
+    function play(){
+      stop();
+      if (interval > 0 && !reduced) {
+        timer = setInterval(function(){ show(current + 1); }, interval);
+      }
+    }
+    function jump(idx){ show(idx); play(); }
+
+    if (dotsWrap) {
+      for (var d = 0; d < slides.length; d++) {
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'se-qr-dot';
+        dot.setAttribute('role', 'tab');
+        dot.setAttribute('aria-label', 'Quote ' + (d + 1));
+        (function(n, el){ el.addEventListener('click', function(){ jump(n); }); })(d, dot);
+        dotsWrap.appendChild(dot);
+        dots.push(dot);
+      }
+    }
+
+    var prev = root.querySelector('.se-qr-prev');
+    var next = root.querySelector('.se-qr-next');
+    if (prev) prev.addEventListener('click', function(){ jump(current - 1); });
+    if (next) next.addEventListener('click', function(){ jump(current + 1); });
+
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', play);
+    root.addEventListener('focusin', stop);
+    root.addEventListener('focusout', play);
+
+    root.setAttribute('tabindex', '0');
+    root.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowLeft') { jump(current - 1); }
+      else if (e.key === 'ArrowRight') { jump(current + 1); }
+    });
+
+    var touchX = null;
+    root.addEventListener('touchstart', function(e){
+      if (e.touches && e.touches.length === 1) touchX = e.touches[0].clientX;
+      stop();
+    }, { passive: true });
+    root.addEventListener('touchend', function(e){
+      if (touchX !== null && e.changedTouches && e.changedTouches.length === 1) {
+        var dx = e.changedTouches[0].clientX - touchX;
+        if (dx > 40) { show(current - 1); }
+        else if (dx < -40) { show(current + 1); }
+      }
+      touchX = null;
+      play();
+    }, { passive: true });
+
+    root.classList.add('se-qr-ready');
+    show(0);
+    play();
+  }
+
+  var roots = document.querySelectorAll('.se-qr');
+  for (var r = 0; r < roots.length; r++) initRotator(roots[r]);
+})();
+</script>
