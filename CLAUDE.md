@@ -205,6 +205,22 @@ restore point, because GA4 has no import). See
 
 Four rules that make the mirror trustworthy:
 
+> ⚠️ **A file in `live/` is not proof that it mirrors anything. One of them did not — found 2026-08-19.**
+> `live/wpcode/9951-renamed-page-redirects.php` sat in this directory for six days looking exactly like the
+> others. It was a **rewritten copy that was never pasted back**: a different header, a leading `<?php` the
+> live snippet does not have, a `Source of truth:` pointer to a path that exists nowhere in this repo, and
+> 2,459 bytes against the real 1,465.
+>
+> **It survived because the redirect worked.** Nobody diffs a snippet that is doing its job, so the one
+> signal that would have caught it was never looked for. It was found only because the owner happened to
+> paste the real editor contents into a conversation — not by any check in this repo.
+>
+> **So: before you build anything on a mirror, prove the mirror.** WPCode is the easy case — it injects
+> snippets raw, so `curl` the page and confirm the mirror's code is a substring of what is served. That is
+> a thirty-second check, and it is the difference between patching live and patching a fiction of it. It
+> matters most for the prepared patches under [`patches/`](./patches/), which are **generated from** these
+> mirrors: a stale mirror poisons the patch silently, and the paste looks correct all the way in.
+
 1. **Get the current code by asking for a paste.** Whoever has the admin screen open should copy the editor's contents and paste them into the conversation. The editor is authoritative; the rendered page is not. Thrive adds `<code class="tve_js_placeholder">` wrappers and a `thrv_wrapper` div **on output** that exist nowhere in the editor, and CompressX wraps every image in `<picture><source type="image/avif"><source type="image/webp">…</picture>` **on output** too, so a `curl` capture pasted back injects junk markup. Never take the repo's copy as current either — the repo lags live, which is how the drift above happened.
 2. **Commit the unpatched capture first, then the patched version.** Two commits. Git history becomes the restore point, so a bad paste is `git show HEAD~1:<path>` away from being undone.
 3. **Prove the capture is exact.** Match the character count the live editor reports, and confirm that stripping your change reproduces the original byte-for-byte. A mirror nobody verified is worse than none — it will be trusted.
