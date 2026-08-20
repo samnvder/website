@@ -458,7 +458,13 @@
     ]);
   }
 })();
+</script>
 
+<!-- Scripts are deliberately split into separate blocks: a truncated or
+     failing block then only loses its own feature instead of aborting
+     everything (a truncated paste killed the whole page's JS on
+     2026-08-20). Keep them separate. -->
+<script>
 /* SE quote rotator — copy of Website/Components/quote-rotator/ (improve
    it there first, then re-copy here). Initializes every .se-qr on the
    page; runs after the personalization script so interest-reordered
@@ -551,7 +557,9 @@
   var roots = document.querySelectorAll('.se-qr');
   for (var r = 0; r < roots.length; r++) initRotator(roots[r]);
 })();
+</script>
 
+<script>
 /* "Message Us" → the site-wide Message Us modal (WPCode 8292). Falls
    back to the phone dialer if the snippet isn't on the page. */
 (function(){
