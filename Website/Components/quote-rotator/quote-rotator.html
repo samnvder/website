@@ -165,6 +165,15 @@
 @media (max-width: 900px) {
   .se-qr-arrow { display: none !important; }
 }
+
+/* ── Thrive armor — keep last. Inside Thrive (#tve_editor) id-based
+   theme rules out-rank class selectors, so color-critical
+   declarations are re-asserted with !important + text-fill. ── */
+.se-qr-slide p { color: var(--se-qr-text) !important; -webkit-text-fill-color: var(--se-qr-text) !important; }
+.se-qr-slide p.se-qr-stars { color: var(--se-qr-star) !important; -webkit-text-fill-color: var(--se-qr-star) !important; }
+.se-qr-slide footer { color: var(--se-qr-name) !important; -webkit-text-fill-color: var(--se-qr-name) !important; }
+.se-qr-slide footer span { color: var(--se-qr-text) !important; -webkit-text-fill-color: var(--se-qr-text) !important; }
+.se-qr-arrow { color: var(--se-qr-accent) !important; -webkit-text-fill-color: var(--se-qr-accent) !important; }
 </style>
 
 <!-- ── Example instance (replace the slides with your content) ──────── -->

@@ -585,3 +585,162 @@
   .se-tc-cal-row { flex-direction: column; align-items: stretch; }
   .se-tc-cal-btn { justify-content: center; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   THRIVE ARMOR — keep this block LAST in the file.
+   Inside Thrive the page renders under #tve_editor, whose id-based
+   theme rules (#tve_editor p, #tve_editor li, #tve_editor h3, …)
+   out-rank every class selector above. This block re-asserts the
+   color/typography-critical declarations with !important, plus
+   -webkit-text-fill-color for text on colored backgrounds — the same
+   idiom the memberships page uses for the same reason. Layout rules
+   stay un-armored above; only what Thrive is known to swallow lives
+   here.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Every selector is prefixed with #se-tc-page (the page-root id) so it
+   out-ranks Thrive's own !important id rules — (1,1,0)+ beats (1,0,1). */
+
+/* Clearance for the site's sticky header, which otherwise overlaps the
+   hero (seen in Thrive 2026-08-20). Adjust this one number if the
+   header height changes. */
+#se-tc-page {
+  padding-top: 96px !important;
+}
+
+#se-tc-page,
+#se-tc-page p,
+#se-tc-page li,
+#se-tc-page h1,
+#se-tc-page h2,
+#se-tc-page h3,
+#se-tc-page blockquote,
+#se-tc-page footer {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+#se-tc-page .se-tc-hero h1,
+#se-tc-page .se-tc-section h2 {
+  color: var(--se-tc-text) !important;
+  -webkit-text-fill-color: var(--se-tc-text) !important;
+}
+
+#se-tc-page .se-tc-hero h1 span,
+#se-tc-page .se-tc-section h2 span {
+  color: var(--se-tc-blue) !important;
+  -webkit-text-fill-color: var(--se-tc-blue) !important;
+}
+
+#se-tc-page .se-tc-lead,
+#se-tc-page .se-tc-hero-sub,
+#se-tc-page .se-tc-tier-desc,
+#se-tc-page .se-tc-beat p {
+  color: var(--se-tc-text-soft) !important;
+  -webkit-text-fill-color: var(--se-tc-text-soft) !important;
+}
+
+#se-tc-page .se-tc-beat h3 {
+  color: var(--se-tc-text) !important;
+  -webkit-text-fill-color: var(--se-tc-text) !important;
+}
+
+#se-tc-page .se-tc-beat-num,
+#se-tc-page .se-tc-match-badge,
+#se-tc-page .se-tc-cal-btn,
+#se-tc-page .se-tc-cal-btn:hover,
+#se-tc-page .se-tc-tier-cta,
+#se-tc-page .se-tc-tier-cta:hover,
+#se-tc-page .se-tc-question-btn,
+#se-tc-page .se-tc-question-btn:hover {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#se-tc-page .se-tc-cal-btn.se-tc-cal-alt,
+#se-tc-page .se-tc-cal-btn.se-tc-cal-alt:hover {
+  color: var(--se-tc-blue) !important;
+  -webkit-text-fill-color: var(--se-tc-blue) !important;
+}
+
+#se-tc-page .se-tc-when-chip,
+#se-tc-page .se-tc-visit-fact strong,
+#se-tc-page .se-tc-interest-note,
+#se-tc-page .se-tc-close-alt a {
+  color: var(--se-tc-blue) !important;
+  -webkit-text-fill-color: var(--se-tc-blue) !important;
+}
+
+#se-tc-page .se-tc-visit-fact,
+#se-tc-page .se-tc-visit-fact a {
+  color: var(--se-tc-text-soft) !important;
+  -webkit-text-fill-color: var(--se-tc-text-soft) !important;
+}
+
+#se-tc-page .se-tc-tier.se-tc-tier-1 h3 { color: var(--se-tc-gold) !important; -webkit-text-fill-color: var(--se-tc-gold) !important; }
+#se-tc-page .se-tc-tier.se-tc-tier-2 h3 { color: var(--se-tc-silver) !important; -webkit-text-fill-color: var(--se-tc-silver) !important; }
+#se-tc-page .se-tc-tier.se-tc-tier-3 h3 { color: var(--se-tc-bronze) !important; -webkit-text-fill-color: var(--se-tc-bronze) !important; }
+
+#se-tc-page .se-tc-tier h3 .se-tc-tier-sub {
+  color: var(--se-tc-text-soft) !important;
+  -webkit-text-fill-color: var(--se-tc-text-soft) !important;
+}
+
+#se-tc-page .se-tc-dues {
+  list-style: none !important;
+  margin: 0 0 16px !important;
+  padding: 16px 18px !important;
+}
+
+#se-tc-page .se-tc-dues li {
+  list-style: none !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.9) !important;
+  margin: 0 !important;
+}
+
+#se-tc-page .se-tc-dues li span,
+#se-tc-page .se-tc-dues li strong {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+#se-tc-page .se-tc-dues li strong {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#se-tc-page .se-tc-enroll-note,
+#se-tc-page .se-tc-pricing-footnote {
+  color: var(--se-tc-muted) !important;
+  -webkit-text-fill-color: var(--se-tc-muted) !important;
+}
+
+#se-tc-page .se-qr-slide p {
+  color: var(--se-qr-text) !important;
+  -webkit-text-fill-color: var(--se-qr-text) !important;
+}
+
+#se-tc-page .se-qr-slide p.se-qr-stars {
+  color: var(--se-qr-star) !important;
+  -webkit-text-fill-color: var(--se-qr-star) !important;
+}
+
+#se-tc-page .se-qr-slide footer {
+  color: var(--se-qr-name) !important;
+  -webkit-text-fill-color: var(--se-qr-name) !important;
+}
+
+#se-tc-page .se-qr-slide footer span {
+  color: var(--se-qr-text) !important;
+  -webkit-text-fill-color: var(--se-qr-text) !important;
+}
+
+#se-tc-page .se-qr-arrow {
+  color: var(--se-qr-accent) !important;
+  -webkit-text-fill-color: var(--se-qr-accent) !important;
+}
+
+#se-tc-page .se-tc-close-alt {
+  color: var(--se-tc-muted) !important;
+  -webkit-text-fill-color: var(--se-tc-muted) !important;
+}
