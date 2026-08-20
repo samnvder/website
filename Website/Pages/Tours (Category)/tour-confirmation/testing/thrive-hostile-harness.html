@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tour Confirmation — Thrive-hostile harness</title>
+<!-- Simulates the id-based Thrive/theme rules that swallowed the page's
+     colors on live (2026-08-20: dues labels and tier-title colors lost).
+     Loaded BEFORE the real stylesheet: the page CSS's armor block must
+     win every check in the console script below. -->
+<style>
+#tve_editor p { color: #123456 !important; font-family: Georgia, serif; margin: 4px 0; }
+#tve_editor li { color: #123456; list-style: disc; margin-left: 20px; }
+#tve_editor ul { padding-left: 30px; }
+#tve_editor h1, #tve_editor h2, #tve_editor h3 { color: #111a22; font-family: Georgia, serif; }
+#tve_editor a { color: #0000ee; }
+#tve_editor footer { color: #123456; }
+#tve_editor strong { color: #123456; }
+#tve_editor span { color: #123456; }
+</style>
+<link rel="stylesheet" href="../Tour Confirmation CSS.css?armor=3">
+</head>
+<body>
+<div id="tve_editor">
+  <div class="se-tc-page" id="se-tc-page">
+    <section class="se-tc-section se-tc-hero">
+      <h1 id="t-h1">Hero <span id="t-h1-span">accent</span></h1>
+      <p class="se-tc-hero-sub" id="t-sub">sub</p>
+    </section>
+    <section class="se-tc-section">
+      <h2 id="t-h2">Head <span id="t-h2-span">accent</span></h2>
+      <div class="se-tc-tiers">
+        <div class="se-tc-tier se-tc-tier-3">
+          <h3 id="t-tier3">Tier 3</h3>
+          <ul class="se-tc-dues" id="t-dues">
+            <li id="t-dues-li"><span id="t-dues-span">Single</span><strong id="t-dues-strong">$205/mo</strong></li>
+          </ul>
+          <a class="se-tc-tier-cta" id="t-cta" href="#">See full details</a>
+        </div>
+      </div>
+    </section>
+    <section class="se-tc-section">
+      <div class="se-qr">
+        <div class="se-qr-track">
+          <blockquote class="se-qr-slide">
+            <p class="se-qr-stars" id="t-stars">★★★★★</p>
+            <p id="t-quote">Quote text</p>
+            <footer id="t-footer">Name<span id="t-footer-span">Google review</span></footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+<script>
+/* Emits PASS/FAIL per check; the harness page shows the results inline. */
+(function(){
+  function rgb(el){ return getComputedStyle(el).color; }
+  var checks = [
+    ['tier3 title bronze', 't-tier3', 'rgb(168, 93, 32)'],
+    ['dues li white-ish', 't-dues-li', 'rgba(255, 255, 255, 0.9)'],
+    ['dues span inherits white-ish', 't-dues-span', 'rgba(255, 255, 255, 0.9)'],
+    ['dues strong white', 't-dues-strong', 'rgb(255, 255, 255)'],
+    ['cta white', 't-cta', 'rgb(255, 255, 255)'],
+    ['h1 teal', 't-h1', 'rgb(32, 65, 71)'],
+    ['h1 span blue', 't-h1-span', 'rgb(11, 70, 140)'],
+    ['h2 teal', 't-h2', 'rgb(32, 65, 71)'],
+    ['h2 span blue', 't-h2-span', 'rgb(11, 70, 140)'],
+    ['lead soft teal', 't-sub', 'rgb(61, 90, 94)'],
+    ['stars gold', 't-stars', 'rgb(246, 176, 30)'],
+    ['quote soft teal', 't-quote', 'rgb(61, 90, 94)'],
+    ['footer blue', 't-footer', 'rgb(11, 70, 140)'],
+    ['footer span soft teal', 't-footer-span', 'rgb(61, 90, 94)'],
+    ['dues no bullets', 't-dues-li', null]
+  ];
+  var out = [];
+  for (var i = 0; i < checks.length; i++) {
+    var el = document.getElementById(checks[i][1]);
+    var got, ok;
+    if (checks[i][2] === null) {
+      got = getComputedStyle(el).listStyleType;
+      ok = got === 'none';
+    } else {
+      got = rgb(el);
+      ok = got === checks[i][2];
+    }
+    out.push((ok ? 'PASS' : 'FAIL') + ' — ' + checks[i][0] + ' (got ' + got + ')');
+  }
+  window.__seArmorResults = out;
+  var pre = document.createElement('pre');
+  pre.textContent = out.join('\n');
+  document.body.appendChild(pre);
+})();
+</script>
+</body>
+</html>
