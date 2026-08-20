@@ -1,0 +1,139 @@
+<!-- ===========================================================
+     PROMO-NOTIFICATION ZAPIER FORM — questions-section / contactButton2 / zapierForm
+     Extracted 2026-08-20 from Website/Pages/index/Index.html (the Dec 2025
+     whole-page snapshot), inner content of the Thrive Custom HTML element
+     data-css="tve-u-675b77063789c1".
+     
+     NOT ON LIVE — SUPERSEDED DELIBERATELY, not lost. The same Zapier embed
+     page (cm1jxql2l001o8bubfm2nwb35) now ships site-wide in the footer CTA
+     form (sec-footer-cta-form), and the contact-button role is covered by
+     the site-wide "Message Us" modal, WPCode 8292. Verified against the
+     live homepage by curl on 2026-08-20. Do not restore without an owner
+     decision. See SEO/TODO.md §25.
+     =========================================================== -->
+
+<div class="container">
+    <!-- Questions Section -->
+    <div class="questions-section membership-card">
+        <h2>I’d like to be notified about<br>Special Membership Promotions.</h2>
+       
+        <button type="button" id="contactButton2" class="membership-btn">Submit a Form</button>
+        <div id="zapierFormContainer" style="display: none; margin-top: 20px; max-width: 750px; width: 100%; margin: 0 auto;">
+            <iframe id="zapierForm" width="100%" height="1340px" style="border: none;"></iframe>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* General Theme: Font and Box Sizing */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    html, body {
+        font-family: 'Lato', sans-serif;
+        color: rgba(10, 10, 10, .85);
+        background-color: rgb(255, 255, 255); /* Apply the site's default background */
+        line-height: 1.5;
+        font-size: 18px;
+    }
+
+    /* Questions Section with Swapped Border and Background Colors */
+    .questions-section {
+        background-color: #0b468c; /* Swapped: now using theme's 'new color' */
+        border-radius: 15px;
+        box-shadow: 0 14px 35px rgba(0, 204, 255, 0.28); /* Match shadow effect */
+        padding: 20px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-align: center;
+        margin: 40px auto; /* Centers the section */
+        max-width: 750px; /* Set to 750px */
+        width: 100%; /* Ensure it uses full width up to max-width */
+        color: white !important; /* Force text color to white */
+        position: relative;
+        overflow: hidden;
+        border: 5px solid #242424; /* Swapped: now using the previous background color */
+    }
+
+    .questions-section:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 28px 56px rgba(0, 204, 255, 0.56); /* Hover effect similar to membership cards */
+        border-color: #242424; /* Keep the swapped border color consistent on hover */
+    }
+
+    .questions-section h2 {
+        font-size: 28px; /* Matching size */
+        color: #ffffff !important; /* Ensure title color is white */
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    .questions-section p {
+        font-size: 16px;
+        color: #ffffff !important; /* Ensure paragraph text color is white */
+        margin-bottom: 10px; /* Adjusted for better spacing */
+    }
+
+    /* Contact Button: background color same as border, text color white */
+    .membership-btn {
+        padding: 15px 30px;  /* Larger padding */
+        font-size: 20px;  /* Larger font size */
+        cursor: pointer;
+        background-color: #242424; /* Use border color for the button background */
+        color: white !important; /* Ensure button text is white */
+        border: none;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+        margin-top: 20px;
+    }
+
+    .membership-btn:hover {
+        background-color: #00ff99; /* Match the hover color */
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .questions-section {
+            max-width: 90%; /* Set a more flexible width for smaller screens */
+            padding: 15px; /* Slightly reduce padding */
+        }
+
+        .questions-section h2 {
+            font-size: 24px; /* Adjust heading size for smaller screens */
+        }
+
+        .questions-section p {
+            font-size: 14px; /* Adjust paragraph size for smaller screens */
+        }
+
+        .membership-btn {
+            padding: 12px 24px; /* Adjust button padding for smaller screens */
+            font-size: 18px; /* Adjust button font size for smaller screens */
+        }
+    }
+</style>
+
+<script>
+    // Toggle the Zapier form and load the iframe content only when clicked
+    document.getElementById('contactButton2').addEventListener('click', function() {
+        const zapierFormContainer = document.getElementById('zapierFormContainer');
+        const contactButton = document.getElementById('contactButton2');
+        const zapierForm = document.getElementById('zapierForm');
+
+        if (zapierFormContainer.style.display === 'none' || zapierFormContainer.style.display === '') {
+            zapierFormContainer.style.display = 'block';
+            contactButton.textContent = 'Close'; // Change button text to 'Close'
+            
+            // Load the iframe only when it's shown
+            if (!zapierForm.src) {
+                zapierForm.src = 'https://interfaces.zapier.com/embed/page/cm1jxql2l001o8bubfm2nwb35?'; // Set the src dynamically
+            }
+        } else {
+            zapierFormContainer.style.display = 'none';
+            contactButton.textContent = 'Submit a Form'; // Change button text back to 'Submit a Form'
+        }
+    });
+</script>
+<div class="tve_iframe_cover"></div>
