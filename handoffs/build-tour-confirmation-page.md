@@ -1,7 +1,13 @@
 # Handoff — build the personalized tour-confirmation page (draft first)
 
-**Created:** 2026-08-20 · **Status:** 🟡 **OPEN** · **Owner-commissioned 2026-08-20**
+**Created:** 2026-08-20 · **Status:** 🟡 **OPEN — phase 1 done 2026-08-20, phase 2 pending** · **Owner-commissioned 2026-08-20**
 **Phase 1 is repo-only:** a complete draft page, no live changes, no gates. Publishing is phase 2, later.
+
+> **Phase 1 landed 2026-08-20** — draft at `Website/Pages/Tours (Category)/tour-confirmation/`,
+> whose README carries the sessionStorage contract and the phase-2 gate list. One assumption below
+> broke: the testimonials draft holds **no quote text** — it fetches reviews at runtime from a Heroku
+> app that no longer exists (`no such app`, verified 2026-08-20). Section 4 ships with loud
+> `[MEMBER QUOTE NOT SET]` placeholders; the owner supplies 3 real reviews before phase 2.
 
 > **Execution convention:** written to be run by a Claude Code agent. See [CLAUDE.md § Handoffs](../CLAUDE.md).
 
