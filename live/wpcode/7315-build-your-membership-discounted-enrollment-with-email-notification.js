@@ -39,6 +39,28 @@ document.addEventListener("DOMContentLoaded", function () {
     const discountedPriceDisplay = document.getElementById("discountedPrice");
     const limitedTimeText = document.getElementById("limitedTimeText");
 
+    // ---- bind guard (2026-08-19) -------------------------------------------
+    // This is the DISCOUNTED-ENROLLMENT builder (#7315). It needs the discount
+    // markup (#originalPrice, #discountedPrice, #limitedTimeText). Without it the
+    // old code threw a TypeError in updateEnrollmentFee() -- which was the ONLY
+    // reason it never double-bound #purchaseButton on /memberships/, where
+    // [wpcode id="7315"] was left in the page alongside [wpcode id="9926"].
+    // Bail out on purpose instead of by accident. See
+    // patches/membership-builder-single-bind/.
+    const purchaseButton = document.getElementById("purchaseButton");
+    if (!membershipType || !tierSelect || !priceDisplay || !purchaseButton
+        || !originalPriceDisplay || !discountedPriceDisplay || !limitedTimeText) {
+        console.warn("[membership builder #7315] Discount markup missing - not bound (this is not a discounted-enrollment page).");
+        return;
+    }
+    if (purchaseButton.dataset.seBuilder) {
+        console.warn("[membership builder #7315] #purchaseButton already bound by builder " + purchaseButton.dataset.seBuilder + " - not binding twice.");
+        return;
+    }
+    purchaseButton.dataset.seBuilder = "7315";
+    // ------------------------------------------------------------------------
+
+
     // Pricing data
     const pricing = {
         single: [245, 225, 205],
