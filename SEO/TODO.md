@@ -750,7 +750,18 @@ that exists in no file. The push to add is the one already in
 
 ---
 
-### 25. 🟡 Homepage repo source carries a Christmas banner and an expired countdown that are not on live — **Claude** · paste-hazard · decisions made 2026-08-20, awaiting Thrive-editor capture
+### 25. Homepage repo source was a December 2025 snapshot ✅ — **done 2026-08-20**
+
+> **✅ CLOSED 2026-08-20.** The owner pasted a fresh full-page capture from the Thrive editor (4,403
+> lines, zero `tve_js_placeholder`, so genuine editor source). The raw capture was committed unpatched
+> first (`e87f6a8`, then removed from the tree — history is the restore point). The converter then
+> removed 380 CompressX `<source>` and 602 `<picture>` wrapper tags plus 43 expanded attributes that had
+> rotted into the editor, and per decision (b) the theme symbols came out: header = line 1, footer =
+> line 4404, and the div balance of the middle (491 opens / 490 closes, closed by the stray `</div>`
+> opening line 4404) proves the cut is exact. The new `Index.html` is a content fragment like every
+> other page: 4,401 lines, div-balanced, **contains `se-bk-inline`** (the old snapshot predated it),
+> and contains none of the Christmas blocks, the Zapier form, the CTA sections, theme symbols or
+> CompressX markup. `guard:capture-markup` passes over it.
 
 Found 2026-08-18 in the same parity audit. Every other published page matches live exactly; the homepage does not.
 
