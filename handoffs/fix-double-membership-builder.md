@@ -1,6 +1,6 @@
 # Handoff — `/memberships/` renders BOTH membership builders; make at most one bind
 
-**Created:** 2026-08-19 · **Status:** 🔴 **OPEN** · **Est.:** ~30 min, two 🛑 gates behind a WP admin login
+**Created:** 2026-08-19 · **Status:** ✅ **CLOSED 2026-08-20** — both gates executed and `curl`-verified; mirrors, paste-sources and records updated. Gate 1 was done via full-page owner capture + converter (also repaired CompressX rot and refreshed the stale repo page source). The one deliberately-skipped item: the real-click test (one click → one Dropbox Sign request) — run at the next natural opportunity. · **Est.:** ~30 min, two 🛑 gates behind a WP admin login
 **Closes:** [SEO/TODO.md §28](../SEO/TODO.md) · **Prepared artifacts:** [patches/membership-builder-single-bind/](../patches/membership-builder-single-bind/)
 **Executed by:** Claude Code (Cowork) + a human at the WordPress screens — see [Kickoff prompt](#kickoff-prompt)
 

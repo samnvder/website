@@ -1,7 +1,12 @@
 # Patch — two membership builders on `/memberships/`; make at most one bind
 
-**Prepared 2026-08-19. NOT applied.** Both steps below are 🛑 HUMAN GATES (a
-Thrive edit and two WPCode pastes). Nothing here has touched the live site.
+**Prepared 2026-08-19. ✅ APPLIED 2026-08-20 — both gates executed and verified.**
+The `[wpcode id="7315"]` element is gone from post 8812, both guarded builders
+are live in WPCode (owner paste-backs byte-identical to the paste files here),
+and `curl` serves `dataset.seBuilder = "9926"` on `/memberships/`. Mirrors and
+repo paste-sources carry the guards. `prove.js`'s "live mirrors" rows now FAIL
+by design — their expectations encode the pre-patch double-bind, which the
+guarded mirrors refuse to reproduce. This directory is history.
 
 ## The finding (verified by `curl`, 2026-08-19)
 

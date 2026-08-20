@@ -103,7 +103,7 @@ Verified on `master`: **0** dead page-links, **0** `tve-jump` references, **0** 
 | §14 | ✅ **Tour bookings now tracked in GA4** — done 2026-08-18; Ads half blocked on having no Ads account | Claude + Sam | done · **read the first month ~2026-09-18** |
 | §15 | Repo has no `se-bk-floating` widget that runs on live | Claude | medium · silent-loss risk |
 | §16 | ✅ **`/special-offer/` now 301s to `/memberships/`** — applied & verified live 2026-08-19 | Sam + Claude | done |
-| §28 | 🔴 **`/memberships/` embeds both builder shortcodes (#9926 + #7315)**; #7315 inert only because it throws first. Patch prepared, 2 gates | Sam | ~10 min · double-signature hazard |
+| §28 | ✅ **done 2026-08-20** — `[wpcode id="7315"]` removed from the page, guarded builders pasted into #9926 and #7315, verified by `curl` | — | closed |
 | §29 | ✅ **`Special Offer.html` inline builder reconciled** — `30/20` and the tag parked; `guard:stale-offer` now scans page files too | Claude | done |
 | §6 | Page weight 318–767 KB of Thrive HTML | — | deferred |
 | §7 | Body-level duplicate meta | — | cosmetic |
@@ -810,7 +810,11 @@ Re-run after any Thrive paste; the script is small enough to rebuild from the me
 
 ---
 
-### 28. 🔴 `/memberships/` renders BOTH membership builders; #7315 is inert only by accident — **Sam** (2 gates) · patch prepared 2026-08-19
+### 28. `/memberships/` renders BOTH membership builders ✅ — **done; both gates executed and verified 2026-08-20**
+
+**Closed 2026-08-20.** Gate 1: the `[wpcode id="7315"]` element was removed from post 8812 via a full-page owner capture → converter → single-element edit (round-trip proven byte-exact); the same paste also repaired CompressX picture-rot in the editor and refreshed the stale repo page source. Gate 2: both guarded builders pasted into WPCode #9926 and #7315; the owner's paste-backs were byte-identical to the prepared patches, and `curl` now serves `dataset.seBuilder = "9926"` = 1, `create-signature-request` = 1, `const discounts = {` = 0. Mirrors and repo paste-sources updated (insert-only diffs, +24/+22 lines); `guard` green, `guard:membership-pricing:prove` 12/0. The end-to-end real-click test (one click → exactly one Dropbox Sign request) was **not** performed — it creates a genuine signature request; run it at the next natural opportunity. The record below is history.
+
+<details><summary>Original finding (2026-08-19)</summary></details>
 
 Found 2026-08-19 by `curl -s -A "Mozilla/5.0" https://southendclub.com/memberships/`: `grep -c create-signature-request` → **2**, `grep -c 'getElementById("purchaseButton").addEventListener'` → **2**. Both the sticker builder **#9926** and the discounted-enrollment builder **#7315** are on the page, each byte-identical to its `live/wpcode/` mirror, each attaching a click listener to `#purchaseButton`.
 
