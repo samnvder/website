@@ -1,0 +1,132 @@
+<!-- ===========================================================
+     SECONDARY CTA SECTION — "Ready to Experience South End?" (sec-cta-*)
+     Extracted 2026-08-20 from Website/Pages/index/Index.html (the Dec 2025
+     whole-page snapshot), inner content of a Thrive Custom HTML element.
+     
+     NOT ON LIVE — SUPERSEDED DELIBERATELY, not lost. Its role (Become a
+     Member / Schedule a Tour) is covered by the site-wide footer CTA and
+     the floating Book Tour button (WPCode 8309). Verified against the live
+     homepage by curl on 2026-08-20. Do not restore without an owner
+     decision. See SEO/TODO.md §25.
+     =========================================================== -->
+
+<!-- SOUTH END CLUB – CTA SECTION -->
+<!-- Paste into Thrive Architect Custom HTML element -->
+
+<style>
+/* ========== CTA SECTION ========== */
+.sec-cta-section {
+  background: #f8f2e1;
+  padding: 60px 24px;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: 'Montserrat', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.sec-cta-inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.sec-cta-title {
+  color: #0b468c;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  line-height: 1.2;
+}
+
+.sec-cta-text {
+  color: #204147;
+  font-size: 16px;
+  margin: 0 0 32px;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.sec-cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Primary Button */
+.sec-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 30px;
+  background: #0b468c;
+  color: #ffffff;
+  border-radius: 30px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.sec-btn-primary:hover {
+  background: #083a73;
+  transform: translateY(-2px);
+}
+
+/* Secondary Button */
+.sec-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 30px;
+  background: transparent;
+  color: #0b468c;
+  border-radius: 30px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 2px solid #0b468c;
+  transition: all 0.3s ease;
+}
+
+.sec-btn-secondary:hover {
+  background: #0b468c;
+  color: #ffffff;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 600px) {
+  .sec-cta-title {
+    font-size: 26px;
+  }
+
+  .sec-cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sec-btn-primary,
+  .sec-btn-secondary {
+    width: 100%;
+    max-width: 260px;
+  }
+}
+</style>
+
+<!-- CTA HTML -->
+<section class="sec-cta-section">
+  <div class="sec-cta-inner">
+    <h2 class="sec-cta-title">Ready to Experience South End?</h2>
+    <p class="sec-cta-text">
+      Join hundreds of families who have made South End their home for fitness,
+      relaxation, and community.
+    </p>
+    <div class="sec-cta-buttons">
+      <a href="https://southendclub.com/memberships/" class="sec-btn-primary">
+        Become a Member
+      </a>
+      <a href="https://southendclub.com/schedule-a-tour/" class="sec-btn-secondary">
+        Schedule a Tour
+      </a>
+    </div>
+  </div>
+</section>

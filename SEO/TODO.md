@@ -750,7 +750,7 @@ that exists in no file. The push to add is the one already in
 
 ---
 
-### 25. 🔴 Homepage repo source carries a Christmas banner and an expired countdown that are not on live — **Claude** · paste-hazard
+### 25. 🟡 Homepage repo source carries a Christmas banner and an expired countdown that are not on live — **Claude** · paste-hazard · decisions made 2026-08-20, awaiting Thrive-editor capture
 
 Found 2026-08-18 in the same parity audit. Every other published page matches live exactly; the homepage does not.
 
@@ -771,12 +771,14 @@ That reframes the fix. Surgically deleting the Christmas blocks would yield a *s
 
 **Done 2026-08-18:** both seasonal blocks extracted to `Website/Pages/index/Seasonal/` — `holiday-video-banner.html` and `promotion-countdown-banner.html`, each with a header stating it is not on live and its countdown is expired. They are preserved for reuse without sitting in the paste path.
 
-**Still open — needs a decision, not a script:**
+**Both questions answered 2026-08-20** (slice 2 of [handoffs/next-three-slices.md](../handoffs/next-three-slices.md)):
 
-1. **What is `Index.html` for?** Either (a) declare it a deliberate whole-page mirror, note the embedded theme symbols in the file, and add a row for that frame to the mirror map in [live/README.md](../live/README.md); or (b) replace it with a content-fragment paste-source captured from the Thrive editor, matching every other page. Do not leave it undeclared — that ambiguity is what let a Christmas banner sit in the paste path for eight months.
-2. **The Zapier form and the CTA/questions sections** (`contactButton2`, `zapierForm`, `questions-section`, `sec-cta-*`) are absent from live. Confirm with Sam: removed deliberately, or lost?
+1. **Owner chose (b)** — `Index.html` will be **replaced with a content-fragment paste-source captured from the Thrive editor**, matching every other page. It is *not* a whole-page mirror, and the mirror map gains no row.
+2. **The Zapier form and CTA/questions sections were superseded deliberately, not lost.** Evidence (live homepage curled 2026-08-20): the exact Zapier embed page `Index.html`'s form loads (`interfaces.zapier.com/embed/page/cm1jxql2l001o8bubfm2nwb35`) is on the live homepage today, inside the site-wide footer CTA form (`sec-footer-cta-form`); the contact-button role is covered by the site-wide "Message Us" modal (WPCode 8292, on 20/20 pages); and the CTA's two links (Memberships / Schedule a Tour) are in the site-wide footer and the floating Book Tour button (8309). Nothing was lost — the page-level blocks were consolidated into site-wide widgets. No restore.
 
-⚠️ Whichever way (1) goes, `Index.html` **must not be pasted into Thrive** in its current state.
+**Done 2026-08-20:** both blocks extracted to `Website/Pages/index/Superseded/` — `zapier-promo-notify-form.html` and `cta-ready-to-experience.html`, each with a header stating it is superseded and by what. Preserved, not deleted, per the handoff.
+
+**Last remaining step:** obtain a fresh homepage capture **from the Thrive editor** (file or fenced code block — Thrive counts lines), commit it unpatched, then replace `Index.html` with it. Until that capture lands, `Index.html` stays as-is and ⚠️ **must not be pasted into Thrive** — it is still the December 2025 snapshot with a Christmas banner.
 
 ---
 
