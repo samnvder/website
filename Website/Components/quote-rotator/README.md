@@ -58,6 +58,19 @@ script blocks and supplies its own slides. That means:
      reorder slides before the rotator script runs (it starts from DOM order).
      The tour-confirmation page uses this to float interest-matched quotes first.
 
+## Review photos
+
+A slide may open with `<img class="se-qr-photo" src="…" alt="…">` — reserved for photos
+**attached to that same review**, so the slide stays an honest reproduction of it.
+Two rules:
+
+1. **Never hotlink `lh3.googleusercontent.com`.** Google rotates/expires those URLs
+   without notice — the slide would break silently months later (the dead-Heroku
+   failure mode). Re-host: save the photo from the review, upload it to the WordPress
+   media library, reference the `southendclub.com/wp-content/uploads/…` URL.
+2. Don't pair a review with a photo it didn't carry — a club stock photo on a review
+   slide implies the reviewer posted it.
+
 ## Content rules
 
 Quotes are **real, verbatim member reviews** — excerpting is fine (contiguous

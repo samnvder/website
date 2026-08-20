@@ -60,7 +60,7 @@ reasoning deliberately.
 
 Section 4 is now an **SE quote rotator** — a copy of the reusable component at
 [`Website/Components/quote-rotator/`](../../../Components/quote-rotator/) (improve it
-there first, then re-copy here) — carrying **8 real, verbatim Google reviews** of the
+there first, then re-copy here) — carrying **20 real, verbatim Google reviews** of the
 club, mined 2026-08-20 from the Google Business Profile reviews manager (the paths that
 failed first: the testimonials draft fetches from a dead Heroku app — "no such app" —
 and Google's anonymous Maps view exposes no review text). Excerpts are contiguous with
@@ -69,8 +69,15 @@ Each slide is tagged `data-interests`; the personalization script floats matched
 to the front of the rotation before the rotator starts. Do not use Yelp review text —
 Yelp's terms prohibit republishing outside their widgets.
 
-**Before phase 2:** the owner approves (or swaps) the 8 selected quotes — the full
-top-20 shortlist is in the phase-1→2 report.
+**Review photos:** each slide supports an optional leading
+`<img class="se-qr-photo">` for photos **attached to that review** — re-hosted only
+(WP media library / this repo), never hotlinked from `lh3.googleusercontent.com`,
+which rots silently. Harvesting them via automation failed (Google never serves the
+full public review feed to the automated session), so adding photos is a small owner
+step: open the review on Google Maps normally, save its photos, upload to the media
+library, add the `<img>` to that slide. See the component README.
+
+**Before phase 2:** the owner approves (or swaps) the 20 selected quotes.
 
 ## No JSON-LD, no head meta — on purpose
 
@@ -82,8 +89,9 @@ viewport, theme-color, stylesheet link, fonts).
 
 ## Phase 2 — the gates
 
-1. 🛑 **Owner approves the 8 selected quotes** (or swaps from the top-20 shortlist) —
-   they are already real and verbatim, so this is sign-off, not sourcing.
+1. 🛑 **Owner approves the 20 selected quotes** — they are already real and verbatim,
+   so this is sign-off, not sourcing. Optionally: harvest photos from the reviews that
+   carry them (manual save → media library → `se-qr-photo` slot).
 2. 🛑 **Create the WordPress page** (suggested slug `/tour-confirmation/`) and paste this
    fragment into Thrive. Never paste over an existing live page.
 3. 🛑 **Noindex + sitemap-exclude** the new URL via WPCode snippet 9934.
