@@ -676,6 +676,22 @@
   -webkit-text-fill-color: var(--se-tc-text-soft) !important;
 }
 
+/* Breathing room around phone/email lines (owner request 2026-08-20). */
+#se-tc-page .se-tc-visit-fact a {
+  display: inline-block !important;
+  padding: 3px 0 !important;
+  line-height: 1.5 !important;
+}
+
+#se-tc-page .se-tc-close-alt {
+  margin-top: 22px !important;
+}
+
+#se-tc-page .se-tc-close-alt a {
+  display: inline-block !important;
+  padding: 0 3px !important;
+}
+
 #se-tc-page .se-tc-tier.se-tc-tier-1 h3 { color: var(--se-tc-gold) !important; -webkit-text-fill-color: var(--se-tc-gold) !important; }
 #se-tc-page .se-tc-tier.se-tc-tier-2 h3 { color: var(--se-tc-silver) !important; -webkit-text-fill-color: var(--se-tc-silver) !important; }
 #se-tc-page .se-tc-tier.se-tc-tier-3 h3 { color: var(--se-tc-bronze) !important; -webkit-text-fill-color: var(--se-tc-bronze) !important; }
