@@ -67,6 +67,31 @@
 
 .se-tc-section h2 span { color: var(--se-tc-blue); }
 
+.se-tc-section h2::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--se-tc-blue), var(--se-tc-blue-bright));
+  margin: 14px auto 0;
+}
+
+/* Sentence-per-line: each sentence is an unbreakable block, so lines
+   break between sentences when there's room — never runoffs. Balance
+   evens out whatever must still wrap. */
+.se-tc-sent { display: inline-block; }
+
+.se-tc-hero h1,
+.se-tc-section h2,
+.se-tc-lead,
+.se-tc-hero-sub,
+.se-tc-tier-desc,
+.se-tc-beat p,
+.se-qr-slide p {
+  text-wrap: balance;
+}
+
 .se-tc-lead {
   font-size: 16px;
   line-height: 1.7;
@@ -350,10 +375,21 @@
 .se-tc-dues li strong { color: #ffffff; font-weight: 700; }
 
 .se-tc-enroll-note {
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.6;
   color: var(--se-tc-muted);
   margin: 0 0 16px;
+  text-align: center;
+}
+
+.se-tc-enroll-label {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--se-tc-blue-dim);
+  margin-bottom: 4px;
 }
 
 .se-tc-tier-cta {
@@ -377,13 +413,32 @@
   color: #ffffff;
 }
 
-.se-tc-pricing-footnote {
-  font-size: 12.5px;
+.se-tc-fine {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 18px 24px;
+  background: #f7f9fd;
+  border: 1px solid rgba(11, 70, 140, 0.12);
+  border-radius: var(--se-tc-radius-sm);
+  text-align: center;
+}
+
+.se-tc-fine p {
+  font-size: 13px;
   line-height: 1.7;
   color: var(--se-tc-muted);
-  text-align: center;
-  max-width: 760px;
-  margin: 0 auto;
+  margin: 4px 0;
+}
+
+.se-tc-fine p strong { color: var(--se-tc-blue); font-weight: 700; }
+
+.se-tc-fine-stamp {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.75;
+  margin-top: 10px !important;
 }
 
 /* ── 4 · Member quotes — SE quote rotator ──────────────────────────────
@@ -740,11 +795,32 @@
 }
 
 #se-tc-page .se-tc-enroll-note,
-#se-tc-page .se-tc-pricing-footnote {
+#se-tc-page .se-tc-fine p {
   color: var(--se-tc-muted) !important;
   -webkit-text-fill-color: var(--se-tc-muted) !important;
   font-weight: 500 !important;
   font-size: 13px !important;
+}
+
+#se-tc-page .se-tc-enroll-label {
+  color: var(--se-tc-blue-dim) !important;
+  -webkit-text-fill-color: var(--se-tc-blue-dim) !important;
+  font-weight: 700 !important;
+  font-size: 10.5px !important;
+}
+
+#se-tc-page .se-tc-fine p strong {
+  color: var(--se-tc-blue) !important;
+  -webkit-text-fill-color: var(--se-tc-blue) !important;
+}
+
+#se-tc-page .se-tc-fine .se-tc-fine-stamp {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+}
+
+#se-tc-page .se-tc-sent {
+  display: inline-block !important;
 }
 
 #se-tc-page .se-qr-slide p {
