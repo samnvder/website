@@ -439,6 +439,18 @@
   .se-qr.se-qr-ready .se-qr-slide { transition: none; transform: none; }
 }
 
+/* Optional photo slot: an <img class="se-qr-photo"> as the slide's first
+   child — for photos ATTACHED TO THAT REVIEW, re-hosted on our own
+   infrastructure. Never hotlink lh3.googleusercontent.com. */
+.se-qr-photo {
+  display: block;
+  width: 100%;
+  max-height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 0 0 14px;
+}
+
 .se-qr-stars {
   color: var(--se-qr-star);
   letter-spacing: 3px;
