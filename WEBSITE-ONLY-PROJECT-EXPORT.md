@@ -25,9 +25,6 @@
 | Relative path | Notes |
 |---------------|--------|
 | `index.html` | |
-| `index-clean.html` | |
-| `index-complete.html` | |
-| `dev-index.html` | Dev entry; drop if unused in the new project. |
 | `readme.md` | Trim references to Central after move. |
 | `package.json` | **See §7** — remove Central scripts before or after copy. |
 | `package-lock.json` | Regenerate with `npm install` if you simplify `package.json`. |

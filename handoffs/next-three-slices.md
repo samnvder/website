@@ -1,6 +1,6 @@
 # Handoff — the next three, sliced: §28, then #11, then #12-retire
 
-**Created:** 2026-08-20 · **Status:** 🟡 **OPEN** · run **in order**, one agent per slice, each on its own branch
+**Created:** 2026-08-20 · **Status:** ✅ **CLOSED 2026-08-20** — all three slices done: §28 (PR #29), #11/§25 (PRs #30, #31), #12-retire (this branch) · run **in order**, one agent per slice, each on its own branch
 **Executed by:** Claude Code agents + a human at the WordPress screens for slice 1 — see the three kickoff prompts
 
 > **Execution convention:** written to be run by Claude Code agents. See [CLAUDE.md § Handoffs](../CLAUDE.md).
