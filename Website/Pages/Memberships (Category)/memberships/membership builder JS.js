@@ -11,6 +11,30 @@ document.addEventListener("DOMContentLoaded", function () {
     const monthlyDueHidden = document.getElementById("monthlyDue");
     const foodBeverageHidden = document.getElementById("foodBeverageMinimum");
 
+    // ---- bind guard (2026-08-19) -------------------------------------------
+    // This is the STICKER builder (#9926). Bail out cleanly when this is not a
+    // builder page, or when the page carries discount markup (#discountedPrice)
+    // that belongs to #7315 / #7966. Without this, a page that renders two
+    // builder snippets binds #purchaseButton twice and every click creates two
+    // Dropbox Sign requests. See patches/membership-builder-single-bind/.
+    const discountedPriceDisplay = document.getElementById("discountedPrice");
+    const purchaseButton = document.getElementById("purchaseButton");
+    if (!membershipType || !tierSelect || !priceDisplay || !purchaseButton) {
+        console.warn("[membership builder #9926] Required DOM nodes missing - not bound.");
+        return;
+    }
+    if (discountedPriceDisplay) {
+        console.warn("[membership builder #9926] Discount markup present (#discountedPrice); this page belongs to the discounted-enrollment builder - #9926 not bound.");
+        return;
+    }
+    if (purchaseButton.dataset.seBuilder) {
+        console.warn("[membership builder #9926] #purchaseButton already bound by builder " + purchaseButton.dataset.seBuilder + " - not binding twice.");
+        return;
+    }
+    purchaseButton.dataset.seBuilder = "9926";
+    // ------------------------------------------------------------------------
+
+
     // Pricing data
     const pricing = {
         single: [245, 225, 205],
