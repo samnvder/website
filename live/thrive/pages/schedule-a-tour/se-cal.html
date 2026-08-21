@@ -1424,6 +1424,7 @@ body.se-cal-panel-open #wpadminbar {
           window.dataLayer = window.dataLayer || [];
           window.dataLayer.push({
             event: 'tour_booked',
+            tour_widget: 'se-cal',
             tour_booking_id: res.data.appointment_id || res.data.id || null,
             tour_is_reschedule: !!res.data.appointment_rescheduled,
             tour_date: payload.preferred_date || null,
