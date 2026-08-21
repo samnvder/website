@@ -101,6 +101,25 @@
   margin: 0 auto 30px;
 }
 
+/* ── 0 · Drone-tour hero video ─────────────────────────────────────── */
+
+.se-tc-video {
+  max-width: 1100px;
+  margin: 0 auto 36px;
+  border: 2px solid var(--se-tc-blue);
+  border-radius: var(--se-tc-radius-md);
+  overflow: hidden;
+  box-shadow: var(--se-tc-shadow-strong);
+  line-height: 0;
+}
+
+.se-tc-video video {
+  display: block;
+  width: 100%;
+  height: clamp(240px, 42vw, 460px);
+  object-fit: cover;
+}
+
 /* ── 1 · Confirmation hero ─────────────────────────────────────────── */
 
 .se-tc-hero { text-align: center; }
@@ -869,6 +888,13 @@
 #se-tc-page .se-tc-close-alt {
   color: var(--se-tc-muted) !important;
   -webkit-text-fill-color: var(--se-tc-muted) !important;
+}
+
+#se-tc-page .se-tc-video video {
+  display: block !important;
+  width: 100% !important;
+  height: clamp(240px, 42vw, 460px) !important;
+  object-fit: cover !important;
 }
 
 /* The theme inflates inline-sized SVGs (seen live 2026-08-20: the
