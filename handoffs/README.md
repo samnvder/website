@@ -14,7 +14,8 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 | **16** | **[build-tour-confirmation-page](build-tour-confirmation-page.md)** | 🟡 **Owner-commissioned 2026-08-20.** Personalized post-booking confirmation page — confirmation hero, tour preview, tier pricing (static cards from `membership-pricing-source.json`, NO builder markup — §28 guards), testimonial quotes, soft close. Personalization via sessionStorage from the booking widgets (which already capture **interests**); no redirect exists today, so phase 2 adds one. The "questions?" slot is reserved for the future South End AI agent (§26). Phase 1 is repo-only draft, no gates; also the future Ads conversion URL (#6). | ~2h draft | no |
 | **13** | **[fix-book-tour-double-booking](fix-book-tour-double-booking.md)** | 🟡 **Mostly done 2026-08-18 — the server now rejects a taken slot (409); it accepted one before.** Numbered 13 to clear a collision with #6 Google Ads, which [read-tour-volume](read-tour-volume.md) references — **its position here is its priority, not its number.** Open: the **partial unique index** (app-level check narrows the race, the database would close it — run the duplicate query first, any rows are an owner call), and a **prepared, undeployed patch** stopping the word `slot_unavailable` reaching customers ([patches/booking-409-message/](../patches/booking-409-message/)). ⚠️ **The old kickoff prompt is retired** — it would send an agent to redo finished work. | ~20 min | index needs a decision; patch needs a deploy gate |
 | 1 | **[tour-conversion-tracking](tour-conversion-tracking.md)** | Makes tour bookings visible to GA4 and Google Ads. Part A ✅ done 2026-08-18; **Part B ✅ published 2026-08-18** (container v7). | ~1h | Part C only — no Google Ads account exists |
-| **14** | **[site-wide-event-tracking](site-wide-event-tracking.md)** | 🟡 **TODO, written 2026-08-19.** Everything still invisible after tours: **`membership_requested`** (the money event — all three WPCode builders end in an `alert()` and push nothing), phone / email / directions clicks (GTM only; only 4 of 23 `tel:` links are the club's number), and the Zapier contact/subscribe iframes GA4 cannot see. Ends in container **v8** + re-export. Scopes but defers Dropbox-Sign-signed, pickleball, Enhanced Conversions and the privacy-policy wording. **Found on the way:** two builders are served on `/memberships/` and #7315 is inert only because it throws on a missing element. Numbered after #13; sits here because it is what Google Ads (#6) will optimise toward. | ~2h | no — three 🛑 gates (WPCode pastes, MP secret, publish) |
+| **14** | **[site-wide-event-tracking](site-wide-event-tracking.md)** | ✅ **CLOSED 2026-08-21 except Part C (Zapier forms).** `membership_requested` live in all three builders and `curl`-verified; `tour_widget` added to every `tour_booked` push (owner-requested, closes the page-vs-widget ambiguity); phone/email/directions click tags with `phone_is_club`; **container v8 published and re-exported**; 5 dimensions + 2 Currency metrics registered in GA4 (22/50 slots). PRs #41/#42 merged. **Open:** star `membership_requested` + `phone_click` once propagation lists them (~a day); Part C (Zapier → Measurement Protocol, 🛑 API-secret gate); Phase 2 items unchanged. | ~2h | Part C only — 🛑 MP secret |
+| **17** | **[widget-engagement-events](widget-engagement-events.md)** | 🟡 **TODO, written 2026-08-21.** Adds `tour_widget_engaged` (once per page view per widget, on first interaction) so abandonment inside the four booking widgets becomes measurable: `page_view` → `tour_widget_engaged` → `tour_booked`, by widget. Same 8 files and generator contract as v8's `tour_widget`; ends in container **v9** + re-export. Deliberately *not* a key event. | ~1.5h | no — two 🛑 gates (pastes, v9 publish) |
 | 2 | **[ga4-hygiene](ga4-hygiene.md)** | Clears MonsterInsights residue. **Low priority — moves no numbers.** | ~20 min | no |
 | 3 | **[backup-gtm-container](backup-gtm-container.md)** | ✅ **Done 2026-08-18.** Published v7 exported to [`analytics/gtm-container-export.json`](../analytics/gtm-container-export.json) and verified; backup law extended to cover configuration. **Re-export after every container publish** — the next one is the Ads tag (#4/#5). | — | done |
 | 4 | **[gtm-conversion-linker](gtm-conversion-linker.md)** | Adds the missing Conversion Linker so Ads can attribute clicks. **Parked on purpose** — must run *before* the Ads conversion tag, never after. | ~10 min | yes — no Google Ads account exists |
@@ -395,7 +396,29 @@ Work on a branch. Report what you changed, what you verified with what output,
 and anything you deliberately left undone.
 ```
 
-### 14 · Site-wide event tracking
+### 17 · Widget engagement events
+
+```
+Execute handoffs/widget-engagement-events.md in this repo.
+
+Read it in full first, plus CLAUDE.md, patches/README.md (naming law) and
+patches/tour-widget-param/ (the generator contract and the mixed-EOL trap
+this copies). It adds a once-per-pageview tour_widget_engaged push to all
+four booking-widget surfaces and ends in GTM container v9.
+
+Rules: generator with --verify, byte-level insert (mixed EOLs), -text the
+paste artifacts, full guard chain before commit, stop at both 🛑 gates
+(pastes; v9 publish), curl-verify after cache flush, re-export the
+container in the same session as the publish. Work on a branch; verify
+which branch every commit landed on afterwards.
+```
+
+### 14 · Site-wide event tracking — ⚠️ retired except Part C
+
+⚠️ **Do not run this kickoff as written** — Parts A, B and D closed 2026-08-21
+(v8 published, exported, GA4 configured; PRs #41/#42). Only Part C (Zapier
+forms → Measurement Protocol) remains; scope a session to Part C alone and its
+🛑 API-secret gate. Original prompt kept for the record:
 
 ```
 Execute handoffs/site-wide-event-tracking.md in this repo.
