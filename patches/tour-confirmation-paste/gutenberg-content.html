@@ -50,6 +50,7 @@
       <a class="se-tc-cal-btn" id="se-tc-cal-google" href="#" target="_blank" rel="noopener">Add to Google Calendar</a>
       <a class="se-tc-cal-btn se-tc-cal-alt" id="se-tc-cal-ics" href="#" download="south-end-club-tour.ics">Apple / Outlook (.ics)</a>
     </div>
+    <p class="se-tc-resched" id="se-tc-resched">Need to reschedule? <a href="https://southendclub.com/schedule-a-tour/" id="se-tc-resched-link">Pick a new time</a> &mdash; your newest booking is the one we'll expect.</p>
     <div class="se-tc-visit-facts">
       <div class="se-tc-visit-fact">
         <strong>Where</strong>
@@ -510,6 +511,24 @@
   border: 2px solid var(--se-tc-blue);
   box-shadow: none;
 }
+
+.se-tc-resched {
+  display: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--se-tc-muted);
+  margin: -10px 0 26px;
+}
+
+.se-tc-resched a {
+  color: var(--se-tc-blue);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(11, 70, 140, 0.45);
+  transition: border-color 0.2s ease;
+}
+
+.se-tc-resched a:hover { border-bottom-style: solid; }
 
 .se-tc-visit-facts {
   display: flex;
@@ -1069,6 +1088,20 @@
 #se-tc-page .se-tc-visit-fact a {
   color: var(--se-tc-text-soft) !important;
   -webkit-text-fill-color: var(--se-tc-text-soft) !important;
+}
+
+#se-tc-page .se-tc-resched {
+  color: var(--se-tc-muted) !important;
+  -webkit-text-fill-color: var(--se-tc-muted) !important;
+  font-weight: 500 !important;
+  font-size: 13.5px !important;
+}
+
+#se-tc-page .se-tc-resched a {
+  color: var(--se-tc-blue) !important;
+  -webkit-text-fill-color: var(--se-tc-blue) !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
 }
 
 /* Breathing room around phone/email lines (owner request 2026-08-20). */

@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "south-end-club-website",
   "version": "1.0.0",
   "description": "South End Club marketing website (standalone repo; exported from WebsiteV1)",
@@ -36,7 +36,7 @@
     "scaffold:carousel": "node scripts/scaffold/new-carousel.js",
     "resolve-project-mode": "node scripts/resolve-project-mode.js",
     "summarize": "node Programs/Pickleball/advanced-open-play/scripts/openplay-summarize.js",
-    "guard": "npm run guard:membership-pricing && npm run guard:pickleball-header && npm run guard:racquet-promo && npm run guard:stale-offer && npm run guard:rls && npm run guard:agent-rules && npm run guard:capture-markup",
+    "guard": "npm run guard:membership-pricing && npm run guard:pickleball-header && npm run guard:racquet-promo && npm run guard:stale-offer && npm run guard:rls && npm run guard:agent-rules && npm run guard:capture-markup && npm run guard:tour-confirmation",
     "guard:capture-markup": "node scripts/convert/live-capture-to-source.js \"Website/Pages\" --check",
     "guard:membership-pricing": "node scripts/audit/membership-pricing-guard.js",
     "guard:racquet-promo": "node scripts/audit/racquet-promo-guard.js",
@@ -46,7 +46,8 @@
     "guard:pickleball-header": "node scripts/audit/pickleball-header-guard.js",
     "guard:membership-pricing:prove": "node scripts/audit/testing/prove-pricing-drift.js",
     "guard:rls": "node scripts/audit/rls-guard.js",
-    "guard:stale-offer": "node scripts/audit/stale-offer-guard.js"
+    "guard:stale-offer": "node scripts/audit/stale-offer-guard.js",
+    "guard:tour-confirmation": "node scripts/audit/tour-confirmation-guard.js"
   },
   "keywords": [
     "south-end-club",

@@ -75,6 +75,8 @@
     var chipText = document.getElementById('se-tc-when-text');
     chipText.textContent = (dateLabel || '') + (dateLabel && timeParts ? ' · ' : '') + (timeParts ? timeParts.label : '');
     document.getElementById('se-tc-when-chip').style.display = 'inline-flex';
+    var resched = document.getElementById('se-tc-resched');
+    if (resched) resched.style.display = 'block';
   }
 
   /* ── Add-to-calendar (only when both date and time are known).
@@ -270,6 +272,21 @@
 </script>
 
 <script>
+/* "Need to reschedule?" → the site-wide floating Book a Tour modal
+   (WPCode 8309). Falls back to the schedule-a-tour page (the link's
+   href) if the floating button isn't on the page. A rebooking flows
+   through the redirect snippet again, landing back here with the new
+   date. */
+(function(){
+  'use strict';
+  var link = document.getElementById('se-tc-resched-link');
+  if (!link) return;
+  link.addEventListener('click', function(e){
+    var fb = document.getElementById('se-bk-floating-btn');
+    if (fb) { e.preventDefault(); fb.click(); }
+  });
+})();
+
 /* "Message Us" → the site-wide Message Us modal (WPCode 8292). Falls
    back to the phone dialer if the snippet isn't on the page. */
 (function(){
