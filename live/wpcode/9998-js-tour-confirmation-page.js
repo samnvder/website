@@ -189,6 +189,7 @@
   if (!document.getElementById('se-tc-page')) return;
 
   function initRotator(root){
+    if (root.classList.contains('se-qr-ready')) return; /* double-init guard: the footer rotator's copy shares pages with this one */
     var track = root.querySelector('.se-qr-track');
     if (!track) return;
     var slides = track.querySelectorAll('.se-qr-slide');

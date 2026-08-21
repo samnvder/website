@@ -67,6 +67,14 @@ if (read(mirror9998) !== norm(artifacts['wpcode-tour-confirmation.js'])) {
   ok('live/wpcode/9998 mirror matches generated body');
 }
 
+// 2b) live mirror of WPCode 10011 (footer reviews) matches the generated artifact
+const mirror10011 = path.join(ROOT, 'live', 'wpcode', '10011-html-footer-member-reviews.html');
+if (read(mirror10011) !== norm(artifacts['footer-reviews-element.html'])) {
+  fail('live/wpcode/10011-html-footer-member-reviews.html differs from the generated footer artifact. After a quote or component change: regenerate, re-paste snippet 10011 in WPCode, and copy the generated file over this mirror in the same session (backup law).');
+} else {
+  ok('live/wpcode/10011 mirror matches generated artifact');
+}
+
 // 3) redirect snippet mirror matches its source
 const redirectSrc = path.join(ROOT, 'patches', 'tour-confirmation-paste', 'wpcode-tour-redirect.js');
 const mirror10010 = path.join(ROOT, 'live', 'wpcode', '10010-js-tour-confirmation-redirect.js');

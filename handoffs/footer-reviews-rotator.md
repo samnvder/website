@@ -1,6 +1,19 @@
 # Handoff — Google-reviews rotator in the universal footer
 
-**Created:** 2026-08-20 · **Status:** 🟡 **OPEN** · **Owner-commissioned 2026-08-20**
+**Created:** 2026-08-20 · **Status:** ✅ **CLOSED — executed same day, owner-directed, with one flagged deviation** · **Owner-commissioned 2026-08-20**
+
+> **As-built (2026-08-20):** live on every page as WPCode snippet **10011** ("HTML -
+> Footer Member Reviews", site-wide footer) — **not** a Theme Builder symbol edit. The
+> element's own script relocates it above `.sec-footer-cta` and reveals it there; if the
+> anchor ever vanishes it stays hidden rather than dangling, and deactivating 10011
+> reverts everything. The deviation was chosen after a day of Thrive template hazards
+> (truncation, clobbering) — no symbol surgery, no capture gate needed, fully revertible.
+> Artifact is generated (`footer-reviews-element.html`: quotes from the tour page,
+> CSS/JS from the component, dark `.se-qr-footer` skin, 7s interval); the component and
+> tour page gained the double-init guard; mirrors live in [`live/wpcode/`](../live/wpcode/)
+> and `guard:tour-confirmation` pins artifact ↔ mirror. Verified live: homepage block
+> positioned above the CTA, rotator running with 20 slides/dots; `/tour-confirmation/`
+> runs both rotators, each initialized exactly once.
 
 > **Execution convention:** written to be run by a Claude Code agent in Cowork. See [CLAUDE.md § Handoffs](../CLAUDE.md).
 
