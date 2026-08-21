@@ -83,10 +83,13 @@ First numbers, same 28-day window as the baseline below:
 [gtm-container-export.json](gtm-container-export.json)): `GA4 - membership_requested` (6 params:
 type/tier/children/enrollment_fee/monthly_due/builder), `tour_widget` added to `GA4 - tour_booked`
 (`se-bk-floating` | `se-bk-inline` | `se-cal` — the page-vs-widget ambiguity is closed), and the three
-link-click tags. **Still to do in GA4:** star `membership_requested` + `phone_click` as key events after
-propagation, and register event-scoped custom definitions: `membership_type`, `membership_tier`,
-`membership_builder`, `tour_widget`, `phone_is_club` (dimensions) and `membership_enrollment_fee`,
-`membership_monthly_due` (metrics, USD). Not retroactive — events before registration read "(not set)".
+link-click tags. **Custom definitions registered same day (2026-08-21, verified in the UI):**
+event-scoped dimensions `membership_type`, `membership_tier`, `membership_builder`, `tour_widget`,
+`phone_is_club` and event-scoped **Currency** metrics `membership_enrollment_fee`,
+`membership_monthly_due`. Property is now at **22 of 50** dimension slots and **5 of 50** metric slots.
+Not retroactive — events before registration read "(not set)". **Still to do in GA4:** star
+`membership_requested` + `phone_click` as key events once propagation lists them in Admin → Events
+(~22h, same as `tour_booked`).
 
 **2026-08-18 update — `tour_booked` collects AND is now a key event.** The GTM build was published (container **version 7**) and verified end to end: the tag fires, and GA4 DebugView received the event with its parameters attached. The event then took most of the 24-hour propagation window to reach Admin → Events — it was absent on two checks earlier that day — and was **starred as a key event late on 2026-08-18**, confirmed by the toast *"tour_booked has now been enabled as a key event"* and, independently, by the **Key events** tab listing it against stream *South End Club*. See [handoffs/publish-tour-tracking-gtm.md](../handoffs/publish-tour-tracking-gtm.md).
 
