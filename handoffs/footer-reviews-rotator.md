@@ -1,8 +1,21 @@
 # Handoff — Google-reviews rotator in the universal footer
 
-**Created:** 2026-08-20 · **Status:** 🔴 **REOPENED — functionally live, visually broken by theme overrides** · **Owner-commissioned 2026-08-20**
+**Created:** 2026-08-20 · **Status:** ✅ **CLOSED — armored fix live and verified visually 2026-08-20** · **Owner-commissioned 2026-08-20**
 
-## 🔴 The fix this handoff now exists for (2026-08-20, owner screenshot)
+> **Fix as-built (2026-08-20):** the dark skin in `generate.js` was replaced with fully
+> armored rules scoped under `#se-footer-reviews` (id specificity + `!important` on every
+> declaration the theme can paint, no variable reliance) — card, `::before`/`::after`
+> `content: none`, all text colors with `-webkit-text-fill-color`, the ready-state
+> grid-stacking mechanic, geometry, arrows, dots. Snippet **10011** re-pasted via raw
+> fetch + `CodeMirror.setValue` (25,780 chars, verified equal after a fresh reload),
+> mirror synced, `npm run guard` green, cache flushed. **Verified visually this time:**
+> homepage footer at desktop (owner-confirmed screenshot: dark translucent centered card,
+> white text, gold accents, above the promo CTA) and 375px mobile (card centered 21px/21px,
+> armored computed styles winning, arrows hidden, dots visible); `/tour-confirmation/`
+> runs both rotators, 20 dots each (double-init would show 40), page rotator unarmored —
+> no bleed. Auto-rotate confirmed advancing at 7s; it pauses on hover/focus by design.
+
+## 🔴 The fix this handoff was reopened for (2026-08-20, owner screenshot)
 
 The rotator runs on every page, but **Thrive's footer-symbol styling steamrolls the
 card**: the theme styles `blockquote` as a large near-white card and pushes it
