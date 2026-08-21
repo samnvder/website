@@ -16,6 +16,7 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 | 1 | **[tour-conversion-tracking](tour-conversion-tracking.md)** | Makes tour bookings visible to GA4 and Google Ads. Part A ✅ done 2026-08-18; **Part B ✅ published 2026-08-18** (container v7). | ~1h | Part C only — no Google Ads account exists |
 | **14** | **[site-wide-event-tracking](site-wide-event-tracking.md)** | ✅ **CLOSED 2026-08-21 except Part C (Zapier forms).** `membership_requested` live in all three builders and `curl`-verified; `tour_widget` added to every `tour_booked` push (owner-requested, closes the page-vs-widget ambiguity); phone/email/directions click tags with `phone_is_club`; **container v8 published and re-exported**; 5 dimensions + 2 Currency metrics registered in GA4 (22/50 slots). PRs #41/#42 merged. **Open:** star `membership_requested` + `phone_click` once propagation lists them (~a day); Part C (Zapier → Measurement Protocol, 🛑 API-secret gate); Phase 2 items unchanged. | ~2h | Part C only — 🛑 MP secret |
 | **17** | **[widget-engagement-events](widget-engagement-events.md)** | 🟡 **TODO, written 2026-08-21.** Adds `tour_widget_engaged` (once per page view per widget, on first interaction) so abandonment inside the four booking widgets becomes measurable: `page_view` → `tour_widget_engaged` → `tour_booked`, by widget. Same 8 files and generator contract as v8's `tour_widget`; ends in container **v9** + re-export. Deliberately *not* a key event. | ~1.5h | no — two 🛑 gates (pastes, v9 publish) |
+| **18** | **[membership-signed-event](membership-signed-event.md)** | 🟡 **SCOPED 2026-08-21 from the actual Heroku source** (CLI authed, app cloned). The true purchase: builders pass the GA4 client id → Dropbox Sign metadata → a **new** webhook endpoint (none exists today — the server never learns a contract was signed) → `membership_signed` via Measurement Protocol, joined to the visitor's session. Becomes the **primary** conversion above `membership_requested`. Side-finding: the `offer:` tag is sent by the site but the server ignores it. | ~2h | no — four 🛑 gates (pastes, GA4 secret, callback registration, deploy) |
 | 2 | **[ga4-hygiene](ga4-hygiene.md)** | Clears MonsterInsights residue. **Low priority — moves no numbers.** | ~20 min | no |
 | 3 | **[backup-gtm-container](backup-gtm-container.md)** | ✅ **Done 2026-08-18.** Published v7 exported to [`analytics/gtm-container-export.json`](../analytics/gtm-container-export.json) and verified; backup law extended to cover configuration. **Re-export after every container publish** — the next one is the Ads tag (#4/#5). | — | done |
 | 4 | **[gtm-conversion-linker](gtm-conversion-linker.md)** | Adds the missing Conversion Linker so Ads can attribute clicks. **Parked on purpose** — must run *before* the Ads conversion tag, never after. | ~10 min | yes — no Google Ads account exists |
@@ -411,6 +412,25 @@ paste artifacts, full guard chain before commit, stop at both 🛑 gates
 (pastes; v9 publish), curl-verify after cache flush, re-export the
 container in the same session as the publish. Work on a branch; verify
 which branch every commit landed on afterwards.
+```
+
+### 18 · membership_signed
+
+```
+Execute handoffs/membership-signed-event.md in this repo.
+
+Read it in full first, plus CLAUDE.md and patches/tour-widget-param/ (the
+generator contract). Heroku CLI is authed as s@southendclub.com; the app
+is still-cliffs-89444 (single server.js). The handoff was scoped from the
+real source — trust its findings but re-clone and diff before patching.
+
+Rules: mirror the app into live/heroku/ before touching it (two commits:
+capture, then patch); builder patch via generator with --verify; no PII
+to GA4 ever; stop at all four 🛑 gates (WPCode pastes, GA4 API secret,
+Dropbox Sign callback registration, Heroku deploy); test with
+TEST_MODE=true and an owner-controlled email, then flip it back and void
+the test signature request. Work on a branch; verify which branch every
+commit landed on afterwards.
 ```
 
 ### 14 · Site-wide event tracking — ⚠️ retired except Part C
