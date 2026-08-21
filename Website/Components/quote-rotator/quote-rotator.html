@@ -220,6 +220,7 @@
   'use strict';
 
   function initRotator(root){
+    if (root.classList.contains('se-qr-ready')) return; /* double-init guard: two copies of this script may share a page */
     var track = root.querySelector('.se-qr-track');
     if (!track) return;
     var slides = track.querySelectorAll('.se-qr-slide');
