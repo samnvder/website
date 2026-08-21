@@ -537,6 +537,19 @@
   opacity: 0.75;
 }
 
+/* Reviewer name links out to the review on Google. */
+.se-qr-name-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(11, 70, 140, 0.45);
+  transition: border-color 0.2s ease;
+}
+
+.se-qr-name-link:hover {
+  border-bottom: 1px solid var(--se-qr-accent);
+  color: var(--se-qr-accent);
+}
+
 .se-qr-dots {
   display: none;
   justify-content: center;
@@ -833,9 +846,14 @@
   -webkit-text-fill-color: var(--se-qr-star) !important;
 }
 
-#se-tc-page .se-qr-slide footer {
+#se-tc-page .se-qr-slide footer,
+#se-tc-page .se-qr-slide footer .se-qr-name-link {
   color: var(--se-qr-name) !important;
   -webkit-text-fill-color: var(--se-qr-name) !important;
+}
+
+#se-tc-page .se-qr-slide footer .se-qr-name-link {
+  text-decoration: none !important;
 }
 
 #se-tc-page .se-qr-slide footer span {

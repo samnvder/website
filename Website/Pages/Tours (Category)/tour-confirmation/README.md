@@ -1,9 +1,26 @@
-# Tour Confirmation — phase-1 DRAFT, not live
+# Tour Confirmation — LIVE at /tour-confirmation/ (published 2026-08-20)
 
-**Status: 🟡 draft.** Built 2026-08-20 per
+**Status: 🟢 live** on WordPress page (post **9993**), noindexed via Yoast. Built per
 [handoffs/build-tour-confirmation-page.md](../../../../handoffs/build-tour-confirmation-page.md).
-Nothing here is published; no WordPress page exists for it yet; the booking widgets do not
-redirect to it. Publishing is **phase 2** and every step of it is 🛑 owner-gated.
+The booking widgets do **not** redirect to it yet — that is the remaining phase-2 step.
+
+## ⚠️ How the live page is assembled (unusual — read before editing live)
+
+| Piece | Lives where on live |
+|---|---|
+| Markup (everything before the first `<script>` in the HTML file) | **Gutenberg `core/html` block** in post 9993's content |
+| CSS (the whole CSS file) | second `core/html` block, wrapped in `<style>` |
+| JS (the three `<script>` blocks) | **WPCode snippet 9998**, site-wide footer, guarded on `#se-tc-page` — mirrored at [`live/wpcode/9998-js-tour-confirmation-page.js`](../../../../live/wpcode/9998-js-tour-confirmation-page.js) |
+
+Why not one Thrive element like other pages: Thrive Custom HTML elements silently
+**truncate at ~32KB**, and WordPress post content **entity-encodes stray `&` on output**
+(`&&` → `&#038;&#038;`), so inline JS in post content is a syntax error waiting to happen.
+Both were hit live on 2026-08-20. The Thrive template canvas for the page holds only the
+pass-through WordPress Content element — **do not add elements to it in Architect**; a
+Thrive "Save Work" overwrites the post content (this also happened, recovered same day).
+
+Editing flow now: edit the files here → markup/CSS re-paste into the two Gutenberg blocks
+(code-editor view), JS changes regenerate WPCode 9998 (keep the `#se-tc-page` guards).
 
 ## What this is
 
