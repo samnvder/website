@@ -1,6 +1,18 @@
 # Handoff — build the personalized tour-confirmation page (draft first)
 
-**Created:** 2026-08-20 · **Status:** 🟡 **OPEN — phase 1 done 2026-08-20, phase 2 pending** · **Owner-commissioned 2026-08-20**
+**Created:** 2026-08-20 · **Status:** ✅ **CLOSED — phases 1 AND 2 live 2026-08-20** · **Owner-commissioned 2026-08-20**
+
+> **Phase 2 shipped the same day, by a different mechanism than planned.** The widgets were
+> never edited: WPCode snippet **10010** (mirrored in [`live/wpcode/`](../live/wpcode/))
+> wraps `window.fetch` site-wide and reacts to a successful `book-tour` call from either
+> widget on any page — sessionStorage handoff, 1.2s grace for the GA4 push, redirect.
+> Verified end-to-end on production. The page itself lives at `/tour-confirmation/`
+> (post 9993, noindexed): markup+CSS in a Thrive element (mirrored at
+> [`live/thrive/pages/tour-confirmation/`](../live/thrive/pages/tour-confirmation/)),
+> page JS in WPCode **9998**. Platform hazards discovered en route are recorded in
+> [the page README](../Website/Pages/Tours%20(Category)/tour-confirmation/README.md).
+> Remaining optional polish (owner-sourced): per-review share links, review photos.
+> GA4/Ads (#14/#6): the conversion URL is live — destination tracking is now trivial.
 **Phase 1 is repo-only:** a complete draft page, no live changes, no gates. Publishing is phase 2, later.
 
 > **Phase 1 landed 2026-08-20** — draft at `Website/Pages/Tours (Category)/tour-confirmation/`,
