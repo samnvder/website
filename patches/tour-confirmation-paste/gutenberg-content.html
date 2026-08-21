@@ -1,4 +1,5 @@
-﻿<!-- ═══════════════════════════════════════════════════════════════════
+<!-- wp:html -->
+<!-- ═══════════════════════════════════════════════════════════════════
      TOUR CONFIRMATION PAGE — phase-1 DRAFT, not live
      See README.md in this directory before publishing anything.
 
@@ -288,288 +289,905 @@
   </section>
 
 </div>
+<!-- /wp:html -->
 
-<script>
-/* Tour-confirmation personalization.
-   Reads sessionStorage key "seTourBooking":
-     { "firstName": "John",
-       "tourDate": "2026-08-22",          // YYYY-MM-DD
-       "tourTime": "10:00 AM",            // h:mm AM/PM
-       "interests": ["Tennis", "Swimming"] }
-   Written by the booking widgets at confirm time (phase 2). Every field
-   is optional; anything missing or malformed leaves the generic page
-   as-is. All injection is via textContent — never innerHTML. */
-(function(){
-  'use strict';
+<!-- wp:html -->
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   TOUR CONFIRMATION PAGE — CSS
+   Draft (phase 1) — not live. See README.md in this directory.
+   Palette/typography mirror the memberships page (the closest relative):
+   cream #f8f2e1, brand blue #0b468c, teal #204147, Montserrat.
+   Everything is scoped under .se-tc-page so nothing leaks into the
+   surrounding Thrive template when pasted.
+   ═══════════════════════════════════════════════════════════════════ */
 
-  var data = null;
-  try { data = JSON.parse(sessionStorage.getItem('seTourBooking') || 'null'); } catch (e) { data = null; }
-  if (!data || typeof data !== 'object') return;
+.se-tc-page {
+  --se-tc-bg: #f8f2e1;
+  --se-tc-white: #ffffff;
+  --se-tc-blue: #0b468c;
+  --se-tc-blue-bright: #1a6dd4;
+  --se-tc-blue-dim: rgba(11, 70, 140, 0.6);
+  --se-tc-teal: #204147;
+  --se-tc-text: #204147;
+  --se-tc-text-soft: #2e5158;
+  --se-tc-muted: #4c6577;
+  --se-tc-green: #16a34a;
+  --se-tc-gold: #b8860b;
+  --se-tc-gold-glow: rgba(184, 134, 11, 0.25);
+  --se-tc-silver: #6b7280;
+  --se-tc-bronze: #a85d20;
+  --se-tc-radius-sm: 12px;
+  --se-tc-radius-md: 20px;
+  --se-tc-shadow-soft: 0 4px 30px rgba(11, 70, 140, 0.08);
+  --se-tc-shadow-strong: 0 20px 60px rgba(11, 70, 140, 0.15);
+  --se-tc-ease: cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* ── First name ── */
-  var firstName = null;
-  if (typeof data.firstName === 'string') {
-    var fn = data.firstName.trim();
-    if (/^[A-Za-zÀ-ɏ' -]{1,30}$/.test(fn)) firstName = fn;
-  }
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--se-tc-bg);
+  color: var(--se-tc-text);
+  padding: 40px 20px 60px;
+}
 
-  /* ── Date / time ── */
-  var dateObj = null;
-  if (typeof data.tourDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(data.tourDate)) {
-    var dp = data.tourDate.split('-');
-    var cand = new Date(+dp[0], +dp[1] - 1, +dp[2]);
-    if (!isNaN(cand.getTime())) dateObj = cand;
-  }
-  var timeParts = null;
-  if (typeof data.tourTime === 'string') {
-    var tm = data.tourTime.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
-    if (tm) {
-      var hh = +tm[1] % 12;
-      if (/pm/i.test(tm[3])) hh += 12;
-      if (+tm[1] >= 1 && +tm[1] <= 12 && +tm[2] <= 59) timeParts = { h: hh, m: +tm[2], label: tm[1] + ':' + tm[2] + ' ' + tm[3].toUpperCase() };
-    }
-  }
+.se-tc-page * { box-sizing: border-box; }
 
-  var DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  var dayLabel = dateObj ? DAYS[dateObj.getDay()] : null;
-  var dateLabel = dateObj ? DAYS[dateObj.getDay()] + ', ' + MONTHS[dateObj.getMonth()] + ' ' + dateObj.getDate() : null;
+.se-tc-section {
+  max-width: 1100px;
+  margin: 0 auto 36px;
+  background: var(--se-tc-white);
+  border: 2px solid var(--se-tc-blue);
+  border-radius: var(--se-tc-radius-md);
+  box-shadow: var(--se-tc-shadow-strong);
+  padding: 44px 36px;
+  position: relative;
+  overflow: hidden;
+}
 
-  /* ── Hero ── */
-  if (firstName) {
-    var title = document.getElementById('se-tc-hero-title');
-    title.textContent = '';
-    title.appendChild(document.createTextNode("You're all set, "));
-    var nameSpan = document.createElement('span');
-    nameSpan.textContent = firstName;
-    title.appendChild(nameSpan);
-    title.appendChild(document.createTextNode('!'));
-  }
-  /* Sentence-per-line helper: each sentence becomes an unbreakable
-     block so lines break between sentences, never as runoffs. */
-  function setSentences(el, sentences){
-    el.textContent = '';
-    for (var s = 0; s < sentences.length; s++) {
-      if (s > 0) el.appendChild(document.createTextNode(' '));
-      var sp = document.createElement('span');
-      sp.className = 'se-tc-sent';
-      sp.textContent = sentences[s];
-      el.appendChild(sp);
-    }
-  }
+.se-tc-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--se-tc-blue), var(--se-tc-teal), var(--se-tc-blue));
+}
 
-  if (dateLabel || timeParts) {
-    var sub = document.getElementById('se-tc-hero-sub');
-    var when = dateLabel ? ('See you ' + dateLabel + (timeParts ? ' at ' + timeParts.label : '')) : ('See you at ' + timeParts.label);
-    setSentences(sub, [when + '.', 'A confirmation email is on its way.']);
-    var chipText = document.getElementById('se-tc-when-text');
-    chipText.textContent = (dateLabel || '') + (dateLabel && timeParts ? ' · ' : '') + (timeParts ? timeParts.label : '');
-    document.getElementById('se-tc-when-chip').style.display = 'inline-flex';
-  }
+.se-tc-section h2 {
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin: 0 0 10px;
+  text-align: center;
+  color: var(--se-tc-text);
+}
 
-  /* ── Add-to-calendar (only when both date and time are known).
-       Links carry the tour slot and club address only — never a name
-       or any other personal data. ── */
-  if (dateObj && timeParts) {
-    var pad = function(n){ return (n < 10 ? '0' : '') + n; };
-    var stampLocal = function(d, h, m){
-      return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + 'T' + pad(h) + pad(m) + '00';
-    };
-    var endM = timeParts.m + 30;
-    var endH = timeParts.h + Math.floor(endM / 60);
-    endM = endM % 60;
-    var start = stampLocal(dateObj, timeParts.h, timeParts.m);
-    var end = stampLocal(dateObj, endH, endM);
-    var evTitle = 'Tour — South End Racquet & Health Club';
-    var evLoc = '2800 Skypark Dr, Torrance, CA 90505';
-    var evDesc = 'Your club tour — check in at the front desk. Questions? (310) 530-0630';
+.se-tc-section h2 span { color: var(--se-tc-blue); }
 
-    var gcal = 'https://calendar.google.com/calendar/render?action=TEMPLATE'
-      + '&text=' + encodeURIComponent(evTitle)
-      + '&dates=' + start + '/' + end
-      + '&location=' + encodeURIComponent(evLoc)
-      + '&details=' + encodeURIComponent(evDesc);
-    document.getElementById('se-tc-cal-google').setAttribute('href', gcal);
+.se-tc-section h2::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--se-tc-blue), var(--se-tc-blue-bright));
+  margin: 14px auto 0;
+}
 
-    var ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//South End Club//Tour//EN\r\nBEGIN:VEVENT\r\n'
-      + 'UID:se-tour-' + start + '@southendclub.com\r\n'
-      + 'DTSTART:' + start + '\r\nDTEND:' + end + '\r\n'
-      + 'SUMMARY:' + evTitle + '\r\n'
-      + 'LOCATION:' + evLoc.replace(/,/g, '\\,') + '\r\n'
-      + 'DESCRIPTION:' + evDesc.replace(/,/g, '\\,') + '\r\n'
-      + 'END:VEVENT\r\nEND:VCALENDAR\r\n';
-    document.getElementById('se-tc-cal-ics').setAttribute('href', 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics));
-    document.getElementById('se-tc-cal-row').style.display = 'flex';
-  }
+/* Sentence-per-line: each sentence is an unbreakable block, so lines
+   break between sentences when there's room — never runoffs. Balance
+   evens out whatever must still wrap. */
+.se-tc-sent { display: inline-block; }
 
-  /* ── Interests ── */
-  var interests = [];
-  if (Array.isArray(data.interests)) {
-    for (var i = 0; i < data.interests.length && interests.length < 12; i++) {
-      if (typeof data.interests[i] === 'string' && data.interests[i].trim()) interests.push(data.interests[i].trim().slice(0, 40));
-    }
-  }
-  if (interests.length) {
-    var note = document.getElementById('se-tc-interest-note');
-    note.textContent = "You told us you're interested in " + interests.join(', ') + " — we'll make sure your tour covers it.";
-    note.style.display = 'block';
+.se-tc-hero h1,
+.se-tc-section h2,
+.se-tc-lead,
+.se-tc-hero-sub,
+.se-tc-tier-desc,
+.se-tc-beat p,
+.se-qr-slide p {
+  text-wrap: balance;
+}
 
-    /* Tier match: tennis needs Tier 1; other racquet sports Tier 2;
-       gym/pool/classes are covered by Tier 3. Highest need wins. */
-    var joined = interests.join('|').toLowerCase();
-    var tierEl = null;
-    if (/tennis/.test(joined)) {
-      tierEl = document.getElementById('se-tc-tier-pinnacle');
-    } else if (/(pickleball|padel|squash|racquetball)/.test(joined)) {
-      tierEl = document.getElementById('se-tc-tier-elite');
-    } else if (/(weight|resistance|swimming|cardio|group exercise|basketball)/.test(joined)) {
-      tierEl = document.getElementById('se-tc-tier-vitality');
-    }
-    if (tierEl) tierEl.classList.add('se-tc-recommended');
+.se-tc-lead {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--se-tc-text-soft);
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 30px;
+}
 
-    /* Float interest-matched quotes to the front of the rotation.
-       Runs before the rotator script below, which starts from DOM order. */
-    var qTrack = document.querySelector('#se-tc-quotes .se-qr-track');
-    if (qTrack) {
-      var qSlides = Array.prototype.slice.call(qTrack.querySelectorAll('.se-qr-slide'));
-      var matched = [];
-      var rest = [];
-      for (var q = 0; q < qSlides.length; q++) {
-        var tags = (qSlides[q].getAttribute('data-interests') || '').toLowerCase().split(',');
-        var hit = false;
-        for (var t = 0; t < tags.length; t++) {
-          var tag = tags[t].trim();
-          if (tag && joined.indexOf(tag) !== -1) { hit = true; break; }
-        }
-        (hit ? matched : rest).push(qSlides[q]);
-      }
-      if (matched.length) {
-        var ordered = matched.concat(rest);
-        for (var o = 0; o < ordered.length; o++) qTrack.appendChild(ordered[o]);
-      }
-    }
-  }
+/* ── 1 · Confirmation hero ─────────────────────────────────────────── */
 
-  /* ── Pricing lead: fold the tour day in ── */
-  if (dayLabel) {
-    setSentences(document.getElementById('se-tc-pricing-lead'), [
-      'Most people leave their tour ready to join.',
-      "Here's what your options look like — so " + dayLabel + ' you can just say yes.'
-    ]);
-  }
-})();
-</script>
+.se-tc-hero { text-align: center; }
 
-<!-- Scripts are deliberately split into separate blocks: a truncated or
-     failing block then only loses its own feature instead of aborting
-     everything (a truncated paste killed the whole page's JS on
-     2026-08-20). Keep them separate. -->
-<script>
-/* SE quote rotator — copy of Website/Components/quote-rotator/ (improve
-   it there first, then re-copy here). Initializes every .se-qr on the
-   page; runs after the personalization script so interest-reordered
-   DOM order is what it starts from. */
-(function(){
-  'use strict';
+.se-tc-hero-check {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: rgba(22, 163, 74, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  function initRotator(root){
-    var track = root.querySelector('.se-qr-track');
-    if (!track) return;
-    var slides = track.querySelectorAll('.se-qr-slide');
-    if (slides.length < 2) return;
+.se-tc-hero-check svg { width: 38px; height: 38px; }
 
-    var dotsWrap = root.querySelector('.se-qr-dots');
-    var interval = parseInt(root.getAttribute('data-interval') || '6500', 10);
-    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var current = 0;
-    var timer = null;
-    var dots = [];
+.se-tc-hero h1 {
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin: 0 0 12px;
+  color: var(--se-tc-text);
+}
 
-    function show(idx){
-      current = (idx + slides.length) % slides.length;
-      for (var i = 0; i < slides.length; i++) {
-        slides[i].classList.toggle('se-qr-active', i === current);
-      }
-      for (var j = 0; j < dots.length; j++) {
-        dots[j].classList.toggle('se-qr-dot-active', j === current);
-        dots[j].setAttribute('aria-selected', j === current ? 'true' : 'false');
-      }
-    }
+.se-tc-hero h1 span { color: var(--se-tc-blue); }
 
-    function stop(){ if (timer) { clearInterval(timer); timer = null; } }
-    function play(){
-      stop();
-      if (interval > 0 && !reduced) {
-        timer = setInterval(function(){ show(current + 1); }, interval);
-      }
-    }
-    function jump(idx){ show(idx); play(); }
+.se-tc-hero-sub {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--se-tc-text-soft);
+  max-width: 620px;
+  margin: 0 auto 22px;
+}
 
-    if (dotsWrap) {
-      for (var d = 0; d < slides.length; d++) {
-        var dot = document.createElement('button');
-        dot.type = 'button';
-        dot.className = 'se-qr-dot';
-        dot.setAttribute('role', 'tab');
-        dot.setAttribute('aria-label', 'Quote ' + (d + 1));
-        (function(n, el){ el.addEventListener('click', function(){ jump(n); }); })(d, dot);
-        dotsWrap.appendChild(dot);
-        dots.push(dot);
-      }
-    }
+.se-tc-when-chip {
+  display: none;
+  margin: 0 auto 22px;
+  padding: 10px 22px;
+  border-radius: 100px;
+  background: #f0f4ff;
+  color: var(--se-tc-blue);
+  font-weight: 700;
+  font-size: 16px;
+  width: fit-content;
+  align-items: center;
+  gap: 8px;
+}
 
-    var prev = root.querySelector('.se-qr-prev');
-    var next = root.querySelector('.se-qr-next');
-    if (prev) prev.addEventListener('click', function(){ jump(current - 1); });
-    if (next) next.addEventListener('click', function(){ jump(current + 1); });
+.se-tc-cal-row {
+  display: none;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 26px;
+}
 
-    root.addEventListener('mouseenter', stop);
-    root.addEventListener('mouseleave', play);
-    root.addEventListener('focusin', stop);
-    root.addEventListener('focusout', play);
+.se-tc-cal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s var(--se-tc-ease), box-shadow 0.15s var(--se-tc-ease);
+  background: linear-gradient(135deg, var(--se-tc-blue), var(--se-tc-blue-bright));
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(11, 70, 140, 0.25);
+}
 
-    root.setAttribute('tabindex', '0');
-    root.addEventListener('keydown', function(e){
-      if (e.key === 'ArrowLeft') { jump(current - 1); }
-      else if (e.key === 'ArrowRight') { jump(current + 1); }
-    });
+.se-tc-cal-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(11, 70, 140, 0.35);
+  color: #ffffff;
+}
 
-    var touchX = null;
-    root.addEventListener('touchstart', function(e){
-      if (e.touches && e.touches.length === 1) touchX = e.touches[0].clientX;
-      stop();
-    }, { passive: true });
-    root.addEventListener('touchend', function(e){
-      if (touchX !== null && e.changedTouches && e.changedTouches.length === 1) {
-        var dx = e.changedTouches[0].clientX - touchX;
-        if (dx > 40) { show(current - 1); }
-        else if (dx < -40) { show(current + 1); }
-      }
-      touchX = null;
-      play();
-    }, { passive: true });
+.se-tc-cal-btn.se-tc-cal-alt {
+  background: var(--se-tc-white);
+  color: var(--se-tc-blue);
+  border: 2px solid var(--se-tc-blue);
+  box-shadow: none;
+}
 
-    root.classList.add('se-qr-ready');
-    show(0);
-    play();
-  }
+.se-tc-visit-facts {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  padding-top: 22px;
+  border-top: 1px solid rgba(11, 70, 140, 0.12);
+}
 
-  var roots = document.querySelectorAll('.se-qr');
-  for (var r = 0; r < roots.length; r++) initRotator(roots[r]);
-})();
-</script>
+.se-tc-visit-fact {
+  font-size: 14px;
+  color: var(--se-tc-text-soft);
+  line-height: 1.6;
+  max-width: 260px;
+}
 
-<script>
-/* "Message Us" → the site-wide Message Us modal (WPCode 8292). Falls
-   back to the phone dialer if the snippet isn't on the page. */
-(function(){
-  'use strict';
-  var btn = document.getElementById('se-tc-question-btn');
-  if (!btn) return;
-  btn.addEventListener('click', function(){
-    var crm = document.getElementById('se-crm-btn');
-    if (crm) { crm.click(); }
-    else { window.location.href = 'tel:+13105300630'; }
-  });
-})();
-</script>
+.se-tc-visit-fact strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--se-tc-blue);
+  margin-bottom: 4px;
+}
+
+.se-tc-visit-fact a {
+  color: var(--se-tc-teal);
+  text-decoration: underline;
+  text-decoration-color: rgba(11, 70, 140, 0.35);
+}
+
+.se-tc-visit-fact a:hover { color: var(--se-tc-blue); }
+
+/* ── 2 · What your tour looks like ─────────────────────────────────── */
+
+.se-tc-beats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.se-tc-beat {
+  background: #fafbfc;
+  border: 2px solid rgba(11, 70, 140, 0.12);
+  border-radius: var(--se-tc-radius-sm);
+  padding: 22px;
+}
+
+.se-tc-beat-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--se-tc-blue);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+.se-tc-beat h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: var(--se-tc-text);
+}
+
+.se-tc-beat p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--se-tc-text-soft);
+  margin: 0;
+}
+
+.se-tc-interest-note {
+  display: none;
+  margin: 24px auto 0;
+  padding: 14px 22px;
+  border-radius: var(--se-tc-radius-sm);
+  background: #f0f4ff;
+  color: var(--se-tc-blue);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  max-width: 720px;
+  text-align: center;
+}
+
+/* ── 3 · Membership preview ────────────────────────────────────────── */
+
+.se-tc-tiers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+.se-tc-tier {
+  background: var(--se-tc-white);
+  border: 2px solid rgba(11, 70, 140, 0.12);
+  border-radius: var(--se-tc-radius-sm);
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.4s var(--se-tc-ease);
+  box-shadow: var(--se-tc-shadow-soft);
+  position: relative;
+}
+
+.se-tc-tier:hover { transform: translateY(-6px); box-shadow: var(--se-tc-shadow-strong); }
+
+.se-tc-tier.se-tc-recommended {
+  border-color: var(--se-tc-gold);
+  box-shadow: var(--se-tc-shadow-strong), 0 0 30px var(--se-tc-gold-glow);
+}
+
+.se-tc-match-badge {
+  display: none;
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 16px;
+  border-radius: 100px;
+  background: var(--se-tc-gold);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.se-tc-tier.se-tc-recommended .se-tc-match-badge { display: inline-block; }
+
+.se-tc-tier h3 {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.se-tc-tier h3 .se-tc-tier-sub {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  font-style: italic;
+  margin-top: 5px;
+  color: var(--se-tc-text-soft);
+}
+
+.se-tc-tier.se-tc-tier-1 h3 { color: var(--se-tc-gold); }
+.se-tc-tier.se-tc-tier-2 h3 { color: var(--se-tc-silver); }
+.se-tc-tier.se-tc-tier-3 h3 { color: var(--se-tc-bronze); }
+
+.se-tc-tier-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--se-tc-text-soft);
+  margin: 12px 0 16px;
+}
+
+.se-tc-dues {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 16px 18px;
+  background: var(--se-tc-blue);
+  border-radius: var(--se-tc-radius-sm);
+}
+
+.se-tc-dues li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.se-tc-dues li:last-child { border-bottom: none; }
+
+.se-tc-dues li strong { color: #ffffff; font-weight: 700; }
+
+.se-tc-enroll-note {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--se-tc-muted);
+  margin: 0 0 16px;
+  text-align: center;
+}
+
+.se-tc-enroll-label {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--se-tc-blue-dim);
+  margin-bottom: 4px;
+}
+
+.se-tc-tier-cta {
+  display: block;
+  margin-top: auto;
+  padding: 13px 20px;
+  border-radius: 100px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  background: linear-gradient(135deg, var(--se-tc-blue), var(--se-tc-blue-bright));
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(11, 70, 140, 0.25);
+  transition: transform 0.15s var(--se-tc-ease), box-shadow 0.15s var(--se-tc-ease);
+}
+
+.se-tc-tier-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(11, 70, 140, 0.35);
+  color: #ffffff;
+}
+
+.se-tc-fine {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 18px 24px;
+  background: #f7f9fd;
+  border: 1px solid rgba(11, 70, 140, 0.12);
+  border-radius: var(--se-tc-radius-sm);
+  text-align: center;
+}
+
+.se-tc-fine p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--se-tc-muted);
+  margin: 4px 0;
+}
+
+.se-tc-fine p strong { color: var(--se-tc-blue); font-weight: 700; }
+
+.se-tc-fine-stamp {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.75;
+  margin-top: 10px !important;
+}
+
+/* ── 4 · Member quotes — SE quote rotator ──────────────────────────────
+   Copy of Website/Components/quote-rotator/quote-rotator.html styles.
+   Improve the component there first, then re-copy here. */
+
+.se-qr {
+  --se-qr-accent: #0b468c;
+  --se-qr-text: #3d5a5e;
+  --se-qr-name: #0b468c;
+  --se-qr-star: #f6b01e;
+  --se-qr-bg: #fafbfc;
+  --se-qr-border: rgba(11, 70, 140, 0.12);
+  position: relative;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.se-qr-track { position: relative; }
+
+/* Once the script runs, slides stack in one grid cell (the track sizes
+   itself to the tallest slide — no JS measuring) and crossfade; before
+   it runs (or with scripting off) they simply flow in a column —
+   nothing is hidden. */
+.se-qr.se-qr-ready .se-qr-track { display: grid; }
+
+.se-qr-slide {
+  margin: 0;
+  padding: 28px 30px 22px;
+  background: var(--se-qr-bg);
+  border: 2px solid var(--se-qr-border);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.se-qr.se-qr-ready .se-qr-slide {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s ease, transform 0.6s ease, visibility 0.6s;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.se-qr.se-qr-ready .se-qr-slide.se-qr-active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .se-qr.se-qr-ready .se-qr-slide { transition: none; transform: none; }
+}
+
+/* Optional photo slot: an <img class="se-qr-photo"> as the slide's first
+   child — for photos ATTACHED TO THAT REVIEW, re-hosted on our own
+   infrastructure. Never hotlink lh3.googleusercontent.com. */
+.se-qr-photo {
+  display: block;
+  width: 100%;
+  max-height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 0 0 14px;
+}
+
+.se-qr-stars {
+  color: var(--se-qr-star);
+  letter-spacing: 3px;
+  font-size: 15px;
+  margin: 0 0 12px;
+}
+
+.se-qr-slide p {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--se-qr-text);
+  font-style: italic;
+  margin: 0 0 16px;
+}
+
+.se-qr-slide footer {
+  font-size: 13px;
+  font-weight: 700;
+  font-style: normal;
+  color: var(--se-qr-name);
+}
+
+.se-qr-slide footer span {
+  display: block;
+  margin-top: 3px;
+  font-weight: 500;
+  font-size: 11.5px;
+  color: var(--se-qr-text);
+  opacity: 0.75;
+}
+
+/* Reviewer name links out to the review on Google. */
+.se-qr-name-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(11, 70, 140, 0.45);
+  transition: border-color 0.2s ease;
+}
+
+.se-qr-name-link:hover {
+  border-bottom: 1px solid var(--se-qr-accent);
+  color: var(--se-qr-accent);
+}
+
+.se-qr-dots {
+  display: none;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.se-qr.se-qr-ready .se-qr-dots { display: flex; }
+
+.se-qr-dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--se-qr-border);
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.se-qr-dot.se-qr-dot-active {
+  background: var(--se-qr-accent);
+  transform: scale(1.25);
+}
+
+.se-qr-arrow {
+  display: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--se-qr-border);
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--se-qr-accent);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  z-index: 2;
+}
+
+.se-qr.se-qr-ready .se-qr-arrow { display: inline-flex; }
+.se-qr-arrow:hover { border-color: var(--se-qr-accent); box-shadow: 0 4px 14px rgba(11, 70, 140, 0.18); }
+.se-qr-arrow.se-qr-prev { left: -52px; }
+.se-qr-arrow.se-qr-next { right: -52px; }
+
+@media (max-width: 900px) {
+  .se-qr-arrow { display: none !important; }
+}
+
+/* ── 5 · Soft close / future AI-agent slot ─────────────────────────── */
+
+.se-tc-close { text-align: center; }
+
+.se-tc-question-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 34px;
+  border: none;
+  border-radius: 100px;
+  background: linear-gradient(135deg, var(--se-tc-blue), var(--se-tc-blue-bright));
+  color: #ffffff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(11, 70, 140, 0.25);
+  transition: transform 0.15s var(--se-tc-ease), box-shadow 0.15s var(--se-tc-ease);
+}
+
+.se-tc-question-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(11, 70, 140, 0.35);
+}
+
+.se-tc-close-alt {
+  margin-top: 16px;
+  font-size: 13.5px;
+  color: var(--se-tc-muted);
+}
+
+.se-tc-close-alt a { color: var(--se-tc-blue); font-weight: 600; text-decoration: none; }
+.se-tc-close-alt a:hover { text-decoration: underline; }
+
+/* ── Responsive ────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .se-tc-page { padding: 24px 12px 40px; }
+  .se-tc-section { padding: 32px 20px; margin-bottom: 24px; }
+  .se-tc-visit-facts { flex-direction: column; gap: 16px; align-items: center; text-align: center; }
+  .se-tc-tiers { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .se-tc-section { padding: 26px 16px; border-radius: var(--se-tc-radius-sm); }
+  .se-tc-cal-row { flex-direction: column; align-items: stretch; }
+  .se-tc-cal-btn { justify-content: center; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   THRIVE ARMOR — keep this block LAST in the file.
+   Inside Thrive the page renders under #tve_editor, whose id-based
+   theme rules (#tve_editor p, #tve_editor li, #tve_editor h3, …)
+   out-rank every class selector above. This block re-asserts the
+   color/typography-critical declarations with !important, plus
+   -webkit-text-fill-color for text on colored backgrounds — the same
+   idiom the memberships page uses for the same reason. Layout rules
+   stay un-armored above; only what Thrive is known to swallow lives
+   here.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Every selector is prefixed with #se-tc-page (the page-root id) so it
+   out-ranks Thrive's own !important id rules — (1,1,0)+ beats (1,0,1). */
+
+/* Clearance for the site's sticky header, which otherwise overlaps the
+   hero (seen in Thrive 2026-08-20). Adjust this one number if the
+   header height changes. */
+#se-tc-page {
+  padding-top: 96px !important;
+}
+
+#se-tc-page,
+#se-tc-page p,
+#se-tc-page li,
+#se-tc-page h1,
+#se-tc-page h2,
+#se-tc-page h3,
+#se-tc-page blockquote,
+#se-tc-page footer {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+#se-tc-page .se-tc-hero h1,
+#se-tc-page .se-tc-section h2 {
+  color: var(--se-tc-text) !important;
+  -webkit-text-fill-color: var(--se-tc-text) !important;
+}
+
+#se-tc-page .se-tc-hero h1 span,
+#se-tc-page .se-tc-section h2 span {
+  color: var(--se-tc-blue) !important;
+  -webkit-text-fill-color: var(--se-tc-blue) !important;
+}
+
+#se-tc-page .se-tc-lead,
+#se-tc-page .se-tc-hero-sub,
+#se-tc-page .se-tc-tier-desc,
+#se-tc-page .se-tc-beat p {
+  color: var(--se-tc-text-soft) !important;
+  -webkit-text-fill-color: var(--se-tc-text-soft) !important;
+  font-weight: 500 !important;
+}
+
+#se-tc-page .se-tc-tier-desc { font-size: 14.5px !important; }
+
+#se-tc-page .se-tc-beat h3 {
+  color: var(--se-tc-text) !important;
+  -webkit-text-fill-color: var(--se-tc-text) !important;
+}
+
+#se-tc-page .se-tc-beat-num,
+#se-tc-page .se-tc-match-badge,
+#se-tc-page .se-tc-cal-btn,
+#se-tc-page .se-tc-cal-btn:hover,
+#se-tc-page .se-tc-tier-cta,
+#se-tc-page .se-tc-tier-cta:hover,
+#se-tc-page .se-tc-question-btn,
+#se-tc-page .se-tc-question-btn:hover {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#se-tc-page .se-tc-cal-btn.se-tc-cal-alt,
+#se-tc-page .se-tc-cal-btn.se-tc-cal-alt:hover {
+  color: var(--se-tc-blue) !important;
+  -webkit-text-fill-color: var(--se-tc-blue) !important;
+}
+
+#se-tc-page .se-tc-when-chip,
+#se-tc-page .se-tc-visit-fact strong,
+#se-tc-page .se-tc-interest-note,
+#se-tc-page .se-tc-close-alt a {
+  color: var(--se-tc-blue) !important;
+  -webkit-text-fill-color: var(--se-tc-blue) !important;
+}
+
+#se-tc-page .se-tc-visit-fact,
+#se-tc-page .se-tc-visit-fact a {
+  color: var(--se-tc-text-soft) !important;
+  -webkit-text-fill-color: var(--se-tc-text-soft) !important;
+}
+
+/* Breathing room around phone/email lines (owner request 2026-08-20). */
+#se-tc-page .se-tc-visit-fact a {
+  display: inline-block !important;
+  padding: 3px 0 !important;
+  line-height: 1.5 !important;
+}
+
+/* Secondary text: medium weight so it reads rich, not thin
+   (owner request 2026-08-20). */
+#se-tc-page .se-tc-visit-fact,
+#se-tc-page .se-tc-visit-fact a,
+#se-tc-page .se-tc-when-chip,
+#se-tc-page .se-tc-close-alt,
+#se-tc-page .se-qr-slide p,
+#se-tc-page .se-qr-slide footer span {
+  font-weight: 500 !important;
+}
+
+#se-tc-page .se-tc-close-alt {
+  margin-top: 22px !important;
+}
+
+#se-tc-page .se-tc-close-alt a {
+  display: inline-block !important;
+  padding: 0 3px !important;
+}
+
+#se-tc-page .se-tc-tier.se-tc-tier-1 h3 { color: var(--se-tc-gold) !important; -webkit-text-fill-color: var(--se-tc-gold) !important; }
+#se-tc-page .se-tc-tier.se-tc-tier-2 h3 { color: var(--se-tc-silver) !important; -webkit-text-fill-color: var(--se-tc-silver) !important; }
+#se-tc-page .se-tc-tier.se-tc-tier-3 h3 { color: var(--se-tc-bronze) !important; -webkit-text-fill-color: var(--se-tc-bronze) !important; }
+
+#se-tc-page .se-tc-tier h3 .se-tc-tier-sub {
+  color: var(--se-tc-text-soft) !important;
+  -webkit-text-fill-color: var(--se-tc-text-soft) !important;
+}
+
+#se-tc-page .se-tc-dues {
+  list-style: none !important;
+  margin: 0 0 16px !important;
+  padding: 16px 18px !important;
+}
+
+#se-tc-page .se-tc-dues li {
+  list-style: none !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.9) !important;
+  margin: 0 !important;
+}
+
+#se-tc-page .se-tc-dues li span,
+#se-tc-page .se-tc-dues li strong {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+#se-tc-page .se-tc-dues li strong {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#se-tc-page .se-tc-enroll-note,
+#se-tc-page .se-tc-fine p {
+  color: var(--se-tc-muted) !important;
+  -webkit-text-fill-color: var(--se-tc-muted) !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+}
+
+#se-tc-page .se-tc-enroll-label {
+  color: var(--se-tc-blue-dim) !important;
+  -webkit-text-fill-color: var(--se-tc-blue-dim) !important;
+  font-weight: 700 !important;
+  font-size: 10.5px !important;
+}
+
+#se-tc-page .se-tc-fine p strong {
+  color: var(--se-tc-blue) !important;
+  -webkit-text-fill-color: var(--se-tc-blue) !important;
+}
+
+#se-tc-page .se-tc-fine .se-tc-fine-stamp {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+}
+
+#se-tc-page .se-tc-sent {
+  display: inline-block !important;
+}
+
+#se-tc-page .se-qr-slide p {
+  color: var(--se-qr-text) !important;
+  -webkit-text-fill-color: var(--se-qr-text) !important;
+}
+
+#se-tc-page .se-qr-slide p.se-qr-stars {
+  color: var(--se-qr-star) !important;
+  -webkit-text-fill-color: var(--se-qr-star) !important;
+}
+
+#se-tc-page .se-qr-slide footer,
+#se-tc-page .se-qr-slide footer .se-qr-name-link {
+  color: var(--se-qr-name) !important;
+  -webkit-text-fill-color: var(--se-qr-name) !important;
+}
+
+#se-tc-page .se-qr-slide footer .se-qr-name-link {
+  text-decoration: none !important;
+}
+
+#se-tc-page .se-qr-slide footer span {
+  color: var(--se-qr-text) !important;
+  -webkit-text-fill-color: var(--se-qr-text) !important;
+}
+
+#se-tc-page .se-qr-arrow {
+  color: var(--se-qr-accent) !important;
+  -webkit-text-fill-color: var(--se-qr-accent) !important;
+}
+
+#se-tc-page .se-tc-close-alt {
+  color: var(--se-tc-muted) !important;
+  -webkit-text-fill-color: var(--se-tc-muted) !important;
+}
+
+/* The theme inflates inline-sized SVGs (seen live 2026-08-20: the
+   Message Us button grew to 72px tall). Pin every icon's box. */
+#se-tc-page .se-tc-question-btn svg {
+  width: 18px !important;
+  height: 18px !important;
+  flex: 0 0 auto !important;
+}
+
+#se-tc-page .se-tc-when-chip svg {
+  width: 16px !important;
+  height: 16px !important;
+  flex: 0 0 auto !important;
+}
+
+#se-tc-page .se-tc-hero-check svg {
+  width: 38px !important;
+  height: 38px !important;
+}
+
+#se-tc-page .se-tc-visit-fact em {
+  font-style: italic;
+  font-size: 12.5px;
+}
+</style>
+<!-- /wp:html -->

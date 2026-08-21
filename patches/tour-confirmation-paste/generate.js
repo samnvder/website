@@ -50,3 +50,15 @@ for (const [name, content] of [['element-1-markup.html', out1], ['element-2-scri
   console.log(name + ': ' + bytes + ' bytes (cap ' + CAP + ')');
 }
 console.log('script blocks: ' + blocks.length + ', all compile');
+
+// The artifact actually used since the 2026-08-20 architecture change:
+// the COMPLETE Gutenberg post content for page 9993 — markup block +
+// CSS block. Paste flow: WP editor -> ⋮ -> Code editor -> select all ->
+// paste -> Update -> flush cache. Scripts are NOT included here — they
+// live in WPCode snippet 9998 (see README).
+const CSS_SOURCE = path.join(ROOT, 'Website', 'Pages', 'Tours (Category)', 'tour-confirmation', 'Tour Confirmation CSS.css');
+const css = fs.readFileSync(CSS_SOURCE, 'utf8').replace(/\r\n/g, '\n').trim();
+const cleanMarkup = markup.replace(/\r\n/g, '\n').trim();
+const gutenberg = '<!-- wp:html -->\n' + cleanMarkup + '\n<!-- /wp:html -->\n\n<!-- wp:html -->\n<style>\n' + css + '\n</style>\n<!-- /wp:html -->\n';
+fs.writeFileSync(path.join(OUT_DIR, 'gutenberg-content.html'), gutenberg);
+console.log('gutenberg-content.html: ' + Buffer.byteLength(gutenberg, 'utf8') + ' bytes (markup + CSS blocks, no scripts)');

@@ -870,3 +870,27 @@
   color: var(--se-tc-muted) !important;
   -webkit-text-fill-color: var(--se-tc-muted) !important;
 }
+
+/* The theme inflates inline-sized SVGs (seen live 2026-08-20: the
+   Message Us button grew to 72px tall). Pin every icon's box. */
+#se-tc-page .se-tc-question-btn svg {
+  width: 18px !important;
+  height: 18px !important;
+  flex: 0 0 auto !important;
+}
+
+#se-tc-page .se-tc-when-chip svg {
+  width: 16px !important;
+  height: 16px !important;
+  flex: 0 0 auto !important;
+}
+
+#se-tc-page .se-tc-hero-check svg {
+  width: 38px !important;
+  height: 38px !important;
+}
+
+#se-tc-page .se-tc-visit-fact em {
+  font-style: italic;
+  font-size: 12.5px;
+}
