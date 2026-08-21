@@ -16,13 +16,13 @@ conversion becomes reportable. Ids are the widgets' own internal names.
 
 | File | Paste into | Gate on |
 |---|---|---|
-| `8309-floating-book-tour-button.html` | WPCode **#8309** (floating button, sitewide) | character delta **+43**, *"Snippet updated."* notice |
-| `thrive-index--se-bk-inline.html` | Thrive editor, **homepage**, the `se-bk-inline` custom HTML element | line count **+1** (Thrive counts lines, not characters) |
-| `thrive-schedule-a-tour--se-cal.html` | Thrive editor, **/schedule-a-tour/**, the `se-cal` element | line count **+1** |
-| `thrive-memberships--se-cal.html` | Thrive editor, **/memberships/**, the `se-cal` element | line count **+1** |
+| `tour-widget-param--paste-into-wpcode-8309.html` | WPCode **#8309** (floating button, sitewide) | character delta **+43**, *"Snippet updated."* notice |
+| `tour-widget-param--paste-into-thrive-index-se-bk-inline.html` | Thrive editor, **homepage**, the `se-bk-inline` custom HTML element | line count **+1** (Thrive counts lines, not characters) |
+| `tour-widget-param--paste-into-thrive-schedule-a-tour-se-cal.html` | Thrive editor, **/schedule-a-tour/**, the `se-cal` element | line count **+1** |
+| `tour-widget-param--paste-into-thrive-memberships-se-cal.html` | Thrive editor, **/memberships/**, the `se-cal` element | line count **+1** |
 
 Each artifact is the **whole element** — select-all in the editor, paste, save.
-`<name>.diff` files prove each change is the one inserted line and nothing else.
+`tour-widget-param--diff-*.diff` files prove each change is the one inserted line and nothing else.
 
 Four repo page sources carry copies of the same pushes and were synced in-place
 (no paste needed): `index/Index.html`, `schedule-a-tour/Membership Tour Booking
@@ -52,10 +52,10 @@ Offer.html`.
   bookings from before registration will read "(not set)", same as the 2026-08-18
   test row does for `tour_source_page`.
 
-## build.js modes
+## Generator modes
 
 ```
-node patches/tour-widget-param/build.js             # write paste artifacts + diffs from mirrors
-node patches/tour-widget-param/build.js --verify    # re-derive; exit 1 if artifacts drift
-node patches/tour-widget-param/build.js --in-place  # apply to all 8 repo files (idempotent)
+node patches/tour-widget-param/tour-widget-param--generate.js             # write paste artifacts + diffs from mirrors
+node patches/tour-widget-param/tour-widget-param--generate.js --verify    # re-derive; exit 1 if artifacts drift
+node patches/tour-widget-param/tour-widget-param--generate.js --in-place  # apply to all 8 repo files (idempotent)
 ```

@@ -10,11 +10,11 @@ stay out; plan type, tier, child count and dollar figures go in.
 
 | File | What it is | Paste into |
 |---|---|---|
-| `9926.js` | Full patched snippet — normal join builder | WPCode **#9926** |
-| `7315.js` | Full patched snippet — discounted-enrollment builder | WPCode **#7315** |
-| `7966.js` | Full patched snippet — offer template (inert, `OFFER NOT SET`) | WPCode **#7966** |
-| `<id>.diff` | Proof the change is the inserted block and nothing else | — (read, don't paste) |
-| `build.js` | The generator; see modes below | — |
+| `membership-requested-event--paste-into-wpcode-9926.js` | Full patched snippet — normal join builder | WPCode **#9926** |
+| `membership-requested-event--paste-into-wpcode-7315.js` | Full patched snippet — discounted-enrollment builder | WPCode **#7315** |
+| `membership-requested-event--paste-into-wpcode-7966.js` | Full patched snippet — offer template (inert, `OFFER NOT SET`) | WPCode **#7966** |
+| `membership-requested-event--diff-<id>.diff` | Proof the change is the inserted block and nothing else | — (read, don't paste) |
+| `membership-requested-event--generate.js` | The generator; see modes below | — |
 
 Paste the **whole file**, select-all, into the snippet's editor. Expected delta: **+924 bytes**
 for #9926 and #7315, **+1,036** for #7966 (deeper indentation), LF newlines as the mirrors carry.
@@ -38,12 +38,12 @@ Confirm the save by the *"Snippet updated."* notice, then GoDaddy → Flush Cach
   served is the fixed state. Post-paste verification expects `grep -c membership_requested` = **1**
   on `/memberships/`.
 
-## build.js modes
+## Generator modes
 
 ```
-node patches/membership-requested-event/build.js             # write <id>.js + <id>.diff from mirrors
-node patches/membership-requested-event/build.js --verify    # re-derive; exit 1 if committed patches drift
-node patches/membership-requested-event/build.js --in-place  # patch live/wpcode mirrors + Website/Pages paste-sources
+node patches/membership-requested-event/membership-requested-event--generate.js             # write <id>.js + <id>.diff from mirrors
+node patches/membership-requested-event/membership-requested-event--generate.js --verify    # re-derive; exit 1 if committed patches drift
+node patches/membership-requested-event/membership-requested-event--generate.js --in-place  # patch live/wpcode mirrors + Website/Pages paste-sources
 ```
 
 Idempotent: a file already carrying the push is left unchanged, so `--verify` stays green after

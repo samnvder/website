@@ -23,3 +23,13 @@ live/thrive/** -text
 # against the LF source it was made from. core.autocrlf is true here, so
 # without this the patch silently stops working on a fresh clone.
 *.patch -text
+
+# Paste artifacts derived byte-for-byte from the live/ mirrors above: the paste
+# is gated by a character-count delta and proven by --verify against the mirror,
+# so a checkout must not rewrite their endings either - found 2026-08-21 when a
+# fresh worktree materialized the artifacts as CRLF against LF mirrors and
+# --verify failed on files that were byte-identical at commit time.
+patches/membership-requested-event/membership-requested-event--paste-into-wpcode-*.js -text
+patches/membership-requested-event/membership-requested-event--diff-*.diff -text
+patches/tour-widget-param/tour-widget-param--paste-into-* -text
+patches/tour-widget-param/tour-widget-param--diff-*.diff -text

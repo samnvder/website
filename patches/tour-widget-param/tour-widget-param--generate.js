@@ -11,10 +11,10 @@
  * se-bk-floating (WPCode #8309, sitewide) · se-bk-inline (homepage) ·
  * se-cal (calendar embeds).
  *
- * Modes (same contract as patches/membership-requested-event/build.js):
- *   node build.js             write paste artifacts + diffs from the live mirrors
- *   node build.js --verify    re-derive from current mirrors; exit 1 on drift
- *   node build.js --in-place  apply to ALL repo files (mirrors + page sources), idempotent
+ * Modes (same contract as membership-requested-event--generate.js):
+ *   (no flag)     write paste artifacts + diffs from the live mirrors
+ *   --verify      re-derive from current mirrors; exit 1 on drift
+ *   --in-place    apply to ALL repo files (mirrors + page sources), idempotent
  *
  * GTM/GA4 side (container v8): dataLayer variable `tour_widget`, mapped on the
  * GA4 - tour_booked tag, registered as an event-scoped dimension.
@@ -34,10 +34,10 @@ const PARAM = "tour_widget";
 
 // Live surfaces get a paste artifact (out); page sources are repo-sync only.
 const FILES = [
-    { rel: "live/wpcode/8309-floating-book-tour-button.html", widget: "se-bk-floating", out: "8309-floating-book-tour-button.html" },
-    { rel: "live/thrive/pages/index/se-bk-inline.html", widget: "se-bk-inline", out: "thrive-index--se-bk-inline.html" },
-    { rel: "live/thrive/pages/schedule-a-tour/se-cal.html", widget: "se-cal", out: "thrive-schedule-a-tour--se-cal.html" },
-    { rel: "live/thrive/pages/memberships/se-cal.html", widget: "se-cal", out: "thrive-memberships--se-cal.html" },
+    { rel: "live/wpcode/8309-floating-book-tour-button.html", widget: "se-bk-floating", out: "tour-widget-param--paste-into-wpcode-8309.html", diff: "tour-widget-param--diff-8309.diff" },
+    { rel: "live/thrive/pages/index/se-bk-inline.html", widget: "se-bk-inline", out: "tour-widget-param--paste-into-thrive-index-se-bk-inline.html", diff: "tour-widget-param--diff-index-se-bk-inline.diff" },
+    { rel: "live/thrive/pages/schedule-a-tour/se-cal.html", widget: "se-cal", out: "tour-widget-param--paste-into-thrive-schedule-a-tour-se-cal.html", diff: "tour-widget-param--diff-schedule-a-tour-se-cal.diff" },
+    { rel: "live/thrive/pages/memberships/se-cal.html", widget: "se-cal", out: "tour-widget-param--paste-into-thrive-memberships-se-cal.html", diff: "tour-widget-param--diff-memberships-se-cal.diff" },
     { rel: "Website/Pages/index/Index.html", widget: "se-bk-inline", out: null },
     { rel: "Website/Pages/Tours (Category)/schedule-a-tour/Membership Tour Booking Page.html", widget: "se-cal", out: null },
     { rel: "Website/Pages/Memberships (Category)/memberships/Memberships Page HTML.html", widget: "se-cal", out: null },
@@ -72,7 +72,7 @@ function readRepoFile(rel) {
     return { abs, content: fs.readFileSync(abs, "utf8") };
 }
 
-function writeDiff(name, mirrorAbs, patchPath) {
+function writeDiff(diffName, mirrorAbs, patchPath) {
     let out = "";
     try {
         out = execFileSync("git", ["diff", "--no-index", "--", mirrorAbs, patchPath], { encoding: "utf8" });
@@ -80,7 +80,7 @@ function writeDiff(name, mirrorAbs, patchPath) {
         if (e.status === 1 && typeof e.stdout === "string") out = e.stdout;
         else throw e;
     }
-    const diffPath = path.join(OUT_DIR, `${name}.diff`);
+    const diffPath = path.join(OUT_DIR, diffName);
     // Empty diff = mirror already patched (post --in-place); keep the recorded insert.
     if (out === "" && fs.existsSync(diffPath) && fs.readFileSync(diffPath, "utf8") !== "") return;
     fs.writeFileSync(diffPath, out);
@@ -104,7 +104,7 @@ function buildPatches({ verify }) {
         }
 
         fs.writeFileSync(patchPath, patched);
-        writeDiff(path.parse(f.out).name, abs, patchPath);
+        writeDiff(f.diff, abs, patchPath);
         const lineDelta = patched.split("\n").length - content.split("\n").length;
         console.log(`wrote ${f.out} (+${patched.length - content.length} chars, +${lineDelta} line)`);
         ok++;

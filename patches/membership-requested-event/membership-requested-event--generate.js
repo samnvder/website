@@ -6,11 +6,11 @@
  * ("Thank you! A membership form has been sent…") in each membership builder,
  * preserving each file's own line endings and the alert line's indentation.
  *
- * Modes:
- *   node build.js             write patches/membership-requested-event/<id>.js + <id>.diff
- *   node build.js --verify    re-derive each patch from the current mirror; exit 1 on any diff
- *   node build.js --in-place  apply the insert to the live/wpcode mirrors AND the
- *                             Website/Pages paste-source copies (idempotent)
+ * Modes (run as: node patches/membership-requested-event/membership-requested-event--generate.js):
+ *   (no flag)     write …--paste-into-wpcode-<id>.js + …--diff-<id>.diff
+ *   --verify      re-derive each patch from the current mirror; exit 1 on any diff
+ *   --in-place    apply the insert to the live/wpcode mirrors AND the
+ *                 Website/Pages paste-source copies (idempotent)
  *
  * Idempotent by design: a file already carrying the push is returned unchanged,
  * so --verify stays green after --in-place has run.
@@ -107,12 +107,13 @@ function buildPatches({ verify }) {
     for (const b of BUILDERS) {
         const { content } = readRepoFile(b.mirror);
         const patched = patchContent(content, b.id, b.mirror);
-        const patchPath = path.join(OUT_DIR, `${b.id}.js`);
+        const patchName = `membership-requested-event--paste-into-wpcode-${b.id}.js`;
+        const patchPath = path.join(OUT_DIR, patchName);
 
         if (verify) {
-            if (!fs.existsSync(patchPath)) throw new Error(`--verify: ${b.id}.js does not exist — run build first`);
+            if (!fs.existsSync(patchPath)) throw new Error(`--verify: ${patchName} does not exist — run build first`);
             const committed = fs.readFileSync(patchPath, "utf8");
-            if (committed !== patched) throw new Error(`--verify: ${b.id}.js differs from what the current mirror derives — mirror drifted or patch was hand-edited`);
+            if (committed !== patched) throw new Error(`--verify: ${patchName} differs from what the current mirror derives — mirror drifted or patch was hand-edited`);
             ok++;
             continue;
         }
@@ -120,7 +121,7 @@ function buildPatches({ verify }) {
         fs.writeFileSync(patchPath, patched);
         writeDiff(b, patchPath);
         ok++;
-        console.log(`wrote ${b.id}.js (+${patched.length - content.length} bytes) and ${b.id}.diff`);
+        console.log(`wrote ${patchName} (+${patched.length - content.length} bytes)`);
     }
     if (verify) console.log(`${ok} patches verified`);
 }
@@ -134,7 +135,7 @@ function writeDiff(b, patchPath) {
         if (e.status === 1 && typeof e.stdout === "string") out = e.stdout;
         else throw e;
     }
-    const diffPath = path.join(OUT_DIR, `${b.id}.diff`);
+    const diffPath = path.join(OUT_DIR, `membership-requested-event--diff-${b.id}.diff`);
     // An empty diff means the mirror is already patched (post --in-place).
     // Keep the existing diff, which records the original insert, rather than
     // clobbering it with nothing.
