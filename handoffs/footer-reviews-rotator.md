@@ -1,6 +1,54 @@
 # Handoff — Google-reviews rotator in the universal footer
 
-**Created:** 2026-08-20 · **Status:** ✅ **CLOSED — executed same day, owner-directed, with one flagged deviation** · **Owner-commissioned 2026-08-20**
+**Created:** 2026-08-20 · **Status:** 🔴 **REOPENED — functionally live, visually broken by theme overrides** · **Owner-commissioned 2026-08-20**
+
+## 🔴 The fix this handoff now exists for (2026-08-20, owner screenshot)
+
+The rotator runs on every page, but **Thrive's footer-symbol styling steamrolls the
+card**: the theme styles `blockquote` as a large near-white card and pushes it
+off-center, while the dark-skin **text** rules (which used `!important`) still apply —
+result: white text on a white card, off-center, unreadable. Root cause: the dark skin
+set the card background/layout through CSS **variables** on `.se-qr-footer`
+(specificity ~0,2,0), which theme `blockquote`/id-based rules out-rank. Same failure
+class the tour page needed its THRIVE ARMOR block for.
+
+**Fix (all in `patches/tour-confirmation-paste/generate.js`, footer artifact section):**
+replace the variable-dependent skin with **fully armored rules scoped under
+`#se-footer-reviews`** (id specificity + `!important`, no variable reliance for
+anything the theme can paint):
+
+- slide card: `background: rgba(255,255,255,0.07)`, `border: 2px solid rgba(255,255,255,0.18)`,
+  `border-radius: 14px`, `padding: 28px 30px 22px`, `margin: 0`, `text-align: center`,
+  `box-shadow: none` — every declaration `!important`
+- kill theme blockquote decorations: `#se-footer-reviews .se-qr-slide::before,
+  #se-footer-reviews .se-qr-slide::after { content: none !important; }`
+- text: quote p white-ish (`rgba(255,255,255,0.88)`) + `-webkit-text-fill-color`,
+  stars gold `#f6b01e`, reviewer name + link white, "Google review" span
+  `rgba(255,255,255,0.65)`, all Montserrat, all `!important`
+- stacking: `#se-footer-reviews .se-qr-ready .se-qr-track { display: grid !important; }`
+  and slides `grid-area: 1 / 1 !important` with the opacity/visibility transitions —
+  re-assert the whole ready-state mechanic under the id
+- geometry: `#se-footer-reviews .se-qr { position: relative !important; max-width: 720px
+  !important; margin: 0 auto !important; }`, arrows and dots restyled under the id
+
+**Deploy loop (proven today, fully agent-drivable):** regenerate →
+`guard:tour-confirmation` fails on the 10011 mirror → commit+push → in wp-admin open
+snippet **10011**, fetch the artifact from
+`raw.githubusercontent.com/samnvder/website/<branch>/patches/tour-confirmation-paste/footer-reviews-element.html`,
+`CodeMirror.setValue`, verify length, **Update** → copy artifact over
+`live/wpcode/10011-html-footer-member-reviews.html` → guard green → flush cache.
+
+**Verification must be VISUAL this time** — the miss that shipped this bug was
+verifying by `curl` counts alone, which all passed while the thing looked terrible.
+Screenshot the footer on the homepage (desktop + mobile width): dark translucent
+card, centered, readable white text, gold accents, sitting above the promo CTA.
+Then re-check `/tour-confirmation/`: both rotators still init exactly once, and the
+footer armor must not bleed into the page rotator (everything scoped under
+`#se-footer-reviews` guarantees that).
+
+---
+
+**Original status:** ✅ executed same day, owner-directed, with one flagged deviation
 
 > **As-built (2026-08-20):** live on every page as WPCode snippet **10011** ("HTML -
 > Footer Member Reviews", site-wide footer) — **not** a Theme Builder symbol edit. The
