@@ -1,6 +1,67 @@
 # Handoff — Google-reviews rotator in the universal footer
 
-**Created:** 2026-08-20 · **Status:** ✅ **CLOSED — executed same day, owner-directed, with one flagged deviation** · **Owner-commissioned 2026-08-20**
+**Created:** 2026-08-20 · **Status:** ✅ **CLOSED — armored fix live and verified visually 2026-08-20** · **Owner-commissioned 2026-08-20**
+
+> **Fix as-built (2026-08-20):** the dark skin in `generate.js` was replaced with fully
+> armored rules scoped under `#se-footer-reviews` (id specificity + `!important` on every
+> declaration the theme can paint, no variable reliance) — card, `::before`/`::after`
+> `content: none`, all text colors with `-webkit-text-fill-color`, the ready-state
+> grid-stacking mechanic, geometry, arrows, dots. Snippet **10011** re-pasted via raw
+> fetch + `CodeMirror.setValue` (25,780 chars, verified equal after a fresh reload),
+> mirror synced, `npm run guard` green, cache flushed. **Verified visually this time:**
+> homepage footer at desktop (owner-confirmed screenshot: dark translucent centered card,
+> white text, gold accents, above the promo CTA) and 375px mobile (card centered 21px/21px,
+> armored computed styles winning, arrows hidden, dots visible); `/tour-confirmation/`
+> runs both rotators, 20 dots each (double-init would show 40), page rotator unarmored —
+> no bleed. Auto-rotate confirmed advancing at 7s; it pauses on hover/focus by design.
+
+## 🔴 The fix this handoff was reopened for (2026-08-20, owner screenshot)
+
+The rotator runs on every page, but **Thrive's footer-symbol styling steamrolls the
+card**: the theme styles `blockquote` as a large near-white card and pushes it
+off-center, while the dark-skin **text** rules (which used `!important`) still apply —
+result: white text on a white card, off-center, unreadable. Root cause: the dark skin
+set the card background/layout through CSS **variables** on `.se-qr-footer`
+(specificity ~0,2,0), which theme `blockquote`/id-based rules out-rank. Same failure
+class the tour page needed its THRIVE ARMOR block for.
+
+**Fix (all in `patches/tour-confirmation-paste/generate.js`, footer artifact section):**
+replace the variable-dependent skin with **fully armored rules scoped under
+`#se-footer-reviews`** (id specificity + `!important`, no variable reliance for
+anything the theme can paint):
+
+- slide card: `background: rgba(255,255,255,0.07)`, `border: 2px solid rgba(255,255,255,0.18)`,
+  `border-radius: 14px`, `padding: 28px 30px 22px`, `margin: 0`, `text-align: center`,
+  `box-shadow: none` — every declaration `!important`
+- kill theme blockquote decorations: `#se-footer-reviews .se-qr-slide::before,
+  #se-footer-reviews .se-qr-slide::after { content: none !important; }`
+- text: quote p white-ish (`rgba(255,255,255,0.88)`) + `-webkit-text-fill-color`,
+  stars gold `#f6b01e`, reviewer name + link white, "Google review" span
+  `rgba(255,255,255,0.65)`, all Montserrat, all `!important`
+- stacking: `#se-footer-reviews .se-qr-ready .se-qr-track { display: grid !important; }`
+  and slides `grid-area: 1 / 1 !important` with the opacity/visibility transitions —
+  re-assert the whole ready-state mechanic under the id
+- geometry: `#se-footer-reviews .se-qr { position: relative !important; max-width: 720px
+  !important; margin: 0 auto !important; }`, arrows and dots restyled under the id
+
+**Deploy loop (proven today, fully agent-drivable):** regenerate →
+`guard:tour-confirmation` fails on the 10011 mirror → commit+push → in wp-admin open
+snippet **10011**, fetch the artifact from
+`raw.githubusercontent.com/samnvder/website/<branch>/patches/tour-confirmation-paste/footer-reviews-element.html`,
+`CodeMirror.setValue`, verify length, **Update** → copy artifact over
+`live/wpcode/10011-html-footer-member-reviews.html` → guard green → flush cache.
+
+**Verification must be VISUAL this time** — the miss that shipped this bug was
+verifying by `curl` counts alone, which all passed while the thing looked terrible.
+Screenshot the footer on the homepage (desktop + mobile width): dark translucent
+card, centered, readable white text, gold accents, sitting above the promo CTA.
+Then re-check `/tour-confirmation/`: both rotators still init exactly once, and the
+footer armor must not bleed into the page rotator (everything scoped under
+`#se-footer-reviews` guarantees that).
+
+---
+
+**Original status:** ✅ executed same day, owner-directed, with one flagged deviation
 
 > **As-built (2026-08-20):** live on every page as WPCode snippet **10011** ("HTML -
 > Footer Member Reviews", site-wide footer) — **not** a Theme Builder symbol edit. The

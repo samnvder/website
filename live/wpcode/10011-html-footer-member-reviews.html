@@ -176,32 +176,106 @@
 .se-qr-slide footer span { color: var(--se-qr-text) !important; -webkit-text-fill-color: var(--se-qr-text) !important; }
 .se-qr-arrow { color: var(--se-qr-accent) !important; -webkit-text-fill-color: var(--se-qr-accent) !important; }
 
-/* Dark skin for the navy footer + placement wrapper */
-#se-footer-reviews { display: none; padding: 38px 20px 8px; }
+/* ── DARK-FOOTER ARMOR — the Thrive footer symbol styles blockquote as a
+   big near-white card and out-ranks class selectors (same failure class
+   as the #tve_editor armor on the tour page). Every declaration the theme
+   can paint is therefore re-asserted under the #se-footer-reviews id
+   with !important, with NO variable reliance. ── */
+#se-footer-reviews { display: none; padding: 38px 20px 40px; padding-bottom: 40px !important; }
 #se-footer-reviews .se-fr-title {
-  text-align: center; font-family: Montserrat, system-ui, sans-serif;
-  font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
-  color: #f6b01e; margin: 0 0 6px;
+  text-align: center !important; font-family: Montserrat, system-ui, sans-serif !important;
+  font-size: 13px !important; font-weight: 700 !important; letter-spacing: 0.14em !important; text-transform: uppercase !important;
+  color: #f6b01e !important; -webkit-text-fill-color: #f6b01e !important; margin: 0 0 6px !important;
 }
 #se-footer-reviews .se-fr-rule { width: 44px; height: 2px; background: #f6b01e; opacity: 0.7; margin: 0 auto 22px; border-radius: 1px; }
-.se-qr.se-qr-footer {
-  --se-qr-bg: rgba(255, 255, 255, 0.07);
-  --se-qr-border: rgba(255, 255, 255, 0.18);
-  --se-qr-text: rgba(255, 255, 255, 0.88);
-  --se-qr-name: #ffffff;
-  --se-qr-accent: #f6b01e;
-  max-width: 720px;
+
+/* Rotator geometry */
+#se-footer-reviews .se-qr { position: relative !important; max-width: 720px !important; margin: 0 auto !important; }
+#se-footer-reviews .se-qr-track { position: relative !important; }
+
+/* Slide card — kills the theme blockquote white card */
+#se-footer-reviews .se-qr-slide {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 2px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 14px !important;
+  padding: 28px 30px 22px !important;
+  margin: 0 !important;
+  text-align: center !important;
+  box-shadow: none !important;
 }
-.se-qr-footer .se-qr-slide { border-radius: 14px; }
-.se-qr-footer .se-qr-slide p { color: var(--se-qr-text) !important; -webkit-text-fill-color: var(--se-qr-text) !important; }
-.se-qr-footer .se-qr-slide footer, .se-qr-footer .se-qr-slide footer .se-qr-name-link { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
-.se-qr-footer .se-qr-slide footer span { color: rgba(255,255,255,0.65) !important; -webkit-text-fill-color: rgba(255,255,255,0.65) !important; }
-.se-qr-footer .se-qr-name-link { border-bottom-color: rgba(255,255,255,0.4); }
-.se-qr-footer .se-qr-name-link:hover { color: #f6b01e !important; -webkit-text-fill-color: #f6b01e !important; border-bottom-color: #f6b01e; }
-.se-qr-footer .se-qr-arrow { background: transparent; border-color: rgba(255,255,255,0.25); color: #f6b01e !important; -webkit-text-fill-color: #f6b01e !important; }
-.se-qr-footer .se-qr-arrow:hover { border-color: #f6b01e; box-shadow: none; }
-.se-qr-footer .se-qr-dot { background: rgba(255,255,255,0.25); }
-.se-qr-footer .se-qr-dot.se-qr-dot-active { background: #f6b01e; }
+#se-footer-reviews .se-qr-slide::before,
+#se-footer-reviews .se-qr-slide::after { content: none !important; }
+
+/* Text */
+#se-footer-reviews .se-qr-slide p {
+  font-family: Montserrat, system-ui, sans-serif !important;
+  font-size: 15px !important; line-height: 1.75 !important; font-style: italic !important;
+  margin: 0 0 16px !important;
+  color: rgba(255, 255, 255, 0.88) !important; -webkit-text-fill-color: rgba(255, 255, 255, 0.88) !important;
+}
+#se-footer-reviews .se-qr-slide p.se-qr-stars {
+  font-style: normal !important; letter-spacing: 3px !important; font-size: 15px !important; margin: 0 0 12px !important;
+  color: #f6b01e !important; -webkit-text-fill-color: #f6b01e !important;
+}
+#se-footer-reviews .se-qr-slide footer {
+  font-family: Montserrat, system-ui, sans-serif !important;
+  font-size: 13px !important; font-weight: 700 !important; font-style: normal !important;
+  color: #ffffff !important; -webkit-text-fill-color: #ffffff !important;
+}
+#se-footer-reviews .se-qr-slide footer span {
+  display: block !important; margin-top: 3px !important; font-weight: 500 !important; font-size: 11.5px !important;
+  color: rgba(255, 255, 255, 0.65) !important; -webkit-text-fill-color: rgba(255, 255, 255, 0.65) !important; opacity: 1 !important;
+}
+#se-footer-reviews .se-qr-name-link {
+  color: #ffffff !important; -webkit-text-fill-color: #ffffff !important;
+  text-decoration: none !important; border-bottom: 1px dotted rgba(255, 255, 255, 0.4) !important;
+}
+#se-footer-reviews .se-qr-name-link:hover { color: #f6b01e !important; -webkit-text-fill-color: #f6b01e !important; border-bottom: 1px solid #f6b01e !important; }
+
+/* Ready-state stacking mechanic, re-asserted under the id */
+#se-footer-reviews .se-qr.se-qr-ready .se-qr-track { display: grid !important; }
+#se-footer-reviews .se-qr.se-qr-ready .se-qr-slide {
+  grid-area: 1 / 1 !important;
+  opacity: 0 !important;
+  transform: translateY(14px) !important;
+  transition: opacity 0.6s ease, transform 0.6s ease, visibility 0.6s !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+#se-footer-reviews .se-qr.se-qr-ready .se-qr-slide.se-qr-active {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  pointer-events: auto !important;
+  visibility: visible !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  #se-footer-reviews .se-qr.se-qr-ready .se-qr-slide { transition: none !important; transform: none !important; }
+}
+
+/* Arrows */
+#se-footer-reviews .se-qr-arrow {
+  position: absolute !important; top: 50% !important; transform: translateY(-50%) !important;
+  width: 38px !important; height: 38px !important; padding: 0 !important;
+  align-items: center !important; justify-content: center !important;
+  background: transparent !important; border: 2px solid rgba(255, 255, 255, 0.25) !important; border-radius: 50% !important;
+  color: #f6b01e !important; -webkit-text-fill-color: #f6b01e !important;
+  font-size: 16px !important; line-height: 1 !important; cursor: pointer !important; box-shadow: none !important; z-index: 2 !important;
+}
+#se-footer-reviews .se-qr-arrow:hover { border-color: #f6b01e !important; box-shadow: none !important; }
+#se-footer-reviews .se-qr.se-qr-ready .se-qr-arrow { display: inline-flex !important; }
+@media (max-width: 900px) {
+  #se-footer-reviews .se-qr.se-qr-ready .se-qr-arrow { display: none !important; }
+}
+
+/* Dots */
+#se-footer-reviews .se-qr.se-qr-ready .se-qr-dots { display: flex !important; justify-content: center !important; gap: 8px !important; margin-top: 18px !important; }
+#se-footer-reviews .se-qr-dot {
+  width: 9px !important; height: 9px !important; padding: 0 !important;
+  border: none !important; border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.25) !important; cursor: pointer !important;
+  transition: background 0.25s ease, transform 0.25s ease !important;
+}
+#se-footer-reviews .se-qr-dot.se-qr-dot-active { background: #f6b01e !important; transform: scale(1.25) !important; }
 </style>
 
 <div id="se-footer-reviews">
