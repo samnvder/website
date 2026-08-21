@@ -275,6 +275,21 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 alert("Thank you! A membership form has been sent to the email address you provided!");
 
+                /* --- conversion tracking: one push per successful signature request (no PII) --- */
+                try {
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        event: 'membership_requested',
+                        membership_type: membershipTypeValue || null,
+                        membership_tier: tier || null,
+                        membership_children: Number(numberOfChildrenValue) || 0,
+                        membership_enrollment_fee: Number(String(enrollmentFee).replace(/[^0-9.]/g, '')) || null,
+                        membership_monthly_due: Number(String(monthlyDue).replace(/[^0-9.]/g, '')) || null,
+                        membership_builder: '9926'
+                    });
+                } catch (e) { /* never let tracking break the confirmation */ }
+                /* --- end conversion tracking --- */
+
                 fetch("https://still-cliffs-89444-6c029a7a2024.herokuapp.com/notify-admin", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
