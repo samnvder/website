@@ -94,7 +94,7 @@ function build() {
     '   as the #tve_editor armor on the tour page). Every declaration the theme',
     '   can paint is therefore re-asserted under the #se-footer-reviews id',
     '   with !important, with NO variable reliance. ── */',
-    '#se-footer-reviews { display: none; padding: 38px 20px 40px; }',
+    '#se-footer-reviews { display: none; padding: 38px 20px 40px; padding-bottom: 40px !important; }',
     '#se-footer-reviews .se-fr-title {',
     '  text-align: center !important; font-family: Montserrat, system-ui, sans-serif !important;',
     '  font-size: 13px !important; font-weight: 700 !important; letter-spacing: 0.14em !important; text-transform: uppercase !important;',
