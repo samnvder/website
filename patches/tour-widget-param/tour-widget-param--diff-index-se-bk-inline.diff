@@ -1,0 +1,12 @@
+diff --git "a/C:\\Users\\Sam Work\\Documents\\Local Projects\\Website\\live\\thrive\\pages\\index\\se-bk-inline.html" "b/C:\\Users\\Sam Work\\Documents\\Local Projects\\Website\\patches\\tour-widget-param\\thrive-index--se-bk-inline.html"
+index 3e16cc4..437a80f 100644
+--- "a/C:\\Users\\Sam Work\\Documents\\Local Projects\\Website\\live\\thrive\\pages\\index\\se-bk-inline.html"	
++++ "b/C:\\Users\\Sam Work\\Documents\\Local Projects\\Website\\patches\\tour-widget-param\\thrive-index--se-bk-inline.html"	
+@@ -1417,6 +1417,7 @@ span.flatpickr-weekday { color: #0b468c !important; }
+           window.dataLayer = window.dataLayer || [];
+           window.dataLayer.push({
+             event: 'tour_booked',
++            tour_widget: 'se-bk-inline',
+             tour_booking_id: res.data.appointment_id || res.data.id || null,
+             tour_is_reschedule: !!res.data.appointment_rescheduled,
+             tour_date: payload.preferred_date || null,

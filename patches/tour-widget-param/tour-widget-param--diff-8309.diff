@@ -1,0 +1,12 @@
+diff --git "a/C:\\Users\\Sam Work\\Documents\\Local Projects\\Website\\live\\wpcode\\8309-floating-book-tour-button.html" "b/C:\\Users\\Sam Work\\Documents\\Local Projects\\Website\\patches\\tour-widget-param\\8309-floating-book-tour-button.html"
+index e9be416..6cb4813 100644
+--- "a/C:\\Users\\Sam Work\\Documents\\Local Projects\\Website\\live\\wpcode\\8309-floating-book-tour-button.html"	
++++ "b/C:\\Users\\Sam Work\\Documents\\Local Projects\\Website\\patches\\tour-widget-param\\8309-floating-book-tour-button.html"	
+@@ -1238,6 +1238,7 @@ span.flatpickr-weekday { color: #0b468c !important; }
+           window.dataLayer = window.dataLayer || [];
+           window.dataLayer.push({
+             event: 'tour_booked',
++            tour_widget: 'se-bk-floating',
+             tour_booking_id: res.data.appointment_id || res.data.id || null,
+             tour_is_reschedule: !!res.data.appointment_rescheduled,
+             tour_date: payload.preferred_date || null,
