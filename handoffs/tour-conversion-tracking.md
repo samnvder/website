@@ -80,7 +80,7 @@ Consequences of the site-wide finding, both good:
 
 ### ✅ Repo side — already done (2026-08-17)
 
-Applied by `patches/tour-conversion-tracking/apply.sh` (idempotent — re-running skips patched files):
+Applied by `patches/tour-conversion-tracking/tour-conversion-tracking--apply.sh` (idempotent — re-running skips patched files):
 
 | File | Sites |
 |---|---|
@@ -90,7 +90,7 @@ Applied by `patches/tour-conversion-tracking/apply.sh` (idempotent — re-runnin
 
 ### The snippet
 
-Canonical copy: `patches/tour-conversion-tracking/snippet.js`. Inserted directly after the anchor `if(res.ok && res.data.success){`, which appears exactly once per widget. Both widgets build identically-keyed `payload` objects, so **one byte-identical snippet works in all sites** — no per-page variation.
+Canonical copy: `patches/tour-conversion-tracking/tour-conversion-tracking--snippet.js`. Inserted directly after the anchor `if(res.ok && res.data.success){`, which appears exactly once per widget. Both widgets build identically-keyed `payload` objects, so **one byte-identical snippet works in all sites** — no per-page variation.
 
 ```js
         /* --- GA4 / Google Ads conversion — added 2026-08-17, see handoffs/tour-conversion-tracking.md --- */
@@ -140,7 +140,7 @@ Then **flush cache**: GoDaddy Quick Links → Flush Cache. Skip it and you'll ve
 > **Regenerating the blocks:** if live has drifted since 2026-08-17, re-curl and re-extract rather than pasting stale blocks:
 > ```bash
 > curl -s -A "Mozilla/5.0" https://southendclub.com/schedule-a-tour/ -o /tmp/tour.html
-> python patches/tour-conversion-tracking/extract_live.py /tmp/tour.html schedule-a-tour
+> python patches/tour-conversion-tracking/tour-conversion-tracking--extract-live.py /tmp/tour.html schedule-a-tour
 > ```
 
 ---
@@ -272,7 +272,7 @@ Rules:
   booking widget from production. Paste only patches/tour-conversion-tracking/
   live-blocks/*.js, one per widget, four total.
 - Before pasting, re-curl each live page and confirm the blocks still match;
-  regenerate with extract_live.py if live has drifted.
+  regenerate with tour-conversion-tracking--extract-live.py if live has drifted.
 - Stop and ask me at every step marked 🛑 HUMAN GATE.
 - Flush GoDaddy cache after live edits, then verify with curl, not the browser.
 - If there's no Google Ads account, skip Part C and finish A, B and D. Don't

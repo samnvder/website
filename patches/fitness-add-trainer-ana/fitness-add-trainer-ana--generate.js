@@ -6,12 +6,12 @@
  * training section out of it, so the artifact can never drift from the source
  * that was reviewed and committed.
  *
- * Run: node patches/fitness-add-trainer-ana/build-artifact.js
+ * Run: node patches/fitness-add-trainer-ana/fitness-add-trainer-ana--generate.js
  *
  * Emits, next to itself:
- *   personal-training-section.html  the section to paste into Thrive
- *   trainer-card-ana.html           just Ana's card, if inserting one card
- *   preview.html                    standalone render for eyeballing layout
+ *   fitness-add-trainer-ana--paste-into-thrive-section.html  the section to paste into Thrive
+ *   fitness-add-trainer-ana--paste-into-thrive-card-ana.html           just Ana's card, if inserting one card
+ *   fitness-add-trainer-ana--preview.html                    standalone render for eyeballing layout
  */
 
 const fs = require('fs');
@@ -54,8 +54,8 @@ function main() {
         throw new Error('Ana Sampaio is not in the sliced section.');
     }
 
-    fs.writeFileSync(path.join(OUT, 'personal-training-section.html'), section);
-    fs.writeFileSync(path.join(OUT, 'trainer-card-ana.html'), card);
+    fs.writeFileSync(path.join(OUT, 'fitness-add-trainer-ana--paste-into-thrive-section.html'), section);
+    fs.writeFileSync(path.join(OUT, 'fitness-add-trainer-ana--paste-into-thrive-card-ana.html'), card);
 
     const preview = [
         '<!doctype html><html><head><meta charset="utf-8">',
@@ -70,13 +70,13 @@ function main() {
         '</body></html>',
     ].join('\n');
 
-    fs.writeFileSync(path.join(OUT, 'preview.html'), preview);
+    fs.writeFileSync(path.join(OUT, 'fitness-add-trainer-ana--preview.html'), preview);
 
     process.stdout.write(
         `Wrote 3 artifacts from ${path.relative(REPO, PAGE)}\n` +
-        `  personal-training-section.html  ${section.length} chars, ${cards} trainer cards\n` +
-        `  trainer-card-ana.html           ${card.length} chars\n` +
-        `  preview.html                    ${preview.length} chars\n`
+        `  fitness-add-trainer-ana--paste-into-thrive-section.html  ${section.length} chars, ${cards} trainer cards\n` +
+        `  fitness-add-trainer-ana--paste-into-thrive-card-ana.html           ${card.length} chars\n` +
+        `  fitness-add-trainer-ana--preview.html                    ${preview.length} chars\n`
     );
 }
 

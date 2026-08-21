@@ -1,6 +1,6 @@
 /**
- * Regenerates 7966-paste-into-wpcode.js from the live mirror.
- * Run: node patches/fix-7966-young-discounts/generate.js
+ * Regenerates fix-7966-young-discounts--paste-into-wpcode-7966.js from the live mirror.
+ * Run: node patches/fix-7966-young-discounts/fix-7966-young-discounts--generate.js
  *
  * Deriving the paste from the MIRROR rather than the repo paste-source copy is
  * deliberate: the mirror is the byte-exact record of what is in the WPCode
@@ -12,7 +12,7 @@ const path = require('path');
 
 const root = path.resolve(__dirname, '..', '..');
 const MIRROR = path.join(root, 'live/wpcode/7966-build-your-membership-discounted-enrollment-percent.js');
-const OUT = path.join(__dirname, '7966-paste-into-wpcode.js');
+const OUT = path.join(__dirname, 'fix-7966-young-discounts--paste-into-wpcode-7966.js');
 const BAR = '/* ' + '='.repeat(74) + ' */';
 
 const SUBS = [

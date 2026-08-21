@@ -5,19 +5,19 @@ from 3 columns to 2×2 on desktop.
 
 Repo source of truth is [`Website/Pages/fitness/fitness HTML.html`](../../Website/Pages/fitness/fitness%20HTML.html)
 and [`Fitness CSS.css`](../../Website/Pages/fitness/Fitness%20CSS.css). The
-artifacts here are **sliced out of those files** by `build-artifact.js`, so they
+artifacts here are **sliced out of those files** by `fitness-add-trainer-ana--generate.js`, so they
 cannot drift from what was reviewed and committed. Regenerate with:
 
 ```bash
-node patches/fitness-add-trainer-ana/build-artifact.js
+node patches/fitness-add-trainer-ana/fitness-add-trainer-ana--generate.js
 ```
 
 | File | What it is |
 |---|---|
-| `personal-training-section.html` | The whole Personal Training section — paste this if replacing the section wholesale |
-| `trainer-card-ana.html` | Just Ana's card, for inserting one card after Justin Stuler's |
-| `preview.html` | Standalone render (section + full page CSS) for eyeballing layout |
-| `build-artifact.js` | Regenerates all three from the page file |
+| `fitness-add-trainer-ana--paste-into-thrive-section.html` | The whole Personal Training section — paste this if replacing the section wholesale |
+| `fitness-add-trainer-ana--paste-into-thrive-card-ana.html` | Just Ana's card, for inserting one card after Justin Stuler's |
+| `fitness-add-trainer-ana--preview.html` | Standalone render (section + full page CSS) for eyeballing layout |
+| `fitness-add-trainer-ana--generate.js` | Regenerates all three from the page file |
 
 ## Photo — uploaded, but oversized
 
@@ -50,7 +50,7 @@ file and regenerate rather than hand-editing the artifact:
 
 ```bash
 node scripts/convert/live-capture-to-source.js "Website/Pages/fitness/fitness HTML.html" --check
-node patches/fitness-add-trainer-ana/build-artifact.js
+node patches/fitness-add-trainer-ana/fitness-add-trainer-ana--generate.js
 ```
 
 Note the source is a PNG where the other three are JPGs. PNG is the wrong format
@@ -129,7 +129,7 @@ artifacts crept in.
 1. ~~Upload the headshot~~ — done, `Ana.png`, verified 200
 2. Consider resizing it first (see above) — same filename, no markup change
 3. Confirm the phone number with Ana
-4. Open `/fitness/` in Thrive Architect and paste `trainer-card-ana.html`
+4. Open `/fitness/` in Thrive Architect and paste `fitness-add-trainer-ana--paste-into-thrive-card-ana.html`
    directly after Justin Stuler's card, inside `.trainers-grid`
 5. Apply the two CSS changes wherever this page's CSS lives in Thrive
 6. Save, then **GoDaddy → Quick Links → Flush Cache**

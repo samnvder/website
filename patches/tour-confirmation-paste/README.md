@@ -18,7 +18,7 @@
 >
 > Two constraints this history recorded: Thrive Custom HTML elements truncate at ~32KB,
 > and post content mangles inline JS. The two-element artifacts below predate this and are
-> kept for the record; `element-2-scripts.html` is superseded by WPCode 9998.
+> kept for the record; `tour-confirmation-paste--paste-into-thrive-2-scripts.html` is superseded by WPCode 9998.
 
 **Why this exists:** Thrive's Custom HTML element silently truncates its content at
 ~32KB. The tour-confirmation page is ~34KB, so a single-element paste **always** loses
@@ -29,8 +29,8 @@ offset, taking all page JS with them (the page fell back to its static no-JS lay
 
 | File | Goes in | Holds | Size |
 |---|---|---|---|
-| `element-1-markup.html` | first Custom HTML element | all markup, through the closing `</div>` of `#se-tc-page` | ~22KB |
-| `element-2-scripts.html` | second Custom HTML element, directly below | the three `<script>` blocks | ~12KB |
+| `tour-confirmation-paste--paste-into-thrive-1-markup.html` | first Custom HTML element | all markup, through the closing `</div>` of `#se-tc-page` | ~22KB |
+| `tour-confirmation-paste--paste-into-thrive-2-scripts.html` | second Custom HTML element, directly below | the three `<script>` blocks | ~12KB |
 
 The page CSS still goes in the page's **Custom CSS panel** (from
 `Website/Pages/Tours (Category)/tour-confirmation/Tour Confirmation CSS.css`).
@@ -40,7 +40,7 @@ The page CSS still goes in the page's **Custom CSS panel** (from
 never edit these artifacts directly. After any page edit:
 
 ```bash
-node patches/tour-confirmation-paste/generate.js
+node patches/tour-confirmation-paste/tour-confirmation-paste--generate.js
 ```
 
 It splits at the markup/script boundary, syntax-checks every script block, and refuses

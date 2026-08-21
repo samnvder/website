@@ -136,7 +136,7 @@ Rules:
   booking widget from production. Paste only patches/tour-conversion-tracking/
   live-blocks/*.js, one per widget, four total.
 - Before pasting, re-curl each live page and confirm the blocks still match;
-  regenerate with extract_live.py if live has drifted.
+  regenerate with tour-conversion-tracking--extract-live.py if live has drifted.
 - Stop and ask me at every step marked 🛑 HUMAN GATE.
 - Flush GoDaddy cache after live edits, then verify with curl, not the browser.
 - Google Ads is confirmed absent, so Part C is blocked. Finish A, B and D and

@@ -49,7 +49,7 @@ leaves the digits as-authored.
 ## Applying it
 
 ```bash
-node patches/neutralise-special-offer/generate.js --check
+node patches/neutralise-special-offer/neutralise-special-offer--generate.js --check
 ```
 
 Exits `0` — the repo source is already patched. Re-run `--apply` only if the page is re-derived from live.

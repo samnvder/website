@@ -2,7 +2,7 @@
 
 **Created:** 2026-08-20 · **Status:** ✅ **CLOSED — armored fix live and verified visually 2026-08-20** · **Owner-commissioned 2026-08-20**
 
-> **Fix as-built (2026-08-20):** the dark skin in `generate.js` was replaced with fully
+> **Fix as-built (2026-08-20):** the dark skin in `tour-confirmation-paste--generate.js` was replaced with fully
 > armored rules scoped under `#se-footer-reviews` (id specificity + `!important` on every
 > declaration the theme can paint, no variable reliance) — card, `::before`/`::after`
 > `content: none`, all text colors with `-webkit-text-fill-color`, the ready-state
@@ -25,7 +25,7 @@ set the card background/layout through CSS **variables** on `.se-qr-footer`
 (specificity ~0,2,0), which theme `blockquote`/id-based rules out-rank. Same failure
 class the tour page needed its THRIVE ARMOR block for.
 
-**Fix (all in `patches/tour-confirmation-paste/generate.js`, footer artifact section):**
+**Fix (all in `patches/tour-confirmation-paste/tour-confirmation-paste--generate.js`, footer artifact section):**
 replace the variable-dependent skin with **fully armored rules scoped under
 `#se-footer-reviews`** (id specificity + `!important`, no variable reliance for
 anything the theme can paint):
@@ -47,7 +47,7 @@ anything the theme can paint):
 **Deploy loop (proven today, fully agent-drivable):** regenerate →
 `guard:tour-confirmation` fails on the 10011 mirror → commit+push → in wp-admin open
 snippet **10011**, fetch the artifact from
-`raw.githubusercontent.com/samnvder/website/<branch>/patches/tour-confirmation-paste/footer-reviews-element.html`,
+`raw.githubusercontent.com/samnvder/website/<branch>/patches/tour-confirmation-paste/tour-confirmation-paste--paste-into-wpcode-10011-footer-reviews.html`,
 `CodeMirror.setValue`, verify length, **Update** → copy artifact over
 `live/wpcode/10011-html-footer-member-reviews.html` → guard green → flush cache.
 
@@ -69,7 +69,7 @@ footer armor must not bleed into the page rotator (everything scoped under
 > anchor ever vanishes it stays hidden rather than dangling, and deactivating 10011
 > reverts everything. The deviation was chosen after a day of Thrive template hazards
 > (truncation, clobbering) — no symbol surgery, no capture gate needed, fully revertible.
-> Artifact is generated (`footer-reviews-element.html`: quotes from the tour page,
+> Artifact is generated (`tour-confirmation-paste--paste-into-wpcode-10011-footer-reviews.html`: quotes from the tour page,
 > CSS/JS from the component, dark `.se-qr-footer` skin, 7s interval); the component and
 > tour page gained the double-init guard; mirrors live in [`live/wpcode/`](../live/wpcode/)
 > and `guard:tour-confirmation` pins artifact ↔ mirror. Verified live: homepage block
@@ -100,7 +100,7 @@ The 20 quotes live in ONE place:
 [`Website/Pages/Tours (Category)/tour-confirmation/Tour Confirmation HTML.html`](../Website/Pages/Tours%20(Category)/tour-confirmation/Tour%20Confirmation%20HTML.html)
 (the `se-qr-slide` blockquotes). The footer artifact is **generated from them** — never
 hand-copied — so a future quote swap on the tour page flows to the footer by regenerate +
-re-paste. Extend [`patches/tour-confirmation-paste/generate.js`](../patches/tour-confirmation-paste/generate.js)
+re-paste. Extend [`patches/tour-confirmation-paste/tour-confirmation-paste--generate.js`](../patches/tour-confirmation-paste/tour-confirmation-paste--generate.js)
 to emit the new artifact and `guard:tour-confirmation` will police it for free (it
 compares every `build()` output automatically).
 
@@ -113,7 +113,7 @@ compares every `build()` output automatically).
    its own and the footer's) double-initializes both: the page's WPCode 9998 script and
    the footer element's script each loop over **all** `.se-qr` on the page. Re-copy the
    fix into the tour page source + regenerate + re-paste 9998 (the guard forces this).
-2. **Generator:** extend `generate.js` with a `footer-reviews-element.html` artifact:
+2. **Generator:** extend `tour-confirmation-paste--generate.js` with a `tour-confirmation-paste--paste-into-wpcode-10011-footer-reviews.html` artifact:
    - extract the 20 `se-qr-slide` blockquotes from the tour page source
      (strip `data-interests` — no personalization in the footer);
    - wrap in a self-contained element: `<style>` (component CSS + dark skin) +
@@ -141,7 +141,7 @@ compares every `build()` output automatically).
    happened.
 5. 🛑 **HUMAN GATE — the edit.** Theme Builder → footer symbol → add a **Custom HTML
    element between the nav-columns section and the notify section** → paste
-   `patches/tour-confirmation-paste/footer-reviews-element.html` → save. ⚠️ Two lessons
+   `patches/tour-confirmation-paste/tour-confirmation-paste--paste-into-wpcode-10011-footer-reviews.html` → save. ⚠️ Two lessons
    from 2026-08-20 apply: verify the paste's **tail survived** (scroll to the bottom of
    the code box — element pastes have truncated before), and never leave a second editor
    tab open on anything while saving (a stray Thrive Save Work clobbered post content
@@ -175,7 +175,7 @@ compares every `build()` output automatically).
 ## When this is done
 
 - [ ] Component double-init guard shipped, tour page + 9998 re-pasted, guard green
-- [ ] `footer-reviews-element.html` generated from the tour page's slides, not hand-copied
+- [ ] `tour-confirmation-paste--paste-into-wpcode-10011-footer-reviews.html` generated from the tour page's slides, not hand-copied
 - [ ] Footer symbol captured to `live/thrive/symbols/footer/` **before** the edit
 - [ ] Rotator live between nav columns and notify section, dark-skinned, on every page
 - [ ] `curl` counts match expectations above; both rotators verified on `/tour-confirmation/`
@@ -191,8 +191,8 @@ Website/Components/quote-rotator/ and patches/tour-confirmation-paste/.
 Build order matters: (1) add the double-init guard to the quote-rotator
 component and propagate it to the tour page source + WPCode 9998 per the
 copy-in law — guard:tour-confirmation will force the regenerate; (2)
-extend patches/tour-confirmation-paste/generate.js to emit
-footer-reviews-element.html, generated FROM the tour page's 20 slides
+extend patches/tour-confirmation-paste/tour-confirmation-paste--generate.js to emit
+tour-confirmation-paste--paste-into-wpcode-10011-footer-reviews.html, generated FROM the tour page's 20 slides
 (strip data-interests, dark skin via .se-qr-footer variable overrides,
 data-interval 7000, self-contained style+markup+script); (3) verify in a
 dark harness locally.

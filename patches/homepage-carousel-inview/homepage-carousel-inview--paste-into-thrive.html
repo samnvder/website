@@ -1,0 +1,810 @@
+<!-- Pickleball Carousel — Homepage variant. Fixed: lightbox image selection + resize behavior. -->
+<!-- Paste entire block into homepage Thrive Architect custom HTML element. Self-contained. -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&amp;family=Playfair+Display:ital,wght@0,500;0,600;0,700&amp;display=swap" rel="stylesheet">
+<style>
+/* Scoped to .carousel-pickleball */
+.carousel-pickleball {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 2rem;
+}
+.carousel-pickleball .carousel-label-wrap {
+    margin-bottom: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.carousel-pickleball .carousel-label {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-style: italic;
+    display: block;
+    text-align: center;
+    margin: 0;
+    width: fit-content;
+    max-width: 90%;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    letter-spacing: 0.04em;
+    line-height: 1.35;
+    padding: clamp(1rem, 2.5vw, 1.25rem) clamp(1.75rem, 5vw, 2.5rem);
+    color: #0b468c;
+    background: linear-gradient(135deg, #fff 0%, #f8f6f0 100%);
+    border: 1px solid rgba(11,70,140,0.12);
+    border-radius: 100px;
+    box-shadow: 0 2px 8px rgba(11,70,140,0.04), 0 12px 40px rgba(11,70,140,0.06);
+}
+.carousel-pickleball .carousel-label .carousel-label-line {
+    display: block;
+    white-space: nowrap;
+}
+/* Homepage subheading bubble (below carousel) */
+.carousel-pickleball .carousel-label-sub {
+    display: flex;
+    justify-content: center;
+    margin-top: clamp(1rem, 2.5vw, 1.5rem);
+    width: 100%;
+}
+.carousel-pickleball .carousel-label-sub-line {
+    display: block;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+@media (min-width: 1025px) {
+    .carousel-pickleball .carousel-label-sub-line--desktop { display: block !important; }
+    .carousel-pickleball .carousel-label-sub-line--mobile { display: none !important; }
+}
+@media (max-width: 1024px) {
+    .carousel-pickleball .carousel-label-sub-line--desktop { display: none !important; }
+    .carousel-pickleball .carousel-label-sub-line--mobile { display: block !important; }
+}
+.carousel-pickleball .no-break {
+    white-space: nowrap;
+}
+.carousel-pickleball .carousel-label-sub a {
+    display: inline-block;
+    max-width: 95%;
+    min-width: min(90%, 38rem);
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-style: italic;
+    font-size: calc(clamp(0.85rem, 2vw, 1.1rem) + 1px);
+    letter-spacing: 0.03em;
+    line-height: 1.55;
+    padding: clamp(0.75rem, 2.5vw, 1.25rem) clamp(1.75rem, 5vw, 2.5rem);
+    color: #fff;
+    text-align: center;
+    background: linear-gradient(135deg, #0b468c 0%, #204147 100%);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 100px;
+    box-shadow: 0 2px 8px rgba(11,70,140,0.2), 0 12px 40px rgba(11,70,140,0.15);
+    text-decoration: none;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.carousel-pickleball .carousel-label-sub a .link-text {
+    color: #7eb8e8;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.carousel-pickleball .carousel-label-sub a:hover .link-text {
+    color: #fff;
+}
+.carousel-pickleball .carousel-label-sub a:hover {
+    box-shadow: 0 4px 12px rgba(11,70,140,0.3);
+}
+@media (min-width: 1025px) {
+    .carousel-pickleball .carousel-label-line--desktop { display: block !important; }
+    .carousel-pickleball .carousel-label-line--mobile { display: none !important; }
+}
+@media (max-width: 1024px) {
+    .carousel-pickleball .carousel-label-line--desktop { display: none !important; }
+    .carousel-pickleball .carousel-label-line--mobile { display: block !important; }
+    .carousel-pickleball .carousel-label {
+        font-size: clamp(1.5rem, 7.5vw, 2.25rem) !important;
+        max-width: 92% !important;
+    }
+    .carousel-pickleball .carousel-label .carousel-label-line {
+        white-space: normal !important;
+    }
+    .carousel-pickleball .carousel-label-sub a {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        font-size: calc(clamp(0.75rem, 2.5vw, 0.95rem) + 1px) !important;
+        line-height: 1.7 !important;
+        min-width: unset !important;
+        max-width: 98% !important;
+    }
+    .carousel-pickleball .carousel-label-wrap {
+        margin-bottom: clamp(1rem, 2.5vw, 1.75rem) !important;
+    }
+    .carousel-pickleball {
+        margin-top: 40px;
+    }
+}
+@media (max-width: 374px) {
+    .carousel-pickleball .carousel-label-sub a {
+        max-width: 99% !important;
+    }
+}
+.carousel-pickleball .carousel-browse-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(0.375rem, 1.5vw, 0.5rem);
+    margin-bottom: clamp(0.75rem, 2vw, 1rem);
+}
+.carousel-pickleball .carousel-browse-btn {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+    padding: clamp(0.45rem, 1.5vw, 0.55rem) clamp(0.85rem, 3vw, 1.25rem);
+    border-radius: 100px;
+    border: 1px solid rgba(11,70,140,0.25);
+    background: #fff;
+    color: #0b468c;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+.carousel-pickleball .carousel-browse-btn:hover {
+    background: rgba(11,70,140,0.08);
+    border-color: rgba(11,70,140,0.4);
+}
+.carousel-pickleball .carousel-categories {
+    display: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+.carousel-pickleball .carousel-categories.is-open {
+    display: flex;
+}
+.carousel-pickleball .carousel-cat-btn {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+    padding: clamp(0.45rem, 1.5vw, 0.55rem) clamp(0.85rem, 3vw, 1.25rem);
+    border-radius: 100px;
+    border: 1px solid rgba(11,70,140,0.25);
+    background: #fff;
+    color: #0b468c;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+.carousel-pickleball .carousel-cat-btn:hover {
+    background: rgba(11,70,140,0.08);
+    border-color: rgba(11,70,140,0.4);
+}
+.carousel-pickleball .carousel-cat-btn.active {
+    background: #0b468c;
+    color: #fff;
+    border-color: #0b468c;
+}
+.carousel-pickleball .carousel-album {
+    width: 100%;
+    max-width: 60rem;
+    margin: 0 auto;
+}
+.carousel-pickleball .carousel-album-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.375rem;
+    padding: 0.5rem 0;
+}
+@media (min-width: 481px) and (max-width: 767px) {
+    .carousel-pickleball .carousel-album-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    }
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+    .carousel-pickleball .carousel-album-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    }
+}
+.carousel-pickleball .carousel-album-grid img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.carousel-pickleball .carousel-album-grid img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(11,70,140,0.2);
+}
+/* Lightbox */
+.carousel-lightbox {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center;
+    padding: 1rem; box-sizing: border-box; cursor: default;
+}
+.carousel-lightbox .carousel-lightbox-img-wrap {
+    display: flex; align-items: center; justify-content: center;
+    max-width: calc(100vw - 6rem); max-height: calc(100vh - 2rem); cursor: default;
+}
+.carousel-lightbox .carousel-lightbox-img-wrap img {
+    max-width: 100%; max-height: calc(100vh - 2rem); width: auto; height: auto;
+    object-fit: contain; pointer-events: none;
+}
+.carousel-lightbox .carousel-lightbox-close {
+    position: absolute; top: 1rem; right: 1rem; z-index: 1;
+    width: 2rem; height: 2rem; padding: 0; border: none; border-radius: 50%;
+    background: rgba(128,128,128,0.6); color: #fff; font-size: 1.25rem; line-height: 1;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+}
+.carousel-lightbox .carousel-lightbox-close:hover {
+    background: rgba(128,128,128,0.9);
+}
+.carousel-lightbox .carousel-lightbox-prev,
+.carousel-lightbox .carousel-lightbox-next {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 3rem; height: 3rem; padding: 0; border: none; border-radius: 50%;
+    background: rgba(128,128,128,0.5); color: #fff; font-size: 1.5rem; line-height: 1;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s; z-index: 1;
+}
+.carousel-lightbox .carousel-lightbox-prev:hover,
+.carousel-lightbox .carousel-lightbox-next:hover {
+    background: rgba(128,128,128,0.8);
+}
+.carousel-lightbox .carousel-lightbox-prev { left: 1rem; }
+.carousel-lightbox .carousel-lightbox-next { right: 1rem; }
+
+/* ── Carousel wrap ── */
+.carousel-pickleball .carousel-wrap {
+    align-self: stretch;
+    width: 100%;
+    position: relative;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    background: rgba(32,65,71,0.03);
+    border: 1px solid rgba(11,70,140,0.05);
+    transition: height 0.4s ease;
+}
+.carousel-pickleball .carousel-wrap[data-carousel-dynamic] {
+    min-height: 200px;
+}
+.carousel-pickleball .carousel-track {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+}
+.carousel-pickleball .carousel-track .carousel-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 100%;
+    position: relative;
+    cursor: pointer;
+}
+.carousel-pickleball .carousel-track .carousel-slide img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+.carousel-pickleball .carousel-slide-caption {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    padding: 0.25rem 0.5rem;
+    background: rgba(0,0,0,0.4);
+    border-radius: 0.25rem;
+}
+.carousel-pickleball .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.375rem;
+    padding: 0.75rem 0;
+}
+.carousel-pickleball .carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(11,70,140,0.15);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+.carousel-pickleball .carousel-dot.active {
+    background: #0b468c;
+    transform: scale(1.3);
+}
+@media (min-width: 1025px) {
+    .carousel-pickleball .carousel-wrap {
+        max-width: 38rem;
+        margin-left: auto;
+        margin-right: auto;
+        align-self: center;
+    }
+    .carousel-pickleball .carousel-album-grid {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0.5rem;
+    }
+}
+@media (max-width: 480px) {
+    .carousel-pickleball .carousel-album-grid { gap: 0.25rem; }
+}
+.carousel-pickleball .carousel-wrap[data-carousel-hidden] {
+    display: none !important;
+}
+/* Scroll-triggered animation */
+.carousel-pickleball.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.carousel-pickleball.animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+</style>
+
+<div class="carousel-pickleball animate-on-scroll" role="region" aria-label="Pickleball photo carousel">
+    <div class="carousel-label-wrap">
+        <div class="carousel-label">
+            <span class="carousel-label-line carousel-label-line--desktop">The Best Pickleball In</span>
+            <span class="carousel-label-line carousel-label-line--mobile">The Best Pickleball</span>
+            <span class="carousel-label-line carousel-label-line--desktop">The South Bay!</span>
+            <span class="carousel-label-line carousel-label-line--mobile">In the South Bay</span>
+        </div>
+    </div>
+    <!-- Browse by category -->
+    <div class="carousel-browse-wrap">
+        <button type="button" class="carousel-browse-btn" data-browse-trigger aria-expanded="false" aria-controls="carousel-categories">Browse by Event</button>
+        <div class="carousel-categories" id="carousel-categories" role="tablist" aria-label="Pickleball event albums">
+            <button type="button" class="carousel-cat-btn" data-view="halloween" role="tab" aria-selected="false">Halloween Mixer 2025</button>
+            <button type="button" class="carousel-cat-btn" data-view="beachlife" role="tab" aria-selected="false">Beachlife x Tito's 2025</button>
+        </div>
+    </div>
+    <div class="carousel-wrap" data-carousel data-carousel-dynamic data-carousel-view="all">
+        <div class="carousel-track">
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/02/21_SERC_PB_812A5590.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/02/11_SERC_PB_812A6967.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/44_SERC_PB_812A6183.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/56_SERC_PB_812A5855.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/89_SERC_PB_812A7030.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/61_SERC_PB_812A5827.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/50_SERC_PB_812A6656.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/33_SERC_PB_812A5701.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/8_SERC_PB_812A5718.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/13_SERC_PB_812A6949.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/14_SERC_PB_812A6079.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/24_SERC_PB_812A5668.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/28_SERC_PB_812A5194.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/29_SERC_PB_812A5291.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/30_SERC_PB_812A5751.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/54_SERC_PB_812A6695.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/55_SERC_PB_812A6760.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/12_SERC_PB_812A5389.jpg" alt="Pickleball at South End" data-category="general"></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/25_10_17_SOUTH_END_PICKLEBALL-19-scaled.jpg" alt="Pickleball event photo" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/25_10_17_SOUTH_END_PICKLEBALL-72-scaled.jpg" alt="Pickleball event photo" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/25_10_17_SOUTH_END_PICKLEBALL-44-scaled.jpg" alt="Pickleball event photo" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/25_10_17_SOUTH_END_PICKLEBALL-57-scaled.jpg" alt="Pickleball event photo" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/25_10_17_SOUTH_END_PICKLEBALL-185-scaled.jpg" alt="Pickleball event photo" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/25_10_17_SOUTH_END_PICKLEBALL-271-scaled.jpg" alt="Pickleball event photo" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/70_SERC_PB_812A7058.jpg" alt="Pickleball at South End" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/17_SERC_PB_812A5523.jpg" alt="Pickleball at South End" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/25_10_17_SOUTH_END_PICKLEBALL-195-scaled.jpg" alt="Pickleball event photo" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/25_10_17_SOUTH_END_PICKLEBALL-276-scaled.jpg" alt="Pickleball event photo" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/25_10_17_SOUTH_END_PICKLEBALL-62-scaled.jpg" alt="Pickleball event photo" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/25_10_17_SOUTH_END_PICKLEBALL-68-scaled.jpg" alt="Pickleball event photo" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/25_10_17_SOUTH_END_PICKLEBALL-163-scaled.jpg" alt="Pickleball event photo" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/25_10_17_SOUTH_END_PICKLEBALL-170-scaled.jpg" alt="Pickleball event photo" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/25_10_17_SOUTH_END_PICKLEBALL-224-scaled.jpg" alt="Pickleball event photo" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/25_10_17_SOUTH_END_PICKLEBALL-227-scaled.jpg" alt="Pickleball event photo" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/25_10_17_SOUTH_END_PICKLEBALL-230-scaled.jpg" alt="Pickleball event photo" data-category="halloween"><span class="carousel-slide-caption">Halloween Mixer 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/81_SERC_PB_812A7250.jpg" alt="Pickleball at South End" data-category="beachlife"><span class="carousel-slide-caption">Beachlife x Tito's 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/34_SERC_PB_812A5422.jpg" alt="Pickleball at South End" data-category="beachlife"><span class="carousel-slide-caption">Beachlife x Tito's 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/66_SERC_PB_812A6902.jpg" alt="Pickleball at South End" data-category="beachlife"><span class="carousel-slide-caption">Beachlife x Tito's 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/78_SERC_PB_812A7200.jpg" alt="Pickleball at South End" data-category="beachlife"><span class="carousel-slide-caption">Beachlife x Tito's 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/6_SERC_PB_812A6140.jpg" alt="Pickleball at South End" data-category="beachlife"><span class="carousel-slide-caption">Beachlife x Tito's 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/25_10_17_SOUTH_END_PICKLEBALL-11-scaled.jpg" alt="Pickleball event photo" data-category="beachlife"><span class="carousel-slide-caption">Beachlife x Tito's 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/40_SERC_PB_812A5617.jpg" alt="Pickleball at South End" data-category="beachlife"><span class="carousel-slide-caption">Beachlife x Tito's 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/69_SERC_PB_812A6478.jpg" alt="Pickleball at South End" data-category="beachlife"><span class="carousel-slide-caption">Beachlife x Tito's 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/71_SERC_PB_812A6945.jpg" alt="Pickleball at South End" data-category="beachlife"><span class="carousel-slide-caption">Beachlife x Tito's 2025</span></div>
+            <div class="carousel-slide"><img src="https://southendclub.com/wp-content/uploads/2026/03/79_SERC_PB_812A7201-1.jpg" alt="Pickleball at South End" data-category="beachlife"><span class="carousel-slide-caption">Beachlife x Tito's 2025</span></div>
+        </div>
+        <div class="carousel-dots"></div>
+    </div>
+    <!-- Photo album views -->
+    <div class="carousel-album carousel-album--halloween" data-album="halloween" hidden>
+        <div class="carousel-album-grid"></div>
+    </div>
+    <div class="carousel-album carousel-album--beachlife" data-album="beachlife" hidden>
+        <div class="carousel-album-grid"></div>
+    </div>
+    <!-- Subheader pill below carousel -->
+    <div class="carousel-label-sub">
+        <a href="https://southendclub.com/racquet-sports/#pickleball">
+            <span class="carousel-label-sub-line carousel-label-sub-line--desktop"><span class="link-text">Learn More</span> about the fastest-growing sport where a <span class="no-break">14-year-old</span> and an <span class="no-break">80-year-old</span></span>
+            <span class="carousel-label-sub-line carousel-label-sub-line--desktop">can compete against each other. <span class="no-break">South End</span> is the Home of Pickleball</span>
+            <span class="carousel-label-sub-line carousel-label-sub-line--desktop">in the <span class="no-break">South Bay</span> in a <span class="no-break">private club atmosphere.</span></span>
+            <span class="carousel-label-sub-line carousel-label-sub-line--mobile"><span class="link-text">Learn More</span> about the fastest-growing</span>
+            <span class="carousel-label-sub-line carousel-label-sub-line--mobile">sport where a <span class="no-break">14-year-old</span> and an</span>
+            <span class="carousel-label-sub-line carousel-label-sub-line--mobile"><span class="no-break">80-year-old</span> can compete</span>
+            <span class="carousel-label-sub-line carousel-label-sub-line--mobile">against each other. <span class="no-break">South End</span> is the</span>
+            <span class="carousel-label-sub-line carousel-label-sub-line--mobile"><span class="no-break">Home of Pickleball</span> in the <span class="no-break">South Bay</span></span>
+            <span class="carousel-label-sub-line carousel-label-sub-line--mobile"><span class="no-break">in a private club atmosphere.</span></span>
+        </a>
+    </div>
+</div>
+
+<script>
+(function(){
+    function shuffle(arr) {
+        var a = arr.slice();
+        for (var i = a.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var t = a[i]; a[i] = a[j]; a[j] = t;
+        }
+        return a;
+    }
+
+    function openLightbox(images, startIdx) {
+        if (!images || !images.length) return;
+        var idx = (startIdx + images.length) % images.length;
+        var lb = document.createElement('div');
+        lb.className = 'carousel-lightbox';
+        var imgWrap = document.createElement('div');
+        imgWrap.className = 'carousel-lightbox-img-wrap';
+        var img = document.createElement('img');
+        img.src = images[idx];
+        imgWrap.appendChild(img);
+        lb.appendChild(imgWrap);
+        var closeBtn = document.createElement('button');
+        closeBtn.className = 'carousel-lightbox-close';
+        closeBtn.type = 'button';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.setAttribute('aria-label', 'Close');
+        var prevBtn = document.createElement('button');
+        prevBtn.className = 'carousel-lightbox-prev';
+        prevBtn.type = 'button';
+        prevBtn.innerHTML = '&lsaquo;';
+        prevBtn.setAttribute('aria-label', 'Previous image');
+        var nextBtn = document.createElement('button');
+        nextBtn.className = 'carousel-lightbox-next';
+        nextBtn.type = 'button';
+        nextBtn.innerHTML = '&rsaquo;';
+        nextBtn.setAttribute('aria-label', 'Next image');
+        function go(delta) {
+            idx = (idx + delta + images.length) % images.length;
+            img.src = images[idx];
+        }
+        function keyHandler(e) {
+            if (e.key === 'Escape') { close(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+            if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+        }
+        closeBtn.addEventListener('click', close);
+        prevBtn.addEventListener('click', function(e) { e.stopPropagation(); go(-1); });
+        nextBtn.addEventListener('click', function(e) { e.stopPropagation(); go(1); });
+        lb.addEventListener('click', function(e) {
+            if (e.target === lb || e.target === imgWrap) close();
+        });
+        document.addEventListener('keydown', keyHandler);
+        function close() {
+            if (lb.parentNode) lb.parentNode.removeChild(lb);
+            document.removeEventListener('keydown', keyHandler);
+        }
+        lb.appendChild(closeBtn);
+        lb.appendChild(prevBtn);
+        lb.appendChild(nextBtn);
+        document.body.appendChild(lb);
+    }
+
+    function init() {
+        /* ── Scroll animation observer ── */
+        var observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    var delay = entry.target.dataset.delay || 0;
+                    setTimeout(function() { entry.target.classList.add('visible'); }, delay);
+                }
+            });
+        }, observerOptions);
+        document.querySelectorAll('.carousel-pickleball.animate-on-scroll').forEach(function(el) { observer.observe(el); });
+
+        var container = document.querySelector('.carousel-pickleball');
+        if (!container) return;
+        var wrap = container.querySelector('[data-carousel]');
+        var track = wrap ? wrap.querySelector('.carousel-track') : null;
+        var slideEls = track ? Array.prototype.slice.call(track.querySelectorAll('.carousel-slide')) : [];
+        var imgs = track ? Array.prototype.slice.call(track.querySelectorAll('img')) : [];
+        var dotsWrap = wrap ? wrap.querySelector('.carousel-dots') : null;
+        var browseBtn = container.querySelector('[data-browse-trigger]');
+        var categoriesEl = container.querySelector('#carousel-categories');
+        var catBtns = categoriesEl ? categoriesEl.querySelectorAll('.carousel-cat-btn') : [];
+        var albumEls = container.querySelectorAll('.carousel-album');
+        var albumArr = Array.prototype.slice.call(albumEls);
+
+        var currentView = 'all';
+        var current = 0, interval = null;
+
+        /*
+         * FIX #1 — Simplified display order.
+         *
+         * Old code shuffled an `order` array, set CSS `order` on each slide,
+         * then tried to map DOM indices ↔ display indices ↔ deck indices.
+         * That triple-indirection caused the lightbox to open the wrong image.
+         *
+         * New approach: shuffle the slide *elements* in the DOM directly.
+         * After shuffle, DOM order === display order === dot order.
+         * `current` is simply the index into `slideEls` / `imgs`.
+         * No mapping needed; lightbox always gets the right src.
+         */
+        function shuffleSlides() {
+            var indices = [];
+            for (var i = 0; i < slideEls.length; i++) indices.push(i);
+            indices = shuffle(indices);
+            /* Reorder DOM children to match shuffled order */
+            for (var i = 0; i < indices.length; i++) {
+                track.appendChild(slideEls[indices[i]]);
+            }
+            /* Re-read DOM order so our arrays match the new order */
+            slideEls = Array.prototype.slice.call(track.querySelectorAll('.carousel-slide'));
+            imgs = Array.prototype.slice.call(track.querySelectorAll('img'));
+        }
+
+        /*
+         * FIX #2 — Resize handling (restored).
+         *
+         * The JS-computed height IS needed because overflow:hidden + flex
+         * slides means the wrap won't shrink to match the visible image.
+         * Original bug was getBoundingClientRect returning 0 in Thrive editor.
+         * Fix: fall back to wrap.offsetWidth which works in Thrive iframes,
+         * and retry on image load if dimensions aren't available yet.
+         */
+        var isDynamic = wrap && wrap.hasAttribute('data-carousel-dynamic');
+        var carouselInView = false;
+
+        function computeWrapVisible() {
+            if (!wrap) return false;
+            var r = wrap.getBoundingClientRect();
+            var wh = window.innerHeight || document.documentElement.clientHeight;
+            return r.bottom > 1 && r.top < wh - 1;
+        }
+
+        function setCarouselInView(inView) {
+            carouselInView = inView;
+            if (carouselInView) {
+                updateFrameHeight();
+                resetInterval();
+            } else {
+                clearInterval(interval);
+                interval = null;
+            }
+        }
+
+        function updateFrameHeight() {
+            if (!isDynamic || !wrap || !carouselInView) return;
+            var img = imgs[current];
+            if (!img || !img.complete || !img.naturalWidth) return;
+            var wrapWidth = wrap.offsetWidth || wrap.getBoundingClientRect().width;
+            if (wrapWidth <= 0) return;
+            var h = Math.round(wrapWidth * (img.naturalHeight / img.naturalWidth));
+            wrap.style.height = h + 'px';
+        }
+
+        function goToIndex(idx) {
+            current = idx;
+            track.style.transform = 'translateX(-' + (current * 100) + '%)';
+            var dots = dotsWrap ? dotsWrap.querySelectorAll('.carousel-dot') : [];
+            for (var j = 0; j < dots.length; j++) {
+                dots[j].className = 'carousel-dot' + (j === current ? ' active' : '');
+            }
+            requestAnimationFrame(function() { requestAnimationFrame(updateFrameHeight); });
+        }
+
+        function nextSlide() {
+            goToIndex((current + 1) % slideEls.length);
+        }
+
+        function prevSlide() {
+            goToIndex(current === 0 ? slideEls.length - 1 : current - 1);
+        }
+
+        function resetInterval() {
+            clearInterval(interval);
+            interval = null;
+            if (carouselInView) {
+                interval = setInterval(nextSlide, 3000);
+            }
+        }
+
+        /* ── Carousel setup ── */
+        if (wrap && track && imgs.length) {
+            shuffleSlides();
+
+            /* Build dots */
+            if (dotsWrap) {
+                dotsWrap.innerHTML = '';
+                for (var i = 0; i < imgs.length; i++) {
+                    var dot = document.createElement('button');
+                    dot.type = 'button';
+                    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                    dot.setAttribute('data-index', String(i));
+                    dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+                    dot.addEventListener('click', function() {
+                        goToIndex(parseInt(this.getAttribute('data-index')));
+                        resetInterval();
+                    });
+                    dotsWrap.appendChild(dot);
+                }
+            }
+
+            /* Image load + resize listeners for dynamic height */
+            if (isDynamic) {
+                var checkAndUpdate = function() {
+                    if (!carouselInView) return;
+                    if (imgs[current] && imgs[current].complete && imgs[current].naturalWidth) updateFrameHeight();
+                };
+                for (var k = 0; k < imgs.length; k++) imgs[k].addEventListener('load', checkAndUpdate);
+                function onResize() {
+                    if (carouselInView) updateFrameHeight();
+                }
+                window.addEventListener('resize', onResize);
+            }
+
+            /* Touch / swipe */
+            var startX = 0;
+            wrap.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; }, {passive:true});
+            wrap.addEventListener('touchend', function(e) {
+                var diff = startX - e.changedTouches[0].clientX;
+                if (Math.abs(diff) > 40) {
+                    if (diff > 0) nextSlide();
+                    else prevSlide();
+                    resetInterval();
+                }
+            }, {passive:true});
+
+            /*
+             * FIX #1 continued — Click-to-lightbox.
+             *
+             * Build the images array from the (already shuffled) DOM order.
+             * `current` always equals the visible slide index, so we just
+             * pass `current` to the lightbox. No mapping needed.
+             */
+            function getCarouselSrcs() {
+                var srcs = [];
+                for (var i = 0; i < imgs.length; i++) srcs.push(imgs[i].src);
+                return srcs;
+            }
+
+            for (var m = 0; m < slideEls.length; m++) {
+                slideEls[m].addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    /* Always open whatever slide is currently visible */
+                    openLightbox(getCarouselSrcs(), current);
+                });
+            }
+
+            goToIndex(0);
+            if (typeof IntersectionObserver !== 'undefined') {
+                var io = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        setCarouselInView(entry.isIntersecting);
+                    });
+                }, { root: null, rootMargin: '0px', threshold: 0 });
+                io.observe(wrap);
+                requestAnimationFrame(function() {
+                    var rec = io.takeRecords();
+                    if (rec.length) {
+                        setCarouselInView(rec[0].isIntersecting);
+                    } else {
+                        setCarouselInView(computeWrapVisible());
+                    }
+                });
+            } else {
+                setCarouselInView(true);
+            }
+        }
+
+        /* ── View switching ── */
+        function showView(view) {
+            currentView = view;
+            if (view === 'all') {
+                wrap.removeAttribute('data-carousel-hidden');
+                for (var i = 0; i < albumArr.length; i++) albumArr[i].hidden = true;
+            } else {
+                wrap.setAttribute('data-carousel-hidden', '');
+                for (var i = 0; i < albumArr.length; i++) {
+                    albumArr[i].hidden = (albumArr[i].getAttribute('data-album') !== view);
+                }
+            }
+            for (var i = 0; i < catBtns.length; i++) {
+                var v = catBtns[i].getAttribute('data-view');
+                catBtns[i].classList.toggle('active', v === view);
+                catBtns[i].setAttribute('aria-selected', v === view ? 'true' : 'false');
+            }
+            syncBrowseButton();
+        }
+
+        function syncBrowseButton() {
+            if (!browseBtn) return;
+            if (currentView !== 'all') {
+                browseBtn.textContent = 'Back to Carousel!';
+                browseBtn.setAttribute('aria-expanded', 'false');
+                if (categoriesEl) categoriesEl.classList.remove('is-open');
+            } else {
+                browseBtn.textContent = 'Browse by Event';
+                var isOpen = categoriesEl && categoriesEl.classList.contains('is-open');
+                browseBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            }
+        }
+
+        /* ── Populate album grids + lightbox ── */
+        var byCat = { halloween: [], beachlife: [] };
+        var albumSrcs = { halloween: [], beachlife: [] };
+        for (var i = 0; i < imgs.length; i++) {
+            var cat = imgs[i].getAttribute('data-category');
+            if (cat && byCat[cat]) {
+                albumSrcs[cat].push(imgs[i].src);
+                var clone = imgs[i].cloneNode(true);
+                clone.style.cssText = '';
+                byCat[cat].push(clone);
+            }
+        }
+        for (var i = 0; i < albumArr.length; i++) {
+            var aCat = albumArr[i].getAttribute('data-album');
+            var grid = albumArr[i].querySelector('.carousel-album-grid');
+            if (grid && byCat[aCat]) {
+                grid.innerHTML = '';
+                var srcs = albumSrcs[aCat] || [];
+                for (var j = 0; j < byCat[aCat].length; j++) {
+                    var el = byCat[aCat][j];
+                    (function(images, idx) {
+                        el.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            openLightbox(images, idx);
+                        });
+                    })(srcs, j);
+                    grid.appendChild(el);
+                }
+            }
+        }
+
+        /* ── Browse by Event button ── */
+        if (browseBtn) {
+            browseBtn.addEventListener('click', function() {
+                if (currentView !== 'all') {
+                    showView('all');
+                } else {
+                    if (categoriesEl) {
+                        categoriesEl.classList.toggle('is-open');
+                        syncBrowseButton();
+                    }
+                }
+            });
+        }
+
+        /* ── Category buttons ── */
+        for (var i = 0; i < catBtns.length; i++) {
+            (function(btn) {
+                btn.addEventListener('click', function() {
+                    showView(btn.getAttribute('data-view'));
+                });
+            })(catBtns[i]);
+        }
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+})();
+</script>
