@@ -2,7 +2,7 @@
  * Proof harness: run the builders against a minimal fake DOM and count how many
  * click listeners land on #purchaseButton.
  *
- * Run: node patches/membership-builder-single-bind/prove.js
+ * Run: node patches/membership-builder-single-bind/membership-builder-single-bind--prove.js
  *
  * Three page shapes, two builder sets (live mirrors vs. patched pastes):
  *
@@ -41,8 +41,8 @@ const SETS = {
     body(path.join(root, 'live/wpcode/7315-build-your-membership-discounted-enrollment-with-email-notification.js')),
   ],
   'patched pastes': [
-    body(path.join(__dirname, '9926-paste-into-wpcode.js')),
-    body(path.join(__dirname, '7315-paste-into-wpcode.js')),
+    body(path.join(__dirname, 'membership-builder-single-bind--paste-into-wpcode-9926.js')),
+    body(path.join(__dirname, 'membership-builder-single-bind--paste-into-wpcode-7315.js')),
   ],
 };
 

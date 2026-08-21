@@ -20,7 +20,7 @@ that exact logic to the homepage variant.
 
 1. 🛑 **HUMAN GATE** — open the homepage in Thrive Architect, select the
    pickleball carousel custom HTML element, select-all, and paste the full
-   contents of [`paste.html`](./paste.html) over it. Save.
+   contents of [`homepage-carousel-inview--paste-into-thrive.html`](./homepage-carousel-inview--paste-into-thrive.html) over it. Save.
 2. GoDaddy Quick Links → Flush Cache.
 3. Verify by curl (expect `1`):
 
@@ -30,9 +30,9 @@ that exact logic to the homepage variant.
 
 ## Regenerate
 
-`paste.html` is extracted verbatim from
+`homepage-carousel-inview--paste-into-thrive.html` is extracted verbatim from
 `Website/Pages/index/Index.html` (the carousel custom-HTML block):
 
 ```bash
-node patches/homepage-carousel-inview/extract.js
+node patches/homepage-carousel-inview/homepage-carousel-inview--generate.js
 ```

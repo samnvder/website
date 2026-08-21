@@ -7,7 +7,7 @@
 **The code lives in a different repo.** `book-tour` is not in this repo — its source is
 `Documents/Local Projects/engagepro-booking-app`. The fix is **merged to `main` there** as of
 2026-08-19 (PR #2), and **still not deployed** — merging and deploying are separate, and only the deploy
-reaches customers. [`book-tour-409-message.patch`](book-tour-409-message.patch) is the exact diff, exported
+reaches customers. [`booking-409-message--diff.patch`](booking-409-message--diff.patch) is the exact diff, exported
 so this repo records what changed even though it cannot hold the source.
 
 ---

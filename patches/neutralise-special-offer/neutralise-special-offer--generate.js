@@ -2,9 +2,9 @@
 /**
  * Neutralises the expired Summer 2026 campaign in the /special-offer/ page source.
  *
- * Run:  node patches/neutralise-special-offer/generate.js            (writes artifacts)
- *       node patches/neutralise-special-offer/generate.js --apply    (also rewrites the page source)
- *       node patches/neutralise-special-offer/generate.js --check    (exit 1 if the page still has stale values)
+ * Run:  node patches/neutralise-special-offer/neutralise-special-offer--generate.js            (writes artifacts)
+ *       node patches/neutralise-special-offer/neutralise-special-offer--generate.js --apply    (also rewrites the page source)
+ *       node patches/neutralise-special-offer/neutralise-special-offer--generate.js --check    (exit 1 if the page still has stale values)
  *
  * Why this shape
  * --------------
