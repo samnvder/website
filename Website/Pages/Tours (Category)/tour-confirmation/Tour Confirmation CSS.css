@@ -206,6 +206,24 @@
   box-shadow: none;
 }
 
+.se-tc-resched {
+  display: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--se-tc-muted);
+  margin: -10px 0 26px;
+}
+
+.se-tc-resched a {
+  color: var(--se-tc-blue);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(11, 70, 140, 0.45);
+  transition: border-color 0.2s ease;
+}
+
+.se-tc-resched a:hover { border-bottom-style: solid; }
+
 .se-tc-visit-facts {
   display: flex;
   justify-content: center;
@@ -764,6 +782,20 @@
 #se-tc-page .se-tc-visit-fact a {
   color: var(--se-tc-text-soft) !important;
   -webkit-text-fill-color: var(--se-tc-text-soft) !important;
+}
+
+#se-tc-page .se-tc-resched {
+  color: var(--se-tc-muted) !important;
+  -webkit-text-fill-color: var(--se-tc-muted) !important;
+  font-weight: 500 !important;
+  font-size: 13.5px !important;
+}
+
+#se-tc-page .se-tc-resched a {
+  color: var(--se-tc-blue) !important;
+  -webkit-text-fill-color: var(--se-tc-blue) !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
 }
 
 /* Breathing room around phone/email lines (owner request 2026-08-20). */
