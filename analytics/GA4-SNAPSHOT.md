@@ -76,6 +76,17 @@ First numbers, same 28-day window as the baseline below:
 |---|---|
 | `purchase` | "No stream data detected" — GA4's default placeholder, never fires |
 | `tour_booked` | ✅ **collecting since 2026-08-18** (GTM container v7) and ✅ **marked as a key event 2026-08-18**, see below |
+| `membership_requested` | 🟡 **collecting since 2026-08-21** (container **v8**) — site pushes live since the 2026-08-20 WPCode pastes; **not yet starrable** (propagation, expect ~22h like `tour_booked`). Star it, plus `phone_click`, once listed in Admin → Events. |
+| `phone_click` / `email_click` / `directions_click` | 🟡 collecting since 2026-08-21 (v8, GTM-only link-click tags). `phone_click` carries `phone_is_club` — key-event/Ads decisions should filter on `phone_is_club = true` (a pro's cell on `/racquet-sports/` is a signal, not a conversion). |
+
+**2026-08-21 — container v8 published** (8 tags · 7 triggers · 18 user-defined variables, exported to
+[gtm-container-export.json](gtm-container-export.json)): `GA4 - membership_requested` (6 params:
+type/tier/children/enrollment_fee/monthly_due/builder), `tour_widget` added to `GA4 - tour_booked`
+(`se-bk-floating` | `se-bk-inline` | `se-cal` — the page-vs-widget ambiguity is closed), and the three
+link-click tags. **Still to do in GA4:** star `membership_requested` + `phone_click` as key events after
+propagation, and register event-scoped custom definitions: `membership_type`, `membership_tier`,
+`membership_builder`, `tour_widget`, `phone_is_club` (dimensions) and `membership_enrollment_fee`,
+`membership_monthly_due` (metrics, USD). Not retroactive — events before registration read "(not set)".
 
 **2026-08-18 update — `tour_booked` collects AND is now a key event.** The GTM build was published (container **version 7**) and verified end to end: the tag fires, and GA4 DebugView received the event with its parameters attached. The event then took most of the 24-hour propagation window to reach Admin → Events — it was absent on two checks earlier that day — and was **starred as a key event late on 2026-08-18**, confirmed by the toast *"tour_booked has now been enabled as a key event"* and, independently, by the **Key events** tab listing it against stream *South End Club*. See [handoffs/publish-tour-tracking-gtm.md](../handoffs/publish-tour-tracking-gtm.md).
 
