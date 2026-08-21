@@ -10,7 +10,7 @@ Read the handoff first. This directory is the machinery; the handoff is the plan
 |---|---|
 | `snippet.js` | Canonical `dataLayer` push. Single source of truth — edit here, regenerate everything else. |
 | `apply.sh` | Inserts `snippet.js` after the anchor in the 3 **repo** page files. Idempotent. **Already run 2026-08-17.** |
-| `extract_live.py` | Extracts each booking script's inner JS from a curled **live** page, inserts the snippet, writes `live-blocks/`. |
+| `tour-conversion-tracking--extract-live.py` | Extracts each booking script's inner JS from a curled **live** page, inserts the snippet, writes `live-blocks/`. |
 | `live-blocks/*.js` | **The paste-ready files.** Four complete, patched, syntax-checked scripts — one per live widget instance. |
 
 ## live-blocks — read before pasting
@@ -40,12 +40,12 @@ If live has drifted since 2026-08-17, re-curl and re-extract rather than pasting
 
 ```bash
 curl -s -A "Mozilla/5.0" https://southendclub.com/schedule-a-tour/ -o /tmp/tour.html
-python patches/tour-conversion-tracking/extract_live.py /tmp/tour.html schedule-a-tour
+python patches/tour-conversion-tracking/tour-conversion-tracking--extract-live.py /tmp/tour.html schedule-a-tour
 ```
 
 ```bash
 curl -s -A "Mozilla/5.0" https://southendclub.com/memberships/ -o /tmp/memb.html
-python patches/tour-conversion-tracking/extract_live.py /tmp/memb.html memberships
+python patches/tour-conversion-tracking/tour-conversion-tracking--extract-live.py /tmp/memb.html memberships
 ```
 
 Expect `2 booking call site(s)` per page. Any other number means live changed structurally — **stop and re-read the page before pasting anything.**

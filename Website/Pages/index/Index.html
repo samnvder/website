@@ -2629,9 +2629,28 @@ button.vt-btn:active {
          * and retry on image load if dimensions aren't available yet.
          */
         var isDynamic = wrap && wrap.hasAttribute('data-carousel-dynamic');
+        var carouselInView = false;
+
+        function computeWrapVisible() {
+            if (!wrap) return false;
+            var r = wrap.getBoundingClientRect();
+            var wh = window.innerHeight || document.documentElement.clientHeight;
+            return r.bottom > 1 && r.top < wh - 1;
+        }
+
+        function setCarouselInView(inView) {
+            carouselInView = inView;
+            if (carouselInView) {
+                updateFrameHeight();
+                resetInterval();
+            } else {
+                clearInterval(interval);
+                interval = null;
+            }
+        }
 
         function updateFrameHeight() {
-            if (!isDynamic || !wrap) return;
+            if (!isDynamic || !wrap || !carouselInView) return;
             var img = imgs[current];
             if (!img || !img.complete || !img.naturalWidth) return;
             var wrapWidth = wrap.offsetWidth || wrap.getBoundingClientRect().width;
@@ -2660,7 +2679,10 @@ button.vt-btn:active {
 
         function resetInterval() {
             clearInterval(interval);
-            interval = setInterval(nextSlide, 3000);
+            interval = null;
+            if (carouselInView) {
+                interval = setInterval(nextSlide, 3000);
+            }
         }
 
         /* ── Carousel setup ── */
@@ -2687,11 +2709,14 @@ button.vt-btn:active {
             /* Image load + resize listeners for dynamic height */
             if (isDynamic) {
                 var checkAndUpdate = function() {
+                    if (!carouselInView) return;
                     if (imgs[current] && imgs[current].complete && imgs[current].naturalWidth) updateFrameHeight();
                 };
                 for (var k = 0; k < imgs.length; k++) imgs[k].addEventListener('load', checkAndUpdate);
-                checkAndUpdate();
-                window.addEventListener('resize', updateFrameHeight);
+                function onResize() {
+                    if (carouselInView) updateFrameHeight();
+                }
+                window.addEventListener('resize', onResize);
             }
 
             /* Touch / swipe */
@@ -2727,7 +2752,25 @@ button.vt-btn:active {
                 });
             }
 
-            resetInterval();
+            goToIndex(0);
+            if (typeof IntersectionObserver !== 'undefined') {
+                var io = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        setCarouselInView(entry.isIntersecting);
+                    });
+                }, { root: null, rootMargin: '0px', threshold: 0 });
+                io.observe(wrap);
+                requestAnimationFrame(function() {
+                    var rec = io.takeRecords();
+                    if (rec.length) {
+                        setCarouselInView(rec[0].isIntersecting);
+                    } else {
+                        setCarouselInView(computeWrapVisible());
+                    }
+                });
+            } else {
+                setCarouselInView(true);
+            }
         }
 
         /* ── View switching ── */

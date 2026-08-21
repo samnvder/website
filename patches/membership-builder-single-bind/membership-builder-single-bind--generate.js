@@ -1,6 +1,6 @@
 /**
  * Regenerates the two paste files from the LIVE mirrors in live/wpcode/.
- * Run: node patches/membership-builder-single-bind/generate.js
+ * Run: node patches/membership-builder-single-bind/membership-builder-single-bind--generate.js
  *
  * Deriving from the mirrors rather than the repo paste-source copies is
  * deliberate (same as patches/fix-7966-young-discounts): the mirror is the
@@ -46,7 +46,7 @@ const TARGETS = [
   {
     id: '9926',
     mirror: 'live/wpcode/9926-build-your-membership-with-email-notification.js',
-    out: '9926-paste-into-wpcode.js',
+    out: 'membership-builder-single-bind--paste-into-wpcode-9926.js',
     discounts: 'forbidden',
     // Insert immediately after the LAST line of the getElementById block.
     anchor: '    const foodBeverageHidden = document.getElementById("foodBeverageMinimum");\n',
@@ -80,7 +80,7 @@ const TARGETS = [
   {
     id: '7315',
     mirror: 'live/wpcode/7315-build-your-membership-discounted-enrollment-with-email-notification.js',
-    out: '7315-paste-into-wpcode.js',
+    out: 'membership-builder-single-bind--paste-into-wpcode-7315.js',
     discounts: 'required',
     anchor: '    const limitedTimeText = document.getElementById("limitedTimeText");\n',
     block: [

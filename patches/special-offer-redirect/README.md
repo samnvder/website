@@ -20,7 +20,7 @@ One line, added to the `$map` array in WPCode snippet **9951**:
 'special-offer'   => 'memberships',
 ```
 
-`patches/special-offer-redirect/9951-renamed-page-redirects.php` is the **full
+`patches/special-offer-redirect/special-offer-redirect--paste-into-wpcode-9951.php` is the **full
 snippet with the line applied** — paste-ready, select-all, no fragment editing.
 
 | | |
@@ -52,7 +52,7 @@ there GA4 reads the parameters client-side from the address bar.
 1. **🛑 HUMAN GATE — production snippet edit.** WordPress admin → WPCode →
    snippet **9951** "Renamed-page 301 redirects".
 2. Select all in the editor, paste the contents of
-   `9951-renamed-page-redirects.php` from this directory.
+   `special-offer-redirect--paste-into-wpcode-9951.php` from this directory.
 3. **Note the editor's count before selecting all**, and confirm it rises by
    exactly **38** (or 39 if it counts CRLF as two). If it moves by anything
    else, stop — the paste was partial.
@@ -81,7 +81,7 @@ for u in junior-programs food-services banquets; do curl -s -o /dev/null -w "%{h
 **Expect three `301` lines**, to `/youth-programs/`, `/food-beverage/` and `/events/`.
 
 8. **Backup law — same session, no exceptions.** Copy the applied snippet into
-   `live/wpcode/9951-renamed-page-redirects.php` and commit. Do not defer this.
+   `live/wpcode/special-offer-redirect--paste-into-wpcode-9951.php` and commit. Do not defer this.
 
 ## Then
 

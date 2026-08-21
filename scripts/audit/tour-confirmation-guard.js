@@ -19,7 +19,7 @@
  *      re-paste snippet 9998, and update the mirror in the same
  *      session (backup law).
  *   3. live/wpcode/10010-js-tour-confirmation-redirect.js must equal
- *      its source patches/tour-confirmation-paste/wpcode-tour-redirect.js.
+ *      its source patches/tour-confirmation-paste/tour-confirmation-paste--paste-into-wpcode-10010.js.
  *   4. Every mirrored tour snippet must still be syntactically valid JS.
  *
  * Line endings are normalized before comparing, so CRLF/LF churn never
@@ -31,7 +31,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..', '..');
-const gen = require(path.join(ROOT, 'patches', 'tour-confirmation-paste', 'generate.js'));
+const gen = require(path.join(ROOT, 'patches', 'tour-confirmation-paste', 'tour-confirmation-paste--generate.js'));
 
 const norm = s => s.replace(/\r\n/g, '\n');
 const read = p => norm(fs.readFileSync(p, 'utf8'));
@@ -51,9 +51,9 @@ try {
 
 for (const [name, expected] of Object.entries(artifacts)) {
   const p = path.join(gen.OUT_DIR, name);
-  if (!fs.existsSync(p)) { fail(name + ' is missing — run: node patches/tour-confirmation-paste/generate.js'); continue; }
+  if (!fs.existsSync(p)) { fail(name + ' is missing — run: node patches/tour-confirmation-paste/tour-confirmation-paste--generate.js'); continue; }
   if (read(p) !== norm(expected)) {
-    fail(name + ' does not match the page source. If you edited the page source, run: node patches/tour-confirmation-paste/generate.js — if you edited this artifact directly, move the change into the page source FIRST (a regenerate will silently discard it).');
+    fail(name + ' does not match the page source. If you edited the page source, run: node patches/tour-confirmation-paste/tour-confirmation-paste--generate.js — if you edited this artifact directly, move the change into the page source FIRST (a regenerate will silently discard it).');
   } else {
     ok(name + ' matches page source');
   }
@@ -61,7 +61,7 @@ for (const [name, expected] of Object.entries(artifacts)) {
 
 // 2) live mirror of WPCode 9998 matches the generated body
 const mirror9998 = path.join(ROOT, 'live', 'wpcode', '9998-js-tour-confirmation-page.js');
-if (read(mirror9998) !== norm(artifacts['wpcode-tour-confirmation.js'])) {
+if (read(mirror9998) !== norm(artifacts['tour-confirmation-paste--paste-into-wpcode-9998.js'])) {
   fail('live/wpcode/9998-js-tour-confirmation-page.js differs from the generated WPCode body. After a page-source JS change: regenerate, re-paste snippet 9998 in WPCode, and copy the generated file over this mirror in the same session (backup law).');
 } else {
   ok('live/wpcode/9998 mirror matches generated body');
@@ -69,17 +69,17 @@ if (read(mirror9998) !== norm(artifacts['wpcode-tour-confirmation.js'])) {
 
 // 2b) live mirror of WPCode 10011 (footer reviews) matches the generated artifact
 const mirror10011 = path.join(ROOT, 'live', 'wpcode', '10011-html-footer-member-reviews.html');
-if (read(mirror10011) !== norm(artifacts['footer-reviews-element.html'])) {
+if (read(mirror10011) !== norm(artifacts['tour-confirmation-paste--paste-into-wpcode-10011-footer-reviews.html'])) {
   fail('live/wpcode/10011-html-footer-member-reviews.html differs from the generated footer artifact. After a quote or component change: regenerate, re-paste snippet 10011 in WPCode, and copy the generated file over this mirror in the same session (backup law).');
 } else {
   ok('live/wpcode/10011 mirror matches generated artifact');
 }
 
 // 3) redirect snippet mirror matches its source
-const redirectSrc = path.join(ROOT, 'patches', 'tour-confirmation-paste', 'wpcode-tour-redirect.js');
+const redirectSrc = path.join(ROOT, 'patches', 'tour-confirmation-paste', 'tour-confirmation-paste--paste-into-wpcode-10010.js');
 const mirror10010 = path.join(ROOT, 'live', 'wpcode', '10010-js-tour-confirmation-redirect.js');
 if (read(mirror10010) !== read(redirectSrc)) {
-  fail('live/wpcode/10010-js-tour-confirmation-redirect.js differs from patches/tour-confirmation-paste/wpcode-tour-redirect.js. Edit the patches copy, re-paste snippet 10010, and copy it over the mirror in the same session.');
+  fail('live/wpcode/10010-js-tour-confirmation-redirect.js differs from patches/tour-confirmation-paste/tour-confirmation-paste--paste-into-wpcode-10010.js. Edit the patches copy, re-paste snippet 10010, and copy it over the mirror in the same session.');
 } else {
   ok('live/wpcode/10010 mirror matches source');
 }

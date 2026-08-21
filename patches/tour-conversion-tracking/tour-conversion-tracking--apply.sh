@@ -3,7 +3,7 @@
 # Idempotent: skips any file that already contains tour_booked.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-SNIP="$ROOT/patches/tour-conversion-tracking/snippet.js"
+SNIP="$ROOT/patches/tour-conversion-tracking/tour-conversion-tracking--snippet.js"
 ANCHOR='if(res.ok && res.data.success){'
 
 apply() {

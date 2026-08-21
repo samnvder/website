@@ -2,7 +2,7 @@
  * Builds every generated tour-confirmation artifact from the page source
  * (single source of truth: Tour Confirmation HTML.html + CSS.css).
  *
- *   node patches/tour-confirmation-paste/generate.js      # write artifacts
+ *   node patches/tour-confirmation-paste/tour-confirmation-paste--generate.js      # write artifacts
  *
  * `guard:tour-confirmation` (scripts/audit/tour-confirmation-guard.js)
  * requires this module and recomputes everything, so an artifact edited
@@ -51,6 +51,10 @@ function build() {
     if (g.indexOf("getElementById('se-tc-page')") === -1) throw new Error('block ' + i + ' did not take the page guard');
     new Function(g);
   });
+  // ⚠️ The emitted header strings below still say "generate.js" (the file's
+  // pre-2026-08-21 name). They are byte-locked into live WPCode 9998/10011 and
+  // the pasted Thrive elements — changing them here fails guard:tour-confirmation
+  // until every one is re-pasted. Update them only in a session that re-pastes.
   const wpcodeJs = "/* Tour-confirmation page JS — WPCode snippet 9998 (site-wide footer, guarded).\n" +
     " * GENERATED from the script blocks in\n" +
     " * Website/Pages/Tours (Category)/tour-confirmation/Tour Confirmation HTML.html\n" +
@@ -226,11 +230,11 @@ function build() {
   ].join('\n');
 
   return {
-    'element-1-markup.html': header1 + markup,
-    'element-2-scripts.html': header2 + scripts,
-    'gutenberg-content.html': gutenberg,
-    'wpcode-tour-confirmation.js': wpcodeJs,
-    'footer-reviews-element.html': footerElement,
+    'tour-confirmation-paste--paste-into-thrive-1-markup.html': header1 + markup,
+    'tour-confirmation-paste--paste-into-thrive-2-scripts.html': header2 + scripts,
+    'tour-confirmation-paste--paste-into-gutenberg.html': gutenberg,
+    'tour-confirmation-paste--paste-into-wpcode-9998.js': wpcodeJs,
+    'tour-confirmation-paste--paste-into-wpcode-10011-footer-reviews.html': footerElement,
   };
 }
 
@@ -240,7 +244,7 @@ if (require.main === module) {
   const artifacts = build();
   for (const [name, content] of Object.entries(artifacts)) {
     const bytes = Buffer.byteLength(content, 'utf8');
-    if (name.startsWith('element-') && bytes > THRIVE_CAP - 2048) {
+    if (name.indexOf('paste-into-thrive-') !== -1 && bytes > THRIVE_CAP - 2048) {
       throw new Error(name + ' is ' + bytes + ' bytes — too close to the 32KB Thrive cap.');
     }
     fs.writeFileSync(path.join(OUT_DIR, name), content);

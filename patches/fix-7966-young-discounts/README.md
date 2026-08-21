@@ -4,7 +4,7 @@
 
 ## What this changes
 
-`7966-paste-into-wpcode.js` is the **current live contents of WPCode #7966**, with
+`fix-7966-young-discounts--paste-into-wpcode-7966.js` is the **current live contents of WPCode #7966**, with
 exactly four substitutions:
 
 | # | From | To | Why |
@@ -31,7 +31,7 @@ doing it during a campaign launch is a live pricing change under time pressure.
 
 1. WP Admin → **Code Snippets (WPCode)** → open **#7966**
 2. Click into the editor, **Ctrl+A**, paste the full contents of
-   `7966-paste-into-wpcode.js`
+   `fix-7966-young-discounts--paste-into-wpcode-7966.js`
 3. **Update**
 4. Paste the saved editor contents back into the conversation so the mirror can
    be re-captured — the mirror is only worth having if it is true
@@ -46,7 +46,7 @@ doing it during a campaign launch is a live pricing change under time pressure.
 ## Regenerate
 
 ```bash
-node patches/fix-7966-young-discounts/generate.js
+node patches/fix-7966-young-discounts/fix-7966-young-discounts--generate.js
 ```
 
 Derives from the live mirror, so the output differs from what is running by

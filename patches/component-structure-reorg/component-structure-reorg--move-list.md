@@ -1,6 +1,6 @@
 # Derived move list — component-structure-reorg
 
-Generated 2026-08-18 from `render-map.txt`, then **revised 2026-08-18** to apply
+Generated 2026-08-18 from `component-structure-reorg--render-map.txt`, then **revised 2026-08-18** to apply
 the HUMAN GATE 1 decisions. **NOTHING MOVED YET.**
 
 Routing rules (see [the handoff](../../handoffs/component-structure-reorg.md)):

@@ -19,7 +19,7 @@
  * Idempotent: re-running is a no-op. CRLF is preserved because the target is
  * a paste-in mirror and a line-ending flip would show as a whole-file diff.
  *
- *   node patches/se-bk-inline-tracking/apply-tour-booked-push.js [--verify]
+ *   node patches/se-bk-inline-tracking/se-bk-inline-tracking--apply-tour-booked-push.js [--verify]
  *
  * --verify exits 1 if the push is absent, 0 if present. Nothing is written.
  */

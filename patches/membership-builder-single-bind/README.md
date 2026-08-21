@@ -4,7 +4,7 @@
 The `[wpcode id="7315"]` element is gone from post 8812, both guarded builders
 are live in WPCode (owner paste-backs byte-identical to the paste files here),
 and `curl` serves `dataset.seBuilder = "9926"` on `/memberships/`. Mirrors and
-repo paste-sources carry the guards. `prove.js`'s "live mirrors" rows now FAIL
+repo paste-sources carry the guards. `membership-builder-single-bind--prove.js`'s "live mirrors" rows now FAIL
 by design — their expectations encode the pre-patch double-bind, which the
 guarded mirrors refuse to reproduce. This directory is history.
 
@@ -75,12 +75,12 @@ under time pressure.
 
 Defence in depth, so the invariant does not depend on anyone remembering layer 1.
 Each paste file is the **current live mirror plus exactly one inserted block**
-(`generate.js` proves this — stripping the block reproduces the mirror byte-for-byte):
+(`membership-builder-single-bind--generate.js` proves this — stripping the block reproduces the mirror byte-for-byte):
 
 | File | Inserted guard |
 |---|---|
-| `9926-paste-into-wpcode.js` | bail unless `#membershipType/#tier/#priceDisplay/#purchaseButton` exist; **bail if `#discountedPrice` exists** (that markup belongs to a discount builder); bail if `#purchaseButton` already carries `data-se-builder`; else stamp it `9926` |
-| `7315-paste-into-wpcode.js` | bail unless the core four **and** `#originalPrice/#discountedPrice/#limitedTimeText` exist; bail if already stamped; else stamp `7315` |
+| `membership-builder-single-bind--paste-into-wpcode-9926.js` | bail unless `#membershipType/#tier/#priceDisplay/#purchaseButton` exist; **bail if `#discountedPrice` exists** (that markup belongs to a discount builder); bail if `#purchaseButton` already carries `data-se-builder`; else stamp it `9926` |
+| `membership-builder-single-bind--paste-into-wpcode-7315.js` | bail unless the core four **and** `#originalPrice/#discountedPrice/#limitedTimeText` exist; bail if already stamped; else stamp `7315` |
 
 `#discountedPrice` is the discriminator — the join frontend has none, the
 Discounted Enrollment and special-offer frontends have one — so on any page
@@ -91,7 +91,7 @@ added (#7966's own guard checks only the core four, so it would *not* have
 prevented this).
 
 **Nothing else changes** — no dues, enrollment fees, F&B minimums, discounts,
-payload fields, endpoints or wording. `generate.js` runs the same pricing
+payload fields, endpoints or wording. `membership-builder-single-bind--generate.js` runs the same pricing
 validator `npm run guard` uses over both outputs (`discounts: forbidden` for
 #9926, `required` for #7315) and they pass.
 
@@ -150,14 +150,14 @@ Expect `0` (was `1`).
 ## Regenerate / re-prove
 
 ```bash
-node patches/membership-builder-single-bind/generate.js
+node patches/membership-builder-single-bind/membership-builder-single-bind--generate.js
 ```
 Derives both paste files from the live mirrors. Throws if an anchor line is
 missing (live has moved → re-capture first) or if a mirror already carries the
 guard (the paste landed → this patch is history).
 
 ```bash
-node patches/membership-builder-single-bind/prove.js
+node patches/membership-builder-single-bind/membership-builder-single-bind--prove.js
 ```
 Runs the live mirrors and the patched pastes against a fake DOM in three page
 shapes (join page as live today, discount page, join page with the discount
@@ -174,8 +174,8 @@ observed on 2026-08-19:
 ```
 Apply patches/membership-builder-single-bind/ (South End Club repo). Read its README first.
 Two 🛑 HUMAN GATES: (1) remove the [wpcode id="7315"] Custom HTML element (data-css tve-u-693b313a87da28)
-from the /memberships/ Thrive page (post 8812); (2) paste 9926-paste-into-wpcode.js into WPCode #9926 and
-7315-paste-into-wpcode.js into WPCode #7315. Stop and ask before each. After each paste the owner pastes
+from the /memberships/ Thrive page (post 8812); (2) paste membership-builder-single-bind--paste-into-wpcode-9926.js into WPCode #9926 and
+membership-builder-single-bind--paste-into-wpcode-7315.js into WPCode #7315. Stop and ask before each. After each paste the owner pastes
 the editor contents back; re-capture live/wpcode/ mirrors, apply the same guard block to the two repo
 paste-sources (CRLF), run npm run guard and npm run guard:membership-pricing:prove, verify by curl with the
 expected counts in the README, flush GoDaddy cache, update SEO/TODO.md §28 and the README status line.

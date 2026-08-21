@@ -70,7 +70,7 @@ node -e 'const fs=require("fs"),page=fs.readFileSync("mem.html","utf8").replace(
 **Both printed `MIRROR MATCHES LIVE` on 2026-08-19.** The leading `/* ... */` banner is a documented
 repo-added header (20 lines on #9926, 29 on #7315) and is not part of the shipped code — skip it, as the
 snippet above does. If either prints `DRIFTED`, **do not paste anything**: re-capture the mirror from the
-WPCode editor first, then re-run `generate.js`.
+WPCode editor first, then re-run `membership-builder-single-bind--generate.js`.
 
 ---
 
@@ -109,13 +109,13 @@ Delete the element (or empty it). Save. Then **GoDaddy Quick Links → Flush Cac
 ## 🛑 Gate 2 — WPCode: paste the two guarded builders
 
 Defence in depth, so the invariant survives someone re-adding the shortcode. Each paste file is the
-current live mirror **plus exactly one inserted guard block** — `generate.js` proves that stripping the
+current live mirror **plus exactly one inserted guard block** — `membership-builder-single-bind--generate.js` proves that stripping the
 block reproduces the mirror byte-for-byte, and runs the same pricing validator `npm run guard` uses.
 
 | Snippet | File | Guard |
 |---|---|---|
-| **#9926** | `patches/membership-builder-single-bind/9926-paste-into-wpcode.js` | bail unless the core four exist; **bail if `#discountedPrice` exists**; bail if `#purchaseButton` is already stamped; else stamp `9926` |
-| **#7315** | `patches/membership-builder-single-bind/7315-paste-into-wpcode.js` | bail unless the core four **and** `#originalPrice`/`#discountedPrice`/`#limitedTimeText` exist; bail if stamped; else stamp `7315` |
+| **#9926** | `patches/membership-builder-single-bind/membership-builder-single-bind--paste-into-wpcode-9926.js` | bail unless the core four exist; **bail if `#discountedPrice` exists**; bail if `#purchaseButton` is already stamped; else stamp `9926` |
+| **#7315** | `patches/membership-builder-single-bind/membership-builder-single-bind--paste-into-wpcode-7315.js` | bail unless the core four **and** `#originalPrice`/`#discountedPrice`/`#limitedTimeText` exist; bail if stamped; else stamp `7315` |
 
 `#discountedPrice` is the discriminator — the join frontend has none, the discount frontends have one —
 so on any page **at most one can pass**, and the `data-se-builder` stamp holds the invariant even if a
@@ -149,7 +149,7 @@ Then **GoDaddy Quick Links → Flush Cache**, once, at the end.
 | #7315 | 9,370 | 1,312 | **+1,312** |
 
 Regenerate these rather than trusting them if the mirrors have moved —
-`node patches/membership-builder-single-bind/generate.js` prints both.
+`node patches/membership-builder-single-bind/membership-builder-single-bind--generate.js` prints both.
 
 ---
 
@@ -197,14 +197,14 @@ with the owner — this creates a genuine signature request.
 ## Re-prove the patch at any time
 
 ```bash
-node patches/membership-builder-single-bind/generate.js
+node patches/membership-builder-single-bind/membership-builder-single-bind--generate.js
 ```
 
 ```bash
-node patches/membership-builder-single-bind/prove.js
+node patches/membership-builder-single-bind/membership-builder-single-bind--prove.js
 ```
 
-`generate.js` throws if an anchor line is missing (live moved → re-capture) or if a mirror already carries
+`membership-builder-single-bind--generate.js` throws if an anchor line is missing (live moved → re-capture) or if a mirror already carries
 the guard (the paste landed → this handoff is history). Observed 2026-08-19:
 
 | Builders | join page | discount page | join + promo spans |
@@ -232,7 +232,7 @@ the guard (the paste landed → this handoff is history). Observed 2026-08-19:
 ## Related
 
 - **[SEO/TODO.md §28](../SEO/TODO.md)** — the backlog entry, with the full mechanism
-- **[patches/membership-builder-single-bind/](../patches/membership-builder-single-bind/)** — paste files, `generate.js`, `prove.js`
+- **[patches/membership-builder-single-bind/](../patches/membership-builder-single-bind/)** — paste files, `membership-builder-single-bind--generate.js`, `membership-builder-single-bind--prove.js`
 - **[CLAUDE.md](../CLAUDE.md)** — the backup law, the concurrency law, and the two-builders note
 - **[special-offer-redirect-and-get-answers.md](special-offer-redirect-and-get-answers.md)** — closed 2026-08-19; source of the
   counting-units and fake-mirror warnings above

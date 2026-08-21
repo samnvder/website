@@ -9,7 +9,7 @@ back would corrupt the page structure.
 import sys, os, re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SNIP = open(os.path.join(HERE, "snippet.js"), encoding="utf-8").read().rstrip("\n").split("\n")
+SNIP = open(os.path.join(HERE, "tour-conversion-tracking--snippet.js"), encoding="utf-8").read().rstrip("\n").split("\n")
 ANCHOR = "if(res.ok && res.data.success){"
 OUT = os.path.join(HERE, "live-blocks")
 os.makedirs(OUT, exist_ok=True)
