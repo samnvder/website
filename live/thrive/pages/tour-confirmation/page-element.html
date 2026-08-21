@@ -1,0 +1,1229 @@
+<!-- wp:html -->
+<!-- ═══════════════════════════════════════════════════════════════════
+     TOUR CONFIRMATION PAGE — phase-1 DRAFT, not live
+     See README.md in this directory before publishing anything.
+
+     Where visitors land after booking a tour (phase 2 adds the redirect
+     from the se-bk-inline / se-cal booking widgets). Reads the booking
+     details the widget writes to sessionStorage under the key
+     "seTourBooking" and personalizes; falls back to a complete generic
+     page when storage is empty (direct visit, refresh, shared link).
+     Personal data NEVER travels in URL parameters.
+
+     Deliberately absent: any membership-builder frontend markup or ids
+     (#membershipType / #purchaseButton / #originalPrice / ...). Tier
+     cards here are static and link to /memberships/. If that ever
+     changes, go through the SEO/TODO.md §28 single-bind reasoning first.
+     ═══════════════════════════════════════════════════════════════════ -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+<meta name="theme-color" content="#0b468c">
+<link rel="stylesheet" href="Tour Confirmation CSS.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
+
+<div class="se-tc-page" id="se-tc-page">
+
+  <!-- ── 0 · Drone-tour hero video ─────────────────────────────────────
+       Ambient loop of the same video the header's DRONE TOUR button
+       plays. Muted autoplay + playsinline so mobile browsers allow it;
+       boolean attributes stay bare (editor form). -->
+  <section class="se-tc-video">
+    <video autoplay muted loop playsinline preload="metadata">
+      <source src="https://southendclub.com/wp-content/uploads/2026/02/Indoor-Drone-Tour-s2.mp4" type="video/mp4">
+    </video>
+  </section>
+
+  <!-- ── 1 · Confirmation hero ─────────────────────────────────────── -->
+  <section class="se-tc-section se-tc-hero" id="se-tc-hero">
+    <div class="se-tc-hero-check">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    </div>
+    <h1 id="se-tc-hero-title">You're all set — <span>your tour is booked</span></h1>
+    <p class="se-tc-hero-sub" id="se-tc-hero-sub"><span class="se-tc-sent">A confirmation email is on its way.</span> <span class="se-tc-sent">We can't wait to show you around the club.</span></p>
+    <div class="se-tc-when-chip" id="se-tc-when-chip">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px;opacity:0.8;"><path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v11a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1zm-2 6v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8H5z"></path></svg>
+      <span id="se-tc-when-text"></span>
+    </div>
+    <div class="se-tc-cal-row" id="se-tc-cal-row">
+      <a class="se-tc-cal-btn" id="se-tc-cal-google" href="#" target="_blank" rel="noopener">Add to Google Calendar</a>
+      <a class="se-tc-cal-btn se-tc-cal-alt" id="se-tc-cal-ics" href="#" download="south-end-club-tour.ics">Apple / Outlook (.ics)</a>
+    </div>
+    <div class="se-tc-visit-facts">
+      <div class="se-tc-visit-fact">
+        <strong>Where</strong>
+        <a href="https://www.google.com/maps/dir//2800+Skypark+Dr,+Torrance,+CA+90505" target="_blank" rel="noopener">2800 Skypark Dr<br>Torrance, CA 90505</a>
+      </div>
+      <div class="se-tc-visit-fact">
+        <strong>Questions</strong>
+        <a href="tel:+13105300630">(310) 530-0630</a><br>
+        <a href="mailto:info@southendclub.com">info@southendclub.com</a>
+      </div>
+      <div class="se-tc-visit-fact">
+        <strong>Club hours</strong>
+        Mon&ndash;Fri: 6 AM &ndash; 9 PM<br>
+        Sat&ndash;Sun: 7 AM &ndash; 6 PM <em>(7 PM Summer)</em>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 2 · What your tour looks like ─────────────────────────────── -->
+  <section class="se-tc-section" id="se-tc-tour">
+    <h2>What your tour <span>looks like</span></h2>
+    <p class="se-tc-lead">No paperwork, no pressure — just a relaxed walk through the club so you can picture yourself here.</p>
+    <div class="se-tc-beats">
+      <div class="se-tc-beat">
+        <div class="se-tc-beat-num">1</div>
+        <h3>Check in at the front desk</h3>
+        <p>Give us your name and the team will be expecting you. You'll be greeted and shown around personally.</p>
+      </div>
+      <div class="se-tc-beat">
+        <div class="se-tc-beat-num">2</div>
+        <h3>See the whole club</h3>
+        <p>The pools, the courts, the gym floors, and The Lounge — with extra time on whatever you told us you're most interested in.</p>
+      </div>
+      <div class="se-tc-beat">
+        <div class="se-tc-beat-num">3</div>
+        <h3>About 20 minutes</h3>
+        <p>Quick enough to fit into your day, long enough to ask everything you want to know. No sales script.</p>
+      </div>
+      <div class="se-tc-beat">
+        <div class="se-tc-beat-num">4</div>
+        <h3>Bring nothing</h3>
+        <p>Come as you are — no gym clothes, no gear, nothing to prepare. Just show up and have a look around.</p>
+      </div>
+    </div>
+    <div class="se-tc-interest-note" id="se-tc-interest-note"></div>
+  </section>
+
+  <!-- ── 3 · Membership preview ────────────────────────────────────── -->
+  <!-- Static tier cards only. Pricing figures below are sticker rates
+       from scripts/audit/membership-pricing-source.json (8-2-26) — if
+       pricing changes there, update here in the same session. -->
+  <section class="se-tc-section" id="se-tc-pricing">
+    <h2>Get a head start on <span>your membership</span></h2>
+    <p class="se-tc-lead" id="se-tc-pricing-lead"><span class="se-tc-sent">Most people leave their tour ready to join.</span> <span class="se-tc-sent">Here's what your options look like — so when you visit, you can just say yes.</span></p>
+    <div class="se-tc-tiers">
+      <div class="se-tc-tier se-tc-tier-3" id="se-tc-tier-vitality">
+        <span class="se-tc-match-badge">Matched to your interests</span>
+        <h3>Tier 3 &ndash; Vitality<span class="se-tc-tier-sub">(Essential Fitness)</span></h3>
+        <p class="se-tc-tier-desc">The complete fitness package: every gym floor, the lap and kids' pools, group fitness classes, steam room, sauna, and spa.</p>
+        <ul class="se-tc-dues">
+          <li><span>Single</span><strong>$205/mo</strong></li>
+          <li><span>Couple</span><strong>$350/mo</strong></li>
+          <li><span>Family</span><strong>from $420/mo</strong></li>
+        </ul>
+        <p class="se-tc-enroll-note"><span class="se-tc-enroll-label">One-time enrollment</span>$300 single &middot; $400 couple &middot; $500 family</p>
+        <a class="se-tc-tier-cta" href="https://southendclub.com/memberships/">See full details</a>
+      </div>
+      <div class="se-tc-tier se-tc-tier-2" id="se-tc-tier-elite">
+        <span class="se-tc-match-badge">Matched to your interests</span>
+        <h3>Tier 2 &ndash; Elite<span class="se-tc-tier-sub">(Health &amp; Racquets)</span></h3>
+        <p class="se-tc-tier-desc">Everything in Vitality, plus 9 pickleball courts, 2 padel courts, 2 racquetball courts, and 2 squash courts.</p>
+        <ul class="se-tc-dues">
+          <li><span>Single</span><strong>$225/mo</strong></li>
+          <li><span>Couple</span><strong>$380/mo</strong></li>
+          <li><span>Family</span><strong>from $445/mo</strong></li>
+        </ul>
+        <p class="se-tc-enroll-note"><span class="se-tc-enroll-label">One-time enrollment</span>$350 single &middot; $450 couple &middot; $550 family</p>
+        <a class="se-tc-tier-cta" href="https://southendclub.com/memberships/">See full details</a>
+      </div>
+      <div class="se-tc-tier se-tc-tier-1" id="se-tc-tier-pinnacle">
+        <span class="se-tc-match-badge">Matched to your interests</span>
+        <h3>Tier 1 &ndash; Pinnacle<span class="se-tc-tier-sub">(The Whole Thing)</span></h3>
+        <p class="se-tc-tier-desc">Everything in Elite, plus 9 tennis courts and the full tennis program — complete access to the club.</p>
+        <ul class="se-tc-dues">
+          <li><span>Single</span><strong>$245/mo</strong></li>
+          <li><span>Couple</span><strong>$420/mo</strong></li>
+          <li><span>Family</span><strong>from $495/mo</strong></li>
+        </ul>
+        <p class="se-tc-enroll-note"><span class="se-tc-enroll-label">One-time enrollment</span>$400 single &middot; $500 couple &middot; $600 family</p>
+        <a class="se-tc-tier-cta" href="https://southendclub.com/memberships/">See full details</a>
+      </div>
+    </div>
+    <div class="se-tc-fine">
+      <p><span class="se-tc-sent">Family dues vary with the ages and number of children — the memberships page has the full breakdown.</span></p>
+      <p><span class="se-tc-sent"><strong>Monthly Lounge food &amp; beverage minimum:</strong> $20 single &middot; $40 couple &middot; $60 family</span></p>
+      <p class="se-tc-fine-stamp">Rates as of August 2026</p>
+    </div>
+  </section>
+
+  <!-- ── 4 · Member quotes — SE quote rotator ──────────────────────────
+       Rotator markup/script are a copy of the reusable component at
+       Website/Components/quote-rotator/ — improve it there first, then
+       re-copy here. Quotes are real, verbatim Google reviews of the club
+       (contiguous excerpts, … where trimmed), mined 2026-08-20 from the
+       Business Profile. data-interests tags let the personalization
+       script float matched quotes to the front of the rotation; slides
+       without the attribute are general-purpose. -->
+  <section class="se-tc-section" id="se-tc-quotes">
+    <h2>Hear it from <span>our members</span></h2>
+    <p class="se-tc-lead">Real Google reviews from the people you'll be sharing the club with.</p>
+    <div class="se-qr" data-interval="7000" role="region" aria-label="Member reviews">
+      <button type="button" class="se-qr-arrow se-qr-prev" aria-label="Previous quote">&#8249;</button>
+      <button type="button" class="se-qr-arrow se-qr-next" aria-label="Next quote">&#8250;</button>
+      <div class="se-qr-track">
+        <!-- Tours & joining -->
+        <blockquote class="se-qr-slide">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;Sam Nader did a wonderful job showing me around the club &amp; explaining all of the amenities. He answered all of my questions thoroughly and I ended up signing-up. &hellip; His tour was my deciding factor.&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">GM R</a><span>Google review</span></footer>
+        </blockquote>
+        <blockquote class="se-qr-slide">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;Just joined and couldn&rsquo;t be happier so far. Had a great tour from Payton who also was super helpful and friendly &hellip; The club itself is awesome with so many different aspects to it. Delighted with my choice to join!&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Joe Montana</a><span>Google review</span></footer>
+        </blockquote>
+        <blockquote class="se-qr-slide">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;Sam was informative, friendly, patient, quick, with a no-pressure, not pushy vibe. He was easy and great to work with!&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Kelly Roth</a><span>Google review</span></footer>
+        </blockquote>
+        <!-- Gym & fitness -->
+        <blockquote class="se-qr-slide" data-interests="Weight/Resistance Training, Cardio">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;This is the 4th gym I&rsquo;ve joined in 30 years and hands down it&rsquo;s the best one yet. Sam and the rest of his staff are outstanding. The place is extremely clean and has been completely updated.&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Douglas Shive</a><span>Google review</span></footer>
+        </blockquote>
+        <blockquote class="se-qr-slide" data-interests="Weight/Resistance Training, Cardio, Group Exercise Classes, Family Oriented Atmosphere">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;Amazing club! I just joined and it has the perfect ambiance. Great staff, clean facility, an array of machines and weights. &hellip; It has a resort and family feel to it. &hellip; It was the gym (and more) that I had been looking for!&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Yvette Saddik Jimenez</a><span>Google review</span></footer>
+        </blockquote>
+        <!-- Tennis & padel -->
+        <blockquote class="se-qr-slide" data-interests="Tennis, Swimming, Group Exercise Classes">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;I love this Club for all great tennis, resort like pool and so many classes to choose from all day long!&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Jennifer</a><span>Google review</span></footer>
+        </blockquote>
+        <blockquote class="se-qr-slide" data-interests="Tennis">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;The club itself is fantastic, boasting top-notch facilities and a welcoming atmosphere. I highly recommend it to any tennis enthusiast looking for a superb experience.&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Rene Mexia</a><span>Google review</span></footer>
+        </blockquote>
+        <blockquote class="se-qr-slide" data-interests="Tennis, Padel, Social Community">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;I just became a member of this club, and I met really nice people and good tennis players..because of this club, I&rsquo;m getting into paddle tennis! It&rsquo;s clean and well maintained!&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Moris Arditti</a><span>Google review</span></footer>
+        </blockquote>
+        <!-- Pickleball -->
+        <blockquote class="se-qr-slide" data-interests="Pickleball">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;I decided to inquire about a membership after playing pickleball at the facility. Sam really helped me out. I took a tour of the facility, and he answered all my questions. The club had everything I was looking for.&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Grace Quan</a><span>Google review</span></footer>
+        </blockquote>
+        <blockquote class="se-qr-slide" data-interests="Pickleball">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;Sam was so helpful in the process of getting me signed up! I&rsquo;m very excited to be a member and I&rsquo;m already loving the Pickleball action at South End!&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Tanya Deemer</a><span>Google review</span></footer>
+        </blockquote>
+        <!-- Squash & racquetball -->
+        <blockquote class="se-qr-slide" data-interests="Squash, Racquetball">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;Enjoying this club a lot! It&rsquo;s got a great squash community, and seems to be the premier spot to play if you are in southern LA county.&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Jackie Edelson</a><span>Google review</span></footer>
+        </blockquote>
+        <!-- Pools & family -->
+        <blockquote class="se-qr-slide" data-interests="Swimming, Pickleball, Family Oriented Atmosphere">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;South End is a great family-friendly pool and health club. We love the pickleball courts and both pools in the summer.&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Traci Lupo</a><span>Google review</span></footer>
+        </blockquote>
+        <blockquote class="se-qr-slide" data-interests="Swimming, Family Oriented Atmosphere, Childcare">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;This club is awesome! Best kids pool in the South Bay.&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Jacob Joel Mayeda</a><span>Google review</span></footer>
+        </blockquote>
+        <blockquote class="se-qr-slide" data-interests="Swimming, Childcare, Family Oriented Atmosphere">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;Great swimming pool for littles&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Fabiola Casas</a><span>Google review</span></footer>
+        </blockquote>
+        <blockquote class="se-qr-slide" data-interests="Swimming, Family Oriented Atmosphere">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;We signed up for our second summer since we had such a blast last summer. &hellip; The pool and amenities are great for the whole family.&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Analise Guttmann</a><span>Google review</span></footer>
+        </blockquote>
+        <blockquote class="se-qr-slide" data-interests="Swimming, Family Oriented Atmosphere">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;Our little Hawaii is 5 min from home.&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Sonya Moses</a><span>Google review</span></footer>
+        </blockquote>
+        <!-- Kids & camp -->
+        <blockquote class="se-qr-slide" data-interests="Childcare, Family Oriented Atmosphere">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;THE place to bring your kids for summer camp. Lots of sports, swimming, lunch is included. My kids look forward to it every summer.&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Ellen</a><span>Google review</span></footer>
+        </blockquote>
+        <!-- Women's facilities & wellness -->
+        <blockquote class="se-qr-slide" data-interests="Swimming, Group Exercise Classes">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;Love the facilities at South End. Here&rsquo;s my fav things. The pool. Womens locker room w sauna n jacuzzi. Womens gym. Sues workout class Tues and Th at 4:30.&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">T. Bennett</a><span>Google review</span></footer>
+        </blockquote>
+        <!-- Dining -->
+        <blockquote class="se-qr-slide" data-interests="Social Community">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;Great club. Wonderful food in the lounge!&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Michelle Alford</a><span>Google review</span></footer>
+        </blockquote>
+        <!-- Events -->
+        <blockquote class="se-qr-slide">
+          <p class="se-qr-stars" aria-label="5 out of 5 stars">★★★★★</p>
+          <p>&ldquo;We just had our wedding at South end Racquet club in mid September 2025 and it was a dream come true. The venue provided an incredible location for 150+ wedding guests and we never had to leave the premises. &hellip; Highly recommend South end for events, especially weddings!&rdquo;</p>
+          <footer><a class="se-qr-name-link" href="https://search.google.com/local/reviews?placeid=ChIJe0ftVvdK3YARL-Iks4NBsFo" target="_blank" rel="noopener nofollow">Brooks Mensinger</a><span>Google review</span></footer>
+        </blockquote>
+      </div>
+      <div class="se-qr-dots" role="tablist" aria-label="Choose quote"></div>
+    </div>
+  </section>
+
+  <!-- ── 5 · Soft close ────────────────────────────────────────────── -->
+  <!-- ┌─ FUTURE AI-AGENT SLOT ──────────────────────────────────────┐
+       When the South End AI agent ships, its embed replaces the
+       contents of #se-tc-agent-slot below — the section frame stays.
+       Until then the button opens the site-wide Message Us modal
+       (WPCode snippet 8292) by clicking its floating button.
+       └─────────────────────────────────────────────────────────────┘ -->
+  <section class="se-tc-section se-tc-close" id="se-tc-close">
+    <h2>Have a question <span>before your visit?</span></h2>
+    <p class="se-tc-lead"><span class="se-tc-sent">Ask us anything — memberships, programs, bringing the kids.</span> <span class="se-tc-sent">We'll get right back to you.</span></p>
+    <div id="se-tc-agent-slot">
+      <button type="button" class="se-tc-question-btn" id="se-tc-question-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        Message Us
+      </button>
+      <p class="se-tc-close-alt">Prefer to talk? Call <a href="tel:+13105300630">(310) 530-0630</a>.</p>
+    </div>
+  </section>
+
+</div>
+<!-- /wp:html -->
+
+<!-- wp:html -->
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   TOUR CONFIRMATION PAGE — CSS
+   Draft (phase 1) — not live. See README.md in this directory.
+   Palette/typography mirror the memberships page (the closest relative):
+   cream #f8f2e1, brand blue #0b468c, teal #204147, Montserrat.
+   Everything is scoped under .se-tc-page so nothing leaks into the
+   surrounding Thrive template when pasted.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.se-tc-page {
+  --se-tc-bg: #f8f2e1;
+  --se-tc-white: #ffffff;
+  --se-tc-blue: #0b468c;
+  --se-tc-blue-bright: #1a6dd4;
+  --se-tc-blue-dim: rgba(11, 70, 140, 0.6);
+  --se-tc-teal: #204147;
+  --se-tc-text: #204147;
+  --se-tc-text-soft: #2e5158;
+  --se-tc-muted: #4c6577;
+  --se-tc-green: #16a34a;
+  --se-tc-gold: #b8860b;
+  --se-tc-gold-glow: rgba(184, 134, 11, 0.25);
+  --se-tc-silver: #6b7280;
+  --se-tc-bronze: #a85d20;
+  --se-tc-radius-sm: 12px;
+  --se-tc-radius-md: 20px;
+  --se-tc-shadow-soft: 0 4px 30px rgba(11, 70, 140, 0.08);
+  --se-tc-shadow-strong: 0 20px 60px rgba(11, 70, 140, 0.15);
+  --se-tc-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--se-tc-bg);
+  color: var(--se-tc-text);
+  padding: 40px 20px 60px;
+}
+
+.se-tc-page * { box-sizing: border-box; }
+
+.se-tc-section {
+  max-width: 1100px;
+  margin: 0 auto 36px;
+  background: var(--se-tc-white);
+  border: 2px solid var(--se-tc-blue);
+  border-radius: var(--se-tc-radius-md);
+  box-shadow: var(--se-tc-shadow-strong);
+  padding: 44px 36px;
+  position: relative;
+  overflow: hidden;
+}
+
+.se-tc-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--se-tc-blue), var(--se-tc-teal), var(--se-tc-blue));
+}
+
+.se-tc-section h2 {
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin: 0 0 10px;
+  text-align: center;
+  color: var(--se-tc-text);
+}
+
+.se-tc-section h2 span { color: var(--se-tc-blue); }
+
+.se-tc-section h2::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--se-tc-blue), var(--se-tc-blue-bright));
+  margin: 14px auto 0;
+}
+
+/* Sentence-per-line: each sentence is an unbreakable block, so lines
+   break between sentences when there's room — never runoffs. Balance
+   evens out whatever must still wrap. */
+.se-tc-sent { display: inline-block; }
+
+.se-tc-hero h1,
+.se-tc-section h2,
+.se-tc-lead,
+.se-tc-hero-sub,
+.se-tc-tier-desc,
+.se-tc-beat p,
+.se-qr-slide p {
+  text-wrap: balance;
+}
+
+.se-tc-lead {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--se-tc-text-soft);
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 30px;
+}
+
+/* ── 0 · Drone-tour hero video ─────────────────────────────────────── */
+
+.se-tc-video {
+  max-width: 1100px;
+  margin: 0 auto 36px;
+  border: 2px solid var(--se-tc-blue);
+  border-radius: var(--se-tc-radius-md);
+  overflow: hidden;
+  box-shadow: var(--se-tc-shadow-strong);
+  line-height: 0;
+}
+
+.se-tc-video video {
+  display: block;
+  width: 100%;
+  height: clamp(300px, 54vw, 640px);
+  object-fit: cover;
+}
+
+/* ── 1 · Confirmation hero ─────────────────────────────────────────── */
+
+.se-tc-hero { text-align: center; }
+
+.se-tc-hero-check {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: rgba(22, 163, 74, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.se-tc-hero-check svg { width: 38px; height: 38px; }
+
+.se-tc-hero h1 {
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin: 0 0 12px;
+  color: var(--se-tc-text);
+}
+
+.se-tc-hero h1 span { color: var(--se-tc-blue); }
+
+.se-tc-hero-sub {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--se-tc-text-soft);
+  max-width: 620px;
+  margin: 0 auto 22px;
+}
+
+.se-tc-when-chip {
+  display: none;
+  margin: 0 auto 22px;
+  padding: 10px 22px;
+  border-radius: 100px;
+  background: #f0f4ff;
+  color: var(--se-tc-blue);
+  font-weight: 700;
+  font-size: 16px;
+  width: fit-content;
+  align-items: center;
+  gap: 8px;
+}
+
+.se-tc-cal-row {
+  display: none;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 26px;
+}
+
+.se-tc-cal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s var(--se-tc-ease), box-shadow 0.15s var(--se-tc-ease);
+  background: linear-gradient(135deg, var(--se-tc-blue), var(--se-tc-blue-bright));
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(11, 70, 140, 0.25);
+}
+
+.se-tc-cal-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(11, 70, 140, 0.35);
+  color: #ffffff;
+}
+
+.se-tc-cal-btn.se-tc-cal-alt {
+  background: var(--se-tc-white);
+  color: var(--se-tc-blue);
+  border: 2px solid var(--se-tc-blue);
+  box-shadow: none;
+}
+
+.se-tc-visit-facts {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  padding-top: 22px;
+  border-top: 1px solid rgba(11, 70, 140, 0.12);
+}
+
+.se-tc-visit-fact {
+  font-size: 14px;
+  color: var(--se-tc-text-soft);
+  line-height: 1.6;
+  max-width: 260px;
+}
+
+.se-tc-visit-fact strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--se-tc-blue);
+  margin-bottom: 4px;
+}
+
+.se-tc-visit-fact a {
+  color: var(--se-tc-teal);
+  text-decoration: underline;
+  text-decoration-color: rgba(11, 70, 140, 0.35);
+}
+
+.se-tc-visit-fact a:hover { color: var(--se-tc-blue); }
+
+/* ── 2 · What your tour looks like ─────────────────────────────────── */
+
+.se-tc-beats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.se-tc-beat {
+  background: #fafbfc;
+  border: 2px solid rgba(11, 70, 140, 0.12);
+  border-radius: var(--se-tc-radius-sm);
+  padding: 22px;
+}
+
+.se-tc-beat-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--se-tc-blue);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+.se-tc-beat h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: var(--se-tc-text);
+}
+
+.se-tc-beat p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--se-tc-text-soft);
+  margin: 0;
+}
+
+.se-tc-interest-note {
+  display: none;
+  margin: 24px auto 0;
+  padding: 14px 22px;
+  border-radius: var(--se-tc-radius-sm);
+  background: #f0f4ff;
+  color: var(--se-tc-blue);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  max-width: 720px;
+  text-align: center;
+}
+
+/* ── 3 · Membership preview ────────────────────────────────────────── */
+
+.se-tc-tiers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+.se-tc-tier {
+  background: var(--se-tc-white);
+  border: 2px solid rgba(11, 70, 140, 0.12);
+  border-radius: var(--se-tc-radius-sm);
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.4s var(--se-tc-ease);
+  box-shadow: var(--se-tc-shadow-soft);
+  position: relative;
+}
+
+.se-tc-tier:hover { transform: translateY(-6px); box-shadow: var(--se-tc-shadow-strong); }
+
+.se-tc-tier.se-tc-recommended {
+  border-color: var(--se-tc-gold);
+  box-shadow: var(--se-tc-shadow-strong), 0 0 30px var(--se-tc-gold-glow);
+}
+
+.se-tc-match-badge {
+  display: none;
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 16px;
+  border-radius: 100px;
+  background: var(--se-tc-gold);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.se-tc-tier.se-tc-recommended .se-tc-match-badge { display: inline-block; }
+
+.se-tc-tier h3 {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.se-tc-tier h3 .se-tc-tier-sub {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  font-style: italic;
+  margin-top: 5px;
+  color: var(--se-tc-text-soft);
+}
+
+.se-tc-tier.se-tc-tier-1 h3 { color: var(--se-tc-gold); }
+.se-tc-tier.se-tc-tier-2 h3 { color: var(--se-tc-silver); }
+.se-tc-tier.se-tc-tier-3 h3 { color: var(--se-tc-bronze); }
+
+.se-tc-tier-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--se-tc-text-soft);
+  margin: 12px 0 16px;
+}
+
+.se-tc-dues {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 16px 18px;
+  background: var(--se-tc-blue);
+  border-radius: var(--se-tc-radius-sm);
+}
+
+.se-tc-dues li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.se-tc-dues li:last-child { border-bottom: none; }
+
+.se-tc-dues li strong { color: #ffffff; font-weight: 700; }
+
+.se-tc-enroll-note {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--se-tc-muted);
+  margin: 0 0 16px;
+  text-align: center;
+}
+
+.se-tc-enroll-label {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--se-tc-blue-dim);
+  margin-bottom: 4px;
+}
+
+.se-tc-tier-cta {
+  display: block;
+  margin-top: auto;
+  padding: 13px 20px;
+  border-radius: 100px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  background: linear-gradient(135deg, var(--se-tc-blue), var(--se-tc-blue-bright));
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(11, 70, 140, 0.25);
+  transition: transform 0.15s var(--se-tc-ease), box-shadow 0.15s var(--se-tc-ease);
+}
+
+.se-tc-tier-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(11, 70, 140, 0.35);
+  color: #ffffff;
+}
+
+.se-tc-fine {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 18px 24px;
+  background: #f7f9fd;
+  border: 1px solid rgba(11, 70, 140, 0.12);
+  border-radius: var(--se-tc-radius-sm);
+  text-align: center;
+}
+
+.se-tc-fine p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--se-tc-muted);
+  margin: 4px 0;
+}
+
+.se-tc-fine p strong { color: var(--se-tc-blue); font-weight: 700; }
+
+.se-tc-fine-stamp {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.75;
+  margin-top: 10px !important;
+}
+
+/* ── 4 · Member quotes — SE quote rotator ──────────────────────────────
+   Copy of Website/Components/quote-rotator/quote-rotator.html styles.
+   Improve the component there first, then re-copy here. */
+
+.se-qr {
+  --se-qr-accent: #0b468c;
+  --se-qr-text: #3d5a5e;
+  --se-qr-name: #0b468c;
+  --se-qr-star: #f6b01e;
+  --se-qr-bg: #fafbfc;
+  --se-qr-border: rgba(11, 70, 140, 0.12);
+  position: relative;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.se-qr-track { position: relative; }
+
+/* Once the script runs, slides stack in one grid cell (the track sizes
+   itself to the tallest slide — no JS measuring) and crossfade; before
+   it runs (or with scripting off) they simply flow in a column —
+   nothing is hidden. */
+.se-qr.se-qr-ready .se-qr-track { display: grid; }
+
+.se-qr-slide {
+  margin: 0;
+  padding: 28px 30px 22px;
+  background: var(--se-qr-bg);
+  border: 2px solid var(--se-qr-border);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.se-qr.se-qr-ready .se-qr-slide {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s ease, transform 0.6s ease, visibility 0.6s;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.se-qr.se-qr-ready .se-qr-slide.se-qr-active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .se-qr.se-qr-ready .se-qr-slide { transition: none; transform: none; }
+}
+
+/* Optional photo slot: an <img class="se-qr-photo"> as the slide's first
+   child — for photos ATTACHED TO THAT REVIEW, re-hosted on our own
+   infrastructure. Never hotlink lh3.googleusercontent.com. */
+.se-qr-photo {
+  display: block;
+  width: 100%;
+  max-height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 0 0 14px;
+}
+
+.se-qr-stars {
+  color: var(--se-qr-star);
+  letter-spacing: 3px;
+  font-size: 15px;
+  margin: 0 0 12px;
+}
+
+.se-qr-slide p {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--se-qr-text);
+  font-style: italic;
+  margin: 0 0 16px;
+}
+
+.se-qr-slide footer {
+  font-size: 13px;
+  font-weight: 700;
+  font-style: normal;
+  color: var(--se-qr-name);
+}
+
+.se-qr-slide footer span {
+  display: block;
+  margin-top: 3px;
+  font-weight: 500;
+  font-size: 11.5px;
+  color: var(--se-qr-text);
+  opacity: 0.75;
+}
+
+/* Reviewer name links out to the review on Google. */
+.se-qr-name-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(11, 70, 140, 0.45);
+  transition: border-color 0.2s ease;
+}
+
+.se-qr-name-link:hover {
+  border-bottom: 1px solid var(--se-qr-accent);
+  color: var(--se-qr-accent);
+}
+
+.se-qr-dots {
+  display: none;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.se-qr.se-qr-ready .se-qr-dots { display: flex; }
+
+.se-qr-dot {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--se-qr-border);
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.se-qr-dot.se-qr-dot-active {
+  background: var(--se-qr-accent);
+  transform: scale(1.25);
+}
+
+.se-qr-arrow {
+  display: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--se-qr-border);
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--se-qr-accent);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  z-index: 2;
+}
+
+.se-qr.se-qr-ready .se-qr-arrow { display: inline-flex; }
+.se-qr-arrow:hover { border-color: var(--se-qr-accent); box-shadow: 0 4px 14px rgba(11, 70, 140, 0.18); }
+.se-qr-arrow.se-qr-prev { left: -52px; }
+.se-qr-arrow.se-qr-next { right: -52px; }
+
+@media (max-width: 900px) {
+  .se-qr-arrow { display: none !important; }
+}
+
+/* ── 5 · Soft close / future AI-agent slot ─────────────────────────── */
+
+.se-tc-close { text-align: center; }
+
+.se-tc-question-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 34px;
+  border: none;
+  border-radius: 100px;
+  background: linear-gradient(135deg, var(--se-tc-blue), var(--se-tc-blue-bright));
+  color: #ffffff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(11, 70, 140, 0.25);
+  transition: transform 0.15s var(--se-tc-ease), box-shadow 0.15s var(--se-tc-ease);
+}
+
+.se-tc-question-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(11, 70, 140, 0.35);
+}
+
+.se-tc-close-alt {
+  margin-top: 16px;
+  font-size: 13.5px;
+  color: var(--se-tc-muted);
+}
+
+.se-tc-close-alt a { color: var(--se-tc-blue); font-weight: 600; text-decoration: none; }
+.se-tc-close-alt a:hover { text-decoration: underline; }
+
+/* ── Responsive ────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .se-tc-page { padding: 24px 12px 40px; }
+  .se-tc-section { padding: 32px 20px; margin-bottom: 24px; }
+  .se-tc-visit-facts { flex-direction: column; gap: 16px; align-items: center; text-align: center; }
+  .se-tc-tiers { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .se-tc-section { padding: 26px 16px; border-radius: var(--se-tc-radius-sm); }
+  .se-tc-cal-row { flex-direction: column; align-items: stretch; }
+  .se-tc-cal-btn { justify-content: center; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   THRIVE ARMOR — keep this block LAST in the file.
+   Inside Thrive the page renders under #tve_editor, whose id-based
+   theme rules (#tve_editor p, #tve_editor li, #tve_editor h3, …)
+   out-rank every class selector above. This block re-asserts the
+   color/typography-critical declarations with !important, plus
+   -webkit-text-fill-color for text on colored backgrounds — the same
+   idiom the memberships page uses for the same reason. Layout rules
+   stay un-armored above; only what Thrive is known to swallow lives
+   here.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Every selector is prefixed with #se-tc-page (the page-root id) so it
+   out-ranks Thrive's own !important id rules — (1,1,0)+ beats (1,0,1). */
+
+/* Clearance for the site's sticky header, which otherwise overlaps the
+   hero (seen in Thrive 2026-08-20). Adjust this one number if the
+   header height changes. */
+#se-tc-page {
+  padding-top: 132px !important;
+}
+
+#se-tc-page,
+#se-tc-page p,
+#se-tc-page li,
+#se-tc-page h1,
+#se-tc-page h2,
+#se-tc-page h3,
+#se-tc-page blockquote,
+#se-tc-page footer {
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+#se-tc-page .se-tc-hero h1,
+#se-tc-page .se-tc-section h2 {
+  color: var(--se-tc-text) !important;
+  -webkit-text-fill-color: var(--se-tc-text) !important;
+}
+
+#se-tc-page .se-tc-hero h1 span,
+#se-tc-page .se-tc-section h2 span {
+  color: var(--se-tc-blue) !important;
+  -webkit-text-fill-color: var(--se-tc-blue) !important;
+}
+
+#se-tc-page .se-tc-lead,
+#se-tc-page .se-tc-hero-sub,
+#se-tc-page .se-tc-tier-desc,
+#se-tc-page .se-tc-beat p {
+  color: var(--se-tc-text-soft) !important;
+  -webkit-text-fill-color: var(--se-tc-text-soft) !important;
+  font-weight: 500 !important;
+}
+
+#se-tc-page .se-tc-tier-desc { font-size: 14.5px !important; }
+
+#se-tc-page .se-tc-beat h3 {
+  color: var(--se-tc-text) !important;
+  -webkit-text-fill-color: var(--se-tc-text) !important;
+}
+
+#se-tc-page .se-tc-beat-num,
+#se-tc-page .se-tc-match-badge,
+#se-tc-page .se-tc-cal-btn,
+#se-tc-page .se-tc-cal-btn:hover,
+#se-tc-page .se-tc-tier-cta,
+#se-tc-page .se-tc-tier-cta:hover,
+#se-tc-page .se-tc-question-btn,
+#se-tc-page .se-tc-question-btn:hover {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#se-tc-page .se-tc-cal-btn.se-tc-cal-alt,
+#se-tc-page .se-tc-cal-btn.se-tc-cal-alt:hover {
+  color: var(--se-tc-blue) !important;
+  -webkit-text-fill-color: var(--se-tc-blue) !important;
+}
+
+#se-tc-page .se-tc-when-chip,
+#se-tc-page .se-tc-visit-fact strong,
+#se-tc-page .se-tc-interest-note,
+#se-tc-page .se-tc-close-alt a {
+  color: var(--se-tc-blue) !important;
+  -webkit-text-fill-color: var(--se-tc-blue) !important;
+}
+
+#se-tc-page .se-tc-visit-fact,
+#se-tc-page .se-tc-visit-fact a {
+  color: var(--se-tc-text-soft) !important;
+  -webkit-text-fill-color: var(--se-tc-text-soft) !important;
+}
+
+/* Breathing room around phone/email lines (owner request 2026-08-20). */
+#se-tc-page .se-tc-visit-fact a {
+  display: inline-block !important;
+  padding: 3px 0 !important;
+  line-height: 1.5 !important;
+}
+
+/* Secondary text: medium weight so it reads rich, not thin
+   (owner request 2026-08-20). */
+#se-tc-page .se-tc-visit-fact,
+#se-tc-page .se-tc-visit-fact a,
+#se-tc-page .se-tc-when-chip,
+#se-tc-page .se-tc-close-alt,
+#se-tc-page .se-qr-slide p,
+#se-tc-page .se-qr-slide footer span {
+  font-weight: 500 !important;
+}
+
+#se-tc-page .se-tc-close-alt {
+  margin-top: 22px !important;
+}
+
+#se-tc-page .se-tc-close-alt a {
+  display: inline-block !important;
+  padding: 0 3px !important;
+}
+
+#se-tc-page .se-tc-tier.se-tc-tier-1 h3 { color: var(--se-tc-gold) !important; -webkit-text-fill-color: var(--se-tc-gold) !important; }
+#se-tc-page .se-tc-tier.se-tc-tier-2 h3 { color: var(--se-tc-silver) !important; -webkit-text-fill-color: var(--se-tc-silver) !important; }
+#se-tc-page .se-tc-tier.se-tc-tier-3 h3 { color: var(--se-tc-bronze) !important; -webkit-text-fill-color: var(--se-tc-bronze) !important; }
+
+#se-tc-page .se-tc-tier h3 .se-tc-tier-sub {
+  color: var(--se-tc-text-soft) !important;
+  -webkit-text-fill-color: var(--se-tc-text-soft) !important;
+}
+
+#se-tc-page .se-tc-dues {
+  list-style: none !important;
+  margin: 0 0 16px !important;
+  padding: 16px 18px !important;
+}
+
+#se-tc-page .se-tc-dues li {
+  list-style: none !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.9) !important;
+  margin: 0 !important;
+}
+
+#se-tc-page .se-tc-dues li span,
+#se-tc-page .se-tc-dues li strong {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+#se-tc-page .se-tc-dues li strong {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+#se-tc-page .se-tc-enroll-note,
+#se-tc-page .se-tc-fine p {
+  color: var(--se-tc-muted) !important;
+  -webkit-text-fill-color: var(--se-tc-muted) !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+}
+
+#se-tc-page .se-tc-enroll-label {
+  color: var(--se-tc-blue-dim) !important;
+  -webkit-text-fill-color: var(--se-tc-blue-dim) !important;
+  font-weight: 700 !important;
+  font-size: 10.5px !important;
+}
+
+#se-tc-page .se-tc-fine p strong {
+  color: var(--se-tc-blue) !important;
+  -webkit-text-fill-color: var(--se-tc-blue) !important;
+}
+
+#se-tc-page .se-tc-fine .se-tc-fine-stamp {
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+}
+
+#se-tc-page .se-tc-sent {
+  display: inline-block !important;
+}
+
+#se-tc-page .se-qr-slide p {
+  color: var(--se-qr-text) !important;
+  -webkit-text-fill-color: var(--se-qr-text) !important;
+}
+
+#se-tc-page .se-qr-slide p.se-qr-stars {
+  color: var(--se-qr-star) !important;
+  -webkit-text-fill-color: var(--se-qr-star) !important;
+}
+
+#se-tc-page .se-qr-slide footer,
+#se-tc-page .se-qr-slide footer .se-qr-name-link {
+  color: var(--se-qr-name) !important;
+  -webkit-text-fill-color: var(--se-qr-name) !important;
+}
+
+#se-tc-page .se-qr-slide footer .se-qr-name-link {
+  text-decoration: none !important;
+}
+
+#se-tc-page .se-qr-slide footer span {
+  color: var(--se-qr-text) !important;
+  -webkit-text-fill-color: var(--se-qr-text) !important;
+}
+
+#se-tc-page .se-qr-arrow {
+  color: var(--se-qr-accent) !important;
+  -webkit-text-fill-color: var(--se-qr-accent) !important;
+}
+
+#se-tc-page .se-tc-close-alt {
+  color: var(--se-tc-muted) !important;
+  -webkit-text-fill-color: var(--se-tc-muted) !important;
+}
+
+#se-tc-page .se-tc-video video {
+  display: block !important;
+  width: 100% !important;
+  height: clamp(300px, 54vw, 640px) !important;
+  object-fit: cover !important;
+}
+
+/* The theme inflates inline-sized SVGs (seen live 2026-08-20: the
+   Message Us button grew to 72px tall). Pin every icon's box. */
+#se-tc-page .se-tc-question-btn svg {
+  width: 18px !important;
+  height: 18px !important;
+  flex: 0 0 auto !important;
+}
+
+#se-tc-page .se-tc-when-chip svg {
+  width: 16px !important;
+  height: 16px !important;
+  flex: 0 0 auto !important;
+}
+
+#se-tc-page .se-tc-hero-check svg {
+  width: 38px !important;
+  height: 38px !important;
+}
+
+#se-tc-page .se-tc-visit-fact em {
+  font-style: italic;
+  font-size: 12.5px;
+}
+</style>
+<!-- /wp:html -->
