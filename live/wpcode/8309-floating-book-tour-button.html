@@ -232,6 +232,8 @@ span.flatpickr-weekday { color: #0b468c !important; }
       <div id="se-bk-floating-d2" style="width:10px;height:10px;border-radius:50%;background:#e2e8f0;transition:all 0.3s ease;"></div>
       <div style="width:20px;height:2px;background:#e2e8f0;border-radius:1px;"></div>
       <div id="se-bk-floating-d3" style="width:10px;height:10px;border-radius:50%;background:#e2e8f0;transition:all 0.3s ease;"></div>
+      <div style="width:20px;height:2px;background:#e2e8f0;border-radius:1px;"></div>
+      <div id="se-bk-floating-d4" style="width:10px;height:10px;border-radius:50%;background:#e2e8f0;transition:all 0.3s ease;"></div>
     </div>
 
     <!-- STEP 1A: Pick a Time -->
@@ -394,6 +396,41 @@ span.flatpickr-weekday { color: #0b468c !important; }
           onmouseout="this.style.transform='';this.style.boxShadow='0 4px 16px rgba(11,70,140,0.25)';"
           role="button" tabindex="0"
         >
+          Continue
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP: Interests (added 2026-08-20, mirrors the inline widget) -->
+    <style>#se-bk-floating-interests label:hover{border-color:#cbd5e1 !important;}#se-bk-floating-interests label:has(input:checked){border-color:#0b468c !important;background:#f0f4ff !important;color:#0b468c !important;}</style>
+    <div id="se-bk-floating-sint" style="display:none;">
+      <h4 style="margin:0 0 16px;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:16px;color:#1a1a2e;text-align:center;">What are you interested in?</h4>
+      <p style="margin:0 0 20px;font-family:system-ui,sans-serif;font-size:14px;color:#64748b;line-height:1.4;text-align:center;">Select all that apply &mdash; helps us personalize your tour.</p>
+      <div id="se-bk-floating-interests" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-floating-interest" value="Weight/Resistance Training" style="accent-color:#0b468c;width:18px;height:18px;"> Weight/Resistance Training</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-floating-interest" value="Swimming" style="accent-color:#0b468c;width:18px;height:18px;"> Swimming</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-floating-interest" value="Pickleball" style="accent-color:#0b468c;width:18px;height:18px;"> Pickleball</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-floating-interest" value="Squash" style="accent-color:#0b468c;width:18px;height:18px;"> Squash</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-floating-interest" value="Padel" style="accent-color:#0b468c;width:18px;height:18px;"> Padel</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-floating-interest" value="Family Oriented Atmosphere" style="accent-color:#0b468c;width:18px;height:18px;"> Family Oriented Atmosphere</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-floating-interest" value="Cardio" style="accent-color:#0b468c;width:18px;height:18px;"> Cardio</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-floating-interest" value="Group Exercise Classes" style="accent-color:#0b468c;width:18px;height:18px;"> Group Exercise Classes</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-floating-interest" value="Tennis" style="accent-color:#0b468c;width:18px;height:18px;"> Tennis</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-floating-interest" value="Racquetball" style="accent-color:#0b468c;width:18px;height:18px;"> Racquetball</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-floating-interest" value="Social Community" style="accent-color:#0b468c;width:18px;height:18px;"> Social Community</label>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#475569;cursor:pointer;transition:all 0.2s ease;background:#fafbfc;"><input type="checkbox" name="se-bk-floating-interest" value="Childcare" data-crm="Kid's Club" style="accent-color:#0b468c;width:18px;height:18px;"> Childcare</label>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:11px;color:#64748b;margin-bottom:6px;">Other (comma-separated for multiple)</label>
+        <input type="text" id="se-bk-floating-interest-other" placeholder="e.g. Yoga, Pilates" style="width:100%;padding:12px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:system-ui,sans-serif;font-size:14px;color:#1a1a2e;outline:none;box-sizing:border-box;background:#fafbfc;" onfocus="this.style.borderColor='#0b468c';" onblur="this.style.borderColor='#e2e8f0';">
+      </div>
+      <div style="display:flex;gap:10px;">
+        <div id="se-bk-floating-sint-back" style="flex:0 0 auto;padding:16px 20px;border:2px solid #e2e8f0;border-radius:100px;color:#64748b;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:border-color 0.15s ease,color 0.15s ease;box-sizing:border-box;" onmouseover="this.style.borderColor='#0b468c';this.style.color='#0b468c';" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#64748b';" role="button" tabindex="0">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Back
+        </div>
+        <div id="se-bk-floating-sint-next" style="flex:1;padding:16px;border:none;border-radius:100px;background:linear-gradient(135deg,#0b468c,#1a6dd4);color:#fff;font-family:Montserrat,system-ui,sans-serif;font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform 0.15s ease,box-shadow 0.15s ease;box-shadow:0 4px 16px rgba(11,70,140,0.25);box-sizing:border-box;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='';" role="button" tabindex="0">
           Review &amp; Book
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </div>
@@ -690,13 +727,15 @@ span.flatpickr-weekday { color: #0b468c !important; }
     document.getElementById('se-bk-floating-s1pick').style.display = (n===1 && SE_MODE==='pick') ? 'block' : 'none';
     document.getElementById('se-bk-floating-s1talk').style.display = (n===1 && SE_MODE==='talk') ? 'block' : 'none';
     document.getElementById('se-bk-floating-s2').style.display = n===2 ? 'block' : 'none';
-    document.getElementById('se-bk-floating-s3').style.display = n===3 ? 'block' : 'none';
+    document.getElementById('se-bk-floating-sint').style.display = n===3 ? 'block' : 'none';
+    document.getElementById('se-bk-floating-s3').style.display = n===4 ? 'block' : 'none';
     document.getElementById('se-bk-floating-success').style.display = 'none';
     document.getElementById('se-bk-floating-tabs').style.display = n===1 ? 'flex' : 'none';
-    document.getElementById('se-bk-floating-dots').style.display = (n >= 1 && n <= 3) ? 'flex' : 'none';
+    document.getElementById('se-bk-floating-dots').style.display = (n >= 1 && n <= 4) ? 'flex' : 'none';
     document.getElementById('se-bk-floating-d1').style.background = n>=1 ? '#0b468c' : '#e2e8f0';
     document.getElementById('se-bk-floating-d2').style.background = n>=2 ? '#0b468c' : '#e2e8f0';
     document.getElementById('se-bk-floating-d3').style.background = n>=3 ? '#0b468c' : '#e2e8f0';
+    document.getElementById('se-bk-floating-d4').style.background = n>=4 ? '#0b468c' : '#e2e8f0';
   }
 
   /* ── Tab Switching ──────────────────────────────────────────────── */
@@ -1072,7 +1111,9 @@ span.flatpickr-weekday { color: #0b468c !important; }
     showStep(3);
   });
 
-  document.getElementById('se-bk-floating-s3-back').addEventListener('click', function(){ showStep(2); });
+  document.getElementById('se-bk-floating-s3-back').addEventListener('click', function(){ showStep(3); });
+  document.getElementById('se-bk-floating-sint-back').addEventListener('click', function(){ showStep(2); });
+  document.getElementById('se-bk-floating-sint-next').addEventListener('click', function(){ showStep(4); });
 
   /* ── Referral Verification ──────────────────────────────────────── */
   function detectSearchType(val){
@@ -1136,7 +1177,7 @@ span.flatpickr-weekday { color: #0b468c !important; }
   /* ── Submit ─────────────────────────────────────────────────────── */
   document.getElementById('se-bk-floating-submit').addEventListener('click', function(){
     var consent = document.getElementById('se-bk-floating-consent');
-    var errEl = document.getElementById('se-bk-error');
+    var errEl = document.getElementById('se-bk-floating-error');
     var submitBtn = document.getElementById('se-bk-floating-submit');
 
     if(!consent.checked){
@@ -1147,6 +1188,15 @@ span.flatpickr-weekday { color: #0b468c !important; }
 
     submitBtn.style.pointerEvents = 'none'; submitBtn.style.opacity = '0.7';
     submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;animation:seBkSpin 0.8s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="31" stroke-dashoffset="10"/></svg> Booking...';
+
+    var interests = [];
+    var intEls = document.querySelectorAll('input[name="se-bk-floating-interest"]:checked');
+    for(var ii = 0; ii < intEls.length; ii++){ interests.push(intEls[ii].getAttribute('data-crm') || intEls[ii].value); }
+    var intOther = document.getElementById('se-bk-floating-interest-other');
+    if(intOther && intOther.value.trim()){
+      var otherVals = intOther.value.trim().split(',');
+      for(var jj = 0; jj < otherVals.length; jj++){ if(otherVals[jj].trim()) interests.push(otherVals[jj].trim()); }
+    }
 
     var refInput = document.getElementById('se-bk-floating-referral');
     var heardVal = document.getElementById('se-bk-floating-heard').value;
@@ -1159,6 +1209,7 @@ span.flatpickr-weekday { color: #0b468c !important; }
       preferred_date: SE_PARSED_DATE,
       preferred_time: SE_PARSED_TIME,
       how_heard: heardVal || null,
+      interests: interests.length > 0 ? interests.join(', ') : null,
       referral_member: (refInput && refInput.value.trim()) ? (SE_REF_NAME || refInput.value.trim()) : null,
       referral_member_id: SE_REF_ID || null,
       referral_member_ref_id: SE_REF_REFID || null,

@@ -110,6 +110,20 @@
   opacity: 0.75;
 }
 
+/* Optional: wrap the reviewer name in <a class="se-qr-name-link"> to
+   link out to the review (target=_blank rel="noopener nofollow"). */
+.se-qr-name-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(11, 70, 140, 0.45);
+  transition: border-color 0.2s ease;
+}
+
+.se-qr-name-link:hover {
+  border-bottom: 1px solid var(--se-qr-accent);
+  color: var(--se-qr-accent);
+}
+
 /* Dots */
 .se-qr-dots {
   display: none;
@@ -206,6 +220,7 @@
   'use strict';
 
   function initRotator(root){
+    if (root.classList.contains('se-qr-ready')) return; /* double-init guard: two copies of this script may share a page */
     var track = root.querySelector('.se-qr-track');
     if (!track) return;
     var slides = track.querySelectorAll('.se-qr-slide');
