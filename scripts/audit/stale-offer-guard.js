@@ -163,6 +163,10 @@ function findStaleOffers(source, fileLabel, today) {
   }).map((f) => f.message);
 }
 
+function isArchiveDir(dirName) {
+  return dirName === 'Archive';
+}
+
 /** Every .html under Website/Pages, recursively, repo-relative. */
 function collectPageFiles(repoRoot) {
   const root = path.join(repoRoot, PAGES_DIR_REL);
@@ -174,12 +178,22 @@ function collectPageFiles(repoRoot) {
       .sort((a, b) => a.name.localeCompare(b.name)) // deterministic output
       .forEach((entry) => {
         const full = path.join(dir, entry.name);
-        if (entry.isDirectory()) walk(full);
-        else if (entry.name.toLowerCase().endsWith('.html')) out.push(full);
+        if (entry.isDirectory()) {
+          if (!isArchiveDir(entry.name)) walk(full);
+        } else if (entry.name.toLowerCase().endsWith('.html')) out.push(full);
       });
   };
   walk(root);
   return out;
+}
+
+function collectCampaignOfferFiles(repoRoot) {
+  const extras = [
+    path.join(repoRoot, 'Website', 'Pages', 'Memberships (Category)', 'special-offer', 'membership builder JS-special-offer.js'),
+    path.join(repoRoot, 'Components', 'Homepage', 'Homepage Campaign Banner.html'),
+    path.join(repoRoot, 'Components', 'Shared', 'Global Special Offer Button.html'),
+  ];
+  return extras.filter((p) => fs.existsSync(p));
 }
 
 function collectMirrorFiles(repoRoot) {
@@ -197,7 +211,8 @@ function main() {
 
   const mirrors = collectMirrorFiles(repoRoot);
   const pages = collectPageFiles(repoRoot);
-  const files = [...mirrors, ...pages];
+  const extras = collectCampaignOfferFiles(repoRoot);
+  const files = [...mirrors, ...pages, ...extras];
 
   if (!files.length) {
     console.log('[stale-offer-guard] Nothing to check.');
@@ -225,8 +240,8 @@ function main() {
   }
 
   console.log(
-    `[stale-offer-guard] OK (${mirrors.length} mirrored snippets + ${pages.length} page files, `
-      + 'no expired offers)'
+    `[stale-offer-guard] OK (${mirrors.length} mirrored snippets + ${pages.length} page files`
+      + ` + ${extras.length} campaign files, no expired offers)`
   );
 }
 
@@ -234,4 +249,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { findStaleOffers, collectPageFiles, stripComments };
+module.exports = { findStaleOffers, collectPageFiles, collectCampaignOfferFiles, stripComments };

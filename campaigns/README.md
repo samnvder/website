@@ -47,3 +47,7 @@ crashed for weeks and nobody noticed, because a red check had stopped meaning an
    `Website/Pages/Memberships (Category)/special-offer/`. Only the *email* moved.
 5. A campaign that is still being drafted has not run — keep it out until it does, or name it for its
    intended month and expect the guard to stay quiet either way.
+
+`scripts/campaign apply` copies the driving email to `campaigns/<id>/email-source.html` **only if that
+file does not already exist**. A delivered `email-final.html` is never overwritten.
+

@@ -19,6 +19,8 @@ Node.js automation scripts organized by intent:
 | `build/` | Source → derived propagation | `build-carousel.js` + configs in `carousel-configs/` |
 | `convert/` | Transform for env/format | `convert-to-local.js` (local ↔ live URL switching) |
 | `scaffold/` | Generate from templates | `new-carousel.js` (writes shells under `dev/`) |
+| `campaign/` | Membership special-offer campaigns | `index.js` prepare / apply / verify / park / bootstrap |
+| `audit/` | Guards that fail `npm run guard` | `campaign-sync-guard.js`, `stale-offer-guard.js` |
 
 Run via `npm run` or `node scripts/<subdir>/<script>.js`.
 
@@ -31,6 +33,8 @@ Run via `npm run` or `node scripts/<subdir>/<script>.js`.
 | `npm run convert:local` | `convert/convert-to-local.js` |
 | `npm run convert:live` | `convert/convert-to-local.js --revert` |
 | `npm run scaffold:carousel` | `scaffold/new-carousel.js` |
+| `npm run campaign` | `campaign/index.js` (see [campaign/README.md](campaign/README.md)) |
+| `npm run guard:campaign` | `audit/campaign-sync-guard.js` — in the `guard` chain |
 
 ## Pickleball Open Play scripts
 

@@ -70,3 +70,11 @@ test('catches the real #7966 payload tag', () => {
   assert.strictEqual(out.length, 1);
   assert.match(out[0], /filed under this campaign name/);
 });
+
+test('collectPageFiles skips Archive directories', () => {
+  const path = require('path');
+  const { collectPageFiles } = require('../stale-offer-guard.js');
+  const repoRoot = path.resolve(__dirname, '..', '..', '..');
+  const files = collectPageFiles(repoRoot);
+  assert.ok(files.every((f) => !f.split(path.sep).includes('Archive')));
+});

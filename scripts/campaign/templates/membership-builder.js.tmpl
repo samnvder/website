@@ -1,6 +1,6 @@
 /**
  * Special Offer membership builder pricing (WPCode #7966).
- * Offer: NOT SET. Set enrollment, wording, countdown and the offer: tag before launch.
+{{OFFER_HEADER}}
  * Monthly dues match current join-page rates.
  */
 (function () {
@@ -47,7 +47,7 @@
             family: [600, 550, 500]
         };
 
-        const SPECIAL_ENROLLMENT = 0;
+        const SPECIAL_ENROLLMENT = {{SPECIAL_ENROLLMENT}};
 
         function updatePrice() {
             const type = membershipType.value;
@@ -113,7 +113,7 @@
             originalPriceDisplay.textContent = `$${originalPrice}`;
             discountedPriceDisplay.textContent = `$${SPECIAL_ENROLLMENT}`;
             if (limitedTimeText) {
-                limitedTimeText.textContent = "OFFER NOT SET — do not publish";
+                limitedTimeText.textContent = {{LIMITED_TIME_JSON}};
                 limitedTimeText.style.display = "inline";
             }
         }
@@ -244,7 +244,7 @@
                 enrollmentFee,
                 monthlyDue,
                 foodBeverageMinimum,
-                offer: "UNSET-set-before-launch"
+                offer: {{OFFER_TAG_JSON}}
             };
 
             console.log("Form data being sent:", data);

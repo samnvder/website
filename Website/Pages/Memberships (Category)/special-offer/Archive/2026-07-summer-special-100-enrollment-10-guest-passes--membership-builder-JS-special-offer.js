@@ -1,7 +1,7 @@
 /**
  * Special Offer membership builder pricing (WPCode #7966).
- * Offer: NOT SET. Set enrollment, wording, countdown and the offer: tag before launch.
- * Monthly dues match current join-page rates.
+ * Offer: flat $100 enrollment + 10 guest passes through July 31, 2026 (midnight Pacific).
+ * Monthly dues match current join-page rates (lock in before August increase).
  */
 (function () {
     function initMembershipBuilder() {
@@ -22,6 +22,7 @@
             return;
         }
 
+        // Current dues (same as join / WPCode #7315) — lock in before August increase
         const pricing = {
             single: [245, 225, 205],
             couple: [420, 380, 350],
@@ -41,13 +42,15 @@
             family: "$60"
         };
 
+        // Standard enrollment (strikethrough) — family up to $600
         const enrollmentFees = {
             single: [400, 350, 300],
             couple: [500, 450, 400],
             family: [600, 550, 500]
         };
 
-        const SPECIAL_ENROLLMENT = 0;
+        // Summer special: flat $100 enrollment for all types/tiers
+        const SPECIAL_ENROLLMENT = 100;
 
         function updatePrice() {
             const type = membershipType.value;
@@ -83,7 +86,7 @@
                 if (allFieldsFilled) {
                     const averageAge = childrenAges.reduce((a, b) => a + b, 0) / childrenAges.length;
                     if (averageAge <= 6 && numChildren <= 2) {
-                        const youngChildDiscounts = { 1: 30, 2: 20 };
+                        const youngChildDiscounts = { 1: 25, 2: 15 };
                         if (youngChildDiscounts[numChildren]) {
                             additionalCharge -= youngChildDiscounts[numChildren];
                         }
@@ -113,7 +116,7 @@
             originalPriceDisplay.textContent = `$${originalPrice}`;
             discountedPriceDisplay.textContent = `$${SPECIAL_ENROLLMENT}`;
             if (limitedTimeText) {
-                limitedTimeText.textContent = "OFFER NOT SET — do not publish";
+                limitedTimeText.textContent = "through July 31 at midnight · 10 guest passes included";
                 limitedTimeText.style.display = "inline";
             }
         }
@@ -244,7 +247,7 @@
                 enrollmentFee,
                 monthlyDue,
                 foodBeverageMinimum,
-                offer: "UNSET-set-before-launch"
+                offer: "summer-special-2026-jul31"
             };
 
             console.log("Form data being sent:", data);
