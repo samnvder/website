@@ -2,14 +2,14 @@
 
 **Created:** 2026-08-25 · **Status:** 🔴 **NEXT SESSION #1 — phase 2 live paste only.** Phase 1 is in `master`. · **Owner-commissioned 2026-08-25**
 
-> **Do not rebuild phase 1.** The draft page, redirect snippet, generator, guard,
-> and GTM notes already exist. Start on `master`. Do **not** edit the membership
-> builders. WPCode #9926 / #7315 / #7966 and the inlined special-offer builder
-> stay untouched. The redirect is a **separate** site-wide `window.fetch`
-> wrapper, the same mechanism as tour snippet **10010**. One paste covers
-> `/memberships/` and `/special-offer/` because both `POST`
-> `create-signature-request`. Disable the snippet and the site is back to
-> alert-only.
+> **Do not rebuild phase 1.** The page-folder files, guard, and GTM notes
+> already exist. Paste those files — there is no generator. Start on `master`.
+> Do **not** edit the membership builders. WPCode #9926 / #7315 / #7966 and the
+> inlined special-offer builder stay untouched. The redirect is a **separate**
+> site-wide `window.fetch` wrapper, the same mechanism as tour snippet
+> **10010**. One paste covers `/memberships/` and `/special-offer/` because
+> both `POST` `create-signature-request`. Disable the snippet and the site is
+> back to alert-only.
 
 > **Never paste a whole memberships or special-offer page file into Thrive.**
 > The repo lags live. Pasting a whole file silently deletes whatever live has
@@ -42,9 +42,7 @@ page only — never in a Yoast title.
 
 | Piece | Path |
 |---|---|
-| Page source | [`Website/Pages/Memberships (Category)/membership-next-steps/`](../Website/Pages/Memberships%20(Category)/membership-next-steps/) |
-| Redirect snippet (authored, not generated) | [`patches/membership-next-steps/membership-next-steps--paste-into-wpcode-redirect.js`](../patches/membership-next-steps/membership-next-steps--paste-into-wpcode-redirect.js) |
-| Generated pastes | `membership-next-steps--paste-into-gutenberg.html`, `--paste-into-wpcode-page.js`, `--paste-into-thrive-markup.html` |
+| **Paste these** | [`Website/Pages/Memberships (Category)/membership-next-steps/`](../Website/Pages/Memberships%20(Category)/membership-next-steps/) — HTML, CSS, page JS, redirect JS. No generated copies. |
 | GTM/GA4 instructions | [`patches/membership-next-steps/membership-next-steps--gtm.md`](../patches/membership-next-steps/membership-next-steps--gtm.md) |
 | Guard | `npm run guard:membership-next-steps` (wired into `npm run guard`) |
 
@@ -70,26 +68,23 @@ accepts it only if it matches `/^[A-Za-zÀ-ɏ' -]{1,30}$/`. Empty storage
 **Tour CTA (near top):** "Still haven't been to South End? Book a viewing
 of the facility HERE" → `https://southendclub.com/schedule-a-tour/`
 
-Regenerate after any page-source edit (not needed unless you change the draft):
-
-```powershell
-node patches/membership-next-steps/membership-next-steps--generate.js
-```
+There is no generate step. Edit the page-folder files; paste those.
 
 ## Paste folder (deliver-paste)
 
 Open files from here. State this parent path in a fenced block for Explorer:
 
 ```
-C:\Users\Sam Work\Documents\Local Projects\Website\patches\membership-next-steps
+C:\Users\samna\Documents\Local Projects\Website\Website\Pages\Memberships (Category)\membership-next-steps
 ```
 
 | File | Goes in | Notes |
 |---|---|---|
-| `membership-next-steps--paste-into-gutenberg.html` | New WP page, Gutenberg code editor — **two** `core/html` blocks: markup, then CSS in `<style>` | Preferred. Thrive Custom HTML truncates ~32KB. |
-| `membership-next-steps--paste-into-thrive-markup.html` | Fallback Thrive Custom HTML, markup only | Only if Gutenberg is refused. Still put CSS in a second HTML block / Custom CSS — do not rely on this file alone for styles. |
-| `membership-next-steps--paste-into-wpcode-page.js` | **New** WPCode JS, site-wide footer | Guarded on `#se-mn-page`. No-op everywhere else. |
-| `membership-next-steps--paste-into-wpcode-redirect.js` | **New** WPCode JS, site-wide footer | Wraps `fetch`. Builders untouched. |
+| `Membership Next Steps HTML.html` | Gutenberg code editor | Already one `wp:html` block. Do not put CSS here. |
+| `Membership Next Steps thrive-source.html` | Thrive Custom HTML, fallback only | Generated (`npm run convert:thrive-source`). Do not edit. |
+| `Membership Next Steps CSS.css` | Thrive **Custom CSS** on this page | Not View Page Source. Thrive `wpautop`s a Gutenberg `<style>` block (post 10047). |
+| `Membership Next Steps JS.js` | **New** WPCode JS, site-wide footer | Guarded on `#se-mn-page`. |
+| `Membership Next Steps redirect.js` | **New** WPCode JS, site-wide footer | Wraps `fetch`. Builders untouched. |
 
 Deliver each paste via [`.claude/skills/deliver-paste/SKILL.md`](../.claude/skills/deliver-paste/SKILL.md): Notepad + parent folder path. Never gate WPCode on an **absolute** character count (CRLF/LF skew). Confirm saves by **"Snippet updated."**, never by reading fields back.
 
@@ -120,9 +115,9 @@ which branch each commit landed on **afterwards**.
 1. Pages → Add New. Slug **must** be `membership-next-steps` (permalink
    `/membership-next-steps/`). Title can be "Membership Next Steps".
 2. Switch the content editor to **Gutenberg code editor**. Paste
-   `membership-next-steps--paste-into-gutenberg.html` as **two** `core/html`
-   blocks (markup, then CSS wrapped in `<style>`). The generator already
-   emits that shape — do not hand-split unless the paste clearly fused them.
+   `Membership Next Steps HTML.html` (already one `core/html` block).
+   CSS is Thrive **Custom CSS** — a Gutenberg `<style>` block is destroyed
+   by Thrive `wpautop` (every rule becomes a `<p>`). Proven on post **10047**.
 3. Thrive Theme Builder template canvas for this page: **only** the
    pass-through WordPress Content element. Do **not** add Architect elements.
    A Thrive **Save Work** overwrites post content (this happened on
@@ -138,7 +133,7 @@ which branch each commit landed on **afterwards**.
 New snippet (do not reuse 9998 — that is tour-confirmation page JS).
 
 - Location: site-wide, footer
-- Paste: `membership-next-steps--paste-into-wpcode-page.js`
+- Paste: `Membership Next Steps JS.js`
 - Title: `JS - Membership next steps page`
 - Confirm **"Snippet updated."**
 
@@ -149,7 +144,7 @@ The snippet no-ops unless `#se-mn-page` exists.
 New snippet (do not reuse 10010 — that wraps `book-tour`).
 
 - Location: site-wide, footer
-- Paste: `membership-next-steps--paste-into-wpcode-redirect.js`
+- Paste: `Membership Next Steps redirect.js`
 - Title: `JS - Membership next steps redirect`
 - Confirm **"Snippet updated."**
 - Do **not** edit #9926 / #7315 / #7966 or the special-offer inline builder.
@@ -284,7 +279,7 @@ push. `membership_application` is how those clicks become visible.
 
 ## Explicitly out of scope
 
-- Rebuilding the draft page, generator, or guard
+- Rebuilding the draft page or guard
 - Editing any membership builder (#9926, #7315, #7966, inlined special-offer)
 - Replacing the native `alert()`
 - Claiming they are already a member before Dropbox Sign is submitted

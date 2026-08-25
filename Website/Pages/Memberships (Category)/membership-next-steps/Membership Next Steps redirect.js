@@ -1,4 +1,5 @@
-/* Membership next-steps redirect — WPCode snippet (site-wide footer).
+/* Membership next-steps redirect — paste into a new WPCode snippet
+ * (site-wide footer). This file is the source; do not generate a copy.
  *
  * Phase 2 of handoffs/build-membership-next-steps.md. Implemented
  * WITHOUT editing the membership builders: #9926, #7315, #7966 and the

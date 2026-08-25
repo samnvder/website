@@ -10,6 +10,9 @@
 <style>
 @keyframes seBkSlideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 @keyframes seBkSpin{to{transform:rotate(360deg)}}
+.se-bk-floating-invalid{border-color:#dc2626 !important;box-shadow:0 0 0 3px rgba(220,38,38,0.12) !important;background:#fff5f5 !important;}
+.se-bk-floating-field-error{display:flex;align-items:center;gap:6px;margin-top:6px;font-family:system-ui,sans-serif;font-size:12.5px;line-height:1.3;color:#dc2626;}
+.se-bk-floating-field-error svg{flex:0 0 auto;width:14px;height:14px;}
 
 /* Override theme styles */
 #se-bk-btn,
@@ -334,7 +337,7 @@ span.flatpickr-weekday { color: #0b468c !important; }
       </div>
       <div style="margin-bottom:14px;">
         <label style="display:block;font-family:Montserrat,system-ui,sans-serif;font-weight:600;font-size:11px;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;">Phone</label>
-        <input type="tel" id="se-bk-floating-phone" required autocomplete="tel" maxlength="14" placeholder="(310) 555-1234"
+        <input type="tel" id="se-bk-floating-phone" required autocomplete="tel" maxlength="18" placeholder="(310) 555-1234"
           style="width:100%;padding:14px 16px;border:2px solid #e2e8f0;border-radius:14px;font-family:system-ui,sans-serif;font-size:16px;color:#1a1a2e;outline:none;box-sizing:border-box;transition:border-color 0.2s ease,box-shadow 0.2s ease;background:#fafbfc;"
           onfocus="this.style.borderColor='#0b468c';this.style.boxShadow='0 0 0 3px rgba(11,70,140,0.1)';"
           onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none';"
@@ -536,6 +539,45 @@ span.flatpickr-weekday { color: #0b468c !important; }
 
   function pad2(n){ return n < 10 ? '0' + n : '' + n; }
   function fmtDate(d){ return DAYS[d.getDay()] + ', ' + MONTHS[d.getMonth()] + ' ' + d.getDate(); }
+  function seIsPlausibleUsPhone(value){
+    var d = String(value || '').replace(/\D/g,'');
+    if(d.length === 11 && d.charAt(0) === '1') d = d.slice(1);
+    if(!/^\d{10}$/.test(d) || !/[2-9]/.test(d.charAt(0)) || !/[2-9]/.test(d.charAt(3))) return false;
+    if(/^(\d)\1{9}$/.test(d) || d === '1234567890' || d === '0123456789') return false;
+    var line = parseInt(d.slice(6), 10);
+    if(d.slice(3,6) === '555' && line >= 100 && line <= 199) return false;
+    return true;
+  }
+  function seFloatingClearError(el){
+    if(!el) return;
+    el.classList.remove('se-bk-floating-invalid');
+    el.removeAttribute('aria-invalid');
+    if(el._seFloatingErr && el._seFloatingErr.parentNode) el._seFloatingErr.parentNode.removeChild(el._seFloatingErr);
+    el._seFloatingErr = null;
+  }
+  function seFloatingFail(id, message){
+    var el = document.getElementById(id);
+    if(!el) return;
+    seFloatingClearError(el);
+    el.classList.add('se-bk-floating-invalid');
+    el.setAttribute('aria-invalid', 'true');
+    var msg = document.createElement('div');
+    msg.className = 'se-bk-floating-field-error';
+    msg.setAttribute('role', 'alert');
+    msg.innerHTML = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span></span>';
+    msg.querySelector('span').textContent = message;
+    el.parentNode.insertBefore(msg, el.nextSibling);
+    el._seFloatingErr = msg;
+    var clear = function(){
+      seFloatingClearError(el);
+      el.removeEventListener('input', clear);
+      el.removeEventListener('change', clear);
+    };
+    el.addEventListener('input', clear);
+    el.addEventListener('change', clear);
+    try { el.focus({ preventScroll: true }); } catch(e) { el.focus(); }
+    if(el.scrollIntoView) el.scrollIntoView({ behavior:'smooth', block:'center' });
+  }
 
   /* ── Modal Open / Close ──────────────────────────────────────────── */
   function openModal(){
@@ -716,9 +758,13 @@ span.flatpickr-weekday { color: #0b468c !important; }
   if(phoneInput){
     phoneInput.addEventListener('input', function(){
       var v = this.value.replace(/\D/g, '');
-      if(v.length >= 6) this.value = '(' + v.slice(0,3) + ') ' + v.slice(3,6) + '-' + v.slice(6,10);
-      else if(v.length >= 3) this.value = '(' + v.slice(0,3) + ') ' + v.slice(3);
-      else this.value = v;
+      var hasCountryCode = v.charAt(0) === '1';
+      if(hasCountryCode) v = v.slice(1, 11);
+      else v = v.slice(0, 10);
+      var prefix = hasCountryCode ? '1 ' : '';
+      if(v.length >= 6) this.value = prefix + '(' + v.slice(0,3) + ') ' + v.slice(3,6) + '-' + v.slice(6,10);
+      else if(v.length >= 3) this.value = prefix + '(' + v.slice(0,3) + ') ' + v.slice(3);
+      else this.value = prefix + v;
     });
   }
 
@@ -1091,7 +1137,7 @@ span.flatpickr-weekday { color: #0b468c !important; }
     var ph = document.getElementById('se-bk-floating-phone').value.trim();
     if(!fn || !ln){ alert('Please enter your name.'); return; }
     if(!em || em.indexOf('@') < 0){ alert('Please enter a valid email.'); return; }
-    if(ph.replace(/\D/g,'').length !== 10){ alert('Please enter a valid 10-digit phone number.'); return; }
+    if(!seIsPlausibleUsPhone(ph)){ seFloatingFail('se-bk-floating-phone', 'Please enter a valid US phone number'); return; }
     var heard = document.getElementById('se-bk-floating-heard').value;
     if(!heard){ alert('Please let us know how you heard about us.'); return; }
 

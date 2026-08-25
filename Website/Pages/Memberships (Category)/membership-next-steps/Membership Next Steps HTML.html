@@ -1,5 +1,8 @@
+<!-- wp:html -->
 <!-- ═══════════════════════════════════════════════════════════════════
-     MEMBERSHIP NEXT STEPS — phase-1 DRAFT, not live
+     MEMBERSHIP NEXT STEPS — paste this file into Gutenberg (code editor).
+     CSS is Membership Next Steps CSS.css (Thrive Custom CSS — not this file).
+     JS is Membership Next Steps JS.js (WPCode). Do not add a second HTML block.
      See README.md in this directory before publishing anything.
 
      Where visitors land after Buy Membership (phase 2 adds the redirect
@@ -15,7 +18,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
 <meta name="theme-color" content="#0b468c">
-<link rel="stylesheet" href="Membership Next Steps CSS.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
@@ -34,7 +36,10 @@
     <!-- Owner: near-top CTA for people who bought without touring. -->
     <div class="se-mn-tour-cta">
       <p>Still haven't been to <span class="no-break">South End</span>?</p>
-      <a class="se-mn-tour-btn" href="https://southendclub.com/schedule-a-tour/">Book a viewing of the facility <span class="se-mn-here">HERE</span></a>
+      <a class="se-mn-tour-btn" href="https://southendclub.com/schedule-a-tour/">
+        <span class="se-mn-tour-btn-label">Book a viewing of the facility</span>
+        <span class="se-mn-here">HERE</span>
+      </a>
     </div>
   </section>
 
@@ -79,7 +84,7 @@
     <ul class="se-mn-tips">
       <li>Search your inbox for <strong>Dropbox Sign</strong> or <strong>HelloSign</strong>.</li>
       <li>Check <strong>Spam</strong>, <strong>Junk</strong>, and Gmail's <strong>Promotions</strong> tab.</li>
-      <li>Still nothing? Call us at <a href="tel:+13105300630">(310) 530-0630</a> or email <a href="mailto:info@southendclub.com">info@southendclub.com</a> — we will resend it.</li>
+      <li>Still nothing? Call us at <a href="tel:+13105300630">(310) 530-0630</a> or email <a href="mailto:s@southendclub.com">s@southendclub.com</a> — we will resend it.</li>
     </ul>
   </section>
 
@@ -103,103 +108,4 @@
   </section>
 
 </div>
-
-<script>
-/* Membership next-steps personalization.
-   Reads sessionStorage key "seMembershipRequest":
-     { "firstName": "Sam",
-       "membershipType": "family",
-       "tier": "1",
-       "offer": "end-of-summer-2026-sep1",
-       "membership_source": "special_offer",
-       "membership_page": "/special-offer/" }
-   Written by the site-wide fetch wrapper on a successful
-   create-signature-request. Every field is optional; anything missing
-   or malformed leaves the generic page as-is. All injection is via
-   textContent — never innerHTML. No name/email/phone in dataLayer. */
-(function(){
-  'use strict';
-
-  var data = null;
-  try { data = JSON.parse(sessionStorage.getItem('seMembershipRequest') || 'null'); } catch (e) { data = null; }
-  if (!data || typeof data !== 'object') return;
-
-  var firstName = null;
-  if (typeof data.firstName === 'string') {
-    var fn = data.firstName.trim();
-    if (/^[A-Za-zÀ-ɏ' -]{1,30}$/.test(fn)) firstName = fn;
-  }
-
-  function setSentences(el, sentences){
-    el.textContent = '';
-    for (var s = 0; s < sentences.length; s++) {
-      if (s > 0) el.appendChild(document.createTextNode(' '));
-      var sp = document.createElement('span');
-      sp.className = 'se-mn-sent';
-      sp.textContent = sentences[s];
-      el.appendChild(sp);
-    }
-  }
-
-  if (firstName) {
-    var title = document.getElementById('se-mn-hero-title');
-    title.textContent = '';
-    var nameSpan = document.createElement('span');
-    nameSpan.textContent = firstName;
-    title.appendChild(nameSpan);
-    title.appendChild(document.createTextNode(', your membership form is on its way'));
-  }
-
-  var type = (typeof data.membershipType === 'string') ? data.membershipType.trim().toLowerCase() : '';
-  var tier = (typeof data.tier === 'string') ? data.tier.trim() : '';
-  var typeLabel = ({ single: 'Single', couple: 'Couple', family: 'Family' })[type] || '';
-  var plan = document.getElementById('se-mn-plan');
-  if (plan && typeLabel && /^[123]$/.test(tier)) {
-    plan.textContent = typeLabel + ' · Tier ' + tier;
-    plan.style.display = 'inline-block';
-  }
-
-  if (firstName) {
-    var after = document.getElementById('se-mn-after-lead');
-    if (after) {
-      setSentences(after, [
-        firstName + ', as soon as you fill it out and submit, expect a confirmation shortly after.',
-        'That email is your confirmation you are becoming a member of the fastest-growing health and family-oriented spot in the South Bay.'
-      ]);
-    }
-  }
-
-  /* Destination event: same URL for every joiner, so source has to travel
-     as a parameter. Direct visits (no storage) never reach this push. */
-  try {
-    var src = (typeof data.membership_source === 'string') ? data.membership_source : '';
-    if (src !== 'special_offer' && src !== 'memberships' && src !== 'other') src = 'unknown';
-    var page = (typeof data.membership_page === 'string' && data.membership_page.charAt(0) === '/') ? data.membership_page.slice(0, 120) : null;
-    var offerTag = (typeof data.offer === 'string' && /^[a-z0-9][a-z0-9-]{0,79}$/i.test(data.offer)) ? data.offer : null;
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({
-      event: 'membership_next_steps',
-      membership_source: src,
-      membership_page: page,
-      membership_offer: offerTag,
-      membership_type: type || null,
-      membership_tier: /^[123]$/.test(tier) ? tier : null
-    });
-  } catch (e) { /* never let tracking break the page */ }
-})();
-</script>
-
-<script>
-/* "Message Us" → the site-wide Message Us modal (WPCode 8292). Falls
-   back to the phone dialer if the snippet isn't on the page. */
-(function(){
-  'use strict';
-  var btn = document.getElementById('se-mn-question-btn');
-  if (!btn) return;
-  btn.addEventListener('click', function(){
-    var crm = document.getElementById('se-crm-btn');
-    if (crm) { crm.click(); }
-    else { window.location.href = 'tel:+13105300630'; }
-  });
-})();
-</script>
+<!-- /wp:html -->

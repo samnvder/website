@@ -1,8 +1,12 @@
-# patches/ — prepared paste artifacts
+# patches/ — task folders (instructions, GTM, campaign packs)
 
-One directory per task. Each holds the **exact paste-ready content** for a live
-change plus the script that regenerates it, so a paste into Thrive/WPCode is a
-select-all, never hand-editing inside an admin screen.
+One directory per task. **Do not put a second copy of a page HTML/CSS/JS here**
+so it can be pasted — paste the file under `Website/Pages/…` (paste law in
+CLAUDE.md). This directory holds READMEs, GTM notes, campaign packs, and
+authored one-offs that are not a duplicate of a page file.
+
+Each folder that *does* hold paste-shaped artifacts (campaign packs, older
+one-off patches) uses the naming law below.
 
 ## Naming law (owner-mandated 2026-08-21, enforced by `npm run guard:patch-naming`)
 

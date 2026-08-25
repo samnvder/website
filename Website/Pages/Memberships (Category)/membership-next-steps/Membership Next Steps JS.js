@@ -1,10 +1,7 @@
-/* Membership next-steps page JS — WPCode snippet (site-wide footer, guarded).
- * GENERATED from the script blocks in
- * Website/Pages/Memberships (Category)/membership-next-steps/Membership Next Steps HTML.html
- * by patches/membership-next-steps/membership-next-steps--generate.js — edit the page
- * source, then regenerate and re-paste; guard:membership-next-steps fails on drift.
- * WHY WPCode and not inline: WordPress content filters entity-encode
- * stray ampersands in post content on output (&& becomes &#038;&#038;),
+/* Membership next-steps page JS — paste into a new WPCode snippet
+ * (site-wide footer). This file is the source; do not generate a copy.
+ * WHY WPCode and not inline in the HTML: WordPress content filters
+ * entity-encode stray ampersands on output (&& becomes &#038;&#038;),
  * which is a syntax error. WPCode injects raw. Discovered 2026-08-20.
  * Each IIFE no-ops unless #se-mn-page exists on the page. */
 

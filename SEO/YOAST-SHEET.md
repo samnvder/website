@@ -8,7 +8,7 @@ Part of: [GUIDELINES.md](GUIDELINES.md) (content rules) · [TODO.md](TODO.md) (b
 > - `wpseo_robots_array` → serves `noindex, follow`
 > - `wpseo_exclude_from_sitemap_by_post_ids` → drops them from `page-sitemap.xml`
 >
-> Post IDs: 6671 social-media-landing-page · 6685 privacy-policy · 6693 terms-conditions · 9451 brandon-pb · 9642 pickelball-classic-hub · 9652 pickleball-classic-admin · 9662 pickleball-classic-rsvp · 9674 pickelball-classic-check-in.
+> Post IDs: 6671 social-media-landing-page · 6685 privacy-policy · 6693 terms-conditions · 9451 brandon-pb · 9642 pickelball-classic-hub · 9652 pickleball-classic-admin · 9662 pickleball-classic-rsvp · 9674 pickelball-classic-check-in · **10047 membership-next-steps** (added 2026-08-25; paste into WPCode **9934** both arrays).
 > To index one again, remove its ID from **both** arrays.
 >
 > `clone-of-home` was trashed and now returns 404. Sitemap is down to 18 commercial URLs.

@@ -726,7 +726,7 @@ body.se-cal-panel-open #wpadminbar {
 
       <div class="se-cal-field">
         <label>Phone</label>
-        <input type="tel" id="se-cal-phone" placeholder="(310) 555-1234" maxlength="14" autocomplete="tel" />
+        <input type="tel" id="se-cal-phone" placeholder="(310) 555-1234" maxlength="18" autocomplete="tel" />
       </div>
 
       <div class="se-cal-field">
@@ -834,6 +834,15 @@ body.se-cal-panel-open #wpadminbar {
   function pad2(n){ return n < 10 ? '0' + n : '' + n; }
   function dateKey(d){ return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()); }
   function isSameDay(a, b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
+  function seIsPlausibleUsPhone(value){
+    var d = String(value || '').replace(/\D/g,'');
+    if(d.length === 11 && d.charAt(0) === '1') d = d.slice(1);
+    if(!/^\d{10}$/.test(d) || !/[2-9]/.test(d.charAt(0)) || !/[2-9]/.test(d.charAt(3))) return false;
+    if(/^(\d)\1{9}$/.test(d) || d === '1234567890' || d === '0123456789') return false;
+    var line = parseInt(d.slice(6), 10);
+    if(d.slice(3,6) === '555' && line >= 100 && line <= 199) return false;
+    return true;
+  }
 
   /* ── Mini Calendar ─────────────────────────────────────────────── */
   function renderMiniCalendar(){
@@ -1077,9 +1086,13 @@ body.se-cal-panel-open #wpadminbar {
   var phoneInput = document.getElementById('se-cal-phone');
   phoneInput.addEventListener('input', function(){
     var v = this.value.replace(/\D/g, '');
-    if(v.length >= 6) this.value = '(' + v.slice(0,3) + ') ' + v.slice(3,6) + '-' + v.slice(6,10);
-    else if(v.length >= 3) this.value = '(' + v.slice(0,3) + ') ' + v.slice(3);
-    else this.value = v;
+    var hasCountryCode = v.charAt(0) === '1';
+    if(hasCountryCode) v = v.slice(1, 11);
+    else v = v.slice(0, 10);
+    var prefix = hasCountryCode ? '1 ' : '';
+    if(v.length >= 6) this.value = prefix + '(' + v.slice(0,3) + ') ' + v.slice(3,6) + '-' + v.slice(6,10);
+    else if(v.length >= 3) this.value = prefix + '(' + v.slice(0,3) + ') ' + v.slice(3);
+    else this.value = prefix + v;
   });
 
   /* ── How Heard → show/hide referral ─────────────────────────────── */
@@ -1155,7 +1168,7 @@ body.se-cal-panel-open #wpadminbar {
 
     if(!fn || !ln){ errEl.textContent = 'Please enter your name.'; errEl.style.display = 'block'; return; }
     if(!em || em.indexOf('@') < 0){ errEl.textContent = 'Please enter a valid email.'; errEl.style.display = 'block'; return; }
-    if(ph.replace(/\D/g,'').length !== 10){ errEl.textContent = 'Please enter a valid 10-digit phone.'; errEl.style.display = 'block'; return; }
+    if(!seIsPlausibleUsPhone(ph)){ errEl.textContent = 'Please enter a valid US phone number.'; errEl.style.display = 'block'; return; }
     if(!heard){ errEl.textContent = 'Please select how you heard about us.'; errEl.style.display = 'block'; return; }
     if(!consent.checked){ errEl.textContent = 'Please accept the terms to continue.'; errEl.style.display = 'block'; return; }
     errEl.style.display = 'none';

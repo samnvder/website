@@ -1,6 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════════
    MEMBERSHIP NEXT STEPS — CSS
-   Draft (phase 1) — not live. See README.md in this directory.
+   Paste this file into Thrive Custom CSS on /membership-next-steps/
+   (or a WPCode CSS snippet, site-wide header). This file is the source.
    Palette/typography mirror the memberships page and tour-confirmation:
    cream #f8f2e1, brand blue #0b468c, teal #204147, Montserrat.
    Everything is scoped under .se-mn-page so nothing leaks into the
@@ -26,13 +27,18 @@
   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: var(--se-mn-bg);
   color: var(--se-mn-text);
-  padding: 40px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 40px clamp(1rem, 4vw, 2rem) 60px;
 }
 
 .se-mn-page * { box-sizing: border-box; }
 
 .se-mn-section {
-  max-width: 1100px;
+  width: min(1100px, 100%);
+  max-width: min(1100px, 100%);
   margin: 0 auto 36px;
   background: var(--se-mn-white);
   border: 2px solid var(--se-mn-blue);
@@ -41,6 +47,7 @@
   padding: 44px 36px;
   position: relative;
   overflow: hidden;
+  align-self: center;
 }
 
 .se-mn-section::before {
@@ -88,14 +95,20 @@
   color: var(--se-mn-text-soft);
   text-align: center;
   max-width: 720px;
-  margin: 0 auto 30px;
+  width: 100%;
+  margin: 0 auto 20px;
 }
 
 .no-break { white-space: nowrap; }
 
 /* ── 1 · Confirmation hero ─────────────────────────────────────────── */
 
-.se-mn-hero { text-align: center; }
+.se-mn-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
 
 .se-mn-hero-check {
   width: 72px;
@@ -125,7 +138,8 @@
   line-height: 1.7;
   color: var(--se-mn-text-soft);
   max-width: 640px;
-  margin: 0 auto 18px;
+  width: 100%;
+  margin: 0 auto 8px;
 }
 
 .se-mn-plan {
@@ -144,61 +158,81 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   width: 100%;
   padding-inline: clamp(1rem, 4vw, 2rem);
   text-align: center;
-  margin: 8px 0 0;
-  padding-top: 22px;
+  margin: 20px 0 0;
+  padding-top: 28px;
   border-top: 1px solid rgba(11, 70, 140, 0.12);
+  gap: 16px;
 }
 
 .se-mn-tour-cta p {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
   line-height: 1.6;
   color: var(--se-mn-text);
-  margin: 0 0 14px;
+  margin: 0;
+  width: 100%;
+  text-align: center;
 }
 
 .se-mn-tour-btn {
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2.5rem);
+  gap: 4px;
+  min-height: 64px;
+  margin-inline: auto;
+  padding: clamp(1rem, 2.4vw, 1.25rem) clamp(2rem, 5vw, 3rem);
   border-radius: 100px;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 16px;
   text-decoration: none;
   text-align: center;
   white-space: normal;
-  background: linear-gradient(135deg, var(--se-mn-blue), var(--se-mn-blue-bright));
-  color: #ffffff;
-  box-shadow: 0 4px 16px rgba(11, 70, 140, 0.25);
+  background: linear-gradient(135deg, #f0c14b, #e8a317);
+  color: var(--se-mn-blue);
+  box-shadow: 0 10px 32px rgba(232, 163, 23, 0.45);
   transition: transform 0.15s var(--se-mn-ease), box-shadow 0.15s var(--se-mn-ease);
 }
 
 .se-mn-tour-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(11, 70, 140, 0.35);
-  color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(232, 163, 23, 0.55);
+  color: var(--se-mn-blue);
+}
+
+.se-mn-tour-btn-label {
+  font-size: clamp(15px, 2.2vw, 17px);
+  font-weight: 700;
+  line-height: 1.3;
 }
 
 .se-mn-here {
+  font-size: clamp(20px, 3vw, 24px);
+  font-weight: 800;
+  letter-spacing: 0.14em;
   text-decoration: underline;
-  text-underline-offset: 3px;
-  letter-spacing: 0.06em;
+  text-underline-offset: 4px;
 }
 
 /* ── 2 · Beats ─────────────────────────────────────────────────────── */
 
 .se-mn-beats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
+  width: 100%;
 }
 
 .se-mn-beat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   background: #fafbfc;
   border: 2px solid rgba(11, 70, 140, 0.12);
   border-radius: var(--se-mn-radius-sm);
@@ -206,7 +240,7 @@
 }
 
 .se-mn-beat-num {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 34px;
@@ -216,7 +250,7 @@
   color: #ffffff;
   font-weight: 800;
   font-size: 15px;
-  margin-bottom: 12px;
+  margin: 0 auto 12px;
 }
 
 .se-mn-beat h3 {
@@ -224,6 +258,8 @@
   font-weight: 700;
   margin: 0 0 8px;
   color: var(--se-mn-text);
+  text-align: center;
+  width: 100%;
 }
 
 .se-mn-beat p {
@@ -233,18 +269,22 @@
   margin: 0;
   max-width: 100%;
   overflow-wrap: anywhere;
+  text-align: center;
 }
 
 .se-mn-tips {
   list-style: none;
-  margin: 0 auto;
+  display: table;
+  width: auto;
+  max-width: min(640px, 100%);
+  margin: 4px auto 0;
   padding: 0;
-  max-width: 640px;
+  text-align: left;
 }
 
 .se-mn-tips li {
   position: relative;
-  padding: 12px 8px 12px 28px;
+  padding: 10px 8px 10px 28px;
   font-size: 15px;
   line-height: 1.6;
   color: var(--se-mn-text-soft);
@@ -287,11 +327,12 @@
 }
 
 .se-mn-question-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-height: 44px;
+  min-height: 52px;
+  margin-inline: auto;
   padding: 16px 34px;
   border: none;
   border-radius: 100px;
@@ -332,14 +373,74 @@
   .se-mn-beats { grid-template-columns: 1fr; }
 }
 
+@media (min-width: 769px) and (max-width: 1023px) {
+  .se-mn-beats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 /* ═══════════════════════════════════════════════════════════════════
-   THRIVE ARMOR — #se-mn-page out-ranks Thrive's own !important id
-   rules. Clearance for the sticky header. Layout stays un-armored
-   above; only what Thrive is known to swallow lives here.
+   THRIVE ARMOR — keep this block LAST.
+   #tve_editor id rules out-rank class selectors. #se-mn-page (1,1,0)
+   beats Thrive's (1,0,1). Layout is armored here on purpose: Thrive
+   wraps Gutenberg HTML in .thrv_wrapper / .thrv_text_element with
+   max-width caps and left-aligns <a> / <ul>, which is what made the
+   tour button and tips look off-center in Architect.
    ═══════════════════════════════════════════════════════════════════ */
 
+#tve_editor #se-mn-page,
+#se-mn-page,
+#tve_editor #se-mn-page *,
+#se-mn-page * {
+  box-sizing: border-box !important;
+}
+
+#tve_editor #se-mn-page,
 #se-mn-page {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
   padding-top: 132px !important;
+  padding-left: clamp(1rem, 4vw, 2rem) !important;
+  padding-right: clamp(1rem, 4vw, 2rem) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  float: none !important;
+  text-align: center !important;
+}
+
+/* Live wrap on post 10047: .tcb-post-content > #tve_editor > .tve_wp_shortcode > .tve_shortcode_rendered */
+.main-container:has(#se-mn-page),
+#theme-content-section:has(#se-mn-page),
+.section-content:has(#se-mn-page),
+.tcb-post-content:has(#se-mn-page),
+#tve_editor:has(#se-mn-page),
+#tve_flt:has(#se-mn-page),
+.thrv_wrapper:has(#se-mn-page),
+.tve_wp_shortcode:has(#se-mn-page),
+.tve_shortcode_rendered:has(#se-mn-page),
+.thrv_text_element:has(#se-mn-page),
+.tve_empty_dropzone:has(#se-mn-page) {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  float: none !important;
+  display: block !important;
+  box-sizing: border-box !important;
+}
+
+#se-mn-page .thrv_wrapper,
+#se-mn-page .thrv_text_element,
+#se-mn-page .tcb-plain-text {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  float: none !important;
+  display: block !important;
 }
 
 #se-mn-page,
@@ -349,6 +450,39 @@
 #se-mn-page h2,
 #se-mn-page h3 {
   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+#se-mn-page .se-mn-section {
+  width: min(1100px, 100%) !important;
+  max-width: min(1100px, 100%) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  float: none !important;
+  align-self: center !important;
+}
+
+#se-mn-page .se-mn-hero,
+#se-mn-page .se-mn-tour-cta,
+#se-mn-page .se-mn-close,
+#se-mn-page #se-mn-agent-slot {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+#se-mn-page .se-mn-hero h1,
+#se-mn-page .se-mn-section h2,
+#se-mn-page .se-mn-lead,
+#se-mn-page .se-mn-hero-sub,
+#se-mn-page .se-mn-tour-cta p {
+  width: 100% !important;
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  float: none !important;
 }
 
 #se-mn-page .se-mn-hero h1,
@@ -372,22 +506,130 @@
   font-weight: 500 !important;
 }
 
+#se-mn-page .se-mn-lead {
+  margin-bottom: 20px !important;
+}
+
+#se-mn-page .se-mn-hero-sub {
+  margin-bottom: 8px !important;
+}
+
 #se-mn-page .se-mn-beat h3,
 #se-mn-page .se-mn-tour-cta p {
   color: var(--se-mn-text) !important;
   -webkit-text-fill-color: var(--se-mn-text) !important;
 }
 
+#se-mn-page .se-mn-plan {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  line-height: 0 !important;
+}
+
+#se-mn-page .se-mn-plan[style*="inline"] {
+  display: inline-block !important;
+  height: auto !important;
+  overflow: visible !important;
+  margin: 0 auto 22px !important;
+  padding: 10px 22px !important;
+  line-height: 1.4 !important;
+  color: var(--se-mn-blue) !important;
+  -webkit-text-fill-color: var(--se-mn-blue) !important;
+}
+
+#se-mn-page a.se-mn-tour-btn,
+#se-mn-page .se-mn-tour-btn {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  float: none !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  background: linear-gradient(135deg, #f0c14b, #e8a317) !important;
+  color: var(--se-mn-blue) !important;
+  -webkit-text-fill-color: var(--se-mn-blue) !important;
+  box-shadow: 0 10px 32px rgba(232, 163, 23, 0.45) !important;
+}
+
+#se-mn-page a.se-mn-tour-btn:hover,
+#se-mn-page .se-mn-tour-btn:hover {
+  color: var(--se-mn-blue) !important;
+  -webkit-text-fill-color: var(--se-mn-blue) !important;
+}
+
+#se-mn-page .se-mn-tour-btn-label,
+#se-mn-page .se-mn-here {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
 #se-mn-page .se-mn-beat-num,
-#se-mn-page .se-mn-tour-btn,
-#se-mn-page .se-mn-tour-btn:hover,
 #se-mn-page .se-mn-question-btn,
 #se-mn-page .se-mn-question-btn:hover {
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
 }
 
-#se-mn-page .se-mn-plan,
+#se-mn-page .se-mn-question-btn {
+  display: flex !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  float: none !important;
+}
+
+#se-mn-page .se-mn-beats {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+#se-mn-page .se-mn-beat {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  width: 100% !important;
+  max-width: none !important;
+  float: none !important;
+}
+
+#se-mn-page .se-mn-beat-num {
+  display: flex !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+#se-mn-page .se-mn-beat h3,
+#se-mn-page .se-mn-beat p {
+  text-align: center !important;
+  width: 100% !important;
+}
+
+#se-mn-page .se-mn-tips {
+  display: table !important;
+  width: auto !important;
+  max-width: min(640px, 100%) !important;
+  margin: 4px auto 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  float: none !important;
+  list-style: none !important;
+}
+
+#se-mn-page .se-mn-tips li {
+  list-style: none !important;
+  text-align: left !important;
+}
+
 #se-mn-page .se-mn-close-alt a,
 #se-mn-page .se-mn-tips a {
   color: var(--se-mn-blue) !important;
@@ -402,6 +644,8 @@
   margin-top: 22px !important;
   color: var(--se-mn-muted) !important;
   -webkit-text-fill-color: var(--se-mn-muted) !important;
+  text-align: center !important;
+  width: 100% !important;
 }
 
 #se-mn-page .se-mn-question-btn svg {
@@ -413,4 +657,16 @@
 #se-mn-page .se-mn-hero-check svg {
   width: 38px !important;
   height: 38px !important;
+}
+
+@media (max-width: 768px) {
+  #se-mn-page .se-mn-beats {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+  #se-mn-page .se-mn-beats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
 }
