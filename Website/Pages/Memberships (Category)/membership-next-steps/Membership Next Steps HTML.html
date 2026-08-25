@@ -110,11 +110,13 @@
      { "firstName": "Sam",
        "membershipType": "family",
        "tier": "1",
-       "offer": "end-of-summer-2026-sep1" }
+       "offer": "end-of-summer-2026-sep1",
+       "membership_source": "special_offer",
+       "membership_page": "/special-offer/" }
    Written by the site-wide fetch wrapper on a successful
    create-signature-request. Every field is optional; anything missing
    or malformed leaves the generic page as-is. All injection is via
-   textContent — never innerHTML. */
+   textContent — never innerHTML. No name/email/phone in dataLayer. */
 (function(){
   'use strict';
 
@@ -166,6 +168,24 @@
       ]);
     }
   }
+
+  /* Destination event: same URL for every joiner, so source has to travel
+     as a parameter. Direct visits (no storage) never reach this push. */
+  try {
+    var src = (typeof data.membership_source === 'string') ? data.membership_source : '';
+    if (src !== 'special_offer' && src !== 'memberships' && src !== 'other') src = 'unknown';
+    var page = (typeof data.membership_page === 'string' && data.membership_page.charAt(0) === '/') ? data.membership_page.slice(0, 120) : null;
+    var offerTag = (typeof data.offer === 'string' && /^[a-z0-9][a-z0-9-]{0,79}$/i.test(data.offer)) ? data.offer : null;
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'membership_next_steps',
+      membership_source: src,
+      membership_page: page,
+      membership_offer: offerTag,
+      membership_type: type || null,
+      membership_tier: /^[123]$/.test(tier) ? tier : null
+    });
+  } catch (e) { /* never let tracking break the page */ }
 })();
 </script>
 

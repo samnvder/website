@@ -38,6 +38,12 @@ overwrites post content.
 The redirect snippet is authored here (not generated from the page). Edit
 `membership-next-steps--paste-into-wpcode-redirect.js` itself.
 
+GTM/GA4 wiring (next container publish, do not fake an export):
+[`membership-next-steps--gtm.md`](membership-next-steps--gtm.md).
+The site pushes `membership_application` (click, with `membership_source`)
+and `membership_next_steps` (destination). Without those tags, GA4 never
+sees the split.
+
 ## Verify after pasting (flush GoDaddy cache first)
 
 ```powershell

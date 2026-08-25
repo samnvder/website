@@ -41,8 +41,15 @@ That is the intended order: native notification first, then redirect.
 **sessionStorage** key `seMembershipRequest` (never email/phone, never URL params):
 
 ```js
-{ firstName, membershipType, tier, offer }
+{ firstName, membershipType, tier, offer, membership_source, membership_page }
 ```
+
+`membership_source` is `special_offer` | `memberships` | `other`, derived
+from `location.pathname` at click time (not from the `offer:` tag). The
+redirect snippet also pushes `membership_application` on the join page
+(does **not** fire `membership_requested` — that would double-count #9926).
+The next-steps page pushes `membership_next_steps` with the same source.
+GTM tags: [patches/membership-next-steps/membership-next-steps--gtm.md](../patches/membership-next-steps/membership-next-steps--gtm.md).
 
 First name is the first token of the builder's `Name` field. The page
 accepts it only if it matches `/^[A-Za-zÀ-ɏ' -]{1,30}$/`. Empty storage
@@ -109,6 +116,13 @@ Special-offer: same check if that URL is serving the builder (it may still
    **title**. After that, `guard:membership-next-steps` will compare those
    mirrors if the filenames contain `membership-next-steps-page` or
    `membership-next-steps-redirect`.
+8. 🛑 **HUMAN GATE — GTM + GA4.** Follow
+   [patches/membership-next-steps/membership-next-steps--gtm.md](../patches/membership-next-steps/membership-next-steps--gtm.md).
+   Do not star the new events as key events. If widget-engagement (#17)
+   has not published v9 yet, include this in that version; otherwise the
+   next version. Re-export `analytics/gtm-container-export.json` after
+   publish. Register `membership_source`, `membership_page`,
+   `membership_offer` as event-scoped dimensions.
 
 ## Explicitly out of scope
 
@@ -117,6 +131,10 @@ Special-offer: same check if that URL is serving the builder (it may still
 - Claiming they are already a member before Dropbox Sign is submitted
 - Yoast commercial metadata (this page is noindexed)
 - Putting "fastest growing" in a public SEO title (utility page only)
+- Starring `membership_application` or `membership_next_steps` as key
+  events (would double-count joiners against `membership_requested`)
+- Editing `analytics/gtm-container-export.json` to invent a version that
+  was never published
 
 ## Kickoff prompt
 
@@ -126,7 +144,8 @@ full first, along with CLAUDE.md and
 Website/Pages/Memberships (Category)/membership-next-steps/README.md.
 
 Phase 1 is already in the repo. Do NOT rebuild the draft page. Phase 2
-only: live WordPress page + two new WPCode snippets + 9934 noindex.
+only: live WordPress page + two new WPCode snippets + 9934 noindex +
+GTM/GA4 source tags (patches/membership-next-steps/membership-next-steps--gtm.md).
 
 Rules:
 - Do not edit membership builders (#9926, #7315, #7966, or the inlined

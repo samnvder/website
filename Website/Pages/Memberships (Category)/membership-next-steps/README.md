@@ -47,10 +47,12 @@ The redirect snippet writes (never URL parameters):
 
 ```js
 sessionStorage.setItem('seMembershipRequest', JSON.stringify({
-  firstName:       /* first token of the builder's Name field */,
-  membershipType:  /* "single" | "couple" | "family" */,
-  tier:            /* "1" | "2" | "3" */,
-  offer:           /* optional; special-offer sends an offer tag */
+  firstName:          /* first token of the builder's Name field */,
+  membershipType:     /* "single" | "couple" | "family" */,
+  tier:               /* "1" | "2" | "3" */,
+  offer:              /* sanitized offer tag, or "" */,
+  membership_source:  /* "special_offer" | "memberships" | "other" */,
+  membership_page:    /* pathname only, no query string */
 }));
 ```
 

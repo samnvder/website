@@ -90,6 +90,17 @@ const html = read(path.join(ROOT, 'Website', 'Pages', 'Memberships (Category)', 
   else ok('no ' + forbidden);
 });
 
+if (read(redirectSrc).indexOf("event: 'membership_application'") === -1) {
+  fail('redirect snippet lost membership_application (join vs special-offer insight)');
+} else {
+  ok('redirect pushes membership_application');
+}
+if (html.indexOf("event: 'membership_next_steps'") === -1) {
+  fail('page source lost membership_next_steps destination event');
+} else {
+  ok('page pushes membership_next_steps');
+}
+
 if (failures) {
   console.error('[membership-next-steps-guard] FAILED — ' + failures + ' problem(s) above.');
   process.exit(1);
