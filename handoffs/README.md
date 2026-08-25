@@ -4,10 +4,15 @@ Executable briefs for work on the live South End Club stack. **Each one is writt
 
 Every handoff ends with a **kickoff prompt**. All of them are also collected [at the bottom of this file](#kickoff-prompts) so you can grab one without opening anything.
 
+## Next session (2026-08-25 owner)
+
+**#21 [build-membership-next-steps](build-membership-next-steps.md) is first.** Phase 1 is already in `master`. The next session is **phase 2 only**: publish `/membership-next-steps/`, two new WPCode snippets, 9934 noindex, GTM/GA4 `membership_source`. Do **not** rebuild the draft page. Kickoff is at the top of [Kickoff prompts](#kickoff-prompts).
+
 ## Open
 
 | # | Handoff | What it does | Time | Blocked? |
 |---|---|---|---|---|
+| **21** | **[build-membership-next-steps](build-membership-next-steps.md)** | 🔴 **NEXT SESSION — phase 2 live.** After Buy Membership: native `alert()`, then 3s redirect to `/membership-next-steps/` (Dropbox Sign instructions, tour CTA, named hero). Builders untouched; fetch wrapper covers `/memberships/` + `/special-offer/`. `membership_application` / `membership_next_steps` carry `membership_source`. Phase 1 merged; remaining: 🛑 WP page + 2 WPCode + 9934 + GTM. | ~45 min gated | 🛑 owner pastes |
 | ✅ | **[lock-down-supabase-rls](lock-down-supabase-rls.md)** | ✅ **CLOSED 2026-08-18 — remediated and verified in production, read *and* write paths.** Anon `SELECT`/`UPDATE`/`DELETE` on `tour_bookings` and `tour_referrals` is shut. Root cause was a policy granted `TO public` instead of `service_role`, not absent RLS. Write path since confirmed by an authorised probe — which surfaced handoff #6. Audit record: [`security/`](../security/2026-08-18-supabase-rls-exposure.pdf). **The data is still unbacked-up — that is `SEO/TODO.md` §18, a different problem.** | — | done |
 | ✅ | **[publish-tour-tracking-gtm](publish-tour-tracking-gtm.md)** | ✅ **CLOSED 2026-08-18 — GA4 now reports tours.** v7 is live and `tour_booked` is **starred as a key event**; the star was the last checkbox and it took ~22h of propagation to become clickable. One follow-up outlives it: `tour_booking_id` is confirmed `null` (blocks Ads dedup, nothing else). **Engage Pro appointment `831` was cancelled 2026-08-19**, clearing the last stray test artifact. | — | done |
 | **15** | **[fix-double-membership-builder](fix-double-membership-builder.md)** | ✅ **CLOSED 2026-08-20 — both gates executed and `curl`-verified.** `[wpcode id="7315"]` removed from post 8812 (via full-page owner capture, which also repaired CompressX rot and refreshed the stale repo page source); guarded builders live in WPCode #9926/#7315; mirrors and paste-sources updated. Skipped on purpose: the real-click test (one click → one Dropbox Sign request) — run at the next natural opportunity. | done | — |
@@ -18,7 +23,6 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 | **17** | **[widget-engagement-events](widget-engagement-events.md)** | 🟡 **TODO, written 2026-08-21.** Adds `tour_widget_engaged` (once per page view per widget, on first interaction) so abandonment inside the four booking widgets becomes measurable: `page_view` → `tour_widget_engaged` → `tour_booked`, by widget. Same 8 files and generator contract as v8's `tour_widget`; ends in container **v9** + re-export. Deliberately *not* a key event. | ~1.5h | no — two 🛑 gates (pastes, v9 publish) |
 | **18** | **[membership-signed-event](membership-signed-event.md)** | 🟡 **SCOPED 2026-08-21 from the actual Heroku source** (CLI authed, app cloned). The true purchase: builders pass the GA4 client id → Dropbox Sign metadata → a **new** webhook endpoint (none exists today — the server never learns a contract was signed) → `membership_signed` via Measurement Protocol, joined to the visitor's session. Becomes the **primary** conversion above `membership_requested`. Side-finding: the `offer:` tag is sent by the site but the server ignores it. | ~2h | no — four 🛑 gates (pastes, GA4 secret, callback registration, deploy) |
 | **20** | **[use-membership-campaign-engine](use-membership-campaign-engine.md)** | 🟡 **Operator manual 2026-08-24.** How to run the campaign engine next session: ingest email HTML, apply, three pastes (`PAGE--` / `HOME--` / `WPCODE--`), park. Engine itself is #19 (closed). Live `/special-offer/` still 301s to `/memberships/` until #9951 is edited. | ~20 min teach / launch | 🛑 live pastes + 9951 |
-| **21** | **[build-membership-next-steps](build-membership-next-steps.md)** | 🟡 **Owner-commissioned 2026-08-25.** After Buy Membership: keep the native `alert()`, then redirect (3s) to a named `/membership-next-steps/` page — Dropbox Sign instructions, post-submit confirmation copy, near-top tour CTA. **Builders are not edited**; a separate `fetch` wrapper covers `/memberships/` and `/special-offer/`. `membership_application` + `membership_next_steps` carry `membership_source` (`memberships` \| `special_offer`). Phase 1 is repo draft; phase 2 is 🛑 live pastes + 9934 + GTM. | ~20 min paste | 🛑 WP page + 2 WPCode + 9934 + GTM |
 | **19** | **[membership-campaign-engine](membership-campaign-engine.md)** | ✅ **CLOSED 2026-08-24.** Campaign engine landed and proven on the real CRLF `Special Offer.html`. Sources parked then this offer applied in-repo. Summer 2026 archived as `2026-07-summer-special-100-enrollment-10-guest-passes`. How to **use** it is #20. | — | done |
 | 2 | **[ga4-hygiene](ga4-hygiene.md)** | Clears MonsterInsights residue. **Low priority — moves no numbers.** | ~20 min | no |
 | 3 | **[backup-gtm-container](backup-gtm-container.md)** | ✅ **Done 2026-08-18.** Published v7 exported to [`analytics/gtm-container-export.json`](../analytics/gtm-container-export.json) and verified; backup law extended to cover configuration. **Re-export after every container publish** — the next one is the Ads tag (#4/#5). | — | done |
@@ -117,6 +121,34 @@ Two rules that apply to every handoff touching the website:
 ---
 
 ## Kickoff prompts
+
+### 21 · Membership next-steps page — 🔴 NEXT SESSION
+
+```
+Execute handoffs/build-membership-next-steps.md in this repo. It is the
+top open item. Read it in full first, along with CLAUDE.md,
+Website/Pages/Memberships (Category)/membership-next-steps/README.md,
+patches/membership-next-steps/README.md,
+patches/membership-next-steps/membership-next-steps--gtm.md, and
+.claude/skills/deliver-paste/SKILL.md.
+
+You are on master. Phase 1 is already merged. Do NOT rebuild the draft
+page. Do NOT edit membership builders (#9926, #7315, #7966, or the
+inlined special-offer JS). Phase 2 only: publish the live WordPress page,
+two new WPCode snippets, 9934 noindex, then GTM/GA4 source tags.
+
+Work through every HUMAN GATE in the handoff in order. Deliver pastes
+via the deliver-paste skill (Notepad + parent folder path). Confirm
+WPCode saves by "Snippet updated." Flush GoDaddy cache. Verify with
+curl and the expected counts in the handoff, never the browser. Mirror
+new snippets from an editor paste-back the same session; do not invent
+IDs. Live /special-offer/ may still 301 to /memberships/ (9951) — that
+is not a failure of this handoff.
+
+git log --oneline -5, git status, npm run branches before starting.
+Stage explicit paths, never git add -A. Push after every commit.
+Finish with npm run guard (expect 0) and npm run branches:strict.
+```
 
 ### 0 · Publish the tour_booked GTM build — ✅ closed, kickoff retired
 
@@ -469,33 +501,10 @@ the curl blocks in the handoff. Mirror pasted code to live/ the same session.
 Finish with npm run guard:campaign and npm run branches:strict.
 ```
 
-### 21 · Membership next-steps page
+### 19 · membership campaign engine — ✅ closed, kickoff retired
 
-```
-Execute handoffs/build-membership-next-steps.md in this repo.
-
-Read it in full first, along with CLAUDE.md and
-Website/Pages/Memberships (Category)/membership-next-steps/README.md.
-
-Phase 1 is already in the repo. Do NOT rebuild the draft page. Phase 2
-only: live WordPress page + two new WPCode snippets + 9934 noindex +
-GTM/GA4 source tags (see patches/membership-next-steps/membership-next-steps--gtm.md).
-
-Rules:
-- Do not edit membership builders (#9926, #7315, #7966, or the inlined
-  special-offer JS). The redirect is a separate fetch wrapper.
-- Stop at every 🛑 HUMAN GATE. Deliver pastes via the deliver-paste
-  skill (Notepad + folder path).
-- Confirm WPCode saves by the "Snippet updated." notice.
-- Flush GoDaddy cache. Verify with curl, never the browser.
-- Mirror new snippets into live/wpcode/ from an editor paste-back in the
-  same session. Do not invent snippet IDs.
-- git log --oneline -5, git status, npm run branches before starting.
-  Stage explicit paths, never git add -A. Push after every commit.
-- Finish with npm run guard (expect exit 0) and npm run branches:strict.
-```
-
-### 19 · membership campaign engine
+⚠️ **Do not run this kickoff.** The engine shipped 2026-08-24 (PR #45). Use **#20**
+to *operate* it. Original prompt kept for the record:
 
 ```
 Finish building the membership campaign engine in this repo. We are not done.
