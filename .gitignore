@@ -8,3 +8,4 @@ config.env
 supabase/.temp/
 .firebase/
 scripts/audit/pricing-backups/
+scripts/campaign/work/

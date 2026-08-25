@@ -265,6 +265,16 @@ A handoff must have:
 
 **Never paste a repo page file into Thrive.** The repo lags live — e.g. the `se-bk-floating` booking widget exists on production and not in the repo at all. Pasting a whole repo page over a live one silently deletes whatever live has and the repo doesn't.
 
+## Membership campaign engine
+
+A pasted membership-offer **email HTML** (and ordinary language: "new offer", "this campaign") is enough to start the flow. **Do not ask the owner to type CLI commands.** Write the paste to a file and run:
+
+```powershell
+node scripts/campaign/index.js ingest --input "scripts/campaign/work/incoming.html"
+```
+
+`ingest` refuses page source that is not an offer email. It then `prepare`s. `apply` still needs an approved `campaign.json` (or an explicit "apply this" plus a clean parse). Never paste into Thrive/WPCode from this. Isolation: only `scripts/campaign/paths.js` TARGETS. How to run a campaign (pastes, Yoast, `/special-offer/` 301): [`handoffs/use-membership-campaign-engine.md`](./handoffs/use-membership-campaign-engine.md). Details: [`scripts/campaign/README.md`](./scripts/campaign/README.md) and [`.claude/skills/membership-campaign/SKILL.md`](./.claude/skills/membership-campaign/SKILL.md).
+
 ## Working on the live site
 
 - **Always flush cache after a change**: GoDaddy Quick Links → Flush Cache. Without it you will verify stale HTML and reach wrong conclusions.

@@ -1,30 +1,35 @@
-# Current offer — Summer special (lock in before August)
+# Current offer — PARKED
 
-**Valid through:** July 31, 2026 at midnight (Pacific)  
-**Page:** https://southendclub.com/special-offer/  
-**Source HTML:** `Special Offer.html`  
-**Pricing JS (WPCode #7966):** `membership builder JS-special-offer.js`
+**Status:** OFFER NOT SET. Do not publish `/special-offer/`.
 
-## Offer terms (web + email)
+This file is engine-driven. The live offer is whatever `scripts/campaign/state.json` says, rendered into:
 
-- Membership dues rise in **August** — lock in **today’s rates** now
-- **$100 enrollment** (standard enrollment shown up to **$600** for families)
-- **10 guest passes** included
-- Applies to standard Single / Couple / Family builders on this page
+- `Special Offer.html` (campaign-marked slices only)
+- `membership builder JS-special-offer.js`
+- `Components/Homepage/Homepage Campaign Banner.html`
+- `Components/Shared/Global Special Offer Button.html`
 
-## Paste checklist
+Right now `state.json` is **parked**:
 
-1. [ ] Replace Thrive page content with `Special Offer.html`
-2. [ ] Pricing JS is **inlined** in `Special Offer.html` (no need for WPCode #7966 on this page). Optional: leave #7966 inactive here to avoid double-bind.
-3. [ ] Preview: Couple + Tier 3 → enrollment **$100**, Monthly Due **$335** (not `$0`)
-4. [ ] Confirm countdown targets July 31 midnight Pacific
-5. [ ] Confirm no console 404 for `membership builder JS.js` or `Memberships Page CSS.css`
-6. [ ] Paste homepage hero CTA from `Components/Homepage/Homepage Hero Summer Offer CTA.html`
+| Field | Value |
+|---|---|
+| Offer tag | `UNSET-set-before-launch` |
+| Enrollment | `0` |
+| End | none |
+| Limited-time copy | `OFFER NOT SET — do not publish` |
 
-## Email
+The last saved summer campaign (July 2026, $100 enrollment, 10 guest passes) is archived as `2026-07-summer-special-100-enrollment-10-guest-passes` under `Archive/` here and `Components/Homepage/Archive/`.
 
-- Earlier summer send: `email-campaign-summer-2026.html`
-- Final push: `email-campaign-summer-2026-final.html`
-  - **Subject:** August dues go up. These rates aren't coming back.
-  - **Sent:** 2026-07-29 — 5 sent
-  - Join Now → this page · Schedule a Tour → `/schedule-a-tour/`
+## Next campaign
+
+```powershell
+node scripts/campaign/index.js prepare --input path\to\email.html --slug kebab-name
+```
+
+Edit `scripts/campaign/work/<id>/campaign.json` until `"status": "approved"` and `ambiguities` is empty, then:
+
+```powershell
+node scripts/campaign/index.js apply --id <id>
+```
+
+🛑 HUMAN GATE: paste from `patches/<id>/`. Never paste this whole page file into Thrive. See [scripts/campaign/README.md](../../../../scripts/campaign/README.md).

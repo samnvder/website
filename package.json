@@ -4,7 +4,7 @@
   "description": "South End Club marketing website (standalone repo; exported from WebsiteV1)",
   "scripts": {
     "pretest": "npm run guard",
-    "test": "node --test Programs/Pickleball/advanced-open-play/testing/unit/test-openplay-rsvp.js Programs/Pickleball/advanced-open-play/testing/unit/test-firebase-rules.js Programs/Pickleball/advanced-open-play/testing/unit/test-rating-eligibility.js Programs/Pickleball/advanced-open-play/testing/unit/test-roll-live.js scripts/audit/testing/test-pricing-apply.js scripts/audit/testing/test-stale-offer-guard.js scripts/audit/testing/test-rls-guard.js scripts/convert/testing/test-convert-to-local.js",
+    "test": "node --test Programs/Pickleball/advanced-open-play/testing/unit/test-openplay-rsvp.js Programs/Pickleball/advanced-open-play/testing/unit/test-firebase-rules.js Programs/Pickleball/advanced-open-play/testing/unit/test-rating-eligibility.js Programs/Pickleball/advanced-open-play/testing/unit/test-roll-live.js scripts/audit/testing/test-pricing-apply.js scripts/audit/testing/test-stale-offer-guard.js scripts/audit/testing/test-rls-guard.js scripts/convert/testing/test-convert-to-local.js scripts/campaign/testing/test-campaign-engine.js",
     "test:pools-instructors": "node Website/Pages/pools/testing/instructor-pill-layout-test.mjs",
     "firebase:deploy-rules": "npx firebase-tools deploy --only database --non-interactive",
     "deploy:openplay": "node Programs/Pickleball/advanced-open-play/scripts/openplay-deploy.js --only hosting",
@@ -36,7 +36,7 @@
     "scaffold:carousel": "node scripts/scaffold/new-carousel.js",
     "resolve-project-mode": "node scripts/resolve-project-mode.js",
     "summarize": "node Programs/Pickleball/advanced-open-play/scripts/openplay-summarize.js",
-    "guard": "npm run guard:patch-naming && npm run guard:membership-pricing && npm run guard:pickleball-header && npm run guard:racquet-promo && npm run guard:stale-offer && npm run guard:rls && npm run guard:agent-rules && npm run guard:capture-markup && npm run guard:tour-confirmation",
+    "guard": "npm run guard:patch-naming && npm run guard:membership-pricing && npm run guard:pickleball-header && npm run guard:racquet-promo && npm run guard:stale-offer && npm run guard:rls && npm run guard:agent-rules && npm run guard:capture-markup && npm run guard:tour-confirmation && npm run guard:campaign",
     "guard:patch-naming": "node scripts/audit/patch-naming-guard.js",
     "guard:capture-markup": "node scripts/convert/live-capture-to-source.js \"Website/Pages\" --check",
     "guard:membership-pricing": "node scripts/audit/membership-pricing-guard.js",
@@ -48,7 +48,15 @@
     "guard:membership-pricing:prove": "node scripts/audit/testing/prove-pricing-drift.js",
     "guard:rls": "node scripts/audit/rls-guard.js",
     "guard:stale-offer": "node scripts/audit/stale-offer-guard.js",
-    "guard:tour-confirmation": "node scripts/audit/tour-confirmation-guard.js"
+    "guard:tour-confirmation": "node scripts/audit/tour-confirmation-guard.js",
+    "guard:campaign": "node scripts/audit/campaign-sync-guard.js",
+    "campaign": "node scripts/campaign/index.js",
+    "campaign:ingest": "node scripts/campaign/index.js ingest",
+    "campaign:prepare": "node scripts/campaign/index.js prepare",
+    "campaign:apply": "node scripts/campaign/index.js apply",
+    "campaign:verify": "node scripts/campaign/index.js verify",
+    "campaign:park": "node scripts/campaign/index.js park",
+    "campaign:bootstrap": "node scripts/campaign/index.js bootstrap"
   },
   "keywords": [
     "south-end-club",

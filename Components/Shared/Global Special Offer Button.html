@@ -1,0 +1,71 @@
+<!--
+  GLOBAL SPECIAL OFFER BUTTON
+  Site-wide WPCode HTML snippet, footer insert.
+  Coexists with #se-bk-floating-wrap (bottom-left tour, desktop) and #se-crm-btn (bottom-right message).
+  Hides on /special-offer/ and after campaign expiry.
+-->
+<style>
+#se-campaign-float,
+#se-campaign-float * {
+  box-sizing: border-box !important;
+  -webkit-font-smoothing: antialiased !important;
+}
+#se-campaign-float {
+  display: none;
+  position: fixed;
+  left: 24px;
+  bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  z-index: 2147483645;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  max-width: min(220px, calc(100vw - 48px));
+  padding: 10px 14px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: #1a1205;
+  background: linear-gradient(135deg, #f0d78c, #b8860b);
+  box-shadow: 0 8px 24px rgba(184,134,11,0.35);
+  font-family: Montserrat, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  overflow-wrap: break-word;
+}
+#se-campaign-float.is-visible { display: inline-flex; }
+#se-campaign-float:focus-visible {
+  outline: 2px solid #0b468c;
+  outline-offset: 3px;
+}
+@media (max-width: 1023px) {
+  #se-campaign-float {
+    left: 16px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+}
+@media (max-width: 320px) {
+  #se-campaign-float {
+    left: 12px;
+    padding: 10px 12px;
+    font-size: 12px;
+    max-width: calc(100vw - 24px);
+  }
+}
+</style>
+<a id="se-campaign-float" href="https://southendclub.com/special-offer/?utm_campaign=end-of-summer-2026-sep1" aria-label="End of summer · Membership">
+  <span aria-hidden="true">⏳</span>
+  <span>$100 Offer</span>
+</a>
+<script>
+(function () {
+  var END = new Date('2026-09-02T06:59:59.000Z');
+  var el = document.getElementById('se-campaign-float');
+  if (!el) return;
+  var path = (location.pathname || '').replace(/\/+$/, '');
+  if (/\/special-offer$/i.test(path)) return;
+  if (!END) return;
+  if (new Date() >= END) return;
+  el.classList.add('is-visible');
+})();
+</script>

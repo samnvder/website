@@ -17,6 +17,8 @@ Every handoff ends with a **kickoff prompt**. All of them are also collected [at
 | **14** | **[site-wide-event-tracking](site-wide-event-tracking.md)** | ✅ **CLOSED 2026-08-21 except Part C (Zapier forms).** `membership_requested` live in all three builders and `curl`-verified; `tour_widget` added to every `tour_booked` push (owner-requested, closes the page-vs-widget ambiguity); phone/email/directions click tags with `phone_is_club`; **container v8 published and re-exported**; 5 dimensions + 2 Currency metrics registered in GA4 (22/50 slots). PRs #41/#42 merged. **Open:** star `membership_requested` + `phone_click` once propagation lists them (~a day); Part C (Zapier → Measurement Protocol, 🛑 API-secret gate); Phase 2 items unchanged. | ~2h | Part C only — 🛑 MP secret |
 | **17** | **[widget-engagement-events](widget-engagement-events.md)** | 🟡 **TODO, written 2026-08-21.** Adds `tour_widget_engaged` (once per page view per widget, on first interaction) so abandonment inside the four booking widgets becomes measurable: `page_view` → `tour_widget_engaged` → `tour_booked`, by widget. Same 8 files and generator contract as v8's `tour_widget`; ends in container **v9** + re-export. Deliberately *not* a key event. | ~1.5h | no — two 🛑 gates (pastes, v9 publish) |
 | **18** | **[membership-signed-event](membership-signed-event.md)** | 🟡 **SCOPED 2026-08-21 from the actual Heroku source** (CLI authed, app cloned). The true purchase: builders pass the GA4 client id → Dropbox Sign metadata → a **new** webhook endpoint (none exists today — the server never learns a contract was signed) → `membership_signed` via Measurement Protocol, joined to the visitor's session. Becomes the **primary** conversion above `membership_requested`. Side-finding: the `offer:` tag is sent by the site but the server ignores it. | ~2h | no — four 🛑 gates (pastes, GA4 secret, callback registration, deploy) |
+| **20** | **[use-membership-campaign-engine](use-membership-campaign-engine.md)** | 🟡 **Operator manual 2026-08-24.** How to run the campaign engine next session: ingest email HTML, apply, three pastes (`PAGE--` / `HOME--` / `WPCODE--`), park. Engine itself is #19 (closed). Live `/special-offer/` still 301s to `/memberships/` until #9951 is edited. | ~20 min teach / launch | 🛑 live pastes + 9951 |
+| **19** | **[membership-campaign-engine](membership-campaign-engine.md)** | ✅ **CLOSED 2026-08-24.** Campaign engine landed and proven on the real CRLF `Special Offer.html`. Sources parked then this offer applied in-repo. Summer 2026 archived as `2026-07-summer-special-100-enrollment-10-guest-passes`. How to **use** it is #20. | — | done |
 | 2 | **[ga4-hygiene](ga4-hygiene.md)** | Clears MonsterInsights residue. **Low priority — moves no numbers.** | ~20 min | no |
 | 3 | **[backup-gtm-container](backup-gtm-container.md)** | ✅ **Done 2026-08-18.** Published v7 exported to [`analytics/gtm-container-export.json`](../analytics/gtm-container-export.json) and verified; backup law extended to cover configuration. **Re-export after every container publish** — the next one is the Ads tag (#4/#5). | — | done |
 | 4 | **[gtm-conversion-linker](gtm-conversion-linker.md)** | Adds the missing Conversion Linker so Ads can attribute clicks. **Parked on purpose** — must run *before* the Ads conversion tag, never after. | ~10 min | yes — no Google Ads account exists |
@@ -431,6 +433,66 @@ Dropbox Sign callback registration, Heroku deploy); test with
 TEST_MODE=true and an owner-controlled email, then flip it back and void
 the test signature request. Work on a branch; verify which branch every
 commit landed on afterwards.
+```
+
+### 20 · Use the membership campaign engine
+
+```
+Execute handoffs/use-membership-campaign-engine.md in this repo.
+
+Read it in full first, plus CLAUDE.md, scripts/campaign/README.md, and
+.claude/skills/membership-campaign/SKILL.md.
+
+This is the operator manual for the membership campaign engine (#19 built it;
+do not rebuild it). Teach and then run the loop. Do not paste into Thrive or
+WPCode yourself.
+
+First: git log --oneline -5, git status, npm run branches. Uncommitted campaign
+files and ?? files may already exist — do not git add -A and do not overwrite
+someone else's work.
+
+If I paste offer-email HTML, write it to scripts/campaign/work/incoming.html
+and run ingest. Do not ask me for CLI commands.
+
+If I say launch / apply the end-of-summer offer that is already applied in
+repo: open PAGE-- / HOME-- / WPCODE-- from patches/2026-09-end-of-summer/ via
+the deliver-paste skill (Notepad + folder path). Skip Yoast unless I ask for
+Google's listing. Warn me that /special-offer/ still 301s to /memberships/
+until WPCode 9951 drops that mapping and the page is published.
+
+Isolation: only campaign TARGETS. Never 9926/7315/7966 or the join page.
+
+After any live paste I do: remind me to flush GoDaddy cache and verify with
+the curl blocks in the handoff. Mirror pasted code to live/ the same session.
+
+Finish with npm run guard:campaign and npm run branches:strict.
+```
+
+### 19 · membership campaign engine
+
+```
+Finish building the membership campaign engine in this repo. We are not done.
+
+Read CLAUDE.md, then handoffs/membership-campaign-engine.md. Work on branch
+claude/membership-campaign-engine.
+
+The engine is a draft: prepare/apply/verify/park/bootstrap and 14 unit tests
+exist uncommitted. They have not been run against the real CRLF Special Offer.html.
+Do not treat bootstrap/docs/commit as the job. Finish the engine first so
+installAllMarkers, apply, park, patches, and verify work on the real tree.
+Then bootstrap parked sources, docs, npm test, npm run guard, commit, push.
+
+Isolation law: do not edit join/memberships builders, WPCode 9926/7315/7966,
+8309, 8292, Thrive header/footer, Index.html, youth camp banner, or anything
+outside scripts/campaign/paths.js TARGETS plus archives, patches/<id>/,
+campaign docs, and guards/tests.
+
+Do not paste into Thrive or WPCode. Do not apply the expired July campaign.
+Do not edit the plan file.
+
+When the engine is actually finished: npm test, npm run guard, explicit git
+add paths, push, npm run branches:strict, verify the commit landed on
+claude/membership-campaign-engine.
 ```
 
 ### 14 · Site-wide event tracking — ⚠️ retired except Part C
