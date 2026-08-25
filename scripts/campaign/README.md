@@ -44,8 +44,9 @@ The engine may write only:
 
 | Path | Role |
 |---|---|
-| `Website/Pages/Memberships (Category)/special-offer/Special Offer.html` | Marked slices: META, PROMO, CALLOUT, LIMITED-TIME, BUILDER-JS |
-| `Website/Pages/Memberships (Category)/special-offer/membership builder JS-special-offer.js` | Canonical companion of the inlined builder |
+| `Website/Pages/Memberships (Category)/special-offer/Special Offer.html` | **The campaign page.** Marked slices: META, PROMO, CALLOUT, LIMITED-TIME, BUILDER-JS |
+| `Website/Pages/Memberships (Category)/special-offer/membership builder JS-special-offer.js` | Companion of the inlined builder (not WPCode #9926 / #7966) |
+| `Website/Pages/Memberships (Category)/special-offer/CURRENT-OFFER.md` | Engine-written join-vs-offer map + current offer record |
 | `Components/Homepage/Homepage Campaign Banner.html` | Generated homepage banner |
 | `Components/Shared/Global Special Offer Button.html` | Generated site-wide chip |
 | `patches/<campaign-id>/` | Paste artifacts. **Always includes** `PAGE--<id>.html` (full `/special-offer/` Thrive select-all), `HOME--<id>.html`, `WPCODE--<id>.html` |
@@ -65,7 +66,17 @@ The companion JS file is generated from `templates/membership-builder.js.tmpl` a
 
 ## Global button
 
-Small chip, footer WPCode HTML. Coexists with `#se-bk-floating-wrap` (bottom-left tour) and `#se-crm-btn` (bottom-right message). Hidden on `/special-offer/`. No-op when `END` is null or the campaign has expired. Parking hides it in JS; disabling the snippet is the real off switch.
+Site-wide WPCode HTML snippet (`#se-campaign-float`), footer insert. Hidden on `/special-offer/`. No-op when `END` is null or the campaign has expired. Parking hides it in JS; disabling the snippet is the real off switch.
+
+**Coexistence (do not restack these by eye):**
+
+| Widget | Where | Campaign float |
+|---|---|---|
+| `.se-textus-fab` (Text Us) | Bottom-left, **mobile/tablet only** (`pointer: coarse` or `max-width: 1024px`; hidden on `hover: hover` + `pointer: fine`). `left: 16px`, `bottom: 16px + safe-area`, `min-height: 44px` | Stack **16px above it**: `bottom: 16px + 44px + 16px + safe-area` (`--se-fab-inset` / `--se-textus-height` / `--se-fab-gap` in `renderButton`). Same 16px left inset. Width `calc(100vw - 32px)` so it cannot bleed. |
+| `#se-bk-floating-wrap` (tour) | Bottom-left, desktop | Keep `bottom: 96px + safe-area`, `left: 24px` |
+| `#se-crm-btn` (Message Us) | Bottom-right | Leave it. Do not move the offer chip to the right. |
+
+A future campaign that rewrites the float CSS must keep that Text Us stack. The chip is one reused snippet; next offer pastes over the same WPCode row.
 
 ## Parking
 

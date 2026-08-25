@@ -14,6 +14,7 @@ const SPECIAL_OFFER_DIR = path.join(
 const TARGETS = {
   page: path.join(SPECIAL_OFFER_DIR, 'Special Offer.html'),
   builderJs: path.join(SPECIAL_OFFER_DIR, 'membership builder JS-special-offer.js'),
+  currentOffer: path.join(SPECIAL_OFFER_DIR, 'CURRENT-OFFER.md'),
   pageArchiveDir: path.join(SPECIAL_OFFER_DIR, 'Archive'),
   homepageBanner: path.join('Components', 'Homepage', 'Homepage Campaign Banner.html'),
   homepageArchiveDir: path.join('Components', 'Homepage', 'Archive'),

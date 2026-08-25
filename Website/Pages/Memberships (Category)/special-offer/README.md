@@ -1,21 +1,28 @@
 # special-offer/
 
-Promotional membership landing page (Thrive Custom HTML). Same builder / tour / FAQ stack as the join page, with a time-limited enrollment offer in marked slices. **Do not edit those slices by hand** — run `scripts/campaign`. Do not paste the whole page into Thrive; the repo lags live.
+**This is the campaign landing page.** When you run a membership offer, this is the folder to alter — via `scripts/campaign`, not by editing the join builder.
+
+| | Join (`/memberships/`) | **This page** (`/special-offer/`) |
+|---|---|---|
+| HTML | `memberships/Membership Builder frontend.html` | `Special Offer.html` |
+| JS | WPCode **#9926** | Inlined `CAMPAIGN:BUILDER-JS` |
+| Restore | `memberships/Original Version 1/` | `apply` / `park` + `Archive/` |
+| How to change | Hand; pricing guard | `node scripts/campaign/index.js ingest` then `apply` |
+
+Do **not** enable WPCode **#7966** on this page. Do **not** paste `Membership Builder frontend.html` or #9926 here.
 
 ## Current offer
 
-**Parked.** `OFFER NOT SET` / `UNSET-set-before-launch`. See [CURRENT-OFFER.md](CURRENT-OFFER.md). Driven by `scripts/campaign` (`state.json` + `npm run campaign`).
-
-The July 2026 summer special ($100 enrollment, 10 guest passes, through July 31) is archived, not live in these sources.
+See [CURRENT-OFFER.md](CURRENT-OFFER.md) (engine-written from `scripts/campaign/state.json`). Campaign-marked slices only — do not hand-edit `CAMPAIGN:*` blocks.
 
 ## Files
 
 | File | Role |
 |------|------|
-| `Special Offer.html` | Thrive paste-source. Campaign engine writes only CAMPAIGN markers (meta, promo, callout, limited-time, inlined builder JS). Hero, cards, FAQ, tour widget stay. |
+| `Special Offer.html` | Thrive paste-source. Engine writes only CAMPAIGN markers (meta, promo, callout, limited-time, inlined builder JS). Hero, cards, FAQ, tour widget stay. |
 | `Special Offer.css` | Local/preview companion styles |
-| `membership builder JS-special-offer.js` | Canonical offer builder — generated, must match the inlined BUILDER-JS block |
-| `CURRENT-OFFER.md` | Engine-driven offer record |
+| `membership builder JS-special-offer.js` | Companion of the inlined BUILDER-JS block — generated, must match |
+| `CURRENT-OFFER.md` | Engine-driven offer record + join-vs-offer map |
 | `Archive/` | Byte-exact previous campaign surfaces |
 | `Brandon PB Offer/` | Separate pickleball offer (not this campaign) |
 
@@ -23,23 +30,15 @@ The July 2026 summer special ($100 enrollment, 10 guest passes, through July 31)
 
 ## WordPress wiring
 
-1. **Never paste this whole file over the live Thrive page.** Paste only the generated slices from `patches/<campaign-id>/`.
-2. Pricing for this page is **inlined** (from `membership builder JS-special-offer.js`). Do **not** also enable WPCode **#7966** on this page.
+1. Paste the generated `PAGE--<id>.html` from `patches/<campaign-id>/` — not a browser capture, and not the join-page file.
+2. Pricing is **inlined**. Do **not** also enable WPCode **#7966**.
 3. Keep `[wpcode id="7186"]` as on the join page (non-pricing snippet).
 4. Do **not** leave `<script src="membership builder JS.js">` or `Memberships Page CSS.css` — those 404 on WordPress and leave prices at `$0`.
-5. Yoast title/description live in the Yoast panel, not in these meta tags. The engine still writes a Yoast cheat sheet into `patches/<id>/`.
-
-## Diff vs join (`/memberships/`)
-
-- SEO / canonical → `/special-offer/`
-- Campaign promo + page-local countdown chip (generated)
-- Builder blurb + limited-time label for this offer
-- Inlined builder, not WPCode #9926 / #7315 / #7966
-- Monthly dues match join (`membership-pricing-source.json`)
+5. Yoast title/description live in the Yoast panel, not in these meta tags.
 
 ## History
 
-- 2026-08-24: Campaign engine landed. Sources parked with markers. Summer 2026 page archived as `2026-07-summer-special-100-enrollment-10-guest-passes`.
+- 2026-08-24: Marked as the campaign page (vs join Original Version 1). Engine landed; end-of-summer applied in-repo.
 - 2026-07-29: Extended offer end to July 31, 2026 at midnight Pacific (was July 22); homepage hero CTA matched.
 - 2026-07-22: Extended offer end to July 22, 2026 at midnight Pacific (was July 21).
 - 2026-07-15: Rebuilt from join HTML; summer special ($100 enrollment / 10 guest passes / July 21); removed local asset refs; synced dues with join.

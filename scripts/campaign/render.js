@@ -30,17 +30,19 @@ function hasDuesDiscount(manifest) {
   return d.single > 0 || d.couple > 0 || d.family > 0;
 }
 
+function fabMobileLabel(manifest) {
+  if (manifest.status === 'parked') return 'OFFER NOT SET';
+  const slug = String(manifest.slug || '').replace(/-/g, ' ').trim();
+  if (!slug || slug === 'unset') return 'SPECIAL OFFER';
+  return slug.toUpperCase() + ' OFFER';
+}
+
 function perkItems(manifest) {
   if (manifest.status === 'parked') return ['OFFER NOT SET'];
   const items = [];
   if (manifest.enrollment) items.push(`<strong>$${manifest.enrollment}</strong> enrollment`);
   if (hasDuesDiscount(manifest)) {
-    const d = duesMap(manifest);
-    if (d.single === d.couple && d.couple === d.family) {
-      items.push(`<strong>$${d.single}</strong> off monthly dues`);
-    } else {
-      items.push(`<strong>$${d.single}</strong> / <strong>$${d.couple}</strong> / <strong>$${d.family}</strong> off monthly dues`);
-    }
+    items.push('<strong>Reduced Monthly Dues</strong>');
   }
   if (manifest.guestPasses) items.push(`<strong>${manifest.guestPasses}</strong> guest passes`);
   if (manifest.endParts) {
@@ -157,6 +159,7 @@ function renderPromo(manifest) {
     <span class="se-campaign-fab-label">Offer</span>
     <span class="se-campaign-fab-details">${escapeHtml(details.replace(/&nbsp;/g, ' '))}</span>
     <span class="se-campaign-fab-time"><span id="se-camp-fab-days">00</span>d <span id="se-camp-fab-hours">00</span>h left</span>
+    <span class="se-campaign-fab-short">${escapeHtml(fabMobileLabel(manifest))}</span>
   </span>
 </a>
 
@@ -305,10 +308,31 @@ body.admin-bar .se-campaign-fab { top: 172px !important; }
 .se-campaign-fab-label { font-size: 10px !important; font-weight: 800 !important; letter-spacing: 0.14em !important; text-transform: uppercase !important; }
 .se-campaign-fab-details { font-size: 12px !important; font-weight: 800 !important; color: #0b468c !important; }
 .se-campaign-fab-time { font-size: 11px !important; font-weight: 700 !important; color: rgba(11,70,140,0.85) !important; font-variant-numeric: tabular-nums !important; }
+.se-campaign-fab-short { display: none !important; }
 @media (max-width: 768px) {
   #se-campaign-promo { margin: 20px auto 28px !important; padding: 0 12px !important; }
-  .se-campaign-fab { left: 10px !important; top: 116px !important; }
+  .se-campaign-fab {
+    left: 10px !important;
+    top: 116px !important;
+    max-width: calc(100vw - 20px) !important;
+    padding: 10px 14px !important;
+  }
   body.admin-bar .se-campaign-fab { top: 148px !important; }
+  .se-campaign-fab-emoji,
+  .se-campaign-fab-label,
+  .se-campaign-fab-details,
+  .se-campaign-fab-time { display: none !important; }
+  .se-campaign-fab-short {
+    display: block !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+  }
 }
 </style>
 <script>
@@ -559,7 +583,10 @@ function renderButton(manifest) {
   return `<!--
   GLOBAL SPECIAL OFFER BUTTON
   Site-wide WPCode HTML snippet, footer insert.
-  Coexists with #se-bk-floating-wrap (bottom-left tour, desktop) and #se-crm-btn (bottom-right message).
+  Coexists with #se-bk-floating-wrap (bottom-left tour, desktop), #se-crm-btn
+  (bottom-right message), and .se-textus-fab (bottom-left Text Us, mobile/tablet).
+  On coarse-pointer / ≤1024px, stacks 16px above .se-textus-fab (16px inset + 44px
+  height + 16px gap). Desktop pointer keeps the 96px tour-widget clearance.
   Hides on /special-offer/ and after campaign expiry.
 -->
 <style>
@@ -569,6 +596,9 @@ function renderButton(manifest) {
   -webkit-font-smoothing: antialiased !important;
 }
 #se-campaign-float {
+  --se-fab-inset: 16px;
+  --se-fab-gap: 16px;
+  --se-textus-height: 44px;
   display: none;
   position: fixed;
   left: 24px;
@@ -596,18 +626,24 @@ function renderButton(manifest) {
   outline: 2px solid #0b468c;
   outline-offset: 3px;
 }
-@media (max-width: 1023px) {
+@media (pointer: coarse), (max-width: 1024px) {
   #se-campaign-float {
-    left: 16px;
-    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    left: var(--se-fab-inset);
+    bottom: calc(var(--se-fab-inset) + var(--se-textus-height) + var(--se-fab-gap) + env(safe-area-inset-bottom, 0px));
+    max-width: min(220px, calc(100vw - (var(--se-fab-inset) * 2)));
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  #se-campaign-float {
+    left: 24px;
+    bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+    max-width: min(220px, calc(100vw - 48px));
   }
 }
 @media (max-width: 320px) {
   #se-campaign-float {
-    left: 12px;
     padding: 10px 12px;
     font-size: 12px;
-    max-width: calc(100vw - 24px);
   }
 }
 </style>

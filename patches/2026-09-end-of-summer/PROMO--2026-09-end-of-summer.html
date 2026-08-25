@@ -5,7 +5,7 @@
     <div class="se-campaign-promo-offer">Don't let fall start the same way summer ended</div>
     <div class="se-campaign-promo-perks">
       <span class="se-campaign-perk"><strong>$100</strong> enrollment</span>
-      <span class="se-campaign-perk"><strong>$25</strong> / <strong>$30</strong> / <strong>$40</strong> off monthly dues</span>
+      <span class="se-campaign-perk"><strong>Reduced Monthly Dues</strong></span>
       <span class="se-campaign-perk"><strong>10</strong> guest passes</span>
       <span class="se-campaign-perk">Ends <strong>September&nbsp;1</strong></span>
     </div>
@@ -25,6 +25,7 @@
     <span class="se-campaign-fab-label">Offer</span>
     <span class="se-campaign-fab-details">$100 · lower dues · 10 passes · September 1</span>
     <span class="se-campaign-fab-time"><span id="se-camp-fab-days">00</span>d <span id="se-camp-fab-hours">00</span>h left</span>
+    <span class="se-campaign-fab-short">END OF SUMMER OFFER</span>
   </span>
 </a>
 
@@ -173,10 +174,31 @@ body.admin-bar .se-campaign-fab { top: 172px !important; }
 .se-campaign-fab-label { font-size: 10px !important; font-weight: 800 !important; letter-spacing: 0.14em !important; text-transform: uppercase !important; }
 .se-campaign-fab-details { font-size: 12px !important; font-weight: 800 !important; color: #0b468c !important; }
 .se-campaign-fab-time { font-size: 11px !important; font-weight: 700 !important; color: rgba(11,70,140,0.85) !important; font-variant-numeric: tabular-nums !important; }
+.se-campaign-fab-short { display: none !important; }
 @media (max-width: 768px) {
   #se-campaign-promo { margin: 20px auto 28px !important; padding: 0 12px !important; }
-  .se-campaign-fab { left: 10px !important; top: 116px !important; }
+  .se-campaign-fab {
+    left: 10px !important;
+    top: 116px !important;
+    max-width: calc(100vw - 20px) !important;
+    padding: 10px 14px !important;
+  }
   body.admin-bar .se-campaign-fab { top: 148px !important; }
+  .se-campaign-fab-emoji,
+  .se-campaign-fab-label,
+  .se-campaign-fab-details,
+  .se-campaign-fab-time { display: none !important; }
+  .se-campaign-fab-short {
+    display: block !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+  }
 }
 </style>
 <script>

@@ -31,7 +31,7 @@
     "limitedTimeText": "through September 1 at midnight · 10 guest passes included · lower monthly dues",
     "perks": [
       "$100 enrollment",
-      "$25 / $30 / $40 off monthly dues",
+      "Reduced Monthly Dues",
       "10 guest passes",
       "Ends September 1"
     ],
@@ -87,5 +87,5 @@
     "approvedAt": "2026-08-24T23:44:27.669Z"
   },
   "patchDir": "patches/2026-09-end-of-summer",
-  "appliedAt": "2026-08-25T01:37:21.799Z"
+  "appliedAt": "2026-08-25T08:28:36.443Z"
 }

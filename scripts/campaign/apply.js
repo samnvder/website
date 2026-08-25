@@ -32,6 +32,59 @@ function writeText(filePath, next) {
   return body;
 }
 
+function renderCurrentOfferMd(manifest) {
+  const parked = !manifest || manifest.status === 'parked' || manifest.offerTag === 'UNSET-set-before-launch';
+  const lines = [
+    '# Current offer — SPECIAL-OFFER PAGE',
+    '',
+    '**This folder is the campaign landing page.** Alter it with `scripts/campaign`, not by editing the join builder.',
+    '',
+    '| | Join (`/memberships/`) | This page (`/special-offer/`) |',
+    '|---|---|---|',
+    '| HTML | `memberships/Membership Builder frontend.html` | `Special Offer.html` (`CAMPAIGN:*` markers) |',
+    '| JS | WPCode **#9926** | Inlined `CAMPAIGN:BUILDER-JS` + `membership builder JS-special-offer.js` |',
+    '| Freeze / restore | `memberships/Original Version 1/` | `apply` / `park` + `Archive/` |',
+    '| How to change | Hand; pricing guard | `node scripts/campaign/index.js ingest` then `apply --id <id>` |',
+    '',
+    'Do **not** enable WPCode **#7966** on this page. Do **not** paste join-page HTML or #9926 here.',
+    '',
+  ];
+  if (parked) {
+    lines.push(
+      '**Status:** PARKED — `OFFER NOT SET`. Do not publish `/special-offer/`.',
+      '',
+      '| Field | Value |',
+      '|---|---|',
+      '| Offer tag | `UNSET-set-before-launch` |',
+      '| Enrollment | `0` |',
+      '| End | none |',
+      '| Limited-time copy | `OFFER NOT SET — do not publish` |',
+      ''
+    );
+  } else {
+    const dues = manifest.duesDiscount || {};
+    lines.push(
+      `**Status:** ${manifest.status} — \`${manifest.id}\``,
+      '',
+      '| Field | Value |',
+      '|---|---|',
+      `| Offer tag | \`${manifest.offerTag}\` |`,
+      `| Headline | ${manifest.headline} |`,
+      `| Enrollment | $${manifest.enrollment} |`,
+      `| Dues off | $${dues.single || 0} / $${dues.couple || 0} / $${dues.family || 0} |`,
+      `| Guest passes | ${manifest.guestPasses == null ? 'none' : manifest.guestPasses} |`,
+      `| End | ${manifest.endLabel || 'none'} |`,
+      `| Limited-time copy | ${manifest.limitedTimeText} |`,
+      ''
+    );
+  }
+  lines.push(
+    'This file is engine-driven (`apply` / `park`). Truth is `scripts/campaign/state.json`.',
+    ''
+  );
+  return lines.join('\n');
+}
+
 function applyManifestToRepo(repoRoot, manifest, opts = {}) {
   const pagePath = abs(repoRoot, TARGETS.page);
   const jsPath = abs(repoRoot, TARGETS.builderJs);
@@ -58,6 +111,7 @@ function applyManifestToRepo(repoRoot, manifest, opts = {}) {
   writeText(jsPath, builderJs);
   writeText(bannerPath, banner);
   writeText(buttonPath, button);
+  writeText(abs(repoRoot, TARGETS.currentOffer), renderCurrentOfferMd(manifest));
 
   const patchDir = writePatchDir(repoRoot, manifest, {
     page: writtenPage,

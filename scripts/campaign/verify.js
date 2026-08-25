@@ -97,8 +97,8 @@ function verify(repoRoot, opts = {}) {
   }
 
   const button = fs.readFileSync(buttonPath, 'utf8');
-  if (!button.includes('se-bk-floating-wrap') || !button.includes('se-crm-btn')) {
-    fail('global button source must document coexistence with #se-bk-floating-wrap and #se-crm-btn');
+  if (!button.includes('se-bk-floating-wrap') || !button.includes('se-crm-btn') || !button.includes('se-textus-fab')) {
+    fail('global button source must document coexistence with #se-bk-floating-wrap, #se-crm-btn, and .se-textus-fab');
   }
   if (!button.includes('/special-offer$')) {
     fail('global button must hide on /special-offer/');

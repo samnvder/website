@@ -91,7 +91,10 @@ test('parses shared-class headlines and $N off monthly dues', () => {
   assert.ok(js.includes('"couple":30'));
   assert.ok(js.includes('"family":40'));
   const promo = renderPromo({ ...m, status: 'approved' });
-  assert.ok(promo.includes('off monthly dues'));
+  assert.ok(promo.includes('Reduced Monthly Dues'));
+  assert.ok(!promo.includes('off monthly dues'));
+  assert.ok(promo.includes('se-campaign-fab-short'));
+  assert.ok(promo.includes('END OF SUMMER OFFER'));
 });
 
 test('lower monthly dues without amounts is an ambiguity', () => {
@@ -352,6 +355,9 @@ test('global button hides on /special-offer/, when expired, and when parked', ()
   const html = renderButton(m);
   assert.ok(html.includes('#se-bk-floating-wrap'));
   assert.ok(html.includes('#se-crm-btn'));
+  assert.ok(html.includes('se-textus-fab'));
+  assert.ok(html.includes('--se-textus-height: 44px'));
+  assert.ok(html.includes('(pointer: coarse), (max-width: 1024px)'));
   const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
 
   function run(pathname, nowIso) {
@@ -482,6 +488,7 @@ test('applyManifestToRepo on a copy of the real page only writes campaign target
   const allowed = new Set([
     TARGETS.page.split(path.sep).join('/'),
     TARGETS.builderJs.split(path.sep).join('/'),
+    TARGETS.currentOffer.split(path.sep).join('/'),
     TARGETS.homepageBanner.split(path.sep).join('/'),
     TARGETS.globalButton.split(path.sep).join('/'),
     TARGETS.state.split(path.sep).join('/'),

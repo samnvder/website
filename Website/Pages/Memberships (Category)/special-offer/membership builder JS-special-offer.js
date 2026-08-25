@@ -1,7 +1,8 @@
 /**
- * Special Offer membership builder pricing (WPCode #7966).
+ * SPECIAL-OFFER PAGE builder — inlined in Special Offer.html (CAMPAIGN:BUILDER-JS).
+ * NOT the join page. Do not paste this into WPCode #9926, #7315, or #7966.
  * Offer: $100 enrollment + $25/$30/$40 off dues + 10 guest passes through September 1.
- * Monthly dues match current join-page rates.
+ * Sticker monthly dues match the join page. Offer enrollment / dues live here only.
  */
 (function () {
     function initMembershipBuilder() {

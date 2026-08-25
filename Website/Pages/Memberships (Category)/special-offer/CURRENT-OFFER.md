@@ -1,35 +1,26 @@
-# Current offer — PARKED
+# Current offer — SPECIAL-OFFER PAGE
 
-**Status:** OFFER NOT SET. Do not publish `/special-offer/`.
+**This folder is the campaign landing page.** Alter it with `scripts/campaign`, not by editing the join builder.
 
-This file is engine-driven. The live offer is whatever `scripts/campaign/state.json` says, rendered into:
+| | Join (`/memberships/`) | This page (`/special-offer/`) |
+|---|---|---|
+| HTML | `memberships/Membership Builder frontend.html` | `Special Offer.html` (`CAMPAIGN:*` markers) |
+| JS | WPCode **#9926** | Inlined `CAMPAIGN:BUILDER-JS` + `membership builder JS-special-offer.js` |
+| Freeze / restore | `memberships/Original Version 1/` | `apply` / `park` + `Archive/` |
+| How to change | Hand; pricing guard | `node scripts/campaign/index.js ingest` then `apply --id <id>` |
 
-- `Special Offer.html` (campaign-marked slices only)
-- `membership builder JS-special-offer.js`
-- `Components/Homepage/Homepage Campaign Banner.html`
-- `Components/Shared/Global Special Offer Button.html`
+Do **not** enable WPCode **#7966** on this page. Do **not** paste join-page HTML or #9926 here.
 
-Right now `state.json` is **parked**:
+**Status:** active — `2026-09-end-of-summer`
 
 | Field | Value |
 |---|---|
-| Offer tag | `UNSET-set-before-launch` |
-| Enrollment | `0` |
-| End | none |
-| Limited-time copy | `OFFER NOT SET — do not publish` |
+| Offer tag | `end-of-summer-2026-sep1` |
+| Headline | Don't let fall start the same way summer ended |
+| Enrollment | $100 |
+| Dues off | $25 / $30 / $40 |
+| Guest passes | 10 |
+| End | September 1 |
+| Limited-time copy | through September 1 at midnight · 10 guest passes included · lower monthly dues |
 
-The last saved summer campaign (July 2026, $100 enrollment, 10 guest passes) is archived as `2026-07-summer-special-100-enrollment-10-guest-passes` under `Archive/` here and `Components/Homepage/Archive/`.
-
-## Next campaign
-
-```powershell
-node scripts/campaign/index.js prepare --input path\to\email.html --slug kebab-name
-```
-
-Edit `scripts/campaign/work/<id>/campaign.json` until `"status": "approved"` and `ambiguities` is empty, then:
-
-```powershell
-node scripts/campaign/index.js apply --id <id>
-```
-
-🛑 HUMAN GATE: paste from `patches/<id>/`. Never paste this whole page file into Thrive. See [scripts/campaign/README.md](../../../../scripts/campaign/README.md).
+This file is engine-driven (`apply` / `park`). Truth is `scripts/campaign/state.json`.

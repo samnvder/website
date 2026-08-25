@@ -11,6 +11,8 @@ Memberships landing page. Memberships Page HTML.html, CSS, membership builder JS
 ## Advanced
 
 - **Files:** Memberships Nav Block.html, Memberships Page CSS.css, Memberships Page HTML.html, membership builder JS.js, membership builder JS.readme, Membership Builder frontend.html
+- **Original Version 1/** — frozen 2026-08-24 restore point of the canonical join builder (HTML + extracted CSS + JS). Do not edit.
+- **Campaigns:** `special-offer/` — not this folder. Engine: `scripts/campaign`.
 - **Discounted Enrollment/** — archived builder HTML + JS with promo/discount UI. Live JS stays on WPCode **#7315**.
 
 ## Pricing update flow
@@ -36,5 +38,6 @@ Supporting scripts:
 
 ## History
 
+- 2026-08-24: Canonical join builder (HTML / CSS / JS) frozen as `Original Version 1/`.
 - 2026-08-02: Normal builder = sticker enrollment only (no promo UI). Discounted variants moved to `Discounted Enrollment/`.
 - 2026-03-02 09:16:47: Added: Memberships Nav Block.html, Memberships Page CSS.css, Memberships Page HTML.html, membership builder JS.js, membership builder JS.readme

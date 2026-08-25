@@ -1,3 +1,23 @@
+<!--
+  ============================================================================
+  SPECIAL OFFER PAGE — this is the campaign landing page.
+  File: Website/Pages/Memberships (Category)/special-offer/Special Offer.html
+  Live: https://southendclub.com/special-offer/
+  ============================================================================
+  Alter THIS file (and the CAMPAIGN:* markers) when running a membership offer.
+  Engine: node scripts/campaign/index.js ingest | apply --id <id>
+  Markers the engine writes: META, PROMO, CALLOUT, LIMITED-TIME, BUILDER-JS.
+
+  Do NOT alter these for a campaign — they are the join-page original:
+    memberships/Membership Builder frontend.html
+    memberships/membership builder JS.js          → WPCode #9926
+    memberships/Original Version 1/               → freeze of that original
+    live/wpcode/9926-*.js  /  7315-*.js  /  7966-*.js
+
+  Builder JS on this page is INLINED (CAMPAIGN:BUILDER-JS). Do not enable
+  WPCode #7966 here. Companion file: membership builder JS-special-offer.js
+  ============================================================================
+-->
 <!-- =============================================
      SEO METADATA FOR SPECIAL OFFER PAGE
      ============================================= -->
@@ -213,7 +233,7 @@
     <div class="se-campaign-promo-offer">Don't let fall start the same way summer ended</div>
     <div class="se-campaign-promo-perks">
       <span class="se-campaign-perk"><strong>$100</strong> enrollment</span>
-      <span class="se-campaign-perk"><strong>$25</strong> / <strong>$30</strong> / <strong>$40</strong> off monthly dues</span>
+      <span class="se-campaign-perk"><strong>Reduced Monthly Dues</strong></span>
       <span class="se-campaign-perk"><strong>10</strong> guest passes</span>
       <span class="se-campaign-perk">Ends <strong>September&nbsp;1</strong></span>
     </div>
@@ -233,6 +253,7 @@
     <span class="se-campaign-fab-label">Offer</span>
     <span class="se-campaign-fab-details">$100 · lower dues · 10 passes · September 1</span>
     <span class="se-campaign-fab-time"><span id="se-camp-fab-days">00</span>d <span id="se-camp-fab-hours">00</span>h left</span>
+    <span class="se-campaign-fab-short">END OF SUMMER OFFER</span>
   </span>
 </a>
 
@@ -381,10 +402,31 @@ body.admin-bar .se-campaign-fab { top: 172px !important; }
 .se-campaign-fab-label { font-size: 10px !important; font-weight: 800 !important; letter-spacing: 0.14em !important; text-transform: uppercase !important; }
 .se-campaign-fab-details { font-size: 12px !important; font-weight: 800 !important; color: #0b468c !important; }
 .se-campaign-fab-time { font-size: 11px !important; font-weight: 700 !important; color: rgba(11,70,140,0.85) !important; font-variant-numeric: tabular-nums !important; }
+.se-campaign-fab-short { display: none !important; }
 @media (max-width: 768px) {
   #se-campaign-promo { margin: 20px auto 28px !important; padding: 0 12px !important; }
-  .se-campaign-fab { left: 10px !important; top: 116px !important; }
+  .se-campaign-fab {
+    left: 10px !important;
+    top: 116px !important;
+    max-width: calc(100vw - 20px) !important;
+    padding: 10px 14px !important;
+  }
   body.admin-bar .se-campaign-fab { top: 148px !important; }
+  .se-campaign-fab-emoji,
+  .se-campaign-fab-label,
+  .se-campaign-fab-details,
+  .se-campaign-fab-time { display: none !important; }
+  .se-campaign-fab-short {
+    display: block !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+  }
 }
 </style>
 <script>
@@ -1817,7 +1859,7 @@ for (var i = 0; i < tierLinks.length; i++) {
       <div class="so-offer-callout-title">Don't let fall start the same way summer ended</div>
       <div class="so-offer-callout-perks">
         <span><strong>$100</strong> enrollment</span>
-        <span><strong>$25</strong> / <strong>$30</strong> / <strong>$40</strong> off monthly dues</span>
+        <span><strong>Reduced Monthly Dues</strong></span>
         <span><strong>10</strong> guest passes</span>
         <span>Ends <strong>September&nbsp;1</strong></span>
       </div>
@@ -2004,9 +2046,10 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Special-offer pricing (inlined — do not rely on WPCode 7966 for this page) -->
 <script>
 /**
- * Special Offer membership builder pricing (WPCode #7966).
+ * SPECIAL-OFFER PAGE builder — inlined in Special Offer.html (CAMPAIGN:BUILDER-JS).
+ * NOT the join page. Do not paste this into WPCode #9926, #7315, or #7966.
  * Offer: $100 enrollment + $25/$30/$40 off dues + 10 guest passes through September 1.
- * Monthly dues match current join-page rates.
+ * Sticker monthly dues match the join page. Offer enrollment / dues live here only.
  */
 (function () {
     function initMembershipBuilder() {

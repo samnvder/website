@@ -86,10 +86,7 @@ function extractDuesDiscounts(text) {
 
 function duesDiscountPerk(d) {
   if (!d) return null;
-  if (d.single === d.couple && d.couple === d.family) {
-    return `$${d.single} off monthly dues`;
-  }
-  return `$${d.single} / $${d.couple} / $${d.family} off monthly dues`;
+  return 'Reduced Monthly Dues';
 }
 
 function extractHeroImage(html) {
