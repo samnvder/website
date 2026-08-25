@@ -10,5 +10,5 @@ Category folder for membership pages. memberships/, corporate-membership/, summe
 
 ## Advanced
 
-- **Subdirs:** memberships/, corporate-membership/, summer-membership/, special-offer/
+- **Subdirs:** memberships/, corporate-membership/, summer-membership/, special-offer/, membership-next-steps/ (post-Buy-Membership utility page; draft until phase 2)
 - **special-offer:** Brandon PB Offer, etc.
