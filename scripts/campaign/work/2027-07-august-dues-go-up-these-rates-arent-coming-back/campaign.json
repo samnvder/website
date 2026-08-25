@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "status": "draft",
+  "profile": "membership-special-offer",
+  "id": "2027-07-august-dues-go-up-these-rates-arent-coming-back",
+  "slug": "august-dues-go-up-these-rates-arent-coming-back",
+  "offerTag": "august-dues-go-up-these-rates-arent-coming-back-2027-jul31",
+  "headline": "August dues go up. These rates aren't coming back.",
+  "eyebrow": "Final days · Through July 31",
+  "subject": "August dues go up. These rates aren't coming back.",
+  "preheader": "$100 enrollment on all plans through July 31. Lock in today's dues before the August increase.",
+  "enrollment": 100,
+  "guestPasses": null,
+  "endDatePacific": "2027-07-31T23:59:59",
+  "endDateISO": "2027-08-01T06:59:59.000Z",
+  "endLabel": "July 31",
+  "endParts": {
+    "year": 2027,
+    "month": 7,
+    "day": 31
+  },
+  "limitedTimeText": "through July 31 at midnight",
+  "perks": [
+    "$100 enrollment",
+    "Ends July 31"
+  ],
+  "primaryCta": {
+    "label": "Join Now",
+    "href": "https://southendclub.com/special-offer/"
+  },
+  "secondaryCta": {
+    "label": "Schedule a Tour",
+    "href": "https://southendclub.com/schedule-a-tour/"
+  },
+  "heroImage": {
+    "src": "https://southendclub.com/wp-content/uploads/2026/06/Facility-Day.png",
+    "alt": "Aerial view of South End Club"
+  },
+  "preset": "south-end-premium",
+  "tone": "urgency",
+  "yoast": {
+    "title": "August dues go up. These rates aren't coming back. | South End Club",
+    "description": "$100 enrollment on all plans through July 31. Lock in today's dues before the August increase."
+  },
+  "extracted": {
+    "enrollment": {
+      "value": 100,
+      "evidence": "Matched \"$N enrollment\"",
+      "confidence": "high"
+    },
+    "guestPasses": {
+      "value": null,
+      "evidence": "No guest-pass count found (optional)",
+      "confidence": "optional"
+    },
+    "endDate": {
+      "value": {
+        "year": 2027,
+        "month": 7,
+        "day": 31
+      },
+      "evidence": "Matched \" 7/31\"",
+      "confidence": "high"
+    }
+  },
+  "ambiguities": [],
+  "approvedAt": null
+}

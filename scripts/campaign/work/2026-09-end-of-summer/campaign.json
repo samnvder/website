@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "status": "approved",
+  "profile": "membership-special-offer",
+  "id": "2026-09-end-of-summer",
+  "slug": "end-of-summer",
+  "offerTag": "end-of-summer-2026-sep1",
+  "headline": "Don't let fall start the same way summer ended",
+  "eyebrow": "End of summer · Membership",
+  "subject": "South End Club — End of summer membership offer",
+  "preheader": "$100 enrollment, lower monthly dues, and 10 guest passes — through September 1 at midnight.",
+  "enrollment": 100,
+  "guestPasses": 10,
+  "duesDiscount": {
+    "single": 25,
+    "couple": 30,
+    "family": 40
+  },
+  "endDatePacific": "2026-09-01T23:59:59",
+  "endDateISO": "2026-09-02T06:59:59.000Z",
+  "endLabel": "September 1",
+  "endParts": {
+    "year": 2026,
+    "month": 9,
+    "day": 1
+  },
+  "limitedTimeText": "through September 1 at midnight · 10 guest passes included · lower monthly dues",
+  "perks": [
+    "$100 enrollment",
+    "$25 / $30 / $40 off monthly dues",
+    "10 guest passes",
+    "Ends September 1"
+  ],
+  "primaryCta": {
+    "label": "Join Now",
+    "href": "https://southendclub.com/special-offer/"
+  },
+  "secondaryCta": {
+    "label": "Schedule a Tour",
+    "href": "https://southendclub.com/schedule-a-tour/"
+  },
+  "heroImage": {
+    "src": "https://southendclub.com/wp-content/uploads/2026/06/Facility-Day.png",
+    "alt": "Aerial view of South End Club's 7-acre campus in Torrance"
+  },
+  "preset": "south-end-premium",
+  "tone": "urgency",
+  "yoast": {
+    "title": "Don't let fall start the same way summer ended | South End Club",
+    "description": "$100 enrollment, lower monthly dues, and 10 guest passes — through September 1 at midnight."
+  },
+  "extracted": {
+    "enrollment": {
+      "value": 100,
+      "evidence": "Matched \"$N enrollment\"",
+      "confidence": "high"
+    },
+    "guestPasses": {
+      "value": 10,
+      "evidence": "Matched \"N guest passes\"",
+      "confidence": "high"
+    },
+    "duesDiscount": {
+      "value": {
+        "single": 25,
+        "couple": 30,
+        "family": 40
+      },
+      "evidence": "Matched \"$N off singles/couples/family\" (agrees with starting monthly)",
+      "confidence": "high"
+    },
+    "endDate": {
+      "value": {
+        "year": 2026,
+        "month": 9,
+        "day": 1
+      },
+      "evidence": "Matched \" 9/1\"",
+      "confidence": "high"
+    }
+  },
+  "ambiguities": [],
+  "approvedAt": "2026-08-24T23:44:27.669Z"
+}
