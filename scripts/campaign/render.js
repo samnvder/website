@@ -16,10 +16,32 @@ function toneOf(manifest) {
   return TONES[manifest.tone] || TONES.urgency;
 }
 
+function duesMap(manifest) {
+  const d = manifest.duesDiscount || {};
+  return {
+    single: Number(d.single) || 0,
+    couple: Number(d.couple) || 0,
+    family: Number(d.family) || 0,
+  };
+}
+
+function hasDuesDiscount(manifest) {
+  const d = duesMap(manifest);
+  return d.single > 0 || d.couple > 0 || d.family > 0;
+}
+
 function perkItems(manifest) {
   if (manifest.status === 'parked') return ['OFFER NOT SET'];
   const items = [];
   if (manifest.enrollment) items.push(`<strong>$${manifest.enrollment}</strong> enrollment`);
+  if (hasDuesDiscount(manifest)) {
+    const d = duesMap(manifest);
+    if (d.single === d.couple && d.couple === d.family) {
+      items.push(`<strong>$${d.single}</strong> off monthly dues`);
+    } else {
+      items.push(`<strong>$${d.single}</strong> / <strong>$${d.couple}</strong> / <strong>$${d.family}</strong> off monthly dues`);
+    }
+  }
   if (manifest.guestPasses) items.push(`<strong>${manifest.guestPasses}</strong> guest passes`);
   if (manifest.endParts) {
     items.push(`Ends <strong>${endLabelNbsp(manifest.endParts.year, manifest.endParts.month, manifest.endParts.day)}</strong>`);
@@ -98,6 +120,7 @@ function renderPromo(manifest) {
     ? 'OFFER NOT SET'
     : [
         manifest.enrollment ? `$${manifest.enrollment}` : null,
+        hasDuesDiscount(manifest) ? 'lower dues' : null,
         manifest.guestPasses ? `${manifest.guestPasses} passes` : null,
         manifest.endParts ? endLabelNbsp(manifest.endParts.year, manifest.endParts.month, manifest.endParts.day).replace('&nbsp;', ' ') : null,
       ].filter(Boolean).join(' · ');
@@ -613,11 +636,15 @@ function renderBuilderJs(manifest) {
   const header = manifest.status === 'parked'
     ? ' * Offer: NOT SET. Set enrollment, wording, countdown and the offer: tag before launch.'
     : ` * Offer: $${manifest.enrollment} enrollment`
+      + (hasDuesDiscount(manifest)
+        ? ` + $${duesMap(manifest).single}/$${duesMap(manifest).couple}/$${duesMap(manifest).family} off dues`
+        : '')
       + (manifest.guestPasses ? ` + ${manifest.guestPasses} guest passes` : '')
       + (manifest.endLabel ? ` through ${manifest.endLabel}` : '')
       + '.';
   tmpl = tmpl.split('{{OFFER_HEADER}}').join(header);
   tmpl = tmpl.split('{{SPECIAL_ENROLLMENT}}').join(String(manifest.enrollment));
+  tmpl = tmpl.split('{{DUES_DISCOUNTS_JSON}}').join(JSON.stringify(duesMap(manifest)));
   tmpl = tmpl.split('{{LIMITED_TIME_JSON}}').join(JSON.stringify(manifest.limitedTimeText));
   tmpl = tmpl.split('{{OFFER_TAG_JSON}}').join(JSON.stringify(manifest.offerTag));
   if (tmpl.includes('{{')) {

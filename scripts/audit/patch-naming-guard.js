@@ -5,9 +5,9 @@
  * For every directory under patches/:
  *   1. It must contain a README.md.
  *   2. Every top-level file except README.md and .gitignore must be named
- *      "<dir-name>--<descriptor>.<ext>" — the slug prefix makes the file
- *      self-identifying outside its directory (Notepad title bars, search
- *      results, paste deliveries).
+ *      "<dir-name>--<descriptor>.<ext>" (one-off patches), or
+ *      "<ROLE>--<dir-name>.<ext>" (campaign packs: PAGE / HOME / WPCODE first
+ *      so Notepad taskbar titles distinguish them).
  *
  * Files inside subdirectories are exempt (e.g. live-blocks/ contents).
  */
@@ -19,6 +19,13 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..', '..');
 const PATCHES = path.join(ROOT, 'patches');
 const EXEMPT = new Set(['README.md', '.gitignore']);
+const ROLE_FIRST = /^(PAGE|HOME|WPCODE|YOAST|PROMO|BUILDER|PREVIEW|GEN)--(.+)\.(html|js|md)$/;
+
+function isNamedOk(dir, name) {
+  if (name.startsWith(dir + '--')) return true;
+  const m = name.match(ROLE_FIRST);
+  return Boolean(m && m[2] === dir);
+}
 
 let failures = 0;
 const fail = msg => { failures++; console.error('  ✗ ' + msg); };
@@ -38,8 +45,8 @@ for (const dir of dirs) {
   }
   for (const e of entries) {
     if (!e.isFile() || EXEMPT.has(e.name)) continue;
-    if (!e.name.startsWith(dir + '--')) {
-      fail('patches/' + dir + '/' + e.name + ' — must be named "' + dir + '--<descriptor>.<ext>"');
+    if (!isNamedOk(dir, e.name)) {
+      fail('patches/' + dir + '/' + e.name + ' — must be named "' + dir + '--<role>.<ext>" or "<ROLE>--' + dir + '.<ext>"');
     }
   }
 }

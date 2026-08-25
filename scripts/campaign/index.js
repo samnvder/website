@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { ROOT, TARGETS, abs, LEGACY_HOMEPAGE } = require('./paths');
 const { parseEmail } = require('./parse-email');
+const { detectCampaignPaste } = require('./detect');
 const { assertApplyReady, PARKED, describeArchive, validateManifest } = require('./manifest');
 const { archiveCurrentSources, defaultArchiveSet } = require('./archive');
 const { applyManifestToRepo, readState } = require('./apply');
@@ -15,18 +16,22 @@ function printHelp() {
   const msg = `
 Membership campaign engine — IDE/LLM agnostic.
 
+  node scripts/campaign/index.js ingest --input <email.html> [--slug kebab]
   node scripts/campaign/index.js prepare --input <email.html> [--slug kebab]
   node scripts/campaign/index.js apply --id <campaign-id>
   node scripts/campaign/index.js verify
   node scripts/campaign/index.js park
   node scripts/campaign/index.js bootstrap
 
+ingest   natural-language / paste entry: refuses unless the HTML looks like a
+         membership-offer email, then prepare. This is what agents run.
+
 prepare  reads email HTML (file or stdin), writes scripts/campaign/work/<id>/
          campaign.json + email-source.html. Does not change page sources.
 
 apply    requires campaign.json status "approved". Archives current sources,
          writes landing page / builder JS / homepage banner / global button,
-         and generates patches/<id>/ paste artifacts.
+         and generates patches/<id>/ including the full-page Thrive select-all.
 
 verify   checks markers and generated sources stay in sync.
 
@@ -91,7 +96,7 @@ function copyEmailToCampaigns(repoRoot, manifest, emailHtml) {
 }
 
 function cmdPrepare(opts) {
-  const html = readInput(opts);
+  const html = opts.html != null ? opts.html : readInput(opts);
   const manifest = parseEmail(html, { slug: opts.slug });
   const dir = writeWork(ROOT, manifest, html);
   console.log('[campaign] draft written to ' + dir);
@@ -110,6 +115,19 @@ function cmdPrepare(opts) {
     console.log('[campaign] not apply-ready yet:');
     errs.forEach((e) => console.log('  - ' + e));
   }
+}
+
+function cmdIngest(opts) {
+  const html = opts.html != null ? opts.html : readInput(opts);
+  const detected = detectCampaignPaste(html);
+  if (!detected.ok) {
+    throw new Error(
+      'Paste is not a membership campaign email'
+      + (detected.reasons.length ? ':\n  - ' + detected.reasons.join('\n  - ') : '.')
+    );
+  }
+  console.log('[campaign] ingest detected (' + detected.score + '): ' + detected.signals.join(', '));
+  cmdPrepare({ ...opts, html });
 }
 
 function logArchiveReport(report) {
@@ -137,8 +155,10 @@ function cmdApply(opts) {
   copyEmailToCampaigns(ROOT, manifest, fs.readFileSync(workEmail, 'utf8'));
   const applied = { ...manifest, status: 'active' };
   const result = applyManifestToRepo(ROOT, applied, { archiveLabel: label });
+  const names = require('./patches').patchNames(manifest.id);
   console.log('[campaign] applied ' + manifest.id);
   console.log('[campaign] patches: ' + result.patchDir);
+  console.log('[campaign] full-page Thrive paste: ' + names.page);
 }
 
 function cmdPark(opts) {
@@ -187,6 +207,9 @@ function cmdBootstrap() {
 function main() {
   const opts = parseArgs(process.argv);
   switch (opts.action) {
+    case 'ingest':
+      cmdIngest(opts);
+      break;
     case 'prepare':
       cmdPrepare(opts);
       break;
@@ -223,6 +246,7 @@ if (require.main === module) {
 module.exports = {
   parseArgs,
   parseEmail,
+  detectCampaignPaste,
   PARKED,
   verify,
   applyManifestToRepo,

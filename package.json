@@ -51,6 +51,7 @@
     "guard:tour-confirmation": "node scripts/audit/tour-confirmation-guard.js",
     "guard:campaign": "node scripts/audit/campaign-sync-guard.js",
     "campaign": "node scripts/campaign/index.js",
+    "campaign:ingest": "node scripts/campaign/index.js ingest",
     "campaign:prepare": "node scripts/campaign/index.js prepare",
     "campaign:apply": "node scripts/campaign/index.js apply",
     "campaign:verify": "node scripts/campaign/index.js verify",

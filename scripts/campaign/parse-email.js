@@ -52,6 +52,46 @@ function extractCtas(html) {
   return out;
 }
 
+function extractHeadlineCell(html) {
+  const re = /<td\b(?=[^>]*\bclass\s*=\s*(["'])([^"']*)\1)[^>]*>([\s\S]*?)<\/td>/gi;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    if (/\bheadline\b/i.test(m[2])) return m[3];
+  }
+  return firstMatch(html, /<h1[^>]*>([\s\S]*?)<\/h1>/i);
+}
+
+function extractDuesDiscounts(text) {
+  const combo = String(text).match(
+    /\$(\d+)\s+off\s+singles[,.\s]+\$(\d+)\s+off\s+couples[,.\s]+(?:and\s+)?\$(\d+)\s+off\s+family(?:\s+monthly\s+dues)?/i
+  );
+  const fromOff = combo
+    ? { single: Number(combo[1]), couple: Number(combo[2]), family: Number(combo[3]) }
+    : null;
+
+  const fromStarting = {};
+  const pairs = [
+    ['single', /Singles:\s*\$(\d+)\s*\/\s*mo\s*\(normally\s*\$(\d+)\)/i],
+    ['couple', /Couples:\s*\$(\d+)\s*\/\s*mo\s*\(normally\s*\$(\d+)\)/i],
+    ['family', /Families:\s*(?:from\s*)?\$(\d+)\s*\/\s*mo\s*\(normally\s*\$(\d+)\)/i],
+  ];
+  pairs.forEach(([key, re]) => {
+    const m = String(text).match(re);
+    if (m) fromStarting[key] = Number(m[2]) - Number(m[1]);
+  });
+  const starting = Object.keys(fromStarting).length === 3 ? fromStarting : null;
+
+  return { fromOff, fromStarting: starting };
+}
+
+function duesDiscountPerk(d) {
+  if (!d) return null;
+  if (d.single === d.couple && d.couple === d.family) {
+    return `$${d.single} off monthly dues`;
+  }
+  return `$${d.single} / $${d.couple} / $${d.family} off monthly dues`;
+}
+
 function extractHeroImage(html) {
   const slot = html.match(/data-campaign-image-slot=["']hero["'][\s\S]{0,800}?<img\b([^>]*)>/i);
   const attrs = slot ? slot[1] : null;
@@ -59,7 +99,7 @@ function extractHeroImage(html) {
   const used = attrs || (fallback && fallback[1]);
   if (!used) return null;
   const srcM = used.match(/\bsrc=["']([^"']+)["']/i);
-  const altM = used.match(/\balt=["']([^"']*)["']/i);
+  const altM = used.match(/\balt="([^"]*)"/i) || used.match(/\balt='([^']*)'/i);
   if (!srcM) return null;
   const src = srcM[1];
   if (/logo/i.test(src) && !slot) return null;
@@ -129,9 +169,7 @@ function parseEmail(html, opts = {}) {
   const subject = commentField(html, 'SUBJECT') || firstMatch(html, /<title[^>]*>([\s\S]*?)<\/title>/i);
   const preheader = commentField(html, 'PREHEADER')
     || firstMatch(html, /mso-hide:all[^>]*>([\s\S]*?)<\/div>/i);
-  const headline = firstMatch(html, /class="headline"[^>]*>([\s\S]*?)<\/td>/i)
-    || firstMatch(html, /<h1[^>]*>([\s\S]*?)<\/h1>/i)
-    || subject;
+  const headline = extractHeadlineCell(html) || subject;
   const headlineText = headline ? stripTags(headline).replace(/<br\s*\/?>/gi, '\n') : null;
   const headlineClean = headlineText ? headlineText.replace(/\s+/g, ' ').trim() : null;
   const headlineMultiline = headline
@@ -179,6 +217,36 @@ function parseEmail(html, opts = {}) {
     field('guestPasses', null, 'No guest-pass count found (optional)', 'optional');
   }
 
+  let duesDiscount = null;
+  const duesFound = extractDuesDiscounts(text);
+  if (duesFound.fromOff && duesFound.fromStarting) {
+    const a = duesFound.fromOff;
+    const b = duesFound.fromStarting;
+    if (a.single === b.single && a.couple === b.couple && a.family === b.family) {
+      duesDiscount = field('duesDiscount', a, 'Matched "$N off singles/couples/family" (agrees with starting monthly)', 'high');
+    } else {
+      field(
+        'duesDiscount',
+        [a, b],
+        `Dues "$N off" (${a.single}/${a.couple}/${a.family}) disagrees with starting monthly (${b.single}/${b.couple}/${b.family})`,
+        'ambiguous'
+      );
+    }
+  } else if (duesFound.fromOff) {
+    duesDiscount = field('duesDiscount', duesFound.fromOff, 'Matched "$N off singles/couples/family"', 'high');
+  } else if (duesFound.fromStarting) {
+    duesDiscount = field('duesDiscount', duesFound.fromStarting, 'Derived from starting monthly vs normally', 'high');
+  } else if (/lower monthly dues/i.test(text)) {
+    field('duesDiscount', null, 'Email mentions lower monthly dues but no $N off singles/couples/family amounts were found', 'missing');
+    ambiguities.push({
+      field: 'duesDiscount',
+      message: 'Email mentions lower monthly dues but no $N off singles/couples/family amounts were found',
+      candidates: [],
+    });
+  } else {
+    field('duesDiscount', null, 'No monthly dues discount (optional)', 'optional');
+  }
+
   let end = null;
   const dated = dates.filter((d, i, arr) => arr.findIndex((x) => x.month === d.month && x.day === d.day && x.year === d.year) === i);
   const uniqueDay = unique(dated.map((d) => ({ month: d.month, day: d.day, year: d.year })));
@@ -209,12 +277,15 @@ function parseEmail(html, opts = {}) {
 
   const perks = [];
   if (enrollment != null) perks.push(`$${enrollment} enrollment`);
+  const duesPerk = duesDiscountPerk(duesDiscount);
+  if (duesPerk) perks.push(duesPerk);
   if (guestPassCount != null) perks.push(`${guestPassCount} guest passes`);
   if (end) perks.push(`Ends ${endLabel(end.year, end.month, end.day)}`);
 
   const limitedTimeText = end
     ? `through ${endLabel(end.year, end.month, end.day)} at midnight`
       + (guestPassCount != null ? ` · ${guestPassCount} guest passes included` : '')
+      + (duesDiscount ? ' · lower monthly dues' : '')
     : null;
 
   return {
@@ -230,6 +301,7 @@ function parseEmail(html, opts = {}) {
     preheader: preheader ? stripTags(preheader) : null,
     enrollment,
     guestPasses: guestPassCount,
+    duesDiscount,
     endDatePacific: end ? `${end.year}-${String(end.month).padStart(2, '0')}-${String(end.day).padStart(2, '0')}T23:59:59` : null,
     endDateISO: end ? pacificEndOfDayIso(end.year, end.month, end.day) : null,
     endLabel: end ? endLabel(end.year, end.month, end.day) : null,
@@ -260,4 +332,4 @@ function parseEmail(html, opts = {}) {
   };
 }
 
-module.exports = { parseEmail };
+module.exports = { parseEmail, extractHeadlineCell, extractDuesDiscounts, duesDiscountPerk };

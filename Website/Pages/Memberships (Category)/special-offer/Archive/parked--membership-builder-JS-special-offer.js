@@ -1,6 +1,6 @@
 /**
  * Special Offer membership builder pricing (WPCode #7966).
-{{OFFER_HEADER}}
+ * Offer: NOT SET. Set enrollment, wording, countdown and the offer: tag before launch.
  * Monthly dues match current join-page rates.
  */
 (function () {
@@ -14,8 +14,6 @@
         const minimumAmountDisplay = document.getElementById("minimumAmount");
         const originalPriceDisplay = document.getElementById("originalPrice");
         const discountedPriceDisplay = document.getElementById("discountedPrice");
-        const originalDuesDisplay = document.getElementById("originalDues");
-        const discountedDuesDisplay = document.getElementById("discountedDues");
         const limitedTimeText = document.getElementById("limitedTimeText");
         const purchaseButton = document.getElementById("purchaseButton");
 
@@ -49,8 +47,7 @@
             family: [600, 550, 500]
         };
 
-        const SPECIAL_ENROLLMENT = {{SPECIAL_ENROLLMENT}};
-        const duesDiscounts = {{DUES_DISCOUNTS_JSON}};
+        const SPECIAL_ENROLLMENT = 0;
 
         function updatePrice() {
             const type = membershipType.value;
@@ -105,26 +102,7 @@
                 }
             }
 
-            const stickerPrice = price;
-            const duesOff = duesDiscounts[type] || 0;
-            if (duesOff) {
-                price = Math.max(0, stickerPrice - duesOff);
-            }
-
-            if (originalDuesDisplay && discountedDuesDisplay) {
-                if (duesOff) {
-                    originalDuesDisplay.textContent = `$${stickerPrice}`;
-                    originalDuesDisplay.style.display = "";
-                    priceDisplay.classList.add("has-dues-deal");
-                } else {
-                    originalDuesDisplay.textContent = "";
-                    originalDuesDisplay.style.display = "none";
-                    priceDisplay.classList.remove("has-dues-deal");
-                }
-                discountedDuesDisplay.textContent = `$${price}`;
-            } else {
-                priceDisplay.textContent = `Monthly Due: $${price}`;
-            }
+            priceDisplay.textContent = `Monthly Due: $${price}`;
         }
 
         function updateEnrollmentFee() {
@@ -135,7 +113,7 @@
             originalPriceDisplay.textContent = `$${originalPrice}`;
             discountedPriceDisplay.textContent = `$${SPECIAL_ENROLLMENT}`;
             if (limitedTimeText) {
-                limitedTimeText.textContent = {{LIMITED_TIME_JSON}};
+                limitedTimeText.textContent = "OFFER NOT SET — do not publish";
                 limitedTimeText.style.display = "inline";
             }
         }
@@ -252,9 +230,7 @@
             }
 
             const enrollmentFee = discountedPriceDisplay.textContent.replace("$", "").trim();
-            const monthlyDue = (discountedDuesDisplay && discountedDuesDisplay.textContent)
-                ? discountedDuesDisplay.textContent.replace("$", "").trim()
-                : priceDisplay.textContent.replace("Monthly Due: $", "").trim();
+            const monthlyDue = priceDisplay.textContent.replace("Monthly Due: $", "").trim();
             const foodBeverageMinimum = minimumAmountDisplay.textContent.replace("Monthly Food & Beverage Assessment: $", "").trim();
 
             const data = {
@@ -268,7 +244,7 @@
                 enrollmentFee,
                 monthlyDue,
                 foodBeverageMinimum,
-                offer: {{OFFER_TAG_JSON}}
+                offer: "UNSET-set-before-launch"
             };
 
             console.log("Form data being sent:", data);

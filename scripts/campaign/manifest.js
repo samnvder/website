@@ -15,6 +15,7 @@ const PARKED = {
   preheader: 'OFFER NOT SET — do not publish',
   enrollment: 0,
   guestPasses: null,
+  duesDiscount: null,
   endDatePacific: null,
   endDateISO: null,
   endLabel: 'OFFER NOT SET',
@@ -47,6 +48,10 @@ function describeArchive(manifest) {
   const bits = [manifest.id];
   if (manifest.enrollment) bits.push(`${manifest.enrollment}-enrollment`);
   if (manifest.guestPasses) bits.push(`${manifest.guestPasses}-guest-passes`);
+  const d = manifest.duesDiscount;
+  if (d && (d.single || d.couple || d.family)) {
+    bits.push(`${d.single}-${d.couple}-${d.family}-off-dues`);
+  }
   return archiveLabel(bits);
 }
 
@@ -68,6 +73,14 @@ function validateManifest(manifest, opts = {}) {
   });
   if (typeof manifest.enrollment !== 'number' || !Number.isInteger(manifest.enrollment) || manifest.enrollment <= 0) {
     errors.push('enrollment must be a positive integer');
+  }
+  if (manifest.duesDiscount) {
+    ['single', 'couple', 'family'].forEach((k) => {
+      const n = manifest.duesDiscount[k];
+      if (typeof n !== 'number' || !Number.isInteger(n) || n < 0) {
+        errors.push(`duesDiscount.${k} must be a non-negative integer`);
+      }
+    });
   }
   if (!manifest.endDateISO) errors.push('missing endDateISO');
   if (!manifest.endParts || !manifest.endParts.year) errors.push('missing endParts');

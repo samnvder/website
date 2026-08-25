@@ -6,10 +6,16 @@ select-all, never hand-editing inside an admin screen.
 
 ## Naming law (owner-mandated 2026-08-21, enforced by `npm run guard:patch-naming`)
 
-**Every top-level file in a patch directory is named `<dir-name>--<role>.<ext>`.**
+**Default:** every top-level file is named `<dir-name>--<role>.<ext>`.
 The directory name is the task slug; the part after `--` says what the file is.
-This makes every file self-identifying when it's open in Notepad or a search
-result — a bare `paste.html` or `generate.js` tells a human nothing.
+This makes a file self-identifying in search results — a bare `paste.html` tells
+a human nothing.
+
+**Campaign packs** (`scripts/campaign` → `patches/<campaign-id>/`) invert that
+for Notepad: `<ROLE>--<dir-name>.<ext>` so the taskbar shows `PAGE--…`,
+`HOME--…`, `WPCODE--…` instead of three identical `2026-09-end-of-summer--…`
+truncations (owner, 2026-08-24). Roles: `PAGE`, `HOME`, `WPCODE`, `YOAST`,
+`PROMO`, `BUILDER`, `PREVIEW`, `GEN`.
 
 Exempt: `README.md` (required in every patch dir), `.gitignore`, and files
 inside subdirectories (e.g. `tour-conversion-tracking/live-blocks/`).

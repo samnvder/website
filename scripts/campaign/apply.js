@@ -54,12 +54,13 @@ function applyManifestToRepo(repoRoot, manifest, opts = {}) {
     };
   }
 
-  writeText(pagePath, pageNext);
+  const writtenPage = writeText(pagePath, pageNext);
   writeText(jsPath, builderJs);
   writeText(bannerPath, banner);
   writeText(buttonPath, button);
 
   const patchDir = writePatchDir(repoRoot, manifest, {
+    page: writtenPage,
     promo: require('./render').renderPromo(manifest),
     builder: require('./render').renderBuilderElement(manifest),
     banner,

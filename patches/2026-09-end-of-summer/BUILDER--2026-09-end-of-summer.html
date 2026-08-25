@@ -1,6 +1,8 @@
+<!-- Special-offer pricing (inlined — do not rely on WPCode 7966 for this page) -->
+<script>
 /**
  * Special Offer membership builder pricing (WPCode #7966).
-{{OFFER_HEADER}}
+ * Offer: $100 enrollment + $25/$30/$40 off dues + 10 guest passes through September 1.
  * Monthly dues match current join-page rates.
  */
 (function () {
@@ -49,8 +51,8 @@
             family: [600, 550, 500]
         };
 
-        const SPECIAL_ENROLLMENT = {{SPECIAL_ENROLLMENT}};
-        const duesDiscounts = {{DUES_DISCOUNTS_JSON}};
+        const SPECIAL_ENROLLMENT = 100;
+        const duesDiscounts = {"single":25,"couple":30,"family":40};
 
         function updatePrice() {
             const type = membershipType.value;
@@ -135,7 +137,7 @@
             originalPriceDisplay.textContent = `$${originalPrice}`;
             discountedPriceDisplay.textContent = `$${SPECIAL_ENROLLMENT}`;
             if (limitedTimeText) {
-                limitedTimeText.textContent = {{LIMITED_TIME_JSON}};
+                limitedTimeText.textContent = "through September 1 at midnight · 10 guest passes included · lower monthly dues";
                 limitedTimeText.style.display = "inline";
             }
         }
@@ -268,7 +270,7 @@
                 enrollmentFee,
                 monthlyDue,
                 foodBeverageMinimum,
-                offer: {{OFFER_TAG_JSON}}
+                offer: "end-of-summer-2026-sep1"
             };
 
             console.log("Form data being sent:", data);
@@ -308,3 +310,5 @@
         initMembershipBuilder();
     }
 })();
+
+</script>

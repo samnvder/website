@@ -8,6 +8,7 @@ const path = require('path');
 const vm = require('vm');
 
 const { parseEmail } = require('../parse-email');
+const { detectCampaignPaste, detectCampaignIntent } = require('../detect');
 const { validateManifest, assertApplyReady, PARKED, describeArchive } = require('../manifest');
 const { pacificEndOfDayIso, offerTag, sanitizeSlug, archiveLabel } = require('../dates');
 const { renderButton, renderPromo, renderBuilderJs, renderBanner } = require('../render');
@@ -17,7 +18,7 @@ const { archiveFile } = require('../archive');
 const { toLf } = require('../eol');
 const { hasAllMarkers } = require('../html');
 const { MARKERS, TARGETS } = require('../paths');
-const { patchNames } = require('../patches');
+const { patchNames, readmeFor } = require('../patches');
 const { verify } = require('../verify');
 
 const REPO = path.resolve(__dirname, '..', '..', '..');
@@ -56,7 +57,51 @@ test('parses the July 2026 email into enrollment, end date, and CTAs', () => {
   assert.strictEqual(m.offerTag, 'summer-special-2026-jul31');
   assert.strictEqual(m.id, '2026-07-summer-special');
   assert.match(m.headline, /August dues go up/);
+  assert.match(m.headline, /aren't coming back/);
+  assert.strictEqual(m.duesDiscount, null);
   assert.ok(m.heroImage.src.includes('Facility-Day'));
+  assert.match(m.heroImage.alt, /Club's/);
+});
+
+test('parses shared-class headlines and $N off monthly dues', () => {
+  const html = `
+    <html>
+      <title>South End Club — End of summer membership offer</title>
+      <style>.headline { font-size: 22px; }</style>
+      <div style="mso-hide:all">$100 enrollment, lower monthly dues, and 10 guest passes</div>
+      <td class="headline section-pad">Don't let fall start the same way summer ended</td>
+      <p>$100 enrollment on every plan</p>
+      <p>$25 off singles, $30 off couples, and $40 off family monthly dues</p>
+      <p>10 complimentary guest passes through September 1 at midnight</p>
+      <p>Singles: $180/mo (normally $205)</p>
+      <p>Couples: $320/mo (normally $350)</p>
+      <p>Families: from $380/mo (normally $420)</p>
+      <a data-campaign-cta="join" href="https://southendclub.com/special-offer/">Join Now</a>
+      <a data-campaign-cta="tour" href="https://southendclub.com/schedule-a-tour/">Schedule a Tour</a>
+    </html>`;
+  const m = parseEmail(html, { today: new Date(2026, 7, 24), slug: 'end-of-summer' });
+  assert.strictEqual(m.enrollment, 100);
+  assert.strictEqual(m.guestPasses, 10);
+  assert.deepStrictEqual(m.duesDiscount, { single: 25, couple: 30, family: 40 });
+  assert.match(m.headline, /Don't let fall start/);
+  assert.strictEqual(m.id, '2026-09-end-of-summer');
+  assert.deepStrictEqual(m.ambiguities, []);
+  const js = renderBuilderJs({ ...m, status: 'approved' });
+  assert.ok(js.includes('"single":25'));
+  assert.ok(js.includes('"couple":30'));
+  assert.ok(js.includes('"family":40'));
+  const promo = renderPromo({ ...m, status: 'approved' });
+  assert.ok(promo.includes('off monthly dues'));
+});
+
+test('lower monthly dues without amounts is an ambiguity', () => {
+  const html = `
+    <html><title>Offer</title>
+    <p>$100 enrollment, lower monthly dues, through September 30</p>
+    <a href="https://southendclub.com/special-offer/">Join Now</a>
+    </html>`;
+  const m = parseEmail(html, { today: new Date(2026, 7, 24) });
+  assert.ok(m.ambiguities.some((a) => a.field === 'duesDiscount'));
 });
 
 test('Pacific midnight July 31 2026 is 2026-08-01T06:59:59.000Z', () => {
@@ -99,6 +144,33 @@ test('expired end date fails validation', () => {
   const m = julyManifest();
   const errs = validateManifest(m, { today: new Date(2026, 7, 24) });
   assert.ok(errs.some((e) => /already passed/.test(e)));
+});
+
+test('detects a pasted membership-offer email and rejects a landing page', () => {
+  const email = fs.readFileSync(JULY_EMAIL, 'utf8');
+  const hit = detectCampaignPaste(email);
+  assert.strictEqual(hit.ok, true, hit.reasons.join('; '));
+  assert.ok(hit.signals.includes('enrollment'));
+  assert.ok(hit.signals.includes('special-offer-url'));
+
+  const page = fs.readFileSync(path.join(REPO, TARGETS.page), 'utf8');
+  const missPage = detectCampaignPaste(page);
+  assert.strictEqual(missPage.ok, false);
+  assert.ok(missPage.reasons.some((r) => /page source/i.test(r)));
+
+  assert.strictEqual(detectCampaignPaste('Join our gym today').ok, false);
+  assert.strictEqual(detectCampaignPaste('<html><body>hello from south end</body></html>').ok, false);
+
+  const stripped = `
+    <html><body>
+      <p>$150 enrollment through September 30</p>
+      <a href="https://southendclub.com/special-offer/">Join Now</a>
+    </body></html>`;
+  assert.strictEqual(detectCampaignPaste(stripped).ok, true);
+
+  const intent = detectCampaignIntent('here is the new offer email, go ahead');
+  assert.strictEqual(intent.ok, true);
+  assert.ok(intent.signals.includes('offer'));
 });
 
 test('archive copy is byte-exact and refuses a conflicting file', () => {
@@ -162,12 +234,110 @@ test('builder JS, banner, and promo stay synchronized to the same manifest', () 
   const button = renderButton(m);
   assert.ok(js.includes('offer: "summer-special-2026-jul31"'));
   assert.ok(js.includes('const SPECIAL_ENROLLMENT = 100;'));
+  assert.ok(js.includes('const duesDiscounts = {"single":0,"couple":0,"family":0}'));
   assert.ok(js.includes('{ 1: 30, 2: 20 }'));
   assert.ok(promo.includes('$100'));
   assert.ok(banner.includes('special-offer'));
   assert.ok(banner.includes('se-campaign-banner'));
   assert.ok(button.includes('utm_campaign=summer-special-2026-jul31'));
   new Function(js.replace(/^\s*\/\*[\s\S]*?\*\//, ''));
+});
+
+test('builder JS strikes through sticker monthly dues when they are discounted', () => {
+  const withDues = renderBuilderJs(julyManifest({
+    duesDiscount: { single: 25, couple: 30, family: 40 },
+  }));
+  assert.ok(withDues.includes('getElementById("originalDues")'));
+  assert.ok(withDues.includes('getElementById("discountedDues")'));
+  assert.ok(withDues.includes('has-dues-deal'));
+  assert.ok(withDues.includes('stickerPrice'));
+  assert.ok(withDues.includes('discountedDuesDisplay.textContent.replace("$", "").trim()'));
+
+  const parked = renderBuilderJs(PARKED);
+  assert.ok(parked.includes('originalDues'));
+  assert.ok(parked.includes('duesDiscounts = {"single":0,"couple":0,"family":0}'));
+});
+
+function mockBuilderDom(values) {
+  const nodes = {};
+  const listeners = {};
+  function node(id, extras = {}) {
+    const n = {
+      id,
+      value: extras.value || '',
+      textContent: '',
+      innerHTML: '',
+      style: { display: extras.display || '' },
+      classList: {
+        names: new Set(extras.className ? extras.className.split(/\s+/) : []),
+        add(c) { this.names.add(c); },
+        remove(c) { this.names.delete(c); },
+        contains(c) { return this.names.has(c); },
+      },
+      addEventListener(ev, fn) {
+        listeners[id] = listeners[id] || {};
+        listeners[id][ev] = fn;
+      },
+      ...extras,
+    };
+    n.style = n.style || { display: '' };
+    nodes[id] = n;
+    return n;
+  }
+  node('membershipType', { value: values.membershipType || 'single' });
+  node('tier', { value: values.tier || '3' });
+  node('familyOptions', { style: { display: 'none' } });
+  node('numberOfChildren', { value: '2' });
+  node('childrenAgesContainer', { innerHTML: '' });
+  node('priceDisplay', { className: 'price-info bold-text' });
+  node('minimumAmount');
+  node('originalPrice');
+  node('discountedPrice');
+  node('limitedTimeText');
+  node('purchaseButton');
+  node('originalDues');
+  node('discountedDues');
+  return { nodes, listeners };
+}
+
+test('builder JS shows $205 crossed off to $180 for a single tier-3 with $25 off dues', () => {
+  const js = renderBuilderJs(julyManifest({
+    duesDiscount: { single: 25, couple: 30, family: 40 },
+  }));
+  const { nodes, listeners } = mockBuilderDom({ membershipType: 'single', tier: '3' });
+  vm.runInNewContext(js, {
+    document: {
+      readyState: 'complete',
+      getElementById: (id) => nodes[id] || null,
+      addEventListener() {},
+    },
+    console,
+  });
+  assert.strictEqual(nodes.originalDues.textContent, '$205');
+  assert.strictEqual(nodes.discountedDues.textContent, '$180');
+  assert.ok(nodes.priceDisplay.classList.contains('has-dues-deal'));
+  assert.notStrictEqual(nodes.originalDues.style.display, 'none');
+
+  nodes.membershipType.value = 'couple';
+  listeners.membershipType.change();
+  assert.strictEqual(nodes.originalDues.textContent, '$350');
+  assert.strictEqual(nodes.discountedDues.textContent, '$320');
+});
+
+test('builder JS hides the dues cross-off when there is no dues discount', () => {
+  const js = renderBuilderJs(PARKED);
+  const { nodes } = mockBuilderDom({ membershipType: 'single', tier: '3' });
+  vm.runInNewContext(js, {
+    document: {
+      readyState: 'complete',
+      getElementById: (id) => nodes[id] || null,
+      addEventListener() {},
+    },
+    console,
+  });
+  assert.strictEqual(nodes.discountedDues.textContent, '$205');
+  assert.strictEqual(nodes.originalDues.style.display, 'none');
+  assert.ok(!nodes.priceDisplay.classList.contains('has-dues-deal'));
 });
 
 test('parked builder uses UNSET tag and zero enrollment', () => {
@@ -219,6 +389,14 @@ test('global button hides on /special-offer/, when expired, and when parked', ()
 test('describeArchive names the offer', () => {
   const m = julyManifest({ guestPasses: 10 });
   assert.strictEqual(describeArchive(m), '2026-07-summer-special-100-enrollment-10-guest-passes');
+  const withDues = julyManifest({
+    guestPasses: 10,
+    duesDiscount: { single: 25, couple: 30, family: 40 },
+  });
+  assert.strictEqual(
+    describeArchive(withDues),
+    '2026-07-summer-special-100-enrollment-10-guest-passes-25-30-40-off-dues'
+  );
 });
 
 test('installAllMarkers and park survive on the real CRLF Special Offer.html', () => {
@@ -236,6 +414,8 @@ test('installAllMarkers and park survive on the real CRLF Special Offer.html', (
   assert.ok(parked.includes('se-campaign-promo'));
   assert.ok(parked.includes('Digital-SIgn.mp4'));
   assert.ok(parked.includes('id="membershipBuilder"'));
+  assert.ok(parked.includes('id="originalDues"'));
+  assert.ok(parked.includes('id="discountedDues"'));
   assert.ok(parked.includes('Yes - We allow reservations'));
   assert.ok(!/through\s+[A-Za-z]+\s+\d{1,2}/.test(parked.replace(/<!--[\s\S]*?-->/g, ' ')));
 });
@@ -324,9 +504,23 @@ test('applyManifestToRepo on a copy of the real page only writes campaign target
 
   const names = patchNames('parked');
   assert.ok(fs.existsSync(path.join(tmp, 'patches', 'parked', 'README.md')));
+  assert.ok(fs.existsSync(path.join(tmp, 'patches', 'parked', names.page)));
   assert.ok(fs.existsSync(path.join(tmp, 'patches', 'parked', names.promo)));
   assert.ok(fs.existsSync(path.join(tmp, 'patches', 'parked', names.generate)));
+  const fullPaste = fs.readFileSync(path.join(tmp, 'patches', 'parked', names.page), 'utf8');
+  assert.ok(fullPaste.includes('id="membershipBuilder"'));
+  assert.ok(fullPaste.includes('Digital-SIgn.mp4'));
+  assert.ok(fullPaste.includes('UNSET-set-before-launch'));
+  assert.ok(toLf(fullPaste).trim() === toLf(page).trim());
 
   const checked = verify(tmp, { strictArchives: false });
   assert.deepStrictEqual(checked.failures, []);
+});
+
+test('patchNames always includes the full-page Thrive paste', () => {
+  const names = patchNames('2026-09-end-of-summer');
+  assert.strictEqual(names.page, 'PAGE--2026-09-end-of-summer.html');
+  assert.strictEqual(names.banner, 'HOME--2026-09-end-of-summer.html');
+  assert.strictEqual(names.button, 'WPCODE--2026-09-end-of-summer.html');
+  assert.match(readmeFor(julyManifest()), /PAGE--/);
 });

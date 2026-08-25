@@ -17,6 +17,7 @@ const {
   renderMeta,
 } = require('./render');
 const { PARKED } = require('./manifest');
+const { patchNames } = require('./patches');
 
 function failList() {
   return { failures: [], ok(msg) { this.failures.length; return msg; } };
@@ -110,6 +111,17 @@ function verify(repoRoot, opts = {}) {
     const arch = abs(repoRoot, TARGETS.pageArchiveDir);
     if (!fs.existsSync(arch) || fs.readdirSync(arch).length === 0) {
       fail('special-offer Archive/ is empty');
+    }
+  }
+
+  const id = manifest.id || state.id;
+  if (id && state.patchDir) {
+    const names = patchNames(id);
+    const pagePastePath = path.join(repoRoot, state.patchDir, names.page);
+    if (!fs.existsSync(pagePastePath)) {
+      fail('full-page Thrive paste missing: ' + names.page);
+    } else if (toLf(fs.readFileSync(pagePastePath, 'utf8')).trim() !== pageLf.trim()) {
+      fail('full-page Thrive paste does not match Special Offer.html');
     }
   }
 
